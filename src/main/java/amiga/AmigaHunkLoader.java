@@ -34,10 +34,14 @@ import ghidra.program.model.data.DataUtilities.ClearDataMode;
 import ghidra.program.model.lang.Language;
 import ghidra.program.model.lang.LanguageCompilerSpecPair;
 import ghidra.program.model.lang.LanguageNotFoundException;
+import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.Memory;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.mem.MemoryBlock;
+import ghidra.program.model.reloc.Relocation.Status;
+import ghidra.program.model.symbol.RefType;
+import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.program.model.symbol.SourceType;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
@@ -46,11 +50,14 @@ import ghidra.util.task.TaskMonitor;
 import hunk.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	public static final int DEF_IMAGE_BASE = 0x21F000;
@@ -105,8 +112,10 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
         try {
             hbf = new HunkBlockFile(reader, type == HunkBlockType.TYPE_LOADSEG);
         } catch (HunkParseError e) {
- 			e.printStackTrace();
+			e.printStackTrace();
+			log.appendMsg("Import stopped while parsing Hunk records: " + e.getMessage());
 			log.appendException(e);
+			return;
         }
         switch (type) {
 		case TYPE_LOADSEG: 
@@ -126,7 +135,12 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	}
 
 	private static void loadExecutable(Address imageBase, boolean isExecutable, HunkBlockFile hbf, FlatProgramAPI fpa, TaskMonitor monitor, Memory mem, MessageLog log) throws Throwable {
-		BinImage bi = BinFmtHunk.loadImage(hbf, log);
+		HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(hbf, log);
+		if (hunkFile == null) {
+			return;
+		}
+
+		BinImage bi = BinFmtHunk.createImage(hunkFile, log);
 		
 		if (bi == null) {
 			return;
@@ -134,46 +148,31 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		
 		int _imageBase = getImageBase(0);
 
+		Segment[] segments = bi.getSegments();
+		int[] addrs = getNodeAddresses(hunkFile, segments, _imageBase);
 		Relocate rel = new Relocate(bi);
-		int[] addrs = rel.getSeqAddresses(_imageBase);
 		List<byte[]> datas;
 		try {
 			datas = rel.relocate(addrs);
 		} catch (HunkParseError e1) {
+			log.appendMsg("Import stopped while applying Hunk relocations: " + e1.getMessage());
 			log.appendException(e1);
 			return;
 		}
 		
-		int lastSectAddress = 0;
+		Address[] segmentAddresses = new Address[segments.length];
+		int lastSectAddress = mapNodes(hunkFile, segments, datas, addrs, fpa, log, segmentAddresses);
+		lastSectAddress = mapOverlayMetadata(hunkFile, segments, fpa, log, segmentAddresses, lastSectAddress);
 
-		for (Segment seg : bi.getSegments()) {
-			int segOffset = addrs[seg.getId()];
-			int size = seg.getSize();
-			
-			if (segOffset + size > lastSectAddress) {
-				lastSectAddress = segOffset + size;
-			}
-
-			ByteArrayInputStream segBytes = new ByteArrayInputStream(datas.get(seg.getId()));
-
-			if (segBytes.available() == 0) {
-				continue;
-			}
-
-			boolean exec = seg.getType() == SegmentType.SEGMENT_TYPE_CODE;
-			boolean write = seg.getType() == SegmentType.SEGMENT_TYPE_DATA;
-
-			AmigaUtils.createSegment(segBytes, fpa, seg.getName(), segOffset, size, write, exec, log);
-			relocateSegment(seg, segOffset, datas, mem, fpa, log);
+		for (Segment seg : segments) {
+			relocateSegment(seg, segmentAddresses[seg.getId()], datas, addrs, segmentAddresses, mem, fpa, log);
 		}
 		
-		for (Segment seg : bi.getSegments()) {
-			int segOffset = addrs[seg.getId()];
-
-			applySegmentDefs(seg, segOffset, fpa, fpa.getCurrentProgram().getSymbolTable(), log, lastSectAddress);
+		for (Segment seg : segments) {
+			applySegmentDefs(seg, segmentAddresses[seg.getId()], fpa, fpa.getCurrentProgram().getSymbolTable(), log, lastSectAddress);
 		}
 		
-		Address startAddr = fpa.toAddr(addrs[0]);
+		Address startAddr = segmentAddresses[0];
 		
 		var fdm = fpa.openDataTypeArchive(Application.getModuleDataFile("amiga_ndk39.gdt").getFile(false), true);
 		AmigaUtils.createExecBaseSegment(fpa, fdm, log);
@@ -184,24 +183,324 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		if(isExecutable)
 			AmigaUtils.setFunction(fpa, startAddr, "start", log);
 		
-		addSymbols(bi.getSegments(), fpa.getCurrentProgram().getSymbolTable(), addrs, fpa);
+		addSymbols(segments, fpa.getCurrentProgram().getSymbolTable(), segmentAddresses);
 	}
 
-	private static void addSymbols(Segment segs[], SymbolTable st, int addrs[], FlatProgramAPI fpa) throws Throwable {
+	/**
+	 * Makes the otherwise file-only HUNK_OVERLAY payload visible to the analyst.
+	 * The block is a static analysis representation, not a claim that AmigaDOS
+	 * assigns this address at run time; LoadSeg supplies that pointer dynamically.
+	 */
+	private static int mapOverlayMetadata(HunkLoadSegFile hunkFile, Segment[] segments, FlatProgramAPI fpa,
+			MessageLog log, Address[] segmentAddresses, int afterRoot) throws HunkParseError {
+		byte[] tableData = hunkFile.getOverlayTableData();
+		if (tableData == null) {
+			return afterRoot;
+		}
+
+		int tableAddress = (afterRoot + 3) & ~3;
+		MemoryBlock block = AmigaUtils.createSegment(new ByteArrayInputStream(tableData), fpa,
+				"HUNK_OVERLAY_TABLE", tableAddress, tableData.length, false, false, log);
+		if (block == null) {
+			throw new HunkParseError("Failed to create HUNK_OVERLAY_TABLE block");
+		}
+		String tableComment = "Static copy of the HUNK_OVERLAY payload. AmigaDOS supplies its runtime pointer in the root OverlayHeader.";
+		block.setComment(tableComment);
+
+		SymbolTable symbols = fpa.getCurrentProgram().getSymbolTable();
+		try {
+			symbols.createLabel(block.getStart(), "HunkOverlayTable", SourceType.IMPORTED);
+		} catch (Exception e) {
+			log.appendException(e);
+		}
+
+		Map<Integer, HunkLoadSegFile.Node> nodesByHeaderOffset = new HashMap<>();
+		for (HunkLoadSegFile.Node node : hunkFile.getNodes()) {
+			if (node.isOverlay()) {
+				nodesByHeaderOffset.put(node.getHeaderFileOffset(), node);
+			}
+		}
+
+		HunkOverlayTable overlayTable = hunkFile.getOverlayTable();
+		if (overlayTable != null) {
+			int resolvedSymbols = mapHierarchicalOverlaySymbols(overlayTable, nodesByHeaderOffset, block.getStart(), segments, segmentAddresses, symbols, log);
+			log.appendMsg(String.format("Mapped hierarchical HUNK_OVERLAY table: depth %d, %d externally reachable symbols.",
+					overlayTable.getTreeDepth(), resolvedSymbols));
+			if (resolvedSymbols != overlayTable.getSymbols().size()) {
+				appendOverlayWarning(block, log, "Some hierarchical overlay targets failed validation and were not linked. " +
+						"Inspect the table before relying on cross-overlay navigation.");
+			}
+			return tableAddress + tableData.length;
+		}
+
+		HunkManxOverlayTable manxTable = hunkFile.getManxOverlayTable();
+		if (manxTable != null) {
+			if (mapManxOverlaySymbols(manxTable, hunkFile.getNodes(), nodesByHeaderOffset, segments, segmentAddresses, symbols, fpa, log)) {
+				log.appendMsg(String.format("Mapped MANX HUNK_OVERLAY table: %d independently loadable nodes.", manxTable.getNodes().size()));
+			} else {
+				appendOverlayWarning(block, log, "A MANX overlay table was recognised but did not validate. " +
+						"Overlay nodes loaded, but no MANX cross-overlay targets were linked.");
+			}
+			return tableAddress + tableData.length;
+		}
+
+		appendOverlayWarning(block, log, "Overlay manager is unrecognised. Overlay nodes loaded, but cross-overlay calls were not resolved. " +
+				"Inspect this HUNK_OVERLAY_TABLE before relying on cross-overlay navigation.");
+		return tableAddress + tableData.length;
+	}
+
+	private static void appendOverlayWarning(MemoryBlock block, MessageLog log, String warning) {
+		block.setComment(block.getComment() + "\n\nWARNING: " + warning);
+		log.appendMsg("WARNING: " + warning);
+	}
+
+	private static int mapHierarchicalOverlaySymbols(HunkOverlayTable overlayTable,
+			Map<Integer, HunkLoadSegFile.Node> nodesByHeaderOffset, Address tableStart,
+			Segment[] segments, Address[] segmentAddresses, SymbolTable symbols, MessageLog log) {
+		int symbolIndex = 0;
+		int resolvedSymbols = 0;
+		for (HunkOverlayTable.Symbol entry : overlayTable.getSymbols()) {
+			Address entryAddress = tableStart.add((overlayTable.getTreeDepth() + symbolIndex * 8L) * 4);
+			try {
+				symbols.createLabel(entryAddress, String.format("HunkOverlaySymbol_%03d", symbolIndex), SourceType.IMPORTED);
+			} catch (Exception e) {
+				log.appendException(e);
+			}
+
+			HunkLoadSegFile.Node node = nodesByHeaderOffset.get(entry.getFilePosition());
+			if (node == null || node.getFirstHunk() != entry.getFirstSegment() ||
+					entry.getSymbolSegment() > node.getLastHunk() ||
+					!isValidSegmentOffset(segments, entry.getSymbolSegment(), entry.getSymbolOffset())) {
+				log.appendMsg(String.format("HUNK_OVERLAY symbol %d does not match an overlay node; no target label created.", symbolIndex));
+				symbolIndex++;
+				continue;
+			}
+
+			Address target = segmentAddresses[entry.getSymbolSegment()].add(entry.getSymbolOffset());
+			try {
+				symbols.createLabel(target, String.format("OverlayTarget_L%d_O%d_%03d", entry.getLevel(), entry.getOrdinate(), symbolIndex), SourceType.IMPORTED);
+				resolvedSymbols++;
+			} catch (Exception e) {
+				log.appendException(e);
+			}
+			symbolIndex++;
+		}
+		return resolvedSymbols;
+	}
+
+	private static boolean mapManxOverlaySymbols(HunkManxOverlayTable table, HunkLoadSegFile.Node[] allNodes,
+			Map<Integer, HunkLoadSegFile.Node> nodesByHeaderOffset, Segment[] segments, Address[] segmentAddresses,
+			SymbolTable symbols, FlatProgramAPI fpa, MessageLog log) {
+		HunkLoadSegFile.Node root = null;
+		for (HunkLoadSegFile.Node node : allNodes) {
+			if (!node.isOverlay()) {
+				root = node;
+				break;
+			}
+		}
+		if (root == null || root.getFirstHunk() == root.getLastHunk()) {
+			log.appendMsg("MANX HUNK_OVERLAY has no second root segment for its trampoline table.");
+			return false;
+		}
+
+		Address trampolineBase = segmentAddresses[root.getFirstHunk() + 1];
+		ReferenceManager references = fpa.getCurrentProgram().getReferenceManager();
+		Integer nodeIndexBias = determineManxNodeIndexBias(table, nodesByHeaderOffset, segments,
+				trampolineBase, fpa.getCurrentProgram().getMemory(), log);
+		if (nodeIndexBias == null) {
+			log.appendMsg("MANX HUNK_OVERLAY failed validation; metadata retained without target references.");
+			return false;
+		}
+		for (int nodeIndex = 0; nodeIndex < table.getNodes().size(); nodeIndex++) {
+			HunkManxOverlayTable.Node entry = table.getNodes().get(nodeIndex);
+			HunkLoadSegFile.Node node = nodesByHeaderOffset.get(entry.getFilePosition());
+			if (node == null) {
+				log.appendMsg(String.format("MANX overlay node %d does not identify a HUNK_HEADER.", nodeIndex));
+				continue;
+			}
+
+			try {
+				symbols.createLabel(trampolineBase.add(entry.getTrampolineOffset()),
+						String.format("ManxOverlayTrampolines_%02d", nodeIndex), SourceType.IMPORTED);
+			} catch (Exception e) {
+				log.appendException(e);
+			}
+
+			int trampolineNumber = 0;
+			for (HunkManxOverlayTable.SegmentDescriptor descriptor : entry.getSegments()) {
+				if (descriptor.getSegment() < node.getFirstHunk() || descriptor.getSegment() > node.getLastHunk()) {
+					log.appendMsg(String.format("MANX overlay node %d references segment %d outside its HUNK_HEADER range.", nodeIndex, descriptor.getSegment()));
+					trampolineNumber += descriptor.getTrampolineCount();
+					continue;
+				}
+				for (int i = 0; i < descriptor.getTrampolineCount(); i++, trampolineNumber++) {
+					Address trampoline = trampolineBase.add(entry.getTrampolineOffset() + trampolineNumber * 8L);
+					try {
+						byte[] bytes = new byte[8];
+						fpa.getCurrentProgram().getMemory().getBytes(trampoline, bytes);
+						int opcode = Short.toUnsignedInt(ByteBuffer.wrap(bytes, 0, 2).order(ByteOrder.BIG_ENDIAN).getShort());
+						int encodedNode = Byte.toUnsignedInt(bytes[4]);
+						int symbolOffset = (Byte.toUnsignedInt(bytes[5]) << 16) |
+								(Byte.toUnsignedInt(bytes[6]) << 8) | Byte.toUnsignedInt(bytes[7]);
+						// MANX documentation specifies zero-based node IDs, but historical
+						// linkers also emitted one-based IDs. The table record is authoritative;
+							// accept either documented encoding after validating the trampoline.
+						if (opcode != 0x6100 || encodedNode != nodeIndex + nodeIndexBias ||
+								!isValidSegmentOffset(segments, descriptor.getSegment(), symbolOffset)) {
+							log.appendMsg(String.format("MANX trampoline %d for node %d failed format validation.", trampolineNumber, nodeIndex));
+							continue;
+						}
+						Address target = segmentAddresses[descriptor.getSegment()].add(symbolOffset);
+						String targetName = String.format("ManxOverlayTarget_%02d_%03d", nodeIndex, trampolineNumber);
+						Function targetFunction = fpa.getFunctionAt(target);
+						if (targetFunction == null) {
+							// A validated MANX trampoline denotes an externally callable routine.
+							// Create an explicit function because a COMPUTED_CALL alone is not a
+							// reliable auto-analysis seed, particularly across overlay spaces.
+							AmigaUtils.setFunction(fpa, target, targetName, log);
+						} else {
+							symbols.createLabel(target, targetName, SourceType.IMPORTED);
+						}
+						// This is a metadata-resolved dynamic call. COMPUTED_CALL preserves the
+						// manager trampoline's actual control flow while exposing the target.
+						references.addMemoryReference(trampoline, target, RefType.COMPUTED_CALL, SourceType.IMPORTED, 0);
+					} catch (Exception e) {
+						log.appendException(e);
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private static Integer determineManxNodeIndexBias(HunkManxOverlayTable table,
+			Map<Integer, HunkLoadSegFile.Node> nodesByHeaderOffset, Segment[] segments,
+			Address trampolineBase, Memory memory, MessageLog log) {
+		Integer bias = null;
+		for (int nodeIndex = 0; nodeIndex < table.getNodes().size(); nodeIndex++) {
+			HunkManxOverlayTable.Node entry = table.getNodes().get(nodeIndex);
+			HunkLoadSegFile.Node node = nodesByHeaderOffset.get(entry.getFilePosition());
+			if (node == null) {
+				return null;
+			}
+			long trampolineNumber = 0;
+			for (HunkManxOverlayTable.SegmentDescriptor descriptor : entry.getSegments()) {
+				if (descriptor.getSegment() < node.getFirstHunk() || descriptor.getSegment() > node.getLastHunk()) {
+					return null;
+				}
+				for (int i = 0; i < descriptor.getTrampolineCount(); i++, trampolineNumber++) {
+					try {
+						Address trampoline = trampolineBase.add(entry.getTrampolineOffset() + trampolineNumber * 8);
+						byte[] bytes = new byte[8];
+						memory.getBytes(trampoline, bytes);
+						int opcode = Short.toUnsignedInt(ByteBuffer.wrap(bytes, 0, 2).order(ByteOrder.BIG_ENDIAN).getShort());
+						int encodedNode = Byte.toUnsignedInt(bytes[4]);
+						int symbolOffset = (Byte.toUnsignedInt(bytes[5]) << 16) |
+								(Byte.toUnsignedInt(bytes[6]) << 8) | Byte.toUnsignedInt(bytes[7]);
+						int candidateBias = encodedNode - nodeIndex;
+						if (opcode != 0x6100 || (candidateBias != 0 && candidateBias != 1) ||
+								!isValidSegmentOffset(segments, descriptor.getSegment(), symbolOffset)) {
+							return null;
+						}
+						if (bias == null) {
+							bias = candidateBias;
+						} else if (bias != candidateBias) {
+							return null;
+						}
+					} catch (MemoryAccessException e) {
+						log.appendException(e);
+						return null;
+					}
+				}
+			}
+		}
+		return bias == null ? 0 : bias;
+	}
+
+	private static boolean isValidSegmentOffset(Segment[] segments, int segment, long offset) {
+		return segment >= 0 && segment < segments.length && offset >= 0 && offset < segments[segment].getSize();
+	}
+
+	private static int[] getNodeAddresses(HunkLoadSegFile hunkFile, Segment[] segments, int imageBase) throws HunkParseError {
+		int[] addresses = new int[segments.length];
+		for (HunkLoadSegFile.Node node : hunkFile.getNodes()) {
+			int address = imageBase;
+			for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
+				if (hunk < 0 || hunk >= segments.length) {
+					throw new HunkParseError("Overlay node has an invalid segment range");
+				}
+				addresses[hunk] = address;
+				address += segments[hunk].getSize();
+			}
+		}
+		return addresses;
+	}
+
+	private static int mapNodes(HunkLoadSegFile hunkFile, Segment[] segments, List<byte[]> datas, int[] addresses, FlatProgramAPI fpa, MessageLog log, Address[] segmentAddresses) throws HunkParseError {
+		int rootEnd = 0;
+		int overlayNumber = 0;
+
+		for (HunkLoadSegFile.Node node : hunkFile.getNodes()) {
+			if (node.isOverlay()) {
+				mapOverlayNode(node, ++overlayNumber, segments, datas, addresses, fpa, log, segmentAddresses);
+				continue;
+			}
+
+			for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
+				Segment segment = segments[hunk];
+				int address = addresses[hunk];
+				byte[] data = datas.get(hunk);
+				MemoryBlock block = AmigaUtils.createSegment(new ByteArrayInputStream(data), fpa, segment.getName(), address, segment.getSize(), segment.getType() == SegmentType.SEGMENT_TYPE_DATA, segment.getType() == SegmentType.SEGMENT_TYPE_CODE, log);
+				if (block == null) {
+					throw new HunkParseError("Failed to create root hunk memory block");
+				}
+				segmentAddresses[hunk] = block.getStart();
+				rootEnd = Math.max(rootEnd, address + segment.getSize());
+			}
+		}
+		return rootEnd;
+	}
+
+	private static void mapOverlayNode(HunkLoadSegFile.Node node, int overlayNumber, Segment[] segments, List<byte[]> datas, int[] addresses, FlatProgramAPI fpa, MessageLog log, Address[] segmentAddresses) throws HunkParseError {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		boolean hasCode = false;
+		boolean hasData = false;
+
+		for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
+			Segment segment = segments[hunk];
+			bytes.writeBytes(datas.get(hunk));
+			hasCode |= segment.getType() == SegmentType.SEGMENT_TYPE_CODE;
+			hasData |= segment.getType() == SegmentType.SEGMENT_TYPE_DATA;
+		}
+
+		MemoryBlock block = AmigaUtils.createSegment(new ByteArrayInputStream(bytes.toByteArray()), fpa, String.format("OVERLAY_%02d", overlayNumber), addresses[node.getFirstHunk()], bytes.size(), hasData, hasCode, log, true);
+		if (block == null) {
+			throw new HunkParseError("Failed to create overlay hunk memory block");
+		}
+
+		for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
+			segmentAddresses[hunk] = block.getStart().add(addresses[hunk] - addresses[node.getFirstHunk()]);
+		}
+	}
+
+	private static void addSymbols(Segment segs[], SymbolTable st, Address[] addrs) throws Throwable {
 		for (Segment seg : segs) {
 			hunk.Symbol[] symbols = seg.getSymbols(seg);
 			if(symbols.length > 0) {
 				for(hunk.Symbol symbol : symbols) {
 					String name = symbol.getName();
 					int offset = symbol.getOffset();
-					st.createLabel(fpa.toAddr(addrs[seg.getId()]+offset), name, SourceType.IMPORTED);
+					st.createLabel(addrs[seg.getId()].add(offset), name, SourceType.IMPORTED);
 				}
 			}
 		}
 	}
 
-	private static void relocateSegment(Segment seg, int segOffset, final List<byte[]> datas, Memory mem, FlatProgramAPI fpa, MessageLog log) {
+	private static void relocateSegment(Segment seg, Address segAddress, final List<byte[]> datas,
+			int[] runtimeSegmentAddresses, Address[] mappedSegmentAddresses, Memory mem,
+			FlatProgramAPI fpa, MessageLog log) {
 		Segment[] toSegs = seg.getRelocationsToSegments();
+		ReferenceManager referenceManager = fpa.getCurrentProgram().getReferenceManager();
 
 		for (Segment toSeg : toSegs) {
 			Reloc[] reloc = seg.getRelocations(toSeg);
@@ -224,7 +523,18 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 						newAddr = buf.get(dataOffset) + r.getAddend();
 						break;
 					}
-					patchReference(mem, fpa.toAddr(segOffset + dataOffset), newAddr, r.getWidth());
+					patchReference(mem, segAddress.add(dataOffset), newAddr, r.getWidth());
+					if (r.getWidth() == 4 && r.getKind() == Reloc.Kind.ABSOLUTE) {
+						Address relocationAddress = segAddress.add(dataOffset);
+						long targetOffset = Integer.toUnsignedLong(newAddr) - Integer.toUnsignedLong(runtimeSegmentAddresses[toSeg.getId()]);
+						Address target = mappedSegmentAddresses[toSeg.getId()].add(targetOffset);
+						// A relocation records a linker-proven direct dependency. It is safe across
+						// Ghidra overlay spaces because target is the mapped segment address, not
+						// merely its ambiguous 32-bit runtime offset.
+						referenceManager.addMemoryReference(relocationAddress, target, RefType.DATA, SourceType.IMPORTED, 0);
+						fpa.getCurrentProgram().getRelocationTable().add(relocationAddress, Status.APPLIED,
+								r.getWidth(), new long[] { target.getOffset(), toSeg.getId() }, null, null);
+					}
 				} catch (MemoryAccessException | CodeUnitInsertionException e) {
 					log.appendException(e);
 					return;
@@ -233,7 +543,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		}
 	}
 	
-	private static void applySegmentDefs(Segment seg, int segOffset, FlatProgramAPI fpa, SymbolTable st, MessageLog log, int lastSectAddress) throws Throwable {
+	private static void applySegmentDefs(Segment seg, Address segAddress, FlatProgramAPI fpa, SymbolTable st, MessageLog log, int lastSectAddress) throws Throwable {
 		if (seg.getSegmentInfo().getDefinitions() == null) {
 			return;
 		}
@@ -244,7 +554,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			Address defAddr = fpa.toAddr(entry.getOffset());
 			
 			if (!entry.isAbsolute()) {
-				defAddr = fpa.toAddr(segOffset + entry.getOffset());
+				defAddr = segAddress.add(entry.getOffset());
 			}
 			
 			if (mem.contains(defAddr)) {
@@ -264,7 +574,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		
 		for (final XReference entry : seg.getSegmentInfo().getReferences()) {
 			for (Integer offset : entry.getOffsets()) {
-				Address fromAddr = fpa.toAddr(segOffset + offset);
+				Address fromAddr = segAddress.add(offset);
 				int newAddr = 0;
 				
 				switch (entry.getType()) {

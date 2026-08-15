@@ -9,16 +9,30 @@ import ghidra.app.util.importer.MessageLog;
 public final class BinFmtHunk {
 
 	public static BinImage loadImage(HunkBlockFile hbf, MessageLog log) {
+		HunkLoadSegFile lsf = loadSegFile(hbf, log);
+		return lsf == null ? null : createImage(lsf, log);
+	}
+
+	public static HunkLoadSegFile loadSegFile(HunkBlockFile hbf, MessageLog log) {
 		try {
 			HunkLoadSegFile lsf = new HunkLoadSegFile();
 			lsf.parseBlockFile(hbf);
-			return createImageFromLoadSegFile(lsf);
+			return lsf;
 		} catch (HunkParseError e) {
 			log.appendException(e);
 			return null;
 		}
 	}
 	
+	public static BinImage createImage(HunkLoadSegFile lsf, MessageLog log) {
+		try {
+			return createImageFromLoadSegFile(lsf);
+		} catch (HunkParseError e) {
+			log.appendException(e);
+			return null;
+		}
+	}
+
 	private static BinImage createImageFromLoadSegFile(HunkLoadSegFile lsf) throws HunkParseError {
 		int num = 0;
 		

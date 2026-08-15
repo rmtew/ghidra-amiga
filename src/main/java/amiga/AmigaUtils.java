@@ -56,12 +56,16 @@ public class AmigaUtils {
 	}
 
 	public static MemoryBlock createSegment(InputStream stream, FlatProgramAPI fpa, String name, long address, long size, boolean write, boolean execute, MessageLog log) {
+		return createSegment(stream, fpa, name, address, size, write, execute, log, false);
+	}
+
+	public static MemoryBlock createSegment(InputStream stream, FlatProgramAPI fpa, String name, long address, long size, boolean write, boolean execute, MessageLog log, boolean overlay) {
 		MemoryBlock block;
 		try {
 			Program program = fpa.getCurrentProgram();
 			
 			int transId = program.startTransaction(String.format("Create %s block", name));
-			block = fpa.createMemoryBlock(name, fpa.toAddr(address), stream, size, false);
+			block = fpa.createMemoryBlock(name, fpa.toAddr(address), stream, size, overlay);
 			program.endTransaction(transId, true);
 			
 			block.setRead(true);

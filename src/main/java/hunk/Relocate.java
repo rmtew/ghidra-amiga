@@ -69,38 +69,63 @@ public class Relocate {
 		}
 	}
 
-	private static void relocData(byte[] data, Segment seg, int[] addrs) {
+	private static void relocData(byte[] data, Segment seg, int[] addrs) throws HunkParseError {
 		Segment[] toSegs = seg.getRelocationsToSegments();
 		
 		for (Segment toSeg : toSegs) {
 			Reloc[] relocs = seg.getRelocations(toSeg);
 			
 			for (Reloc r : relocs) {
-				reloc(data, r, addrs[toSeg.getId()]);
+				reloc(data, r, addrs[seg.getId()], addrs[toSeg.getId()]);
 			}
 		}
 	}
 	
-	private static void reloc(byte[] data, Reloc reloc, int sectAddr) {
+	private static void reloc(byte[] data, Reloc reloc, int sourceAddress, int targetAddress) throws HunkParseError {
 		int offset = reloc.getOffset();
-		
+		if (offset < 0 || offset > data.length - reloc.getWidth()) {
+			throw new HunkParseError("Relocation offset is outside its source segment");
+		}
+
 		ByteBuffer buf = ByteBuffer.wrap(data);
-		
+		long relocationDelta;
+		switch (reloc.getKind()) {
+		case ABSOLUTE:
+			relocationDelta = Integer.toUnsignedLong(targetAddress);
+			break;
+		case PC_RELATIVE:
+			relocationDelta = (long) targetAddress - sourceAddress - offset;
+			break;
+		case BASE_RELATIVE:
+			throw new HunkParseError("Base-relative relocation requires a linker-defined base register and cannot be loaded as an executable relocation");
+		default:
+			throw new HunkParseError("Unknown relocation kind");
+		}
+
 		switch (reloc.getWidth()) {
 		case 4: {
-			int delta = buf.getInt(offset) + reloc.getAddend();
-			buf.putInt(offset, (int)(sectAddr + delta));
+			long value = Integer.toUnsignedLong(buf.getInt(offset)) + reloc.getAddend() + relocationDelta;
+			if (value < 0 || value > 0xffffffffL) {
+				throw new HunkParseError("32-bit relocation overflows its destination");
+			}
+			buf.putInt(offset, (int) value);
 		} break;
 		case 2: {
-			System.out.println(String.format("Word reloc at 0x%08X, delta: %d", offset, buf.getShort(offset)));
-			// int delta = buf.getShort(offset) + reloc.getAddend();
-			// buf.putShort(offset, (short)(sectAddr + delta - offset));
+			long value = buf.getShort(offset) + reloc.getAddend() + relocationDelta;
+			if (value < Short.MIN_VALUE || value > Short.MAX_VALUE) {
+				throw new HunkParseError("16-bit relocation overflows its destination");
+			}
+			buf.putShort(offset, (short) value);
 		} break;
 		case 1: {
-			System.out.println(String.format("Byte reloc at 0x%08X, delta: %d", offset, buf.get(offset)));
-			// int delta = buf.get(offset) + reloc.getAddend();
-			// buf.put(offset, (byte)(sectAddr + delta - offset));
+			long value = buf.get(offset) + reloc.getAddend() + relocationDelta;
+			if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE) {
+				throw new HunkParseError("8-bit relocation overflows its destination");
+			}
+			buf.put(offset, (byte) value);
 		} break;
+		default:
+			throw new HunkParseError("Unsupported relocation width");
 		}
 	}
 }

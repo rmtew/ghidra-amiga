@@ -24,7 +24,7 @@ public class HunkBlockFile {
 	public final List<Pair<Integer, HunkBlock>> getHunkBlocks() {
 		return blocksList;
 	}
-	
+
 	private void parse(BinaryReader reader, boolean isExecutable) throws HunkParseError {
 		try {
 			long pos = reader.getPointerIndex();
@@ -35,11 +35,11 @@ public class HunkBlockFile {
 				HunkBlock block = HunkBlock.fromHunkType(HunkType.fromInteger(tag & HunkType.HUNK_TYPE_MASK), reader, isExecutable);
 				
 				if (block == null) {
-					throw new HunkParseError(String.format("Unsupported hunk type: %04d", tag & HunkType.HUNK_TYPE_MASK));
+					throw new HunkParseError(String.format("Unsupported hunk type: %04d at file offset 0x%08X", tag & HunkType.HUNK_TYPE_MASK, pos));
 				}
 
 				blocksList.add(new Pair<>((int)pos, block));
-				
+
 				pos = reader.getPointerIndex();
 			}
 		} catch (IOException e) {

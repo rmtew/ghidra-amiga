@@ -1,4 +1,4 @@
-//This script applies selected A4 register value to the whole program.
+//This script applies a selected A4 register value to the function at the cursor.
 //@author Dr. MefistO
 //@category Amiga
 //@keybinding
@@ -11,8 +11,6 @@ import ghidra.program.model.lang.Register;
 import ghidra.program.model.lang.RegisterValue;
 import ghidra.program.model.listing.ContextChangeException;
 import ghidra.program.model.listing.Function;
-import ghidra.program.model.listing.FunctionIterator;
-import ghidra.program.model.listing.Listing;
 import ghidra.program.model.listing.ProgramContext;
 
 public class ApplyRegBase extends GhidraScript {
@@ -20,18 +18,21 @@ public class ApplyRegBase extends GhidraScript {
 
 	@Override
 	protected void run() throws Exception {
-		Listing l = this.currentProgram.getListing();
-
 		Register reg = this.currentProgram.getRegister(REG);
-		Address addr = this.askAddress(String.format("%s register base", REG), String.format("Specify %s register base address:", REG));
-
-		FunctionIterator fi = l.getFunctions(true);
-
-		while(fi.hasNext() && !monitor.isCancelled()) {
-			doAnalysis(fi.next(), reg, addr);
+		if (reg == null) {
+			printerr("The current language does not define register " + REG + ".");
+			return;
 		}
 
-		analyzeAll(currentProgram);
+		Function function = this.currentProgram.getFunctionManager().getFunctionContaining(currentAddress);
+		if (function == null) {
+			printerr("Place the cursor in the function whose A4 context is known.");
+			return;
+		}
+
+		Address addr = this.askAddress(String.format("%s register base", REG), String.format("Specify %s register base address:", REG));
+		doAnalysis(function, reg, addr);
+		analyzeChanges(currentProgram);
 	}
 
 	private void doAnalysis(Function func, Register reg, Address addr) {
@@ -44,13 +45,9 @@ public class ApplyRegBase extends GhidraScript {
 			monitor.setMessage(String.format("Analyzing %s reg usage in %s", REG, func.getName()));
 
 			ProgramContext ctx = this.getCurrentProgram().getProgramContext();
-			if(ctx.getRegisterValue(reg, addr) != null) {
-				return;
-			}
-
 			ctx.setRegisterValue(func.getBody().getMinAddress(), func.getBody().getMaxAddress(), new RegisterValue(reg, addr.getOffsetAsBigInteger()));
 		} catch(ContextChangeException e1) {
-			return;
+			printerr("Unable to set " + REG + " context: " + e1.getMessage());
 		}
 	}
 }
