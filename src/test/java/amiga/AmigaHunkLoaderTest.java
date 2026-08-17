@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,7 +27,12 @@ import ghidra.framework.Application;
 import ghidra.framework.ApplicationConfiguration;
 import ghidra.program.database.ProgramBuilder;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.listing.Instruction;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.symbol.OffsetReference;
+import ghidra.program.model.symbol.RefType;
+import ghidra.program.model.symbol.Reference;
+import ghidra.program.model.symbol.SourceType;
 import hunk.BinFmtHunk;
 import hunk.BinImage;
 import hunk.HunkBlockFile;
@@ -35,6 +41,7 @@ import hunk.Relocate;
 import hunk.Segment;
 import hunk.SegmentType;
 import hunk.HunkType;
+import hunk.Reloc;
 
 public class AmigaHunkLoaderTest {
 
@@ -52,6 +59,74 @@ public class AmigaHunkLoaderTest {
 		assertEquals(0x18, AmigaHunkLoader.getBranchTargetDelta(0x6000, (short) 0x16));
 		assertEquals(0x72, AmigaHunkLoader.getBranchTargetDelta(0x6170, (short) 0));
 		assertEquals(1, AmigaHunkLoader.getBranchTargetDelta(0x60ff, (short) 0));
+	}
+
+	@Test
+	public void preservesAztecAssemblyRelocationToTwoBytesBeforeDataSegment() throws Exception {
+		byte[] executable = fixtureBytes("/fixtures/aztec-c/5.0a/relocation-addend-minus-two/base-minus-two");
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			assertEquals(3, segments.length);
+			Segment code = segments[0];
+			Segment data = segments[1];
+			assertEquals(SegmentType.SEGMENT_TYPE_CODE, code.getType());
+			assertEquals(SegmentType.SEGMENT_TYPE_DATA, data.getType());
+
+			Reloc[] relocations = code.getRelocations(data);
+			assertEquals(1, relocations.length);
+			assertEquals(2, relocations[0].getOffset());
+			assertEquals(4, relocations[0].getWidth());
+			assertEquals(Reloc.Kind.ABSOLUTE, relocations[0].getKind());
+			List<byte[]> unbased = new Relocate(image).relocate(new int[] { 0, 0, 0 });
+			assertEquals(0xfffffffe, ByteBuffer.wrap(unbased.get(0)).getInt(relocations[0].getOffset()));
+
+			List<byte[]> relocated = new Relocate(image).relocate(new int[] { 0x1000, 0x2000, 0x3000 });
+			assertEquals("The native 32-bit relocation preserves data-base minus two", 0x1ffe,
+					ByteBuffer.wrap(relocated.get(0)).getInt(relocations[0].getOffset()));
+		}
+	}
+
+	@Test
+	public void documentsCurrentGhidraRenderingOf68000OffsetReferences() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("offset-reference-presentation", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0x1000", 0x100);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0x1000")), true);
+			// movea.l #data_segment_base-2,A0; move.w (A0),D0; rts
+			builder.setBytes("0x1000", "207c0000100a30104e75");
+			builder.disassemble("0x1000", 10);
+
+			Program program = builder.getProgram();
+			Address source = builder.addr("0x1002");
+			Address base = builder.addr("0x100c");
+			int transaction = program.startTransaction("record Hunk relocation addend");
+			try {
+				Reference reference = program.getReferenceManager().addOffsetMemReference(source, base, true, -2,
+						RefType.DATA, SourceType.IMPORTED, 0);
+				program.getReferenceManager().setPrimary(reference, true);
+			}
+			finally {
+				program.endTransaction(transaction, true);
+			}
+
+			Reference reference = program.getReferenceManager().getPrimaryReferenceFrom(source, 0);
+			assertTrue("The importer retains the Hunk target base and signed addend", reference instanceof OffsetReference);
+			OffsetReference offsetReference = (OffsetReference) reference;
+			assertEquals(base, offsetReference.getBaseAddress());
+			assertEquals(-2, offsetReference.getOffset());
+			assertEquals(SourceType.IMPORTED, offsetReference.getSource());
+
+			Instruction instruction = program.getListing().getInstructionAt(builder.addr("0x1000"));
+			assertEquals("Ghidra 12.1.2 renders an offset reference as its resolved scalar; update this"
+					+ " documented limitation only when native operand rendering changes.",
+					"#0x100a", instruction.getDefaultOperandRepresentation(0));
+		}
+		finally {
+			builder.dispose();
+		}
 	}
 
 	@Test
