@@ -1,0 +1,7 @@
+FROM LIB:c.o root.o
+LIBRARY LIB:sc.lib LIB:amiga.lib
+OVLYMGR ovs.o
+OVERLAY
+overlay.o
+#
+TO sas-multi
