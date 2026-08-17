@@ -212,7 +212,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			}
 			specializePrivateDeviceDispatchWrappers(program, deviceWrappers, monitor);
 			propagateTypedPointerArgumentsToStorage(program, monitor);
-			materializeApiBaseStorages(program, apiBaseStorages, ambiguousApiBaseStorages);
+			materializeApiBaseStorages(program, fdm, apiBaseStorages, ambiguousApiBaseStorages);
 		} catch (java.io.IOException | InvalidInputException | DuplicateNameException | CodeUnitInsertionException |
 				CancelledException e) {
 			log.appendException(e);
@@ -509,12 +509,26 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	 * path, while ordinary object pointers require stronger, object-specific
 	 * evidence before they can be typed globally.
 	 */
-	private void materializeApiBaseStorages(Program program, Map<Address, String> bases,
+	private void materializeApiBaseStorages(Program program, FileDataTypeManager fdm, Map<Address, String> bases,
 			Set<Address> ambiguousStorages)
 			throws CodeUnitInsertionException, DuplicateNameException, InvalidInputException {
+		Address sysBaseAddress = program.getAddressFactory().getDefaultAddressSpace().getAddress(4);
 		for (Map.Entry<Address, String> entry : bases.entrySet()) {
 			Address storage = entry.getKey();
 			if (ambiguousStorages.contains(storage) || program.getMemory().getBlock(storage) == null) {
+				continue;
+			}
+			if (storage.equals(sysBaseAddress)) {
+				// Address $4 is the system ABI origin of the Exec base, not
+				// application-owned storage. Its conventional C name is SysBase.
+				removeObsoleteSysBaseAnalysisLabel(program, storage);
+				Data existing = program.getListing().getDefinedDataAt(storage);
+				if (existing == null || existing.getDataType().getName().startsWith("undefined")) {
+					DataUtilities.createData(program, storage,
+							new PointerDataType(getAmigaDataType("ExecBase", fdm)), -1, false,
+							ClearDataMode.CLEAR_ALL_UNDEFINED_CONFLICT_DATA);
+				}
+				AmigaUtils.applyAnalysisGlobalLabel(program, storage, "SysBase");
 				continue;
 			}
 			Data existing = program.getListing().getDefinedDataAt(storage);
@@ -525,25 +539,19 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				DataUtilities.createData(program, storage, PointerDataType.dataType, -1,
 						false, ClearDataMode.CLEAR_ALL_UNDEFINED_CONFLICT_DATA);
 			}
-			applyAnalysisBaseLabel(program, storage, entry.getValue());
+			AmigaUtils.applyAnalysisGlobalLabel(program, storage, getLibraryBaseLabel(entry.getValue()));
 		}
 	}
 
-	private static void applyAnalysisBaseLabel(Program program, Address storage, String library)
-			throws DuplicateNameException, InvalidInputException {
-		Symbol primary = program.getSymbolTable().getPrimarySymbol(storage);
-		if (primary != null && primary.getSource() != SourceType.DEFAULT && primary.getSource() != SourceType.ANALYSIS) {
-			return;
+	private static void removeObsoleteSysBaseAnalysisLabel(Program program, Address sysBaseAddress) {
+		for (Symbol symbol : program.getSymbolTable().getSymbols(sysBaseAddress)) {
+			if (symbol.getSource() == SourceType.ANALYSIS && "g_ExecLibraryBase".equals(symbol.getName())) {
+				symbol.delete();
+			}
 		}
-		String name = getLibraryBaseLabel(storage, library);
-		if (primary != null && primary.getName().equals(name)) {
-			return;
-		}
-		Symbol label = program.getSymbolTable().createLabel(storage, name, SourceType.ANALYSIS);
-		label.setPrimary();
 	}
 
-	private static String getLibraryBaseLabel(Address storage, String library) {
+	private static String getLibraryBaseLabel(String library) {
 		StringBuilder name = new StringBuilder("g_");
 		for (String part : library.split("_")) {
 			if (!part.isEmpty()) {

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
@@ -17,6 +18,100 @@ import ghidra.app.util.bin.ByteArrayProvider;
 import ghidra.app.util.bin.FileByteProvider;
 
 public class HunkOverlayFileTest {
+
+	@Test
+	public void parsesGeneratedAztecSegmentedExecutable() throws Exception {
+		byte[] bytes;
+		try (InputStream stream = getClass().getResourceAsStream(
+				"/fixtures/aztec-c/5.0a/segload-smoke/segload-smoke")) {
+			assertTrue("Generated Aztec fixture is present", stream != null);
+			bytes = stream.readAllBytes();
+		}
+		try (ByteArrayProvider provider = new ByteArrayProvider(bytes)) {
+			HunkLoadSegFile file = new HunkLoadSegFile();
+			file.parseBlockFile(new HunkBlockFile(new BinaryReader(provider, false), true));
+
+			assertEquals(4, file.getSegments().length);
+			assertEquals(2, file.getNodes().length);
+			assertTrue(file.getNodes()[1].isOverlay());
+			assertEquals(1, file.getManxOverlayTable().getNodes().size());
+			HunkManxOverlayTable.Node overlay = file.getManxOverlayTable().getNodes().get(0);
+			assertEquals(1, overlay.getSegments().size());
+			assertEquals(1, overlay.getSegments().get(0).getTrampolineCount());
+		}
+	}
+
+	@Test
+	public void preservesMultipleTargetsInGeneratedAztecSegmentedExecutable() throws Exception {
+		byte[] bytes;
+		try (InputStream stream = getClass().getResourceAsStream(
+				"/fixtures/aztec-c/5.0a/segload-multi/segload-multi")) {
+			assertTrue("Generated Aztec multi-target fixture is present", stream != null);
+			bytes = stream.readAllBytes();
+		}
+		try (ByteArrayProvider provider = new ByteArrayProvider(bytes)) {
+			HunkLoadSegFile file = new HunkLoadSegFile();
+			file.parseBlockFile(new HunkBlockFile(new BinaryReader(provider, false), true));
+
+			assertEquals(2, file.getNodes().length);
+			HunkManxOverlayTable.Node overlay = file.getManxOverlayTable().getNodes().get(0);
+			assertEquals(1, overlay.getSegments().size());
+			assertEquals(2, overlay.getSegments().get(0).getTrampolineCount());
+		}
+	}
+
+	@Test
+	public void doesNotMistakeEmbeddedHunkTagsInCommodoreALinkForAnOverlay() throws Exception {
+		byte[] bytes;
+		try (InputStream stream = getClass().getResourceAsStream("/fixtures/commodore-alink/ALINK")) {
+			assertTrue("Commodore ALink fixture is present", stream != null);
+			bytes = stream.readAllBytes();
+		}
+		try (ByteArrayProvider provider = new ByteArrayProvider(bytes)) {
+			HunkLoadSegFile file = new HunkLoadSegFile();
+			file.parseBlockFile(new HunkBlockFile(new BinaryReader(provider, false), true));
+
+			assertEquals("ALink is a single-node executable", 1, file.getNodes().length);
+			assertEquals("ALink root HUNK_HEADER has six segments", 6, file.getSegments().length);
+			assertEquals("Hunk-type values inside segment bytes are not overlay blocks", null,
+					file.getOverlayTableData());
+		}
+	}
+
+	@Test
+	public void parsesSasCBasicHierarchicalOverlayExecutable() throws Exception {
+		HunkLoadSegFile file = parseFixture("/fixtures/sas-c/6.50/basic-overlay/sas-basic");
+
+		assertEquals(2, file.getNodes().length);
+		assertTrue(file.getNodes()[1].isOverlay());
+		assertEquals(4, file.getSegments().length);
+		assertEquals(3, file.getOverlayTable().getTreeDepth());
+		assertEquals(1, file.getOverlayTable().getSymbols().size());
+		HunkOverlayTable.Symbol symbol = file.getOverlayTable().getSymbols().get(0);
+		assertEquals(3, symbol.getFirstSegment());
+		assertEquals(3, symbol.getSymbolSegment());
+		assertEquals(4, symbol.getSymbolOffset());
+	}
+
+	@Test
+	public void preservesMultipleSasCOverlayTargets() throws Exception {
+		HunkLoadSegFile file = parseFixture("/fixtures/sas-c/6.50/multi-target-overlay/sas-multi");
+
+		assertEquals(2, file.getNodes().length);
+		assertEquals(2, file.getOverlayTable().getSymbols().size());
+		assertEquals(3, file.getOverlayTable().getSymbols().get(0).getSymbolSegment());
+		assertEquals(3, file.getOverlayTable().getSymbols().get(1).getSymbolSegment());
+	}
+
+	@Test
+	public void preservesSasCNestedOverlayHierarchy() throws Exception {
+		HunkLoadSegFile file = parseFixture("/fixtures/sas-c/6.50/nested-overlay/sas-nested");
+
+		assertEquals(3, file.getNodes().length);
+		assertTrue(file.getNodes()[1].isOverlay());
+		assertTrue(file.getNodes()[2].isOverlay());
+		assertEquals(2, file.getOverlayTable().getSymbols().size());
+	}
 
 	@Test
 	public void parsesRootAndOverlayNodes() throws Exception {
@@ -268,5 +363,18 @@ public class HunkOverlayFileTest {
 		output.writeInt(1);
 		output.writeInt(instruction);
 		output.writeInt(HunkType.HUNK_END.getValue());
+	}
+
+	private HunkLoadSegFile parseFixture(String resource) throws Exception {
+		byte[] bytes;
+		try (InputStream stream = getClass().getResourceAsStream(resource)) {
+			assertTrue("Fixture is present: " + resource, stream != null);
+			bytes = stream.readAllBytes();
+		}
+		try (ByteArrayProvider provider = new ByteArrayProvider(bytes)) {
+			HunkLoadSegFile file = new HunkLoadSegFile();
+			file.parseBlockFile(new HunkBlockFile(new BinaryReader(provider, false), true));
+			return file;
+		}
 	}
 }

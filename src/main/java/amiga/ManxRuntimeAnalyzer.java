@@ -16,17 +16,27 @@ import ghidra.app.services.AnalyzerType;
 import ghidra.app.util.importer.MessageLog;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSetView;
+import ghidra.program.model.data.CharDataType;
+import ghidra.program.model.data.LongDataType;
+import ghidra.program.model.data.PointerDataType;
+import ghidra.program.model.data.VoidDataType;
+import ghidra.program.model.lang.Register;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionIterator;
 import ghidra.program.model.listing.Instruction;
 import ghidra.program.model.listing.InstructionIterator;
 import ghidra.program.model.listing.Listing;
+import ghidra.program.model.listing.ParameterImpl;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.listing.ReturnParameterImpl;
+import ghidra.program.model.listing.VariableStorage;
+import ghidra.program.model.listing.Function.FunctionUpdateType;
 import ghidra.program.model.symbol.RefType;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.SourceType;
 import ghidra.program.model.symbol.SymbolTable;
+import ghidra.program.model.scalar.Scalar;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.DuplicateNameException;
 import ghidra.util.exception.InvalidInputException;
@@ -41,6 +51,9 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 
 	private static final String MANX_COMPILER_SPEC_ID = "manx";
 	private static final String A4_STUB_PREFIX = "ManxA4CallStub_";
+	private static final long MANX_STACK_MARKER = 0x4d414e58L;
+	private static final Set<String> MANX_STARTUP_APIS = Set.of(
+			"AllocMem", "Alert", "FindTask", "WaitPort", "GetMsg", "CurrentDir", "Input", "Output", "Open");
 
 	enum RuntimeHelper {
 		MULTIPLY_LONG32_LOW("ManxMultiplyLong32Low",
@@ -65,9 +78,11 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 	}
 
 	public ManxRuntimeAnalyzer() {
-		super("MANX Runtime", "Recognises validated MANX runtime helpers and A4 forwarding stubs",
+		super("MANX Runtime", "Recognises validated MANX CRT startup, runtime helpers, and A4 forwarding stubs",
 				AnalyzerType.INSTRUCTION_ANALYZER);
-		setPriority(AnalysisPriority.FUNCTION_ANALYSIS.after());
+		// The recogniser relies on the Amiga library-call analyzer having already
+		// resolved the standard Exec and DOS calls used by the CRT.
+		setPriority(AnalysisPriority.DATA_ANALYSIS.after().after());
 		setSupportsOneTimeAnalysis();
 	}
 
@@ -126,7 +141,54 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 			nameRuntimeHelper(entry.getKey(), entry.getValue(), log);
 		}
 		propagateNamesToA4Stubs(program, classifications.keySet(), log, monitor);
+		identifyManxStartup(program, shapes.values(), log, monitor);
 		return true;
+	}
+
+	/**
+	 * Recognises the standard Aztec C 5 Amiga CRT entry point, {@code _main}.
+	 *
+	 * <p>The implementation is deliberately a conjunction of independent
+	 * properties from the shipped Manx CRT source: its MANX stack marker and
+	 * its CLI/Workbench setup calls. The marker alone is not enough, because
+	 * applications can legitimately store the same value in unrelated data.</p>
+	 */
+	private static void identifyManxStartup(Program program, Collection<FunctionShape> shapes, MessageLog log,
+			TaskMonitor monitor) throws CancelledException {
+		for (FunctionShape shape : shapes) {
+			monitor.checkCancelled();
+			if (!isManxStartup(shape) || !hasDefaultName(shape.function)) {
+				continue;
+			}
+			nameManxStartup(program, shape.function, log);
+		}
+	}
+
+	static boolean isManxStartup(FunctionShape shape) {
+		return shape.hasManxStackMarker && shape.directCalleeNames.containsAll(MANX_STARTUP_APIS);
+	}
+
+	private static void nameManxStartup(Program program, Function function, MessageLog log) {
+		try {
+			ParameterImpl[] parameters = {
+				new ParameterImpl("commandLineLength", LongDataType.dataType, program, SourceType.ANALYSIS),
+				new ParameterImpl("commandLine", new PointerDataType(CharDataType.dataType), program,
+						SourceType.ANALYSIS)
+			};
+			function.updateFunction(function.getCallingConventionName(),
+					new ReturnParameterImpl(VoidDataType.dataType, VariableStorage.VOID_STORAGE, program),
+					FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true, SourceType.ANALYSIS, parameters);
+			function.setName(AmigaUtils.uniqueAnalysisSymbolName(program, function.getEntryPoint(), "_main"),
+					SourceType.ANALYSIS);
+			if (function.getComment() == null || function.getComment().isBlank()) {
+				function.setComment("MANX Aztec C CRT startup: initializes CLI or Workbench launch state, " +
+						"then invokes the program main path.");
+			}
+			log.appendMsg(String.format("Recognised MANX Aztec C CRT _main at %s.", function.getEntryPoint()));
+		}
+		catch (DuplicateNameException | InvalidInputException e) {
+			log.appendException(e);
+		}
 	}
 
 	static RuntimeHelper classifyMnemonicSequence(List<String> mnemonics, boolean callsDivisionCore,
@@ -194,6 +256,19 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 		return count;
 	}
 
+	static boolean isMoveLongD1ToD0(Instruction instruction) {
+		if (!"move.l".equalsIgnoreCase(instruction.getMnemonicString()) || instruction.getNumOperands() != 2) {
+			return false;
+		}
+		return isSingleRegisterNamed(instruction.getOpObjects(0), "D1") &&
+				isSingleRegisterNamed(instruction.getOpObjects(1), "D0");
+	}
+
+	private static boolean isSingleRegisterNamed(Object[] objects, String registerName) {
+		return objects.length == 1 && objects[0] instanceof Register register &&
+				registerName.equalsIgnoreCase(register.getName());
+	}
+
 	static String normalizeMnemonic(String mnemonic) {
 		int sizeSuffix = mnemonic.indexOf('.');
 		return (sizeSuffix < 0 ? mnemonic : mnemonic.substring(0, sizeSuffix)).toLowerCase(Locale.ROOT);
@@ -204,7 +279,8 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 			return;
 		}
 		try {
-			function.setName(helper.functionName, SourceType.ANALYSIS);
+			function.setName(AmigaUtils.uniqueAnalysisSymbolName(function.getProgram(), function.getEntryPoint(),
+					helper.functionName), SourceType.ANALYSIS);
 			if (function.getComment() == null || function.getComment().isBlank()) {
 				function.setComment(helper.comment);
 			}
@@ -215,7 +291,7 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 	}
 
 	private static boolean hasDefaultName(Function function) {
-		return function.getSymbol().getSource() == SourceType.DEFAULT || function.getName().startsWith("FUN_");
+		return function.getSymbol().getSource() == SourceType.DEFAULT;
 	}
 
 	private static void propagateNamesToA4Stubs(Program program, Collection<Function> runtimeFunctions,
@@ -259,33 +335,64 @@ public class ManxRuntimeAnalyzer extends AbstractAnalyzer {
 		}
 	}
 
-	private static final class FunctionShape {
+	static final class FunctionShape {
+		final Function function;
 		final List<String> mnemonics = new ArrayList<>();
 		final Set<Function> directCallees = new HashSet<>();
+		final Set<String> directCalleeNames = new HashSet<>();
+		boolean hasManxStackMarker;
 		boolean movesD1ToD0;
 
+		private FunctionShape(Function function) {
+			this.function = function;
+		}
+
 		static FunctionShape from(Program program, Listing listing, Function function) {
-			FunctionShape shape = new FunctionShape();
+			FunctionShape shape = new FunctionShape(function);
 			InstructionIterator instructions = listing.getInstructions(function.getBody(), true);
 			while (instructions.hasNext()) {
 				Instruction instruction = instructions.next();
 				String mnemonic = normalizeMnemonic(instruction.getMnemonicString());
 				shape.mnemonics.add(mnemonic);
-				String text = instruction.toString().replace(" ", "").toUpperCase(Locale.ROOT);
-				shape.movesD1ToD0 |= text.startsWith("MOVE.LD1,D0");
+				shape.movesD1ToD0 |= isMoveLongD1ToD0(instruction);
+				for (int operand = 0; operand < instruction.getNumOperands(); operand++) {
+					for (Object object : instruction.getOpObjects(operand)) {
+						if (object instanceof Scalar scalar) {
+							shape.hasManxStackMarker |= scalar.getUnsignedValue() == MANX_STACK_MARKER;
+						}
+					}
+				}
 				if (!instruction.getFlowType().isCall()) {
 					continue;
 				}
-				for (Address flow : instruction.getFlows()) {
-					Function target = program.getFunctionManager().getFunctionAt(flow);
-					// Calls within the current function are ordinary control flow, not
-					// calls to another runtime helper.
-					if (target != null && target != function) {
-						shape.directCallees.add(target);
+				// Amiga resident-library calls are normally register-indirect. The
+				// library analyzer attaches a CALL_OVERRIDE reference to the API
+				// model, so there may be no native flow target to inspect here.
+				for (Reference reference : program.getReferenceManager().getReferencesFrom(instruction.getAddress())) {
+					if (reference.getReferenceType().isCall()) {
+						shape.addDirectCallee(program.getFunctionManager().getFunctionAt(reference.getToAddress()));
 					}
+				}
+				for (Address flow : instruction.getFlows()) {
+					shape.addDirectCallee(program.getFunctionManager().getFunctionAt(flow));
 				}
 			}
 			return shape;
+		}
+
+		private void addDirectCallee(Function target) {
+			// Calls within the current function are ordinary control flow, not
+			// calls to another runtime helper.
+			if (target != null && target != function) {
+				directCallees.add(target);
+				directCalleeNames.add(apiName(target));
+			}
+		}
+
+		private static String apiName(Function function) {
+			String name = function.getName();
+			int separator = name.lastIndexOf('_');
+			return separator < 0 ? name : name.substring(separator + 1);
 		}
 	}
 }

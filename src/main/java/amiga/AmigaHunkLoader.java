@@ -18,6 +18,7 @@ package amiga;
 import ghidra.app.plugin.core.reloc.InstructionStasher;
 import ghidra.app.util.Option;
 import ghidra.app.util.OptionException;
+import ghidra.app.util.PseudoInstruction;
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteProvider;
 import ghidra.app.util.importer.MessageLog;
@@ -201,6 +202,10 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		
 		Address[] segmentAddresses = new Address[segments.length];
 		int lastSectAddress = mapNodes(hunkFile, segments, datas, addrs, fpa, log, segmentAddresses);
+		boolean manxA4ContextApplied = applyValidatedManxA4Context(hunkFile, segments, segmentAddresses, fpa, log);
+		if (!manxA4ContextApplied) {
+			applyValidatedSasCA4Context(hunkFile, segments, segmentAddresses, fpa, log);
+		}
 		lastSectAddress = mapOverlayMetadata(hunkFile, segments, fpa, log, segmentAddresses, lastSectAddress);
 
 		for (Segment seg : segments) {
@@ -290,7 +295,6 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		HunkManxOverlayTable manxTable = hunkFile.getManxOverlayTable();
 		if (manxTable != null) {
 			if (mapManxOverlaySymbols(manxTable, hunkFile.getNodes(), nodesByHeaderOffset, segments, segmentAddresses, symbols, fpa, log)) {
-				applyManxA4Context(hunkFile, segments, segmentAddresses, fpa, log);
 				log.appendMsg(String.format("Mapped MANX HUNK_OVERLAY table: %d independently loadable nodes.", manxTable.getNodes().size()));
 			} else {
 				appendOverlayWarning(block, log, "A MANX overlay table was recognised but did not validate. " +
@@ -431,36 +435,71 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	/**
 	 * MANX startup code establishes its small-data base through a short helper:
 	 * {@code lea absolute.l,A4; rts}.  Do not infer a base merely from arbitrary
-	 * A4 use: require the root entry's direct startup chain to call that helper,
-	 * and require the resulting address to be resident root DATA/BSS.
+	 * A4 use: require the root entry's direct startup chain to call that helper.
+	 * The base is intentionally not required to be mapped.  Aztec/Manx places it
+	 * above the resident small-data area so negative 16-bit displacements address
+	 * the globals below it.
 	 */
-	private static void applyManxA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
+	private static boolean applyValidatedManxA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
 			Address[] segmentAddresses, FlatProgramAPI fpa, MessageLog log) {
-		Address a4Base = findManxA4Base(hunkFile, segments, segmentAddresses, fpa.getCurrentProgram().getMemory());
+		Address a4Base = findManxA4Base(hunkFile, segmentAddresses, fpa.getCurrentProgram());
 		if (a4Base == null) {
-			log.appendMsg("MANX overlay table validated, but no validated MANX A4 startup helper was found.");
+			return false;
+		}
+		if (!applyA4Context(fpa.getCurrentProgram(), a4Base, "MANX", log)) {
+			return false;
+		}
+		int stubs = mapManxA4CallStubs(hunkFile, segments, segmentAddresses, a4Base, fpa, log);
+		log.appendMsg(String.format("Validated MANX startup A4 base at %s; applied context to executable root and overlay blocks.", a4Base));
+		log.appendMsg(String.format("Mapped %d validated MANX A4 call stubs.", stubs));
+		return true;
+	}
+
+	/**
+	 * SAS/C 6.50's c.o startup owns a linker-defined A4-relative database named
+	 * LinkerDB. Unlike MANX, it does not use A4 forwarding stubs. The exact CRT
+	 * prologue is sufficient to establish the context in every executable block,
+	 * including hierarchical-overlay nodes.
+	 */
+	private static void applyValidatedSasCA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
+			Address[] segmentAddresses, FlatProgramAPI fpa, MessageLog log) {
+		HunkLoadSegFile.Node root = findRootNode(hunkFile);
+		if (root == null) {
 			return;
 		}
+		Address linkerDb = findSasCLinkerDb(hunkFile, segments, segmentAddresses, fpa.getCurrentProgram());
+		if (linkerDb == null || !applyA4Context(fpa.getCurrentProgram(), linkerDb, "SAS/C", log)) {
+			return;
+		}
+		try {
+			AmigaUtils.applyAnalysisGlobalLabel(fpa.getCurrentProgram(), linkerDb, "SasCLinkerDB");
+			log.appendMsg(String.format("Validated SAS/C c.o startup LinkerDB at %s; applied A4 context to executable root and overlay blocks.", linkerDb));
+		}
+		catch (Exception exception) {
+			log.appendException(exception);
+		}
+	}
 
-		Register a4 = fpa.getCurrentProgram().getRegister("A4");
+	/** Applies a compiler-validated A4 base to every executable Hunk block. */
+	static boolean applyA4Context(Program program, Address a4Base, String profileName, MessageLog log) {
+		Register a4 = program.getRegister("A4");
 		if (a4 == null) {
-			log.appendMsg("MANX A4 startup helper found, but the selected language has no A4 register.");
-			return;
+			log.appendMsg(profileName + " A4 startup was recognized, but the selected language has no A4 register.");
+			return false;
 		}
-
-		ProgramContext context = fpa.getCurrentProgram().getProgramContext();
+		ProgramContext context = program.getProgramContext();
 		RegisterValue value = new RegisterValue(a4, a4Base.getOffsetAsBigInteger());
 		try {
-			for (MemoryBlock block : fpa.getCurrentProgram().getMemory().getBlocks()) {
+			for (MemoryBlock block : program.getMemory().getBlocks()) {
 				if (block.isExecute()) {
 					context.setRegisterValue(block.getStart(), block.getEnd(), value);
 				}
 			}
-			int stubs = mapManxA4CallStubs(hunkFile, segments, segmentAddresses, a4Base, fpa, log);
-			log.appendMsg(String.format("Validated MANX startup A4 base at %s; applied context to executable root and overlay blocks.", a4Base));
-			log.appendMsg(String.format("Mapped %d validated MANX A4 call stubs.", stubs));
-		} catch (ContextChangeException e) {
-			log.appendException(e);
+			return true;
+		}
+		catch (ContextChangeException exception) {
+			log.appendException(exception);
+			return false;
 		}
 	}
 
@@ -517,20 +556,28 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		return mapped;
 	}
 
-	private static Address findManxA4Base(HunkLoadSegFile hunkFile, Segment[] segments,
-			Address[] segmentAddresses, Memory memory) {
+	private static Address findManxA4Base(HunkLoadSegFile hunkFile, Address[] segmentAddresses, Program program) {
 		HunkLoadSegFile.Node root = findRootNode(hunkFile);
 		if (root == null) {
 			return null;
 		}
+		return findManxA4Base(segmentAddresses[root.getFirstHunk()], program);
+	}
 
-		Address startup = segmentAddresses[root.getFirstHunk()];
+	/**
+	 * Returns the MANX small-data anchor only when the root startup transfer
+	 * chain calls the canonical A4 initializer.  Kept package-visible for the
+	 * loader test because this is the compiler-identification boundary; it does
+	 * not rely on an overlay table or an image-specific address.
+	 */
+	static Address findManxA4Base(Address rootEntry, Program program) {
+		Address startup = rootEntry;
 		for (int depth = 0; depth < 4; depth++) {
-			Address a4Base = findCalledManxA4Initializer(startup, segments, root, segmentAddresses, memory);
+			Address a4Base = findCalledManxA4Initializer(startup, program);
 			if (a4Base != null) {
 				return a4Base;
 			}
-			startup = getDirectStartupTransfer(startup, memory);
+			startup = getDirectStartupTransfer(startup, program);
 			if (startup == null) {
 				break;
 			}
@@ -538,78 +585,145 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		return null;
 	}
 
-	private static Address findCalledManxA4Initializer(Address startup, Segment[] segments, HunkLoadSegFile.Node root,
-			Address[] segmentAddresses, Memory memory) {
-		for (int offset = 0; offset < 0x80; offset += 2) {
-			try {
-				Address instruction = startup.add(offset);
-				int opcode = Short.toUnsignedInt(memory.getShort(instruction));
-				Address target = getDirectCallTarget(instruction, opcode, memory);
-				if (target == null || Short.toUnsignedInt(memory.getShort(target)) != 0x49f9 ||
-						Short.toUnsignedInt(memory.getShort(target.add(6))) != 0x4e75) {
-					continue;
-				}
-				Address base = target.getNewAddress(Integer.toUnsignedLong(memory.getInt(target.add(2))));
-				if (isRootWritableAddress(base, segments, root, segmentAddresses)) {
-					return base;
-				}
-			} catch (MemoryAccessException e) {
+	/**
+	 * Recognises the SAS/C 6.50 {@code c.o} startup prologue and returns its
+	 * linker-defined A4 global-data base.  The signature is deliberately exact:
+	 * register save, command-line preservation, A4 setup, and the conventional
+	 * absolute ExecBase fetch must all occur in order.  This keeps SAS/C context
+	 * recovery independent from both MANX overlays and generic A4 use.
+	 */
+	static Address findSasCLinkerDb(Address rootEntry, Program program) {
+		try {
+			Memory memory = program.getMemory();
+			Address address = rootEntry;
+			if (Short.toUnsignedInt(memory.getShort(address)) != 0x48e7 ||
+					Short.toUnsignedInt(memory.getShort(address.add(2))) != 0x7efe) {
 				return null;
 			}
+			address = address.add(4);
+			if (Short.toUnsignedInt(memory.getShort(address)) != 0x2448 ||
+					Short.toUnsignedInt(memory.getShort(address.add(2))) != 0x2400) {
+				return null;
+			}
+			address = address.add(4);
+			if (Short.toUnsignedInt(memory.getShort(address)) != 0x49f9) { // lea abs.l,A4
+				return null;
+			}
+			Address linkerDb = address.getNewAddress(Integer.toUnsignedLong(memory.getInt(address.add(2))));
+			address = address.add(6);
+			if (Short.toUnsignedInt(memory.getShort(address)) != 0x2c78 ||
+					Short.toUnsignedInt(memory.getShort(address.add(2))) != 4 ||
+					!memory.contains(linkerDb)) {
+				return null;
+			}
+			return linkerDb;
 		}
-		return null;
-	}
-
-	private static Address getDirectStartupTransfer(Address instruction, Memory memory) {
-		try {
-			int opcode = Short.toUnsignedInt(memory.getShort(instruction));
-			if ((opcode & 0xff00) == 0x6000) { // bra.b / bra.w
-				return getBranchTarget(instruction, opcode, memory);
-			}
-			if (opcode == 0x4ef9) { // jmp absolute.l
-				return instruction.getNewAddress(Integer.toUnsignedLong(memory.getInt(instruction.add(2))));
-			}
-		} catch (MemoryAccessException e) {
+		catch (MemoryAccessException exception) {
 			return null;
 		}
+	}
+
+	/**
+	 * Finds the unique SAS/C CRT startup in the resident node. SLink places its
+	 * overlay manager before c.o in the root node, so the executable entry hunk
+	 * is not necessarily the CRT hunk. Overlay nodes are intentionally excluded:
+	 * only the resident startup is allowed to establish the process-wide A4 base.
+	 */
+	static Address findSasCLinkerDb(HunkLoadSegFile hunkFile, Segment[] segments, Address[] segmentAddresses,
+			Program program) {
+		HunkLoadSegFile.Node root = findRootNode(hunkFile);
+		if (root == null) {
+			return null;
+		}
+		Address linkerDb = null;
+		for (int hunk = root.getFirstHunk(); hunk <= root.getLastHunk(); hunk++) {
+			if (hunk < 0 || hunk >= segmentAddresses.length ||
+					hunk >= segments.length || segments[hunk].getType() != SegmentType.SEGMENT_TYPE_CODE ||
+					program.getMemory().getBlock(segmentAddresses[hunk]) == null) {
+				continue;
+			}
+			Address candidate = findSasCLinkerDb(segmentAddresses[hunk], program);
+			if (candidate == null) {
+				continue;
+			}
+			if (linkerDb != null && !linkerDb.equals(candidate)) {
+				return null;
+			}
+			linkerDb = candidate;
+		}
+		return linkerDb;
+	}
+
+	private static Address findCalledManxA4Initializer(Address startup, Program program) {
+		for (PseudoInstruction instruction : M68kControlFlow.decodeLinear(program, startup, 0x80)) {
+			Address target = getDirectCallTarget(instruction);
+			if (target == null) {
+				continue;
+			}
+			Address base = getManxA4InitializerBase(target, program);
+			if (base != null) {
+				return base;
+			}
+		}
 		return null;
 	}
 
-	private static Address getDirectCallTarget(Address instruction, int opcode, Memory memory) throws MemoryAccessException {
-		if ((opcode & 0xff00) == 0x6100) { // bsr.b / bsr.w
-			return getBranchTarget(instruction, opcode, memory);
-		}
-		if (opcode == 0x4eb9) { // jsr absolute.l
-			return instruction.getNewAddress(Integer.toUnsignedLong(memory.getInt(instruction.add(2))));
-		}
-		return null;
+	private static Address getDirectStartupTransfer(Address startup, Program program) {
+		PseudoInstruction instruction = M68kControlFlow.decodeOne(program, startup);
+		return instruction != null && isMnemonic(instruction, "BRA", "JMP") ? getSingleFlowTarget(instruction) : null;
 	}
 
-	private static Address getBranchTarget(Address instruction, int opcode, Memory memory) throws MemoryAccessException {
-		short extension = (opcode & 0xff) == 0 ? memory.getShort(instruction.add(2)) : 0;
-		return instruction.add(getBranchTargetDelta(opcode, extension));
+	private static Address getDirectCallTarget(PseudoInstruction instruction) {
+		return isMnemonic(instruction, "BSR", "JSR") ? getSingleFlowTarget(instruction) : null;
+	}
+
+	private static Address getManxA4InitializerBase(Address target, Program program) {
+		PseudoInstruction initializer = M68kControlFlow.decodeOne(program, target);
+		if (!isMnemonic(initializer, "LEA") || initializer.getNumOperands() != 2 || initializer.getRegister(1) == null ||
+				!"A4".equalsIgnoreCase(initializer.getRegister(1).getName()) || initializer.getLength() != 6) {
+			return null;
+		}
+		PseudoInstruction terminator = M68kControlFlow.decodeOne(program, initializer.getMaxAddress().add(1));
+		if (!isMnemonic(terminator, "RTS")) {
+			return null;
+		}
+		try {
+			// PseudoInstruction does not expose an absolute 68000 LEA operand as
+			// an Address, but its decoded six-byte form proves the following
+			// four-byte extension is the absolute-long small-data anchor.
+			return target.getNewAddress(Integer.toUnsignedLong(initializer.getInt(2)));
+		}
+		catch (MemoryAccessException exception) {
+			return null;
+		}
+	}
+
+	private static boolean isMnemonic(PseudoInstruction instruction, String... mnemonics) {
+		if (instruction == null) {
+			return false;
+		}
+		String actual = instruction.getMnemonicString();
+		int sizeSuffix = actual.indexOf('.');
+		if (sizeSuffix >= 0) {
+			actual = actual.substring(0, sizeSuffix);
+		}
+		for (String mnemonic : mnemonics) {
+			if (mnemonic.equalsIgnoreCase(actual)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static Address getSingleFlowTarget(PseudoInstruction instruction) {
+		Address[] flows = instruction.getFlows();
+		return flows.length == 1 ? flows[0] : null;
 	}
 
 	/** The 68000 branch displacement is relative to the address after the opcode word. */
 	static long getBranchTargetDelta(int opcode, short extension) {
 		int displacement = opcode & 0xff;
 		return 2L + (displacement == 0 ? extension : (byte) displacement);
-	}
-
-	private static boolean isRootWritableAddress(Address address, Segment[] segments, HunkLoadSegFile.Node root,
-			Address[] segmentAddresses) {
-		for (int hunk = root.getFirstHunk(); hunk <= root.getLastHunk(); hunk++) {
-			Segment segment = segments[hunk];
-			if (segment.getType() == SegmentType.SEGMENT_TYPE_CODE) {
-				continue;
-			}
-			Address start = segmentAddresses[hunk];
-			if (address.getAddressSpace().equals(start.getAddressSpace()) && address.compareTo(start) >= 0 &&
-					address.subtract(start) < segment.getSize()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private static boolean isRootExecutableAddress(Address address, Segment[] segments, HunkLoadSegFile.Node root,

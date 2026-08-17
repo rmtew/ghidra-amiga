@@ -2,23 +2,50 @@ package amiga;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.Test;
+import org.junit.BeforeClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ghidra.app.util.bin.ByteArrayProvider;
+import ghidra.app.util.bin.BinaryReader;
+import ghidra.app.util.importer.MessageLog;
+import ghidra.GhidraApplicationLayout;
+import ghidra.framework.Application;
+import ghidra.framework.ApplicationConfiguration;
+import ghidra.program.database.ProgramBuilder;
+import ghidra.program.model.address.Address;
+import ghidra.program.model.listing.Program;
+import hunk.BinFmtHunk;
+import hunk.BinImage;
+import hunk.HunkBlockFile;
+import hunk.HunkLoadSegFile;
+import hunk.Relocate;
+import hunk.Segment;
+import hunk.SegmentType;
 import hunk.HunkType;
 
 public class AmigaHunkLoaderTest {
+
+	@BeforeClass
+	public static void initializeGhidra() throws Exception {
+		if (!Application.isInitialized()) {
+			Application.initializeApplication(
+					new GhidraApplicationLayout(new File(System.getProperty("ghidra.install.dir"))),
+					new ApplicationConfiguration());
+		}
+	}
 
 	@Test
 	public void calculates68000BranchTargetsRelativeToTheOpcodeSuccessor() {
@@ -34,6 +61,162 @@ public class AmigaHunkLoaderTest {
 		}
 		try (ByteArrayProvider provider = new ByteArrayProvider(createOverlayExecutable(false))) {
 			assertFalse(AmigaHunkLoader.isManxOverlayExecutable(provider));
+		}
+	}
+
+	@Test
+	public void findsManxA4BaseWithoutRequiringAnOverlayTable() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("manx-a4", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x400);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// Root branches to startup; startup calls LEA abs.l,A4; RTS.
+			builder.setBytes("0x100", "600e");
+			builder.setBytes("0x110", "4eb9000001204e75");
+			builder.setBytes("0x120", "49f9000003004e75");
+
+			Program program = builder.getProgram();
+			Address base = AmigaHunkLoader.findManxA4Base(builder.addr("0x100"), program);
+			assertEquals(builder.addr("0x300"), base);
+
+			builder.setBytes("0x126", "4e71");
+			assertEquals("The initializer must end in RTS", null,
+					AmigaHunkLoader.findManxA4Base(builder.addr("0x100"), program));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void findsAndAppliesA4ContextInAuthenticPlainManxRuntime() throws Exception {
+		byte[] executable = fixtureBytes("/fixtures/aztec-c/5.0a/runtime-a4-plain/manx-runtime-a4");
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			assertEquals(1, hunkFile.getNodes().length);
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += segment.getSize();
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder("plain-manx-a4", "68000:BE:32:default");
+			try {
+				builder.createMemory("ram", "0x1000", 0x10000);
+				builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0x1000")), true);
+				for (Segment segment : segments) {
+					builder.setBytes(String.format("0x%x", addresses[segment.getId()]), toHex(data.get(segment.getId())));
+				}
+
+				Address a4Base = AmigaHunkLoader.findManxA4Base(builder.addr("0x1000"), builder.getProgram());
+				assertNotNull(a4Base);
+				int transaction = builder.getProgram().startTransaction("apply MANX A4 context");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), a4Base, "MANX", new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				assertEquals(a4Base.getOffset(), builder.getProgram().getProgramContext()
+						.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr("0x1000"))
+						.getUnsignedValue().longValue());
+			}
+			finally {
+				builder.dispose();
+			}
+		}
+	}
+
+	@Test
+	public void findsSasCLinkerDbInAuthenticSasCStartup() throws Exception {
+		byte[] executable = fixtureBytes("/fixtures/sas-c/6.50/runtime-a4/sas-runtime-a4");
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += segment.getSize();
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder("sas-c-a4", "68000:BE:32:default");
+			try {
+				builder.createMemory("ram", "0x1000", 0x10000);
+				builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0x1000")), true);
+				for (Segment segment : segments) {
+					builder.setBytes(String.format("0x%x", addresses[segment.getId()]), toHex(data.get(segment.getId())));
+				}
+
+				assertEquals(builder.addr("0x14a4"),
+						AmigaHunkLoader.findSasCLinkerDb(builder.addr("0x1000"), builder.getProgram()));
+				int transaction = builder.getProgram().startTransaction("apply SAS/C A4 context");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), builder.addr("0x14a4"),
+						"SAS/C", new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				assertEquals(0x14a4L, builder.getProgram().getProgramContext()
+						.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr("0x1000"))
+						.getUnsignedValue().longValue());
+				builder.setBytes("0x1008", "4e71");
+				assertEquals("A lone A4 setup is not SAS/C CRT evidence", null,
+						AmigaHunkLoader.findSasCLinkerDb(builder.addr("0x1000"), builder.getProgram()));
+			}
+			finally {
+				builder.dispose();
+			}
+		}
+	}
+
+	@Test
+	public void appliesSasCA4ContextToAuthenticSlinkOverlayCode() throws Exception {
+		byte[] executable = fixtureBytes("/fixtures/sas-c/6.50/runtime-a4-overlay/sas-runtime-a4-overlay");
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			assertEquals(2, hunkFile.getNodes().length);
+			assertTrue(hunkFile.getNodes()[1].isOverlay());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += 0x1000;
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder("sas-c-a4-overlay", "68000:BE:32:default");
+			try {
+				for (Segment segment : segments) {
+					String address = String.format("0x%x", addresses[segment.getId()]);
+					builder.createMemory("segment_" + segment.getId(), address, 0x1000);
+					builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr(address)),
+							segment.getType() == SegmentType.SEGMENT_TYPE_CODE);
+					builder.setBytes(address, toHex(data.get(segment.getId())));
+				}
+
+				Address linkerDb = AmigaHunkLoader.findSasCLinkerDb(hunkFile, segments, toAddresses(builder, addresses),
+						builder.getProgram());
+				assertNotNull(linkerDb);
+				int transaction = builder.getProgram().startTransaction("apply SAS/C A4 context to overlays");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), linkerDb, "SAS/C", new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				for (Segment segment : segments) {
+					if (segment.getType() == SegmentType.SEGMENT_TYPE_CODE) {
+						String address = String.format("0x%x", addresses[segment.getId()]);
+						assertEquals(linkerDb.getOffset(), builder.getProgram().getProgramContext()
+								.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr(address))
+								.getUnsignedValue().longValue());
+					}
+				}
+			}
+			finally {
+				builder.dispose();
+			}
 		}
 	}
 
@@ -105,6 +288,29 @@ public class AmigaHunkLoaderTest {
 
 	private static Document parseXml(File file) throws Exception {
 		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+	}
+
+	private static byte[] fixtureBytes(String resource) throws Exception {
+		try (InputStream stream = AmigaHunkLoaderTest.class.getResourceAsStream(resource)) {
+			assertTrue("Fixture is present: " + resource, stream != null);
+			return stream.readAllBytes();
+		}
+	}
+
+	private static String toHex(byte[] data) {
+		StringBuilder result = new StringBuilder(data.length * 2);
+		for (byte value : data) {
+			result.append(String.format("%02x", value));
+		}
+		return result.toString();
+	}
+
+	private static Address[] toAddresses(ProgramBuilder builder, int[] addresses) {
+		Address[] result = new Address[addresses.length];
+		for (int index = 0; index < addresses.length; index++) {
+			result[index] = builder.addr(String.format("0x%x", addresses[index]));
+		}
+		return result;
 	}
 
 	private static byte[] createOverlayExecutable(boolean manx) throws Exception {

@@ -81,8 +81,15 @@ public class AmigaHunkAnalyzerTest {
 			MessageLog log = new MessageLog();
 			builder.withTransaction(() -> {
 				program.setExecutableFormat("Amiga Hunk Executable");
-				assertTrue(analyzer.canAnalyze(program));
-				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY, log);
+				try {
+					// Simulate analysis made by an older extension version.
+					program.getSymbolTable().createLabel(builder.addr("0x4"), "g_ExecLibraryBase", SourceType.ANALYSIS);
+					assertTrue(analyzer.canAnalyze(program));
+					added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY, log);
+				}
+				catch (Exception e) {
+					throw new AssertionError(e);
+				}
 			});
 			assertTrue(log.toString(), added[0]);
 
@@ -97,6 +104,34 @@ public class AmigaHunkAnalyzerTest {
 			}
 			assertTrue("the icon vector should resolve through the opener-assigned base at " +
 					program.getListing().getInstructionAt(builder.addr("0x116")) + ": " + references, resolved);
+			assertEquals("SysBase", program.getSymbolTable().getPrimarySymbol(builder.addr("0x4")).getName());
+			assertEquals("g_IconLibraryBase", program.getSymbolTable().getPrimarySymbol(builder.addr("0x80")).getName());
+			assertTrue(program.getSymbolTable().getGlobalSymbols("g_ExecLibraryBase").isEmpty());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void givesConflictingAnalysisSymbolsStableAddressQualifiedNames() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("analysis-labels", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x100);
+			Program program = builder.getProgram();
+			builder.withTransaction(() -> {
+				try {
+					AmigaUtils.applyAnalysisGlobalLabel(program, builder.addr("0x20"), "g_Base");
+					AmigaUtils.applyAnalysisGlobalLabel(program, builder.addr("0x24"), "g_Base");
+					AmigaUtils.applyAnalysisGlobalLabel(program, builder.addr("0x24"), "g_Base");
+				}
+				catch (Exception e) {
+					throw new AssertionError(e);
+				}
+			});
+			assertEquals("g_Base", program.getSymbolTable().getPrimarySymbol(builder.addr("0x20")).getName());
+			assertEquals("g_Base_at_00000024",
+					program.getSymbolTable().getPrimarySymbol(builder.addr("0x24")).getName());
 		}
 		finally {
 			builder.dispose();
@@ -247,8 +282,8 @@ public class AmigaHunkAnalyzerTest {
 			assertEquals("IORequest *", updatedWrapper.getParameter(0).getDataType().getDisplayName());
 			assertEquals(4, updatedWrapper.getParameter(0).getStackOffset());
 			assertEquals(SourceType.ANALYSIS, updatedWrapper.getSignatureSource());
-			assertEquals("g_ExecLibraryBase", program.getSymbolTable().getPrimarySymbol(builder.addr("0x4")).getName());
-			assertEquals("pointer", program.getListing().getDefinedDataAt(builder.addr("0x4"))
+			assertEquals("SysBase", program.getSymbolTable().getPrimarySymbol(builder.addr("0x4")).getName());
+			assertEquals("ExecBase *", program.getListing().getDefinedDataAt(builder.addr("0x4"))
 					.getDataType().getDisplayName());
 		}
 		finally {
