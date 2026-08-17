@@ -1,0 +1,2 @@
+// Stable extension identity; do not derive it from the local checkout directory.
+rootProject.name = 'ghidra-amiga'
