@@ -34,8 +34,12 @@ import ghidra.program.model.data.DataUtilities.ClearDataMode;
 import ghidra.program.model.lang.Language;
 import ghidra.program.model.lang.LanguageCompilerSpecPair;
 import ghidra.program.model.lang.LanguageNotFoundException;
+import ghidra.program.model.lang.Register;
+import ghidra.program.model.lang.RegisterValue;
+import ghidra.program.model.listing.ContextChangeException;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.listing.ProgramContext;
 import ghidra.program.model.mem.Memory;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.mem.MemoryBlock;
@@ -61,6 +65,10 @@ import java.util.Map;
 
 public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	public static final int DEF_IMAGE_BASE = 0x21F000;
+	static final LanguageCompilerSpecPair DEFAULT_68000_LANGUAGE =
+			new LanguageCompilerSpecPair("68000:BE:32:default", "default");
+	static final LanguageCompilerSpecPair MANX_68000_LANGUAGE =
+			new LanguageCompilerSpecPair("68000:BE:32:MANX", "manx");
 
 	static final String OPTION_NAME = "ImageBase";
 	public static Address imageBase = null;
@@ -84,12 +92,38 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	public Collection<LoadSpec> findSupportedLoadSpecs(ByteProvider provider) {
 		List<LoadSpec> loadSpecs = new ArrayList<>();
 		try {
-			if(HunkBlockFile.isHunkBlockFile(new BinaryReader(provider, false)))
-				loadSpecs.add(new LoadSpec(this, 0, new LanguageCompilerSpecPair("68000:BE:32:default", "default"), true));
+			if (HunkBlockFile.isHunkBlockFile(new BinaryReader(provider, false))) {
+				boolean isManxOverlay = isManxOverlayExecutable(provider);
+				loadSpecs.add(new LoadSpec(this, 0,
+						isManxOverlay ? MANX_68000_LANGUAGE : DEFAULT_68000_LANGUAGE, true));
+				// Hunk records carry no compiler identifier. The non-preferred
+				// alternative lets analysts select the proven ABI for ordinary
+				// (non-overlay) MANX output, or the generic ABI for an unusual
+				// overlay executable.
+				loadSpecs.add(new LoadSpec(this, 0,
+						isManxOverlay ? DEFAULT_68000_LANGUAGE : MANX_68000_LANGUAGE, false));
+			}
 		} catch(Exception e) {
 		}
 
 		return loadSpecs;
+	}
+
+	/**
+	 * The MANX ABI is selected only when the executable contains the structured
+	 * flat MANX overlay metadata.  It is a file-format property, not a game or
+	 * function fingerprint.  A later validation step still decides whether its
+	 * trampoline references can safely be mapped.
+	 */
+	static boolean isManxOverlayExecutable(ByteProvider provider) throws Exception {
+		BinaryReader reader = new BinaryReader(provider, false);
+		HunkBlockType type = HunkBlockFile.peekType(reader);
+		if (type != HunkBlockType.TYPE_LOADSEG) {
+			return false;
+		}
+		HunkBlockFile hunkBlocks = new HunkBlockFile(reader, true);
+		HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(hunkBlocks, new MessageLog());
+		return hunkFile != null && hunkFile.getManxOverlayTable() != null;
 	}
 
 	@Override
@@ -236,6 +270,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		HunkManxOverlayTable manxTable = hunkFile.getManxOverlayTable();
 		if (manxTable != null) {
 			if (mapManxOverlaySymbols(manxTable, hunkFile.getNodes(), nodesByHeaderOffset, segments, segmentAddresses, symbols, fpa, log)) {
+				applyManxA4Context(hunkFile, segments, segmentAddresses, fpa, log);
 				log.appendMsg(String.format("Mapped MANX HUNK_OVERLAY table: %d independently loadable nodes.", manxTable.getNodes().size()));
 			} else {
 				appendOverlayWarning(block, log, "A MANX overlay table was recognised but did not validate. " +
@@ -371,6 +406,214 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * MANX startup code establishes its small-data base through a short helper:
+	 * {@code lea absolute.l,A4; rts}.  Do not infer a base merely from arbitrary
+	 * A4 use: require the root entry's direct startup chain to call that helper,
+	 * and require the resulting address to be resident root DATA/BSS.
+	 */
+	private static void applyManxA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
+			Address[] segmentAddresses, FlatProgramAPI fpa, MessageLog log) {
+		Address a4Base = findManxA4Base(hunkFile, segments, segmentAddresses, fpa.getCurrentProgram().getMemory());
+		if (a4Base == null) {
+			log.appendMsg("MANX overlay table validated, but no validated MANX A4 startup helper was found.");
+			return;
+		}
+
+		Register a4 = fpa.getCurrentProgram().getRegister("A4");
+		if (a4 == null) {
+			log.appendMsg("MANX A4 startup helper found, but the selected language has no A4 register.");
+			return;
+		}
+
+		ProgramContext context = fpa.getCurrentProgram().getProgramContext();
+		RegisterValue value = new RegisterValue(a4, a4Base.getOffsetAsBigInteger());
+		try {
+			for (MemoryBlock block : fpa.getCurrentProgram().getMemory().getBlocks()) {
+				if (block.isExecute()) {
+					context.setRegisterValue(block.getStart(), block.getEnd(), value);
+				}
+			}
+			int stubs = mapManxA4CallStubs(hunkFile, segments, segmentAddresses, a4Base, fpa, log);
+			log.appendMsg(String.format("Validated MANX startup A4 base at %s; applied context to executable root and overlay blocks.", a4Base));
+			log.appendMsg(String.format("Mapped %d validated MANX A4 call stubs.", stubs));
+		} catch (ContextChangeException e) {
+			log.appendException(e);
+		}
+	}
+
+	/**
+	 * MANX emits calls through A4-relative jump stubs, often placing the stubs
+	 * in a DATA hunk. A context value alone cannot make Ghidra discover code in
+	 * that non-executable block, so only map the exact JSR(d16,A4) -> JMP(abs.l)
+	 * form when the jump destination is resident root code.
+	 */
+	private static int mapManxA4CallStubs(HunkLoadSegFile hunkFile, Segment[] segments,
+			Address[] segmentAddresses, Address a4Base, FlatProgramAPI fpa, MessageLog log) {
+		HunkLoadSegFile.Node root = findRootNode(hunkFile);
+		if (root == null) {
+			return 0;
+		}
+		Memory memory = fpa.getCurrentProgram().getMemory();
+		ReferenceManager references = fpa.getCurrentProgram().getReferenceManager();
+		SymbolTable symbols = fpa.getCurrentProgram().getSymbolTable();
+		int mapped = 0;
+		for (Segment segment : segments) {
+			if (segment.getType() != SegmentType.SEGMENT_TYPE_CODE) {
+				continue;
+			}
+			Address callSite = segmentAddresses[segment.getId()];
+			for (int offset = 0; offset + 4 <= segment.getSize(); offset += 2) {
+				try {
+					Address instruction = callSite.add(offset);
+					if (Short.toUnsignedInt(memory.getShort(instruction)) != 0x4eac) { // jsr (d16,A4)
+						continue;
+					}
+					Address stub = a4Base.add(memory.getShort(instruction.add(2)));
+					if (Short.toUnsignedInt(memory.getShort(stub)) != 0x4ef9) { // jmp absolute.l
+						continue;
+					}
+					Address destination = stub.getNewAddress(Integer.toUnsignedLong(memory.getInt(stub.add(2))));
+					if (!isRootExecutableAddress(destination, segments, root, segmentAddresses)) {
+						continue;
+					}
+
+					String name = String.format("ManxA4CallStub_%06X", stub.getOffset());
+					if (fpa.getFunctionAt(stub) == null) {
+						AmigaUtils.setFunction(fpa, stub, name, log);
+					} else {
+						symbols.createLabel(stub, name, SourceType.IMPORTED);
+					}
+					references.addMemoryReference(instruction, stub, RefType.COMPUTED_CALL, SourceType.IMPORTED, 0);
+					references.addMemoryReference(stub, destination, RefType.UNCONDITIONAL_JUMP, SourceType.IMPORTED, 0);
+					mapped++;
+				} catch (Exception e) {
+					log.appendException(e);
+				}
+			}
+		}
+		return mapped;
+	}
+
+	private static Address findManxA4Base(HunkLoadSegFile hunkFile, Segment[] segments,
+			Address[] segmentAddresses, Memory memory) {
+		HunkLoadSegFile.Node root = findRootNode(hunkFile);
+		if (root == null) {
+			return null;
+		}
+
+		Address startup = segmentAddresses[root.getFirstHunk()];
+		for (int depth = 0; depth < 4; depth++) {
+			Address a4Base = findCalledManxA4Initializer(startup, segments, root, segmentAddresses, memory);
+			if (a4Base != null) {
+				return a4Base;
+			}
+			startup = getDirectStartupTransfer(startup, memory);
+			if (startup == null) {
+				break;
+			}
+		}
+		return null;
+	}
+
+	private static Address findCalledManxA4Initializer(Address startup, Segment[] segments, HunkLoadSegFile.Node root,
+			Address[] segmentAddresses, Memory memory) {
+		for (int offset = 0; offset < 0x80; offset += 2) {
+			try {
+				Address instruction = startup.add(offset);
+				int opcode = Short.toUnsignedInt(memory.getShort(instruction));
+				Address target = getDirectCallTarget(instruction, opcode, memory);
+				if (target == null || Short.toUnsignedInt(memory.getShort(target)) != 0x49f9 ||
+						Short.toUnsignedInt(memory.getShort(target.add(6))) != 0x4e75) {
+					continue;
+				}
+				Address base = target.getNewAddress(Integer.toUnsignedLong(memory.getInt(target.add(2))));
+				if (isRootWritableAddress(base, segments, root, segmentAddresses)) {
+					return base;
+				}
+			} catch (MemoryAccessException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	private static Address getDirectStartupTransfer(Address instruction, Memory memory) {
+		try {
+			int opcode = Short.toUnsignedInt(memory.getShort(instruction));
+			if ((opcode & 0xff00) == 0x6000) { // bra.b / bra.w
+				return getBranchTarget(instruction, opcode, memory);
+			}
+			if (opcode == 0x4ef9) { // jmp absolute.l
+				return instruction.getNewAddress(Integer.toUnsignedLong(memory.getInt(instruction.add(2))));
+			}
+		} catch (MemoryAccessException e) {
+			return null;
+		}
+		return null;
+	}
+
+	private static Address getDirectCallTarget(Address instruction, int opcode, Memory memory) throws MemoryAccessException {
+		if ((opcode & 0xff00) == 0x6100) { // bsr.b / bsr.w
+			return getBranchTarget(instruction, opcode, memory);
+		}
+		if (opcode == 0x4eb9) { // jsr absolute.l
+			return instruction.getNewAddress(Integer.toUnsignedLong(memory.getInt(instruction.add(2))));
+		}
+		return null;
+	}
+
+	private static Address getBranchTarget(Address instruction, int opcode, Memory memory) throws MemoryAccessException {
+		short extension = (opcode & 0xff) == 0 ? memory.getShort(instruction.add(2)) : 0;
+		return instruction.add(getBranchTargetDelta(opcode, extension));
+	}
+
+	/** The 68000 branch displacement is relative to the address after the opcode word. */
+	static long getBranchTargetDelta(int opcode, short extension) {
+		int displacement = opcode & 0xff;
+		return 2L + (displacement == 0 ? extension : (byte) displacement);
+	}
+
+	private static boolean isRootWritableAddress(Address address, Segment[] segments, HunkLoadSegFile.Node root,
+			Address[] segmentAddresses) {
+		for (int hunk = root.getFirstHunk(); hunk <= root.getLastHunk(); hunk++) {
+			Segment segment = segments[hunk];
+			if (segment.getType() == SegmentType.SEGMENT_TYPE_CODE) {
+				continue;
+			}
+			Address start = segmentAddresses[hunk];
+			if (address.getAddressSpace().equals(start.getAddressSpace()) && address.compareTo(start) >= 0 &&
+					address.subtract(start) < segment.getSize()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isRootExecutableAddress(Address address, Segment[] segments, HunkLoadSegFile.Node root,
+			Address[] segmentAddresses) {
+		for (int hunk = root.getFirstHunk(); hunk <= root.getLastHunk(); hunk++) {
+			if (segments[hunk].getType() != SegmentType.SEGMENT_TYPE_CODE) {
+				continue;
+			}
+			Address start = segmentAddresses[hunk];
+			if (address.getAddressSpace().equals(start.getAddressSpace()) && address.compareTo(start) >= 0 &&
+					address.subtract(start) < segments[hunk].getSize()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static HunkLoadSegFile.Node findRootNode(HunkLoadSegFile hunkFile) {
+		for (HunkLoadSegFile.Node node : hunkFile.getNodes()) {
+			if (!node.isOverlay()) {
+				return node;
+			}
+		}
+		return null;
 	}
 
 	private static Integer determineManxNodeIndexBias(HunkManxOverlayTable table,

@@ -21,6 +21,22 @@ targets without pretending that different overlay spaces are resident simultaneo
 - ALink, BLink and SLink hierarchical tables are decoded when their published layout validates.
 - MANX/Aztec C flat tables are decoded, including their `bsr.w` trampolines. Both documented zero-based
   and legacy one-based node identifiers are accepted after validation.
+- For a validated MANX table, the loader also recognises the MANX startup chain and its
+  `lea absolute.l,A4; rts` helper. It applies that A4 base only when the helper is directly called from
+  startup and the resulting address lies in resident root DATA/BSS; the context is then available to root
+  and overlay code alike.
+- Validated MANX `jsr (d16,A4)` calls through root `jmp absolute.l` stubs are mapped as computed calls.
+  This makes compiler-generated call stubs visible even when the linker placed them in a DATA hunk.
+- A structurally recognised MANX flat overlay table selects the extension's `68000:BE:32:MANX`
+  language and `MANX C` compiler specification.  It retains the normal 68000 instruction model,
+  while correctly allocating stack parameters in two-byte slots.
+- The `MANX Runtime` function analyser runs only for that ABI. It recognises a conservative set of
+  compiler runtime arithmetic and string helpers from instruction/control-flow shape and propagates those
+    names to loader-created A4 forwarding stubs. It never relies on game addresses or overwrites
+    existing non-default names.
+  - The `MANX A4 Callbacks` analyser recognises code addresses installed in A4 callback slots and promotes
+    only executable targets with a validated 68000 `LINK` prologue. It records the slot association without
+    inventing a caller for event-driven callbacks.
 - Other overlay-manager tables remain visible as raw metadata; their nodes and ordinary Hunk relocations
   are still imported correctly, but no speculative overlay-call targets are created.
 
@@ -31,8 +47,8 @@ trampoline have both validated.
 The loader implements the LoadSeg relocation forms with their documented field widths, including
 `HUNK_RELRELOC32`, `HUNK_RELRELOC16`, and `HUNK_RELRELOC8`. Base-register relocations in relocatable
 object files remain deliberately unresolved: they require the linker-selected register base and are
-not executable-file relocations. The `ApplyRegBase` script therefore applies a known A4 value only to
-the function under the cursor; it never stamps an unverified value over a whole program.
+not executable-file relocations. The `ApplyRegBase` script is for manually proven, non-MANX cases and
+applies a value only to the function under the cursor.
 
 When an overlay manager or individual target cannot be validated, the import completes without
 inventing references. A `WARNING` is recorded in Import Results and persisted on the
