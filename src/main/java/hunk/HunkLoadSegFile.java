@@ -1,8 +1,9 @@
 package hunk;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import generic.stl.Pair;
 
@@ -13,12 +14,19 @@ public class HunkLoadSegFile {
 	private HunkOverlayTable overlayTable;
 	private HunkManxOverlayTable manxOverlayTable;
 	private byte[] overlayTableData;
+	private int logicalSlotCount;
 
+	/** A physical Hunk node and the logical segment slots it supplies. */
 	public static final class Node {
 		private final int firstHunk;
 		private final int lastHunk;
 		private final boolean overlay;
 		private final int headerFileOffset;
+		private final List<HunkSegment> segments = new ArrayList<>();
+		private final Map<Integer, HunkSegment> segmentsByLogicalSlot = new HashMap<>();
+		private Node parent;
+		private int hierarchyLevel;
+		private int hierarchyOrdinate;
 
 		Node(HunkHeaderBlock header, int headerFileOffset, boolean overlay) {
 			this.firstHunk = header.getFirstHunk();
@@ -43,15 +51,55 @@ public class HunkLoadSegFile {
 		public int getHeaderFileOffset() {
 			return headerFileOffset;
 		}
+
+		/** Physical segments carried by this node, in HUNK_HEADER order. */
+		public HunkSegment[] getSegments() {
+			return segments.toArray(HunkSegment[]::new);
+		}
+
+		/** Returns this node's physical segment occupying {@code logicalSlot}. */
+		public HunkSegment getSegmentAtLogicalSlot(int logicalSlot) {
+			return segmentsByLogicalSlot.get(logicalSlot);
+		}
+
+		/** Parent from the published hierarchical table, or null for root/unknown topology. */
+		public Node getParent() {
+			return parent;
+		}
+
+		public int getHierarchyLevel() {
+			return hierarchyLevel;
+		}
+
+		public int getHierarchyOrdinate() {
+			return hierarchyOrdinate;
+		}
+
+		private void addSegment(int logicalSlot, HunkSegment segment) {
+			segments.add(segment);
+			segmentsByLogicalSlot.put(logicalSlot, segment);
+		}
+
+		private void setHierarchy(Node parent, int level, int ordinate) {
+			this.parent = parent;
+			this.hierarchyLevel = level;
+			this.hierarchyOrdinate = ordinate;
+		}
 	}
-	
+
 	public HunkLoadSegFile() {
 		segments = new ArrayList<>();
 		nodes = new ArrayList<>();
 	}
-	
+
+	/** All physical segments in file order. Logical slots may intentionally repeat. */
 	public HunkSegment[] getSegments() {
 		return segments.toArray(HunkSegment[]::new);
+	}
+
+	/** Number of logical segment-table slots declared by the root header. */
+	public int getLogicalSlotCount() {
+		return logicalSlotCount;
 	}
 
 	public Node[] getNodes() {
@@ -72,21 +120,19 @@ public class HunkLoadSegFile {
 	public byte[] getOverlayTableData() {
 		return overlayTableData == null ? null : overlayTableData.clone();
 	}
-	
+
 	public void parseBlockFile(HunkBlockFile bf) throws HunkParseError {
-		
 		if (bf == null) {
 			return;
 		}
-		
+
 		final List<Pair<Integer, HunkBlock>> blocks = bf.getHunkBlocks();
-		
 		if (blocks == null || blocks.isEmpty()) {
 			throw new HunkParseError("No hunk blocks found!");
 		}
-		
-		boolean isUnit = (blocks.get(0).second.getHunkType() == HunkType.HUNK_UNIT) || (blocks.get(0).second.getHunkType() == HunkType.HUNK_CODE);
 
+		boolean isUnit = blocks.get(0).second.getHunkType() == HunkType.HUNK_UNIT ||
+				blocks.get(0).second.getHunkType() == HunkType.HUNK_CODE;
 		if (isUnit) {
 			segments.addAll(parsePairNodeBlocks(blocks, null));
 			return;
@@ -96,15 +142,13 @@ public class HunkLoadSegFile {
 		if (rootHeader.getHunkType() != HunkType.HUNK_HEADER) {
 			throw new HunkParseError("No HEADER block found!");
 		}
+		logicalSlotCount = rootHeader.getTableSize();
 
-		segments.addAll(Collections.nCopies(rootHeader.getTableSize(), null));
 		HunkHeaderBlock nodeHeader = null;
 		int nodeHeaderOffset = -1;
 		List<HunkBlock> nodeBlocks = new ArrayList<>();
-
 		for (Pair<Integer, HunkBlock> pair : blocks) {
 			HunkBlock block = pair.second;
-
 			if (block instanceof HunkHeaderBlock) {
 				if (nodeHeader != null) {
 					throw new HunkParseError("Overlay node is missing its terminator");
@@ -113,11 +157,9 @@ public class HunkLoadSegFile {
 				nodeHeaderOffset = pair.first;
 				continue;
 			}
-
 			if (nodeHeader == null) {
 				throw new HunkParseError("Hunk data found outside a HUNK_HEADER node");
 			}
-
 			if (block.getHunkType() == HunkType.HUNK_OVERLAY || block.getHunkType() == HunkType.HUNK_BREAK) {
 				boolean isRootTerminator = block.getHunkType() == HunkType.HUNK_OVERLAY;
 				if (isRootTerminator) {
@@ -133,7 +175,8 @@ public class HunkLoadSegFile {
 				nodeHeader = null;
 				nodeHeaderOffset = -1;
 				nodeBlocks = new ArrayList<>();
-			} else {
+			}
+			else {
 				nodeBlocks.add(block);
 			}
 		}
@@ -141,25 +184,96 @@ public class HunkLoadSegFile {
 		if (nodeHeader != null) {
 			addOverlayNode(nodeHeader, nodeHeaderOffset, nodeBlocks, false);
 		}
-
-		if (segments.contains(null)) {
-			throw new HunkParseError("Overlay file does not define every segment in the root HUNK_HEADER table");
-		}
+		buildHierarchicalParents();
 	}
 
-	private void addOverlayNode(HunkHeaderBlock header, int headerFileOffset, List<HunkBlock> blocks, boolean overlay) throws HunkParseError {
+	private void addOverlayNode(HunkHeaderBlock header, int headerFileOffset, List<HunkBlock> blocks, boolean overlay)
+			throws HunkParseError {
 		List<HunkSegment> nodeSegments = parseNodeBlocks(blocks, header);
+		Node node = new Node(header, headerFileOffset, overlay);
 		for (int i = 0; i < nodeSegments.size(); ++i) {
-			int hunkNumber = header.getFirstHunk() + i;
-			if (hunkNumber >= segments.size() || segments.get(hunkNumber) != null) {
-				throw new HunkParseError("Overlay node contains an invalid or duplicate hunk number");
+			int logicalSlot = header.getFirstHunk() + i;
+			if (logicalSlot >= logicalSlotCount) {
+				throw new HunkParseError("Overlay node contains a hunk number outside the root HUNK_HEADER table");
 			}
-			segments.set(hunkNumber, nodeSegments.get(i));
+			HunkSegment segment = nodeSegments.get(i);
+			node.addSegment(logicalSlot, segment);
+			segments.add(segment);
 		}
-		nodes.add(new Node(header, headerFileOffset, overlay));
+		nodes.add(node);
 	}
 
-	private static List<HunkSegment> parsePairNodeBlocks(List<? extends Pair<Integer, HunkBlock>> pairs, HunkHeaderBlock header) throws HunkParseError {
+	/**
+	 * Associates nodes with the parent path explicitly identified by the standard
+	 * hierarchical table. A node without table-symbol evidence retains an unknown
+	 * parent rather than receiving a guessed path.
+	 */
+	private void buildHierarchicalParents() throws HunkParseError {
+		if (nodes.isEmpty()) {
+			return;
+		}
+		nodes.get(0).setHierarchy(null, 0, 0);
+		if (overlayTable == null) {
+			return;
+		}
+
+		Map<Integer, Node> nodesByHeaderOffset = new HashMap<>();
+		for (Node node : nodes) {
+			if (node.isOverlay()) {
+				nodesByHeaderOffset.put(node.getHeaderFileOffset(), node);
+			}
+		}
+		for (HunkOverlayTable.Symbol symbol : overlayTable.getSymbols()) {
+			Node node = nodesByHeaderOffset.get(symbol.getFilePosition());
+			if (node == null) {
+				continue;
+			}
+			if (node.hierarchyLevel != 0 && (node.hierarchyLevel != symbol.getLevel() ||
+					node.hierarchyOrdinate != symbol.getOrdinate())) {
+				throw new HunkParseError("HUNK_OVERLAY assigns inconsistent hierarchy coordinates to one node");
+			}
+			node.setHierarchy(null, symbol.getLevel(), symbol.getOrdinate());
+		}
+
+		Map<Integer, Node> latestNodeAtLevel = new HashMap<>();
+		latestNodeAtLevel.put(0, nodes.get(0));
+		for (int nodeIndex = 1; nodeIndex < nodes.size(); nodeIndex++) {
+			Node node = nodes.get(nodeIndex);
+			if (node.hierarchyLevel == 0) {
+				continue;
+			}
+			Node parent = latestNodeAtLevel.get(node.hierarchyLevel - 1);
+			node.setHierarchy(parent, node.hierarchyLevel, node.hierarchyOrdinate);
+			latestNodeAtLevel.put(node.hierarchyLevel, node);
+			latestNodeAtLevel.keySet().removeIf(level -> level > node.hierarchyLevel);
+		}
+	}
+
+	/** Resolves a logical slot through the source node's loaded root-to-node path. */
+	public HunkSegment resolveLogicalSlot(Node sourceNode, int logicalSlot) {
+		for (Node node = sourceNode; node != null; node = node.parent) {
+			HunkSegment segment = node.getSegmentAtLogicalSlot(logicalSlot);
+			if (segment != null) {
+				return segment;
+			}
+		}
+		return null;
+	}
+
+	/** Returns the node owning a physical segment, or null for a non-LoadSeg segment. */
+	public Node getOwner(HunkSegment segment) {
+		for (Node node : nodes) {
+			for (HunkSegment candidate : node.segments) {
+				if (candidate == segment) {
+					return node;
+				}
+			}
+		}
+		return null;
+	}
+
+	private static List<HunkSegment> parsePairNodeBlocks(List<? extends Pair<Integer, HunkBlock>> pairs,
+			HunkHeaderBlock header) throws HunkParseError {
 		List<HunkBlock> blocks = new ArrayList<>();
 		for (Pair<Integer, HunkBlock> pair : pairs) {
 			HunkBlock block = pair.second;
@@ -170,10 +284,10 @@ public class HunkLoadSegFile {
 		return parseNodeBlocks(blocks, header);
 	}
 
-	private static List<HunkSegment> parseNodeBlocks(List<HunkBlock> blocks, HunkHeaderBlock header) throws HunkParseError {
+	private static List<HunkSegment> parseNodeBlocks(List<HunkBlock> blocks, HunkHeaderBlock header)
+			throws HunkParseError {
 		List<List<HunkBlock>> groupedSegments = new ArrayList<>();
 		List<HunkBlock> current = null;
-
 		for (HunkBlock block : blocks) {
 			if (block.getHunkType() == HunkType.HUNK_END) {
 				current = null;
@@ -185,7 +299,8 @@ public class HunkLoadSegFile {
 			if (block.isValidLoadsegBeginHunk()) {
 				current = new ArrayList<>();
 				groupedSegments.add(current);
-			} else if (current == null) {
+			}
+			else if (current == null) {
 				throw new HunkParseError("Hunk node contains data before its first segment");
 			}
 			current.add(block);

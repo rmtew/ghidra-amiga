@@ -216,7 +216,12 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			applySegmentDefs(seg, segmentAddresses[seg.getId()], fpa, fpa.getCurrentProgram().getSymbolTable(), log, lastSectAddress);
 		}
 		
-		Address startAddr = segmentAddresses[0];
+		HunkLoadSegFile.Node root = findRootNode(hunkFile);
+		Segment startSegment = root == null ? null : findSegment(root, root.getFirstHunk(), segments);
+		if (startSegment == null) {
+			throw new HunkParseError("Root HUNK_HEADER has no physical entry segment");
+		}
+		Address startAddr = segmentAddresses[startSegment.getId()];
 		
 		var fdm = fpa.openDataTypeArchive(Application.getModuleDataFile("amiga_ndk39.gdt").getFile(false), true);
 		AmigaUtils.createExecBaseSegment(fpa, fdm, log);
@@ -327,15 +332,15 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			}
 
 			HunkLoadSegFile.Node node = nodesByHeaderOffset.get(entry.getFilePosition());
-			if (node == null || node.getFirstHunk() != entry.getFirstSegment() ||
-					entry.getSymbolSegment() > node.getLastHunk() ||
-					!isValidSegmentOffset(segments, entry.getSymbolSegment(), entry.getSymbolOffset())) {
+			Segment targetSegment = node == null ? null : findSegment(node, entry.getSymbolSegment(), segments);
+			if (node == null || node.getFirstHunk() != entry.getFirstSegment() || targetSegment == null ||
+					entry.getSymbolOffset() >= targetSegment.getSize()) {
 				log.appendMsg(String.format("HUNK_OVERLAY symbol %d does not match an overlay node; no target label created.", symbolIndex));
 				symbolIndex++;
 				continue;
 			}
 
-			Address target = segmentAddresses[entry.getSymbolSegment()].add(entry.getSymbolOffset());
+			Address target = segmentAddresses[targetSegment.getId()].add(entry.getSymbolOffset());
 			try {
 				symbols.createLabel(target, String.format("OverlayTarget_L%d_O%d_%03d", entry.getLevel(), entry.getOrdinate(), symbolIndex), SourceType.IMPORTED);
 				resolvedSymbols++;
@@ -362,7 +367,12 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			return false;
 		}
 
-		Address trampolineBase = segmentAddresses[root.getFirstHunk() + 1];
+		Segment trampolineSegment = findSegment(root, root.getFirstHunk() + 1, segments);
+		if (trampolineSegment == null) {
+			log.appendMsg("MANX HUNK_OVERLAY has no physical trampoline segment.");
+			return false;
+		}
+		Address trampolineBase = segmentAddresses[trampolineSegment.getId()];
 		ReferenceManager references = fpa.getCurrentProgram().getReferenceManager();
 		Integer nodeIndexBias = determineManxNodeIndexBias(table, nodesByHeaderOffset, segments,
 				trampolineBase, fpa.getCurrentProgram().getMemory(), log);
@@ -387,7 +397,8 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 
 			int trampolineNumber = 0;
 			for (HunkManxOverlayTable.SegmentDescriptor descriptor : entry.getSegments()) {
-				if (descriptor.getSegment() < node.getFirstHunk() || descriptor.getSegment() > node.getLastHunk()) {
+				Segment targetSegment = findSegment(node, descriptor.getSegment(), segments);
+				if (targetSegment == null) {
 					log.appendMsg(String.format("MANX overlay node %d references segment %d outside its HUNK_HEADER range.", nodeIndex, descriptor.getSegment()));
 					trampolineNumber += descriptor.getTrampolineCount();
 					continue;
@@ -405,11 +416,11 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 						// linkers also emitted one-based IDs. The table record is authoritative;
 							// accept either documented encoding after validating the trampoline.
 						if (opcode != 0x6100 || encodedNode != nodeIndex + nodeIndexBias ||
-								!isValidSegmentOffset(segments, descriptor.getSegment(), symbolOffset)) {
+								symbolOffset >= targetSegment.getSize()) {
 							log.appendMsg(String.format("MANX trampoline %d for node %d failed format validation.", trampolineNumber, nodeIndex));
 							continue;
 						}
-						Address target = segmentAddresses[descriptor.getSegment()].add(symbolOffset);
+						Address target = segmentAddresses[targetSegment.getId()].add(symbolOffset);
 						String targetName = String.format("ManxOverlayTarget_%02d_%03d", nodeIndex, trampolineNumber);
 						Function targetFunction = fpa.getFunctionAt(target);
 						if (targetFunction == null) {
@@ -442,7 +453,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	 */
 	private static boolean applyValidatedManxA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
 			Address[] segmentAddresses, FlatProgramAPI fpa, MessageLog log) {
-		Address a4Base = findManxA4Base(hunkFile, segmentAddresses, fpa.getCurrentProgram());
+		Address a4Base = findManxA4Base(hunkFile, segments, segmentAddresses, fpa.getCurrentProgram());
 		if (a4Base == null) {
 			return false;
 		}
@@ -556,12 +567,18 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		return mapped;
 	}
 
-	private static Address findManxA4Base(HunkLoadSegFile hunkFile, Address[] segmentAddresses, Program program) {
+	private static Address findManxA4Base(HunkLoadSegFile hunkFile, Segment[] segments, Address[] segmentAddresses,
+			Program program) {
 		HunkLoadSegFile.Node root = findRootNode(hunkFile);
 		if (root == null) {
 			return null;
 		}
-		return findManxA4Base(segmentAddresses[root.getFirstHunk()], program);
+		for (Segment segment : getSegmentsForNode(root, segments)) {
+			if (segment.getLogicalSlot() == root.getFirstHunk()) {
+				return findManxA4Base(segmentAddresses[segment.getId()], program);
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -636,13 +653,12 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			return null;
 		}
 		Address linkerDb = null;
-		for (int hunk = root.getFirstHunk(); hunk <= root.getLastHunk(); hunk++) {
-			if (hunk < 0 || hunk >= segmentAddresses.length ||
-					hunk >= segments.length || segments[hunk].getType() != SegmentType.SEGMENT_TYPE_CODE ||
-					program.getMemory().getBlock(segmentAddresses[hunk]) == null) {
+		for (Segment segment : getSegmentsForNode(root, segments)) {
+			if (segment.getType() != SegmentType.SEGMENT_TYPE_CODE ||
+					program.getMemory().getBlock(segmentAddresses[segment.getId()]) == null) {
 				continue;
 			}
-			Address candidate = findSasCLinkerDb(segmentAddresses[hunk], program);
+			Address candidate = findSasCLinkerDb(segmentAddresses[segment.getId()], program);
 			if (candidate == null) {
 				continue;
 			}
@@ -728,13 +744,13 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 
 	private static boolean isRootExecutableAddress(Address address, Segment[] segments, HunkLoadSegFile.Node root,
 			Address[] segmentAddresses) {
-		for (int hunk = root.getFirstHunk(); hunk <= root.getLastHunk(); hunk++) {
-			if (segments[hunk].getType() != SegmentType.SEGMENT_TYPE_CODE) {
+		for (Segment segment : getSegmentsForNode(root, segments)) {
+			if (segment.getType() != SegmentType.SEGMENT_TYPE_CODE) {
 				continue;
 			}
-			Address start = segmentAddresses[hunk];
+			Address start = segmentAddresses[segment.getId()];
 			if (address.getAddressSpace().equals(start.getAddressSpace()) && address.compareTo(start) >= 0 &&
-					address.subtract(start) < segments[hunk].getSize()) {
+					address.subtract(start) < segment.getSize()) {
 				return true;
 			}
 		}
@@ -762,7 +778,8 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			}
 			long trampolineNumber = 0;
 			for (HunkManxOverlayTable.SegmentDescriptor descriptor : entry.getSegments()) {
-				if (descriptor.getSegment() < node.getFirstHunk() || descriptor.getSegment() > node.getLastHunk()) {
+				Segment targetSegment = findSegment(node, descriptor.getSegment(), segments);
+				if (targetSegment == null) {
 					return null;
 				}
 				for (int i = 0; i < descriptor.getTrampolineCount(); i++, trampolineNumber++) {
@@ -776,7 +793,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 								(Byte.toUnsignedInt(bytes[6]) << 8) | Byte.toUnsignedInt(bytes[7]);
 						int candidateBias = encodedNode - nodeIndex;
 						if (opcode != 0x6100 || (candidateBias != 0 && candidateBias != 1) ||
-								!isValidSegmentOffset(segments, descriptor.getSegment(), symbolOffset)) {
+								symbolOffset >= targetSegment.getSize()) {
 							return null;
 						}
 						if (bias == null) {
@@ -794,20 +811,13 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		return bias == null ? 0 : bias;
 	}
 
-	private static boolean isValidSegmentOffset(Segment[] segments, int segment, long offset) {
-		return segment >= 0 && segment < segments.length && offset >= 0 && offset < segments[segment].getSize();
-	}
-
 	private static int[] getNodeAddresses(HunkLoadSegFile hunkFile, Segment[] segments, int imageBase) throws HunkParseError {
 		int[] addresses = new int[segments.length];
 		for (HunkLoadSegFile.Node node : hunkFile.getNodes()) {
 			int address = imageBase;
-			for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
-				if (hunk < 0 || hunk >= segments.length) {
-					throw new HunkParseError("Overlay node has an invalid segment range");
-				}
-				addresses[hunk] = address;
-				address += segments[hunk].getSize();
+			for (Segment segment : getSegmentsForNode(node, segments)) {
+				addresses[segment.getId()] = address;
+				address += segment.getSize();
 			}
 		}
 		return addresses;
@@ -823,15 +833,14 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 				continue;
 			}
 
-			for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
-				Segment segment = segments[hunk];
-				int address = addresses[hunk];
-				byte[] data = datas.get(hunk);
+			for (Segment segment : getSegmentsForNode(node, segments)) {
+				int address = addresses[segment.getId()];
+				byte[] data = datas.get(segment.getId());
 				MemoryBlock block = AmigaUtils.createSegment(new ByteArrayInputStream(data), fpa, segment.getName(), address, segment.getSize(), segment.getType() == SegmentType.SEGMENT_TYPE_DATA, segment.getType() == SegmentType.SEGMENT_TYPE_CODE, log);
 				if (block == null) {
 					throw new HunkParseError("Failed to create root hunk memory block");
 				}
-				segmentAddresses[hunk] = block.getStart();
+				segmentAddresses[segment.getId()] = block.getStart();
 				rootEnd = Math.max(rootEnd, address + segment.getSize());
 			}
 		}
@@ -843,21 +852,40 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		boolean hasCode = false;
 		boolean hasData = false;
 
-		for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
-			Segment segment = segments[hunk];
-			bytes.writeBytes(datas.get(hunk));
+		Segment[] nodeSegments = getSegmentsForNode(node, segments);
+		if (nodeSegments.length == 0) {
+			throw new HunkParseError("Overlay node has no physical segments");
+		}
+		for (Segment segment : nodeSegments) {
+			bytes.writeBytes(datas.get(segment.getId()));
 			hasCode |= segment.getType() == SegmentType.SEGMENT_TYPE_CODE;
 			hasData |= segment.getType() == SegmentType.SEGMENT_TYPE_DATA;
 		}
 
-		MemoryBlock block = AmigaUtils.createSegment(new ByteArrayInputStream(bytes.toByteArray()), fpa, String.format("OVERLAY_%02d", overlayNumber), addresses[node.getFirstHunk()], bytes.size(), hasData, hasCode, log, true);
+		MemoryBlock block = AmigaUtils.createSegment(new ByteArrayInputStream(bytes.toByteArray()), fpa,
+				String.format("OVERLAY_%02d", overlayNumber), addresses[nodeSegments[0].getId()], bytes.size(), hasData,
+				hasCode, log, true);
 		if (block == null) {
 			throw new HunkParseError("Failed to create overlay hunk memory block");
 		}
 
-		for (int hunk = node.getFirstHunk(); hunk <= node.getLastHunk(); ++hunk) {
-			segmentAddresses[hunk] = block.getStart().add(addresses[hunk] - addresses[node.getFirstHunk()]);
+		for (Segment segment : nodeSegments) {
+			segmentAddresses[segment.getId()] = block.getStart().add(
+					addresses[segment.getId()] - addresses[nodeSegments[0].getId()]);
 		}
+	}
+
+	private static Segment[] getSegmentsForNode(HunkLoadSegFile.Node node, Segment[] segments) {
+		return java.util.Arrays.stream(segments).filter(segment -> segment.getNode() == node).toArray(Segment[]::new);
+	}
+
+	private static Segment findSegment(HunkLoadSegFile.Node node, int logicalSlot, Segment[] segments) {
+		for (Segment segment : segments) {
+			if (segment.getNode() == node && segment.getLogicalSlot() == logicalSlot) {
+				return segment;
+			}
+		}
+		return null;
 	}
 
 	private static void addSymbols(Segment segs[], SymbolTable st, Address[] addrs) throws Throwable {
@@ -904,9 +932,9 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 					if (r.getWidth() == 4 && r.getKind() == Reloc.Kind.ABSOLUTE) {
 						Address relocationAddress = segAddress.add(dataOffset);
 						long targetOffset = Integer.toUnsignedLong(newAddr) - Integer.toUnsignedLong(runtimeSegmentAddresses[toSeg.getId()]);
-						// A Hunk relocation is an offset from the target Hunk base. Preserve the
-						// base and signed field addend as Ghidra's native offset-reference pair;
-						// this also represents legitimate base-minus offsets.
+						// Preserve the Hunk target base and signed field addend as Ghidra's
+						// native offset-reference pair.  This remains valid when the addend
+						// addresses LoadSeg state immediately before the mapped segment.
 						referenceManager.addOffsetMemReference(relocationAddress,
 								mappedSegmentAddresses[toSeg.getId()], true, targetOffset,
 								RefType.DATA, SourceType.IMPORTED, 0);

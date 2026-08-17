@@ -14,13 +14,21 @@ public class Segment {
 	private final HashMap<Segment, List<Symbol>> symbolsList;
 	private int id;
 	private int num;
+	private final int logicalSlot;
+	private final HunkLoadSegFile.Node node;
 	private HunkSegment segmentInfo;
 	
 	Segment(SegmentType type, int size, byte[] data, int num) {
+		this(type, size, data, num, num, null);
+	}
+
+	Segment(SegmentType type, int size, byte[] data, int num, int logicalSlot, HunkLoadSegFile.Node node) {
 		this.type = type;
 		this.segSize = size;
 		this.data = data;
 		this.num = num;
+		this.logicalSlot = logicalSlot;
+		this.node = node;
 		segmentInfo = null;
 		
 		relocsList = new HashMap<>();
@@ -63,6 +71,16 @@ public class Segment {
 	
 	public int getNum() {
 		return num;
+	}
+
+	/** Root-header logical Hunk number, which may be shared by sibling nodes. */
+	public int getLogicalSlot() {
+		return logicalSlot;
+	}
+
+	/** Physical node owning this segment, or null for a non-LoadSeg image. */
+	public HunkLoadSegFile.Node getNode() {
+		return node;
 	}
 	
 	public void setNum(int num) {

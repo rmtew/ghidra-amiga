@@ -2,12 +2,17 @@ package hunk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.List;
 
 import org.junit.Test;
@@ -156,6 +161,55 @@ public class HunkOverlayFileTest {
 	}
 
 	@Test
+	public void keepsSiblingOverlaySlotsPhysicallyDistinctAndResolvesRelocationsByPath() throws Exception {
+		byte[] root = rootNodeBytes();
+		byte[] levelOne = overlayNodeBytes(1, false);
+		byte[] firstLevelTwo = overlayNodeBytes(2, true);
+		byte[] secondLevelTwo = overlayNodeBytes(2, false);
+		byte[] levelThree = overlayNodeBytes(3, true);
+		int overlayTableBytes = (4 + 4 * 8) * Integer.BYTES;
+		int levelOneOffset = root.length + 2 * Integer.BYTES + overlayTableBytes;
+		int firstLevelTwoOffset = levelOneOffset + levelOne.length;
+		int secondLevelTwoOffset = firstLevelTwoOffset + firstLevelTwo.length;
+		int levelThreeOffset = secondLevelTwoOffset + secondLevelTwo.length;
+
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try (DataOutputStream output = new DataOutputStream(bytes)) {
+			output.write(root);
+			writeHierarchicalOverlayTable(output, levelOneOffset, firstLevelTwoOffset,
+					secondLevelTwoOffset, levelThreeOffset);
+			output.write(levelOne);
+			output.write(firstLevelTwo);
+			output.write(secondLevelTwo);
+			output.write(levelThree);
+		}
+
+		try (ByteArrayProvider provider = new ByteArrayProvider(bytes.toByteArray())) {
+			HunkLoadSegFile file = new HunkLoadSegFile();
+			file.parseBlockFile(new HunkBlockFile(new BinaryReader(provider, false), true));
+
+			assertEquals(4, file.getLogicalSlotCount());
+			assertEquals(5, file.getSegments().length);
+			assertEquals(5, file.getNodes().length);
+			assertEquals(2, file.getNodes()[2].getFirstHunk());
+			assertEquals(2, file.getNodes()[3].getFirstHunk());
+			assertSame(file.getNodes()[3], file.getNodes()[4].getParent());
+			assertSame(file.getNodes()[2].getSegments()[0], file.resolveLogicalSlot(file.getNodes()[2], 2));
+			assertSame(file.getNodes()[3].getSegments()[0], file.resolveLogicalSlot(file.getNodes()[4], 2));
+
+			BinImage image = BinFmtHunk.createImage(file, new ghidra.app.util.importer.MessageLog());
+			assertNotNull(image);
+			Segment[] segments = image.getSegments();
+			assertEquals(5, segments.length);
+			assertSame(segments[2], segments[2].getRelocationsToSegments()[0]);
+			assertSame(segments[3], segments[4].getRelocationsToSegments()[0]);
+			List<byte[]> relocated = new Relocate(image).relocate(new int[] { 0x1000, 0x1100, 0x1200, 0x1300, 0x1400 });
+			assertEquals(0x1200, readInt(relocated.get(2), 0));
+			assertEquals(0x1300, readInt(relocated.get(4), 0));
+		}
+	}
+
+	@Test
 	public void parsesManxOverlayTable() throws Exception {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		try (DataOutputStream output = new DataOutputStream(bytes)) {
@@ -284,6 +338,20 @@ public class HunkOverlayFileTest {
 		assertThrows(HunkParseError.class, () -> new Relocate(image).relocate(new int[] { 0, 0x100 }));
 	}
 
+	@Test
+	public void appliesAbsoluteRelocationAddendsWithNativeFieldWidthWrapping() throws Exception {
+		BinImage image = new BinImage();
+		Segment source = new Segment(SegmentType.SEGMENT_TYPE_CODE, 4,
+				new byte[] { (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe }, 0);
+		Segment target = new Segment(SegmentType.SEGMENT_TYPE_CODE, 4, new byte[4], 1);
+		image.addSegment(source);
+		image.addSegment(target);
+		source.addRelocations(target, List.of(new Reloc(0, 4, Reloc.Kind.ABSOLUTE)));
+
+		List<byte[]> relocated = new Relocate(image).relocate(new int[] { 0, 0x20000 });
+		assertEquals(0x0001fffe, readInt(relocated.get(0), 0));
+	}
+
 	/**
 	 * Optional integration test for a real overlay executable.  It is deliberately
 	 * opt-in so the public test suite never depends on a user's game collection.
@@ -295,6 +363,13 @@ public class HunkOverlayFileTest {
 			path = System.getenv("TEST_HUNK_OVERLAY_PATH");
 		}
 		Assume.assumeTrue(path != null && !path.isBlank());
+		String expectedHash = System.getProperty("test.hunk.overlay.sha256");
+		if (expectedHash == null || expectedHash.isBlank()) {
+			expectedHash = System.getenv("TEST_HUNK_OVERLAY_SHA256");
+		}
+		if (expectedHash != null && !expectedHash.isBlank()) {
+			assertEquals(expectedHash.replaceAll("\\s", "").toUpperCase(), sha256(Path.of(path)));
+		}
 		try (FileByteProvider provider = new FileByteProvider(new java.io.File(path), null, java.nio.file.AccessMode.READ)) {
 			HunkBlockFile blockFile = new HunkBlockFile(new BinaryReader(provider, false), true);
 			HunkLoadSegFile loadSegFile = new HunkLoadSegFile();
@@ -302,7 +377,8 @@ public class HunkOverlayFileTest {
 
 			assertTrue(loadSegFile.getNodes().length > 1);
 			assertTrue(loadSegFile.getOverlayTableData().length > 0);
-			org.junit.Assert.assertNotNull("Configured executable is expected to use the documented MANX overlay manager", loadSegFile.getManxOverlayTable());
+			assertTrue("Configured executable must use hierarchical or MANX overlay metadata",
+					loadSegFile.getOverlayTable() != null || loadSegFile.getManxOverlayTable() != null);
 			if (loadSegFile.getManxOverlayTable() != null) {
 				byte[] rootTrampolines = loadSegFile.getSegments()[1].getSegmentBlock().getData();
 				Integer nodeIndexBias = null;
@@ -344,7 +420,92 @@ public class HunkOverlayFileTest {
 					nodeIndex++;
 				}
 			}
+			BinImage image = BinFmtHunk.createImage(loadSegFile, new ghidra.app.util.importer.MessageLog());
+			assertNotNull("Configured executable must produce an image", image);
+			new Relocate(image).relocate(new int[image.getSegments().length]);
 		}
+	}
+
+	private static byte[] rootNodeBytes() throws Exception {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try (DataOutputStream output = new DataOutputStream(bytes)) {
+			writeHeader(output, 4, 0, 0);
+			writeCodeSegment(output, 0x4e75);
+		}
+		return bytes.toByteArray();
+	}
+
+	private static byte[] overlayNodeBytes(int slot, boolean relocatesToSlotTwo) throws Exception {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try (DataOutputStream output = new DataOutputStream(bytes)) {
+			writeHeader(output, 4, slot, slot);
+			if (relocatesToSlotTwo) {
+				writeAbsoluteRelocatingCodeSegment(output, 2);
+			} else {
+				writeCodeSegment(output, 0x4e75);
+			}
+			output.writeInt(HunkType.HUNK_BREAK.getValue());
+		}
+		return bytes.toByteArray();
+	}
+
+	private static void writeHierarchicalOverlayTable(DataOutputStream output, int levelOneOffset,
+			int firstLevelTwoOffset, int secondLevelTwoOffset, int levelThreeOffset) throws Exception {
+		output.writeInt(HunkType.HUNK_OVERLAY.getValue());
+		output.writeInt(35); // 36 longwords, including the tree-depth word.
+		output.writeInt(4); // root plus three overlay levels
+		output.writeInt(0);
+		output.writeInt(0);
+		output.writeInt(0);
+		writeOverlaySymbol(output, levelOneOffset, 1, 1, 1, 1);
+		writeOverlaySymbol(output, firstLevelTwoOffset, 2, 1, 2, 2);
+		writeOverlaySymbol(output, secondLevelTwoOffset, 2, 2, 2, 2);
+		writeOverlaySymbol(output, levelThreeOffset, 3, 1, 3, 3);
+	}
+
+	private static void writeOverlaySymbol(DataOutputStream output, int fileOffset, int level, int ordinate,
+			int firstSegment, int targetSegment) throws Exception {
+		output.writeInt(fileOffset);
+		output.writeInt(0);
+		output.writeInt(0);
+		output.writeInt(level);
+		output.writeInt(ordinate);
+		output.writeInt(firstSegment);
+		output.writeInt(targetSegment);
+		output.writeInt(0);
+	}
+
+	private static void writeAbsoluteRelocatingCodeSegment(DataOutputStream output, int targetSlot) throws Exception {
+		output.writeInt(HunkType.HUNK_CODE.getValue());
+		output.writeInt(1);
+		output.writeInt(0);
+		output.writeInt(HunkType.HUNK_ABSRELOC32.getValue());
+		output.writeInt(1);
+		output.writeInt(targetSlot);
+		output.writeInt(0);
+		output.writeInt(0);
+		output.writeInt(HunkType.HUNK_END.getValue());
+	}
+
+	private static int readInt(byte[] data, int offset) {
+		return ((data[offset] & 0xff) << 24) | ((data[offset + 1] & 0xff) << 16) |
+				((data[offset + 2] & 0xff) << 8) | (data[offset + 3] & 0xff);
+	}
+
+	private static String sha256(Path path) throws Exception {
+		MessageDigest digest = MessageDigest.getInstance("SHA-256");
+		try (InputStream input = Files.newInputStream(path)) {
+			byte[] buffer = new byte[8192];
+			for (int read; (read = input.read(buffer)) != -1;) {
+				digest.update(buffer, 0, read);
+			}
+		}
+		byte[] hash = digest.digest();
+		StringBuilder text = new StringBuilder(hash.length * 2);
+		for (byte value : hash) {
+			text.append(String.format("%02X", value));
+		}
+		return text.toString();
 	}
 
 	private static void writeHeader(DataOutputStream output, int tableSize, int firstHunk, int lastHunk) throws Exception {
