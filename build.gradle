@@ -76,6 +76,7 @@ eclipse.classpath.file.whenMerged {
 buildExtension {
 	// Package only extension runtime content, never local tooling, build products,
 	// tests, or reverse-engineering workspaces.
+	exclude '.github'
 	exclude '.gradle'
 	exclude '.uv-cache'
 	exclude '.vscode'
@@ -89,6 +90,7 @@ buildExtension {
 	exclude 'amiga_ndk39.prf'
 	exclude 'notes'
 	exclude 'scripts'
+	exclude 'site'
 	exclude 'src'
 	exclude 'test'
 	exclude 'tmp'
