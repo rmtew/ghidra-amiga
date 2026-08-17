@@ -5,7 +5,25 @@ and [ghidra-amiga-whdload](https://github.com/apparentlymart/ghidra-amiga-whdloa
 see https://github.com/astrelsky/vscode-ghidra-skeleton
 
 ## Development
-- create `data/amiga_ndk39.gdt` with the `amiga_ndk39.prf` C parser profile (put in `USER_HOME/.ghidra_12.0.1_PUBLIC/parseprofiles`). A few headers have been exluded due to parsing problems, and `pack.h` has been added to the start of the parsed headers to ensure correct struct alignment.
+
+`data/amiga_ndk39.gdt` is a checked-in extension resource generated from the
+vendored NDK 3.9 headers. Rebuild it with Ghidra's headless launcher:
+
+```powershell
+$project = Join-Path $env:TEMP 'amiga-ndk-gdt-project'
+New-Item -ItemType Directory -Force $project | Out-Null
+& '<GHIDRA_INSTALL_DIR>\support\analyzeHeadless.bat' $project NdkArchiveBuild `
+  -scriptPath "$PWD\ghidra_scripts" -noanalysis `
+  -postScript CreateAmigaNdk39Gdt.java "$PWD" "$PWD\data\amiga_ndk39.gdt"
+```
+
+The script consumes `data/ndk39_headers.txt`, validates that it covers every
+non-forwarding declaration header under `3rdparty/NDK_3.9/include_h`, and then
+parses the headers for the 68000 ABI. The manifest deliberately excludes only
+the `clib/`, `proto/`, `pragma/`, and `pragmas/` forwarding-declaration trees.
+SAS/C calling-convention annotations are neutralised only while parsing; the
+vendored headers remain unchanged. The build fails if a header is missing,
+stale, duplicated, or omitted.
 
 ## Debugging
 - Build with Ghidra's bundled Gradle wrapper, then install the generated ZIP from `dist/` using

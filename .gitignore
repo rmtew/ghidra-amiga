@@ -6,6 +6,8 @@
 /lib/
 /samples/
 *.class
+# The NDK archive is a checked-in, reproducible extension resource.
+!data/amiga_ndk39.gdt
 .antProperties.xml
 /.classpath
 /.project
