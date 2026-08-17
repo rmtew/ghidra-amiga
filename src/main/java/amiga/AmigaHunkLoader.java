@@ -904,13 +904,15 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 					if (r.getWidth() == 4 && r.getKind() == Reloc.Kind.ABSOLUTE) {
 						Address relocationAddress = segAddress.add(dataOffset);
 						long targetOffset = Integer.toUnsignedLong(newAddr) - Integer.toUnsignedLong(runtimeSegmentAddresses[toSeg.getId()]);
-						Address target = mappedSegmentAddresses[toSeg.getId()].add(targetOffset);
-						// A relocation records a linker-proven direct dependency. It is safe across
-						// Ghidra overlay spaces because target is the mapped segment address, not
-						// merely its ambiguous 32-bit runtime offset.
-						referenceManager.addMemoryReference(relocationAddress, target, RefType.DATA, SourceType.IMPORTED, 0);
+						// A Hunk relocation is an offset from the target Hunk base. Preserve the
+						// base and signed field addend as Ghidra's native offset-reference pair;
+						// this also represents legitimate base-minus offsets.
+						referenceManager.addOffsetMemReference(relocationAddress,
+								mappedSegmentAddresses[toSeg.getId()], true, targetOffset,
+								RefType.DATA, SourceType.IMPORTED, 0);
 						fpa.getCurrentProgram().getRelocationTable().add(relocationAddress, Status.APPLIED,
-								r.getWidth(), new long[] { target.getOffset(), toSeg.getId() }, null, null);
+								r.getWidth(), new long[] { Integer.toUnsignedLong(newAddr), toSeg.getId(),
+										targetOffset }, null, null);
 					}
 				} catch (MemoryAccessException | CodeUnitInsertionException e) {
 					log.appendException(e);

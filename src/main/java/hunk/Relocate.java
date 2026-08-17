@@ -105,6 +105,13 @@ public class Relocate {
 		switch (reloc.getWidth()) {
 		case 4: {
 			long value = Integer.toUnsignedLong(buf.getInt(offset)) + reloc.getAddend() + relocationDelta;
+			// HUNK_ABSRELOC fields use native fixed-width 68k arithmetic. A
+			// linker-supplied signed addend, such as target-2, may wrap the
+			// field while still denoting a valid address.
+			if (reloc.getKind() == Reloc.Kind.ABSOLUTE) {
+				buf.putInt(offset, (int) value);
+				break;
+			}
 			if (value < 0 || value > 0xffffffffL) {
 				throw new HunkParseError("32-bit relocation overflows its destination");
 			}
@@ -112,6 +119,10 @@ public class Relocate {
 		} break;
 		case 2: {
 			long value = buf.getShort(offset) + reloc.getAddend() + relocationDelta;
+			if (reloc.getKind() == Reloc.Kind.ABSOLUTE) {
+				buf.putShort(offset, (short) value);
+				break;
+			}
 			if (value < Short.MIN_VALUE || value > Short.MAX_VALUE) {
 				throw new HunkParseError("16-bit relocation overflows its destination");
 			}
@@ -119,6 +130,10 @@ public class Relocate {
 		} break;
 		case 1: {
 			long value = buf.get(offset) + reloc.getAddend() + relocationDelta;
+			if (reloc.getKind() == Reloc.Kind.ABSOLUTE) {
+				buf.put(offset, (byte) value);
+				break;
+			}
 			if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE) {
 				throw new HunkParseError("8-bit relocation overflows its destination");
 			}
