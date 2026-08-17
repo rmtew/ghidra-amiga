@@ -2,6 +2,7 @@ package fd;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -45,6 +46,36 @@ public class FdParserTest {
 		for(var entry : dir.listFiles()) {
 			var funcTable = FdParser.readSfdFile(entry.getPath());
 			assertNotNull(entry.getPath(), funcTable);
+		}
+	}
+
+	@Test
+	public void preservesRastPortPointerSyntax() {
+		var funcTable = FdParser.readSfdFile("data/sfd/graphics_lib.sfd");
+		var function = funcTable.getFunctionByName("BltTemplate");
+		assertNotNull(function);
+		assertEquals("struct RastPort *", function.getArgs().get(3).type);
+		for (File entry : new File("data/sfd").listFiles()) {
+			funcTable = FdParser.readSfdFile(entry.getPath());
+			assertNotNull(entry.getPath(), funcTable);
+			for (var candidate : funcTable.getFunctions()) {
+				assertSeparatedPointerTokens(candidate.getName(false), candidate.getReturnType());
+				for (var arg : candidate.getArgs()) {
+					if (arg.type.contains("RastPort")) {
+						assertSeparatedPointerTokens(candidate.getName(false), arg.type);
+					}
+				}
+			}
+		}
+	}
+
+	private static void assertSeparatedPointerTokens(String function, String type) {
+		if (!type.contains("RastPort")) {
+			return;
+		}
+		assertEquals("unexpected whitespace in " + function, type.trim(), type.replaceAll("\\s+", " ").trim());
+		for (String token : type.split(" ")) {
+			assertTrue("pointer token was not separated in " + function, token.equals("*") || !token.contains("*"));
 		}
 	}
 }

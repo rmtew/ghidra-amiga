@@ -27,6 +27,9 @@ targets without pretending that different overlay spaces are resident simultaneo
   and overlay code alike.
 - Validated MANX `jsr (d16,A4)` calls through root `jmp absolute.l` stubs are mapped as computed calls.
   This makes compiler-generated call stubs visible even when the linker placed them in a DATA hunk.
+- Amiga library analysis automatically materialises FD tables only for known `.library`, `.device`, and
+  `.resource` names referenced from executable code. This covers ordinary open calls and compiler wrappers
+  without creating every available API table from unrelated filename-like text.
 - A structurally recognised MANX flat overlay table selects the extension's `68000:BE:32:MANX`
   language and `MANX C` compiler specification.  It retains the normal 68000 instruction model,
   while correctly allocating stack parameters in two-byte slots.

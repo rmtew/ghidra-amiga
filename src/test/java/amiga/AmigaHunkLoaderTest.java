@@ -95,6 +95,14 @@ public class AmigaHunkLoaderTest {
 		assertFalse(AddressTakenCodeAnalyzer.isAddressInstalledIntoMemory("lea (-0x3fba,PC),A0", null));
 	}
 
+	@Test
+	public void normalisesKnownAmigaApiNamesForAutomaticDiscovery() {
+		assertEquals("graphics_library", AmigaHunkAnalyzer.toApiBaseName("graphics.library"));
+		assertEquals("trackdisk_device", AmigaHunkAnalyzer.toApiBaseName("TRACKDISK.DEVICE"));
+		assertEquals("potgo_resource", AmigaHunkAnalyzer.toApiBaseName("potgo.resource"));
+		assertEquals(null, AmigaHunkAnalyzer.toApiBaseName("Music.task"));
+	}
+
 	private static Document parseXml(File file) throws Exception {
 		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
 	}
