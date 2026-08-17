@@ -24,6 +24,10 @@
       <li>MANX/Aztec C flat overlay tables, including linker trampolines and legacy node numbering, are recognised conservatively.</li>
       <li>Malformed or unknown overlay metadata no longer turns a usable import into an opaque failure. The import records a persistent warning instead of inventing targets.</li>
     </ul>
+    <figure>
+      <img src="../assets/images/treasure-original-loader-unsupported-hunk-error.png" alt="The original extension's Ghidra import results report Unsupported hunk type: 0000 while loading Treasure.">
+      <figcaption>Before: the original extension fails while loading the overlay executable <em>Treasure</em>, reporting <code>Unsupported hunk type: 0000</code> instead of interpreting the overlay structure.</figcaption>
+    </figure>
 
     <h2>Relocations retain their meaning</h2>
     <p>Hunk relocations are now represented with their signed addends intact. In particular, a relocation referring just before a segment no longer has to be flattened into an unrelated synthetic address. Ghidra can render it in terms of the real Hunk base and addend, while the loader retains the physical metadata needed to explain the reference.</p>

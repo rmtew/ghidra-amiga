@@ -62,6 +62,26 @@ li + li { margin-top: .45rem; }
   background: color-mix(in srgb, var(--accent) 7%, transparent);
 }
 
+figure {
+  margin: 2rem 0;
+  padding: .65rem;
+  border: 1px solid var(--rule);
+  background: var(--code);
+}
+
+figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+}
+
+figcaption {
+  margin: .7rem .2rem .1rem;
+  color: var(--muted);
+  font: .88rem/1.5 system-ui, sans-serif;
+}
+
 code { padding: .08em .28em; background: var(--code); font: .88em ui-monospace, Consolas, monospace; }
 
 footer { margin-top: 4rem; color: var(--muted); font: .9rem/1.5 system-ui, sans-serif; }
