@@ -34,9 +34,13 @@ targets without pretending that different overlay spaces are resident simultaneo
   compiler runtime arithmetic and string helpers from instruction/control-flow shape and propagates those
     names to loader-created A4 forwarding stubs. It never relies on game addresses or overwrites
     existing non-default names.
-  - The `MANX A4 Callbacks` analyser recognises code addresses installed in A4 callback slots and promotes
-    only executable targets with a validated 68000 `LINK` prologue. It records the slot association without
-    inventing a caller for event-driven callbacks.
+- `Address-Taken Code Discovery` is enabled automatically for Hunk imports. It promotes only executable
+  data-reference targets whose pseudo-disassembled control flow reaches a 68000 return, and records the source
+  data reference without inventing an indirect caller or assigning application-specific semantics. On other
+  68000 inputs it remains opt-in. Candidates which do not meet that standard remain unchanged as
+  `Address-Taken Code Candidate` analysis bookmarks. **Analysis → Address-Taken Code Review** opens a
+  modeless table: selecting a candidate navigates to it, while Promote and Dismiss leave the listing available
+  for inspection.
 - Other overlay-manager tables remain visible as raw metadata; their nodes and ordinary Hunk relocations
   are still imported correctly, but no speculative overlay-call targets are created.
 

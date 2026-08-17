@@ -84,14 +84,15 @@ public class AmigaHunkLoaderTest {
 	}
 
 	@Test
-	public void recognisesOnlyA4CallbackInitializerPairs() {
-		assertEquals(-0x1eec, ManxA4CallbackAnalyzer.callbackSlot("lea (-0x3fba,PC),A0",
+	public void recognisesConservativeAddressTakenCodeEvidence() {
+		assertTrue(AddressTakenCodeAnalyzer.is68000Language("68000:BE:32:default"));
+		assertTrue(AddressTakenCodeAnalyzer.is68000Language("68000:BE:32:MANX"));
+		assertFalse(AddressTakenCodeAnalyzer.is68000Language("68020:BE:32:default"));
+		assertTrue(AddressTakenCodeAnalyzer.isAddressInstalledIntoMemory("lea (-0x3fba,PC),A0",
 				"move.l A0,(-0x1eec,A4)"));
-		assertEquals(Integer.MIN_VALUE, ManxA4CallbackAnalyzer.callbackSlot("lea (-0x3fba,PC),A0",
+		assertFalse(AddressTakenCodeAnalyzer.isAddressInstalledIntoMemory("lea (-0x3fba,PC),A0",
 				"move.l A1,(-0x1eec,A4)"));
-		assertEquals(Integer.MIN_VALUE, ManxA4CallbackAnalyzer.callbackSlot("lea (-0x3fba,PC),A0", null));
-		assertTrue(ManxA4CallbackAnalyzer.hasLinkPrologue((byte) 0x4e, (byte) 0x55));
-		assertFalse(ManxA4CallbackAnalyzer.hasLinkPrologue((byte) 0x65, (byte) 0x6e));
+		assertFalse(AddressTakenCodeAnalyzer.isAddressInstalledIntoMemory("lea (-0x3fba,PC),A0", null));
 	}
 
 	private static Document parseXml(File file) throws Exception {

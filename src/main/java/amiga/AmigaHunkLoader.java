@@ -26,6 +26,7 @@ import ghidra.app.util.opinion.LoadSpec;
 import ghidra.app.util.opinion.Loader;
 import ghidra.framework.Application;
 import ghidra.framework.model.DomainObject;
+import ghidra.framework.options.Options;
 import ghidra.program.flatapi.FlatProgramAPI;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.data.DWordDataType;
@@ -64,6 +65,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
+	/** Executable-format identifier persisted on programs imported by this loader. */
+	public static final String EXECUTABLE_FORMAT = "Amiga Hunk Executable";
 	public static final int DEF_IMAGE_BASE = 0x21F000;
 	static final LanguageCompilerSpecPair DEFAULT_68000_LANGUAGE =
 			new LanguageCompilerSpecPair("68000:BE:32:default", "default");
@@ -71,6 +74,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			new LanguageCompilerSpecPair("68000:BE:32:MANX", "manx");
 
 	static final String OPTION_NAME = "ImageBase";
+	static final String NO_RETURN_DISCOVERY_ANALYZER = "Non-Returning Functions - Discovered";
 	public static Address imageBase = null;
 
 	static final String defsSegmName = "DEFS";
@@ -81,7 +85,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 
 	@Override
 	public String getName() {
-		return "Amiga Hunk Executable";
+		return EXECUTABLE_FORMAT;
 	}
 	
 	public static int getImageBase(int offset) {
@@ -130,6 +134,7 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	protected void load(Program program, ImporterSettings importerSettings)  {
 		refsLastIndex = 0;
 		defsLastIndex = 0;
+		disableUnsafeNoReturnDiscovery(program);
 		
 		FlatProgramAPI fpa = new FlatProgramAPI(program);
 		Memory mem = program.getMemory();
@@ -218,6 +223,21 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 			AmigaUtils.setFunction(fpa, startAddr, "start", log);
 		
 		addSymbols(segments, fpa.getCurrentProgram().getSymbolTable(), segmentAddresses);
+	}
+
+	/**
+	 * Ghidra's generic discovered-no-return analyzer treats a call followed by
+	 * presently undefined bytes as evidence that the callee cannot return. That
+	 * inference is unsound for Hunk executables: address-taken code and MANX A4
+	 * forwarding calls are discovered after initial disassembly. A false result
+	 * truncates callers by replacing their call fall-through with a terminator.
+	 *
+	 * <p>Disable only that heuristic before auto-analysis. Known no-return
+	 * definitions and explicit user annotations remain available.</p>
+	 */
+	static void disableUnsafeNoReturnDiscovery(Program program) {
+		Options analysisOptions = program.getOptions(Program.ANALYSIS_PROPERTIES);
+		analysisOptions.setBoolean(NO_RETURN_DISCOVERY_ANALYZER, false);
 	}
 
 	/**
