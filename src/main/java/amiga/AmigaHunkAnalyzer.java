@@ -49,6 +49,7 @@ import ghidra.program.model.data.FileDataTypeManager;
 import ghidra.program.model.data.FunctionDefinitionDataType;
 import ghidra.program.model.data.DataUtilities.ClearDataMode;
 import ghidra.program.model.data.PointerDataType;
+import ghidra.program.model.data.Pointer;
 import ghidra.program.model.data.Structure;
 import ghidra.program.model.data.StringDataInstance;
 import ghidra.program.model.data.Undefined;
@@ -197,10 +198,20 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				apiBaseStorages);
 		try {
 			applyForwardingApiWrapperSignatures(program, forwardingWrappers);
+			List<AmigaAbiModel.DeviceDispatch> deviceDispatches = AmigaAbiModel.loadDeviceDispatches();
+			Map<Integer, Address> deviceAbiTargets = createDeviceAbiTargets(fpa, fdm, deviceDispatches, log);
 			Map<Address, AmigaAbiModel.DeviceDispatch> deviceWrappers = findDeviceDispatchWrappers(program, fdm,
-					AmigaAbiModel.loadDeviceDispatches());
+					deviceDispatches);
 			applyDeviceDispatchWrapperSignatures(program, fdm, deviceWrappers);
+			installDeviceDispatchCallOverrides(program, deviceWrappers, deviceAbiTargets);
+			propagateOpenDeviceRequestTypes(program, fdm, forwardingWrappers,
+					AmigaAbiModel.loadDeviceRequestTypes(), monitor);
 			propagateTypedStackParameters(program, monitor);
+			if (specializePointerParametersByStructureAccess(program, fdm, monitor)) {
+				propagateTypedStackParameters(program, monitor);
+			}
+			specializePrivateDeviceDispatchWrappers(program, deviceWrappers, monitor);
+			propagateTypedPointerArgumentsToStorage(program, monitor);
 			materializeApiBaseStorages(program, apiBaseStorages, ambiguousApiBaseStorages);
 		} catch (java.io.IOException | InvalidInputException | DuplicateNameException | CodeUnitInsertionException |
 				CancelledException e) {
@@ -349,6 +360,56 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 					: new ReturnParameterImpl(returnType, program.getRegister("D0"), program);
 			function.updateFunction(null, returnValue, FunctionUpdateType.CUSTOM_STORAGE, true, SourceType.ANALYSIS, params.toArray(ParameterImpl[]::new));
 			DataUtilities.createData(program, funcAddress, new ArrayDataType(ByteDataType.dataType, 6, -1), -1, false, ClearDataMode.CLEAR_ALL_UNDEFINED_CONFLICT_DATA);
+		}
+	}
+
+	private static Map<Integer, Address> createDeviceAbiTargets(FlatProgramAPI fpa, FileDataTypeManager fdm,
+			List<AmigaAbiModel.DeviceDispatch> dispatches, MessageLog log)
+			throws InvalidInputException, DuplicateNameException, CodeUnitInsertionException {
+		Map<Integer, Address> targets = new HashMap<>();
+		MemoryBlock block = fpa.getMemoryBlock("device_abi");
+		if (block == null) {
+			Address address = fpa.toAddr(AmigaHunkLoader.getImageBase(0));
+			for (MemoryBlock existing : fpa.getMemoryBlocks()) {
+				if (existing.contains(address)) {
+					address = existing.getEnd().add(0x1000 - (existing.getEnd().getOffset() % 0x1000));
+				}
+			}
+			AmigaUtils.createSegment(null, fpa, "device_abi", address.getOffset(), 0x1000, true, true, log);
+			block = fpa.getMemoryBlock("device_abi");
+		}
+		Program program = fpa.getCurrentProgram();
+		for (AmigaAbiModel.DeviceDispatch dispatch : dispatches) {
+			Address target = block.getStart().add(Math.abs(dispatch.vector));
+			AmigaUtils.setFunction(fpa, target, "device_abi_" + dispatch.name, log);
+			Function function = fpa.getFunctionAt(target);
+			List<ParameterImpl> parameters = new ArrayList<>();
+			for (AmigaAbiModel.Parameter parameter : dispatch.parameters) {
+				parameters.add(new ParameterImpl(parameter.name, getAmigaDataType(parameter.type, fdm),
+						program.getRegister(parameter.register), program));
+			}
+			function.updateFunction(null, new ReturnParameterImpl(VoidDataType.dataType, VariableStorage.VOID_STORAGE, program),
+					FunctionUpdateType.CUSTOM_STORAGE, true, SourceType.ANALYSIS, parameters.toArray(ParameterImpl[]::new));
+			targets.put(dispatch.vector, target);
+		}
+		return targets;
+	}
+
+	private static void installDeviceDispatchCallOverrides(Program program,
+			Map<Address, AmigaAbiModel.DeviceDispatch> wrappers, Map<Integer, Address> targets) {
+		for (Map.Entry<Address, AmigaAbiModel.DeviceDispatch> entry : wrappers.entrySet()) {
+			Function wrapper = program.getFunctionManager().getFunctionAt(entry.getKey());
+			Address target = targets.get(entry.getValue().vector);
+			if (wrapper == null || target == null) {
+				continue;
+			}
+			InstructionIterator instructions = program.getListing().getInstructions(wrapper.getBody(), true);
+			while (instructions.hasNext()) {
+				Instruction instruction = instructions.next();
+				if (Integer.valueOf(entry.getValue().vector).equals(getA6VectorBias(instruction))) {
+					instruction.addOperandReference(0, target, RefType.CALL_OVERRIDE_UNCONDITIONAL, SourceType.ANALYSIS);
+				}
+			}
 		}
 	}
 
@@ -698,6 +759,20 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				stackOffset, dataType);
 	}
 
+	private static void recordTypeProposal(Map<Address, DataType> proposals, Set<Address> conflicts,
+			Address storage, DataType dataType) {
+		if (conflicts.contains(storage)) {
+			return;
+		}
+		DataType existing = proposals.get(storage);
+		if (existing == null || existing.isEquivalent(dataType)) {
+			proposals.put(storage, dataType);
+			return;
+		}
+		proposals.remove(storage);
+		conflicts.add(storage);
+	}
+
 	private static Instruction findPushedStackArgument(Function caller, Instruction call, int parameterStackOffset) {
 		if (parameterStackOffset < 4) {
 			return null;
@@ -838,6 +913,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		for (Map.Entry<Integer, Integer> slot : slots.entrySet()) {
 			DataType type = conflicts.contains(slot.getKey()) ? Undefined.getUndefinedDataType(slot.getValue()) :
 					proposals.getOrDefault(slot.getKey(), Undefined.getUndefinedDataType(slot.getValue()));
+			type = retainMoreSpecificPointerType(function, slot.getKey(), type);
 			parameters.add(new ParameterImpl("param_" + (parameters.size() + 1), type, program, SourceType.ANALYSIS));
 		}
 		if (hasEquivalentStackSignature(function, parameters)) {
@@ -846,6 +922,82 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		function.updateFunction(null, function.getReturn(), FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true,
 				SourceType.ANALYSIS, parameters.toArray(ParameterImpl[]::new));
 		return true;
+	}
+
+	private static DataType retainMoreSpecificPointerType(Function function, int stackOffset, DataType proposedType) {
+		for (Parameter parameter : function.getParameters()) {
+			if (parameter.getVariableStorage().isStackStorage() && parameter.getStackOffset() == stackOffset &&
+					isPointerSpecialization(parameter.getDataType(), proposedType)) {
+				return parameter.getDataType();
+			}
+		}
+		return proposedType;
+	}
+
+	private static boolean isPointerSpecialization(DataType candidateType, DataType baseType) {
+		if (!(candidateType instanceof Pointer candidatePointer) || !(baseType instanceof Pointer basePointer) ||
+				!(candidatePointer.getDataType() instanceof Structure candidate) ||
+				!(basePointer.getDataType() instanceof Structure base)) {
+			return false;
+		}
+		return candidate.isEquivalent(base) || embedsBaseAtZero(candidate, base);
+	}
+
+	private static void specializePrivateDeviceDispatchWrappers(Program program,
+			Map<Address, AmigaAbiModel.DeviceDispatch> wrappers, TaskMonitor monitor)
+			throws CancelledException, InvalidInputException, DuplicateNameException {
+		for (Address entry : wrappers.keySet()) {
+			monitor.checkCancelled();
+			Function wrapper = program.getFunctionManager().getFunctionAt(entry);
+			if (wrapper == null || wrapper.getParameterCount() != 1 || !canApplyAnalysisSignature(wrapper) ||
+					isAddressTaken(program, entry)) {
+				continue;
+			}
+			DataType agreedType = null;
+			ReferenceIterator references = program.getReferenceManager().getReferencesTo(entry);
+			while (references.hasNext()) {
+				Reference reference = references.next();
+				if (!reference.getReferenceType().isCall()) {
+					continue;
+				}
+				Instruction call = program.getListing().getInstructionAt(reference.getFromAddress());
+				Function caller = call == null ? null : program.getFunctionManager().getFunctionContaining(call.getAddress());
+				Instruction push = caller == null ? null : findPushedStackArgument(caller, call, 4);
+				Integer offset = push == null ? null : findCallerStackOffset(caller, push);
+				DataType type = offset == null ? null : getStackParameterType(caller, offset);
+				if (type == null || !isPointerSpecialization(type, wrapper.getParameter(0).getDataType())) {
+					agreedType = null;
+					break;
+				}
+				if (agreedType != null && !agreedType.isEquivalent(type)) {
+					agreedType = null;
+					break;
+				}
+				agreedType = type;
+			}
+			if (agreedType != null) {
+				replaceAnalysisParameterType(program, wrapper, 0, agreedType);
+			}
+		}
+	}
+
+	private static DataType getStackParameterType(Function function, int stackOffset) {
+		for (Parameter parameter : function.getParameters()) {
+			if (parameter.getVariableStorage().isStackStorage() && parameter.getStackOffset() == stackOffset) {
+				return parameter.getDataType();
+			}
+		}
+		return null;
+	}
+
+	private static boolean isAddressTaken(Program program, Address entry) {
+		ReferenceIterator references = program.getReferenceManager().getReferencesTo(entry);
+		while (references.hasNext()) {
+			if (!references.next().getReferenceType().isCall()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static Map<Integer, Integer> discoverStackParameterSlots(Function function) {
@@ -871,6 +1023,272 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Refines a pointer-to-base parameter only when its own field accesses prove a
+	 * unique structure in the NDK archive.  This models the usual Amiga idiom in
+	 * which an API accepts an IORequest while device code operates on a concrete
+	 * request structure that embeds IORequest at offset zero.
+	 */
+	private static boolean specializePointerParametersByStructureAccess(Program program, FileDataTypeManager fdm,
+			TaskMonitor monitor) throws CancelledException, InvalidInputException, DuplicateNameException {
+		boolean changed = false;
+		FunctionIterator functions = program.getFunctionManager().getFunctions(true);
+		while (functions.hasNext()) {
+			monitor.checkCancelled();
+			Function function = functions.next();
+			if (!canApplyAnalysisSignature(function)) {
+				continue;
+			}
+			for (Parameter parameter : function.getParameters()) {
+				DataType refinedType = findUniqueStructureSpecialization(function, parameter, fdm);
+				if (refinedType != null && !parameter.getDataType().isEquivalent(refinedType)) {
+					changed |= replaceAnalysisParameterType(program, function, parameter.getOrdinal(), refinedType);
+				}
+			}
+		}
+		return changed;
+	}
+
+	private static DataType findUniqueStructureSpecialization(Function function, Parameter parameter,
+			FileDataTypeManager fdm) {
+		if (!(parameter.getDataType() instanceof Pointer pointer) ||
+				!(pointer.getDataType() instanceof Structure baseStructure) ||
+				!parameter.getVariableStorage().isStackStorage()) {
+			return null;
+		}
+		List<StructureAccess> accesses = findStructureAccesses(function, parameter.getStackOffset());
+		if (accesses.size() < 2) {
+			return null;
+		}
+		Set<DataType> candidates = new HashSet<>();
+		var dataTypes = fdm.getAllDataTypes();
+		while (dataTypes.hasNext()) {
+			DataType candidate = dataTypes.next();
+			if (!(candidate instanceof Structure structure) || !embedsBaseAtZero(structure, baseStructure) ||
+					!matchesStructureAccesses(structure, accesses)) {
+				continue;
+			}
+			candidates.add(candidate);
+			if (candidates.size() > 1) {
+				return null;
+			}
+		}
+		return candidates.size() == 1 ? new PointerDataType(candidates.iterator().next()) : null;
+	}
+
+	private static boolean embedsBaseAtZero(Structure candidate, Structure baseStructure) {
+		DataTypeComponent component = candidate.getComponentAt(0);
+		return component != null && component.getOffset() == 0 && component.getDataType().isEquivalent(baseStructure);
+	}
+
+	private static boolean matchesStructureAccesses(Structure structure, List<StructureAccess> accesses) {
+		for (StructureAccess access : accesses) {
+			DataTypeComponent component = structure.getComponentAt(access.offset());
+			if (component == null || component.getLength() != access.size()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static List<StructureAccess> findStructureAccesses(Function function, int stackOffset) {
+		List<StructureAccess> accesses = new ArrayList<>();
+		Set<String> liveRegisters = new HashSet<>();
+		InstructionIterator instructions = function.getProgram().getListing().getInstructions(function.getBody(), true);
+		while (instructions.hasNext()) {
+			Instruction instruction = instructions.next();
+			Integer sourceOffset = getExternalStackOffset(function, instruction);
+			if (sourceOffset != null && sourceOffset == stackOffset) {
+				for (Object result : instruction.getResultObjects()) {
+					if (result instanceof Register register) {
+						liveRegisters.add(register.getName());
+					}
+				}
+			}
+			for (String register : Set.copyOf(liveRegisters)) {
+				Integer offset = getRegisterDisplacement(instruction, register);
+				if (offset != null && offset >= 0 && getOperandSize(instruction) > 0) {
+					accesses.add(new StructureAccess(offset, getOperandSize(instruction)));
+				}
+				if (writesRegister(instruction, register) && (sourceOffset == null || sourceOffset != stackOffset)) {
+					liveRegisters.remove(register);
+				}
+			}
+		}
+		return accesses.stream().distinct().toList();
+	}
+
+	private static Integer getRegisterDisplacement(Instruction instruction, String registerName) {
+		for (int index = 0; index < instruction.getNumOperands(); index++) {
+			boolean hasRegister = false;
+			Integer displacement = null;
+			for (Object object : instruction.getOpObjects(index)) {
+				if (object instanceof Register register && registerName.equals(register.getName())) {
+					hasRegister = true;
+				}
+				else if (object instanceof Scalar scalar) {
+					displacement = (int) scalar.getSignedValue();
+				}
+			}
+			if (hasRegister && displacement != null) {
+				return displacement;
+			}
+		}
+		return null;
+	}
+
+	private static boolean replaceAnalysisParameterType(Program program, Function function, int ordinal, DataType type)
+			throws InvalidInputException, DuplicateNameException {
+		if (!canApplyAnalysisSignature(function)) {
+			return false;
+		}
+		List<ParameterImpl> parameters = new ArrayList<>();
+		for (Parameter parameter : function.getParameters()) {
+			DataType parameterType = parameter.getOrdinal() == ordinal ? type : parameter.getDataType();
+			parameters.add(new ParameterImpl(parameter.getName(), parameterType, program, SourceType.ANALYSIS));
+		}
+		function.updateFunction(null, function.getReturn(), FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true,
+				SourceType.ANALYSIS, parameters.toArray(ParameterImpl[]::new));
+		return true;
+	}
+
+	private record StructureAccess(int offset, int size) {
+	}
+
+	/**
+	 * OpenDevice's ABI deliberately accepts the common IORequest prefix.  A
+	 * statically known device name supplies the stronger, header-defined request
+	 * subtype for its request argument.  The mapping is data-driven and is
+	 * applied only to direct, statically addressed argument storage.
+	 */
+	private static void propagateOpenDeviceRequestTypes(Program program, FileDataTypeManager fdm,
+			Map<Address, ForwardingApiWrapper> forwardingWrappers,
+			List<AmigaAbiModel.DeviceRequestType> requestTypes, TaskMonitor monitor)
+			throws CancelledException, CodeUnitInsertionException {
+		Map<String, DataType> typesByDevice = new HashMap<>();
+		for (AmigaAbiModel.DeviceRequestType requestType : requestTypes) {
+			typesByDevice.put(requestType.deviceName, new PointerDataType(getAmigaDataType(requestType.requestType, fdm)));
+		}
+		Map<Address, DataType> proposals = new HashMap<>();
+		Set<Address> conflicts = new HashSet<>();
+		FunctionIterator callers = program.getFunctionManager().getFunctions(true);
+		while (callers.hasNext()) {
+			monitor.checkCancelled();
+			Function caller = callers.next();
+			InstructionIterator instructions = program.getListing().getInstructions(caller.getBody(), true);
+			while (instructions.hasNext()) {
+				Instruction call = instructions.next();
+				Function callee = getDirectCallee(program, call);
+				if (callee == null || !isOpenDeviceCall(callee, forwardingWrappers)) {
+					continue;
+				}
+				Parameter deviceName = findParameter(callee, "devName");
+				Parameter request = findParameter(callee, "ioRequest");
+				if (deviceName == null || request == null || !deviceName.getVariableStorage().isStackStorage() ||
+						!request.getVariableStorage().isStackStorage()) {
+					continue;
+				}
+				Instruction namePush = findPushedStackArgument(caller, call, deviceName.getStackOffset());
+				Instruction requestPush = findPushedStackArgument(caller, call, request.getStackOffset());
+				String name = namePush == null ? null : getReferencedString(program, namePush);
+				Address storage = requestPush == null ? null : getMemoryReference(requestPush, true);
+				DataType type = name == null ? null : typesByDevice.get(name.toLowerCase(Locale.ROOT));
+				if (storage != null && type != null) {
+					recordTypeProposal(proposals, conflicts, storage, type);
+				}
+			}
+		}
+		for (Map.Entry<Address, DataType> proposal : proposals.entrySet()) {
+			if (!conflicts.contains(proposal.getKey())) {
+				applyAnalysisPointerStorageType(program, proposal.getKey(), proposal.getValue());
+			}
+		}
+	}
+
+	private static boolean isOpenDeviceCall(Function callee, Map<Address, ForwardingApiWrapper> wrappers) {
+		ForwardingApiWrapper forwarding = wrappers.get(callee.getEntryPoint());
+		return (forwarding != null && "OpenDevice".equals(forwarding.definition().getName(false))) ||
+				"exec_library_OpenDevice".equals(callee.getName());
+	}
+
+	private static Parameter findParameter(Function function, String name) {
+		for (Parameter parameter : function.getParameters()) {
+			if (name.equals(parameter.getName())) {
+				return parameter;
+			}
+		}
+		return null;
+	}
+
+	private static String getReferencedString(Program program, Instruction instruction) {
+		for (Reference reference : instruction.getReferencesFrom()) {
+			if (!reference.isMemoryReference()) {
+				continue;
+			}
+			Data data = program.getListing().getDefinedDataAt(reference.getToAddress());
+			if (data != null && data.hasStringValue()) {
+				return StringDataInstance.getStringDataInstance(data).getStringValue();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Persists an inferred pointer type at a statically addressed argument
+	 * storage location.  This covers globals and A4-relative slots, which are
+	 * intentionally outside stack-to-stack forwarding.
+	 */
+	private static void propagateTypedPointerArgumentsToStorage(Program program, TaskMonitor monitor)
+			throws CancelledException, CodeUnitInsertionException {
+		Map<Address, DataType> proposals = new HashMap<>();
+		Set<Address> conflicts = new HashSet<>();
+		FunctionIterator callers = program.getFunctionManager().getFunctions(true);
+		while (callers.hasNext()) {
+			monitor.checkCancelled();
+			Function caller = callers.next();
+			InstructionIterator instructions = program.getListing().getInstructions(caller.getBody(), true);
+			while (instructions.hasNext()) {
+				Instruction call = instructions.next();
+				Function callee = getDirectCallee(program, call);
+				if (callee == null || callee.getSignatureSource() == SourceType.DEFAULT) {
+					continue;
+				}
+				for (Parameter parameter : callee.getParameters()) {
+					if (!parameter.getVariableStorage().isStackStorage() || !(parameter.getDataType() instanceof Pointer)) {
+						continue;
+					}
+					Instruction push = findPushedStackArgument(caller, call, parameter.getStackOffset());
+					Address storage = push == null ? null : getMemoryReference(push, true);
+					if (storage != null) {
+						recordTypeProposal(proposals, conflicts, storage, parameter.getDataType());
+					}
+				}
+			}
+		}
+		for (Map.Entry<Address, DataType> entry : proposals.entrySet()) {
+			if (!conflicts.contains(entry.getKey())) {
+				applyAnalysisPointerStorageType(program, entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	private static void applyAnalysisPointerStorageType(Program program, Address storage, DataType type)
+			throws CodeUnitInsertionException {
+		Data existing = program.getListing().getDefinedDataAt(storage);
+		Symbol symbol = program.getSymbolTable().getPrimarySymbol(storage);
+		if (symbol != null && symbol.getSource() == SourceType.USER_DEFINED) {
+			return;
+		}
+		if (existing != null && !Undefined.isUndefined(existing.getDataType()) &&
+				!(existing.getDataType() instanceof Pointer)) {
+			return;
+		}
+		if (existing != null && existing.getDataType().isEquivalent(type)) {
+			return;
+		}
+		DataUtilities.createData(program, storage, type, -1, false, ClearDataMode.CLEAR_ALL_CONFLICT_DATA);
 	}
 
 	private Map<Address, FdFunction> findOpenApiWrappers(Program program, Map<Address, String> bases) {

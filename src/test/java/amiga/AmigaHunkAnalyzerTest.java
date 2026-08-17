@@ -406,4 +406,46 @@ public class AmigaHunkAnalyzerTest {
 		}
 	}
 
+	@Test
+	public void specializesAnIoRequestParameterAndDirectGlobalArgumentAsIoAudio() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("audio-request-specialization", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// Standard BeginIO forwarding wrapper: A1=request; A6=request->io_Device; jsr -30(A6).
+			builder.setBytes("0x100", "2f0e2c780004226f00084eaefe262c5f4e75");
+			// SubmitAudio writes the IOAudio fields beyond the embedded IORequest, then calls BeginIO.
+			builder.setBytes("0x140", "48e70020246f0008256f000c0022256f00100026356f0014002a" +
+					"356f0016002c356f0018002e2f0a4eb900000100584f4cdf04004e75");
+			// Caller passes a statically addressed request pointer directly, not via its own stack parameter.
+			builder.setBytes("0x1a0", "2f39000000804eb900000140584f4e75");
+			builder.disassemble("0x100", 0x14);
+			builder.disassemble("0x140", 0x36);
+			builder.disassemble("0x1a0", 0x12);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReadReference("0x1a0", "0x80");
+			Function beginIo = builder.createFunction("0x100");
+			Function submitAudio = builder.createFunction("0x140");
+			builder.createFunction("0x1a0");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			MessageLog log = new MessageLog();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				added[0] = analyzer.added(program, new AddressSet(beginIo.getBody()), TaskMonitor.DUMMY, log);
+			});
+			assertTrue(log.toString(), added[0]);
+			Function typedSubmit = program.getFunctionManager().getFunctionAt(submitAudio.getEntryPoint());
+			assertEquals("IOAudio *", typedSubmit.getParameter(0).getDataType().getDisplayName());
+			assertEquals("IOAudio *", program.getListing().getDefinedDataAt(builder.addr("0x80"))
+					.getDataType().getDisplayName());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
 }

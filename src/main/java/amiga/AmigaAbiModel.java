@@ -50,6 +50,16 @@ final class AmigaAbiModel {
 		}
 	}
 
+	static final class DeviceRequestType {
+		final String deviceName;
+		final String requestType;
+
+		DeviceRequestType(String deviceName, String requestType) {
+			this.deviceName = deviceName;
+			this.requestType = requestType;
+		}
+	}
+
 	private AmigaAbiModel() {
 	}
 
@@ -91,6 +101,22 @@ final class AmigaAbiModel {
 					parameters));
 		}
 		return List.copyOf(dispatches);
+	}
+
+	static List<DeviceRequestType> loadDeviceRequestTypes() throws IOException {
+		Properties properties = new Properties();
+		try (FileInputStream input = new FileInputStream(getDataFile(DEVICE_DISPATCH_FILE))) {
+			properties.load(input);
+		}
+		List<DeviceRequestType> types = new ArrayList<>();
+		for (String deviceName : properties.getProperty("device_request_types", "").split(",")) {
+			deviceName = deviceName.strip().toLowerCase(java.util.Locale.ROOT);
+			if (!deviceName.isEmpty()) {
+				types.add(new DeviceRequestType(deviceName,
+						required(properties, "device_request." + deviceName + ".type")));
+			}
+		}
+		return List.copyOf(types);
 	}
 
 	private static String required(Properties properties, String key) throws IOException {
