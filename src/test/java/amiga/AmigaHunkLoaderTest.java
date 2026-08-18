@@ -296,6 +296,212 @@ public class AmigaHunkLoaderTest {
 	}
 
 	@Test
+	public void findsLatticeCLinkerDbInAuthenticLatticeC502Startup() throws Exception {
+		byte[] executable = fixtureBytes("/fixtures/lattice-c/5.02/runtime-a4/lattice-runtime-a4");
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += segment.getSize();
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder("lattice-c-5.02-a4", "68000:BE:32:default");
+			try {
+				builder.createMemory("ram", "0x1000", 0x10000);
+				builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0x1000")), true);
+				for (Segment segment : segments) {
+					builder.setBytes(String.format("0x%x", addresses[segment.getId()]), toHex(data.get(segment.getId())));
+				}
+
+				Address linkerDb = builder.addr("0x1988");
+				assertEquals(linkerDb, AmigaHunkLoader.findLatticeCLinkerDb(builder.addr("0x101c"), builder.getProgram()));
+				assertEquals(linkerDb, AmigaHunkLoader.findLatticeCLinkerDb(hunkFile, segments,
+						toAddresses(builder, addresses), builder.getProgram()));
+				int transaction = builder.getProgram().startTransaction("apply Lattice C A4 context");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), linkerDb, "Lattice C", new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				assertEquals(linkerDb.getOffset(), builder.getProgram().getProgramContext()
+						.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr("0x1000"))
+						.getUnsignedValue().longValue());
+				builder.setBytes("0x103c", "4e71");
+				assertEquals("The CRT must retain its ExecBase fetch", null,
+						AmigaHunkLoader.findLatticeCLinkerDb(builder.addr("0x101c"), builder.getProgram()));
+			}
+			finally {
+				builder.dispose();
+			}
+		}
+	}
+
+	@Test
+	public void appliesLatticeCA4ContextToAuthenticBlinkOverlayCode() throws Exception {
+		byte[] executable = fixtureBytes("/fixtures/lattice-c/5.02/overlay/lattice-overlay");
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			assertEquals(2, hunkFile.getNodes().length);
+			assertTrue(hunkFile.getNodes()[1].isOverlay());
+			assertEquals(hunkFile.getNodes()[0], hunkFile.getNodes()[1].getParent());
+			assertEquals(1, hunkFile.getNodes()[1].getHierarchyLevel());
+			assertEquals(1, hunkFile.getNodes()[1].getHierarchyOrdinate());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += 0x1000;
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder("lattice-c-5.02-overlay", "68000:BE:32:default");
+			try {
+				for (Segment segment : segments) {
+					String address = String.format("0x%x", addresses[segment.getId()]);
+					builder.createMemory("segment_" + segment.getId(), address, 0x1000);
+					builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr(address)),
+							segment.getType() == SegmentType.SEGMENT_TYPE_CODE);
+					builder.setBytes(address, toHex(data.get(segment.getId())));
+				}
+
+				Address linkerDb = AmigaHunkLoader.findLatticeCLinkerDb(hunkFile, segments,
+						toAddresses(builder, addresses), builder.getProgram());
+				assertEquals(builder.addr("0x4000"), linkerDb);
+				int transaction = builder.getProgram().startTransaction("apply Lattice C A4 context to overlays");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), linkerDb, "Lattice C", new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				for (Segment segment : segments) {
+					if (segment.getType() == SegmentType.SEGMENT_TYPE_CODE) {
+						String address = String.format("0x%x", addresses[segment.getId()]);
+						assertEquals(linkerDb.getOffset(), builder.getProgram().getProgramContext()
+								.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr(address))
+								.getUnsignedValue().longValue());
+					}
+				}
+			}
+			finally {
+				builder.dispose();
+			}
+		}
+	}
+
+	@Test
+	public void findsLatticeCLinkerDbInAuthenticLatticeC500Startup() throws Exception {
+		assertLatticeRuntimeA4Context("/fixtures/lattice-c/5.00/runtime-a4/lattice-runtime-a4", "Lattice C 5.00");
+	}
+
+	@Test
+	public void appliesLatticeC500A4ContextToAuthenticBlinkOverlayCode() throws Exception {
+		assertLatticeOverlayA4Context("/fixtures/lattice-c/5.00/overlay/lattice-overlay", "Lattice C 5.00");
+	}
+
+	@Test
+	public void findsLatticeCLinkerDbInAuthenticLatticeC400Startup() throws Exception {
+		assertLatticeRuntimeA4Context("/fixtures/lattice-c/4.00/runtime-a4/lattice-runtime-a4", "Lattice C 4.00");
+	}
+
+	@Test
+	public void appliesLatticeC400A4ContextToAuthenticBlinkOverlayCode() throws Exception {
+		assertLatticeOverlayA4Context("/fixtures/lattice-c/4.00/overlay/lattice-overlay", "Lattice C 4.00");
+	}
+
+	private static void assertLatticeRuntimeA4Context(String fixture, String profileName) throws Exception {
+		byte[] executable = fixtureBytes(fixture);
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += segment.getSize();
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder(profileName + " A4", "68000:BE:32:default");
+			try {
+				builder.createMemory("ram", "0x1000", 0x10000);
+				builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0x1000")), true);
+				for (Segment segment : segments) {
+					builder.setBytes(String.format("0x%x", addresses[segment.getId()]), toHex(data.get(segment.getId())));
+				}
+
+				Address linkerDb = AmigaHunkLoader.findLatticeCLinkerDb(hunkFile, segments,
+						toAddresses(builder, addresses), builder.getProgram());
+				assertNotNull(profileName + " startup must expose BLINK's LinkerDB", linkerDb);
+				int transaction = builder.getProgram().startTransaction("apply " + profileName + " A4 context");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), linkerDb, profileName, new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				assertEquals(linkerDb.getOffset(), builder.getProgram().getProgramContext()
+						.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr("0x1000"))
+						.getUnsignedValue().longValue());
+			}
+			finally {
+				builder.dispose();
+			}
+		}
+	}
+
+	private static void assertLatticeOverlayA4Context(String fixture, String profileName) throws Exception {
+		byte[] executable = fixtureBytes(fixture);
+		try (ByteArrayProvider provider = new ByteArrayProvider(executable)) {
+			HunkLoadSegFile hunkFile = BinFmtHunk.loadSegFile(
+					new HunkBlockFile(new BinaryReader(provider, false), true), new MessageLog());
+			assertEquals(2, hunkFile.getNodes().length);
+			assertTrue(hunkFile.getNodes()[1].isOverlay());
+			assertEquals(hunkFile.getNodes()[0], hunkFile.getNodes()[1].getParent());
+			assertEquals(1, hunkFile.getNodes()[1].getHierarchyLevel());
+			assertEquals(1, hunkFile.getNodes()[1].getHierarchyOrdinate());
+			BinImage image = BinFmtHunk.createImage(hunkFile, new MessageLog());
+			Segment[] segments = image.getSegments();
+			int[] addresses = new int[segments.length];
+			int nextAddress = 0x1000;
+			for (Segment segment : segments) {
+				addresses[segment.getId()] = nextAddress;
+				nextAddress += 0x1000;
+			}
+
+			List<byte[]> data = new Relocate(image).relocate(addresses);
+			ProgramBuilder builder = new ProgramBuilder(profileName + " overlay", "68000:BE:32:default");
+			try {
+				for (Segment segment : segments) {
+					String address = String.format("0x%x", addresses[segment.getId()]);
+					builder.createMemory("segment_" + segment.getId(), address, 0x1000);
+					builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr(address)),
+							segment.getType() == SegmentType.SEGMENT_TYPE_CODE);
+					builder.setBytes(address, toHex(data.get(segment.getId())));
+				}
+
+				Address linkerDb = AmigaHunkLoader.findLatticeCLinkerDb(hunkFile, segments,
+						toAddresses(builder, addresses), builder.getProgram());
+				assertNotNull(profileName + " BLINK overlay must expose LinkerDB", linkerDb);
+				int transaction = builder.getProgram().startTransaction("apply " + profileName + " A4 context to overlays");
+				assertTrue(AmigaHunkLoader.applyA4Context(builder.getProgram(), linkerDb, profileName, new MessageLog()));
+				builder.getProgram().endTransaction(transaction, true);
+				for (Segment segment : segments) {
+					if (segment.getType() == SegmentType.SEGMENT_TYPE_CODE) {
+						String address = String.format("0x%x", addresses[segment.getId()]);
+						assertEquals(linkerDb.getOffset(), builder.getProgram().getProgramContext()
+								.getRegisterValue(builder.getProgram().getRegister("A4"), builder.addr(address))
+								.getUnsignedValue().longValue());
+					}
+				}
+			}
+			finally {
+				builder.dispose();
+			}
+		}
+	}
+
+	@Test
 	public void declaresTheTwoByteManxStackAbi() throws Exception {
 		File languageDirectory = new File("data/languages");
 		Document language = parseXml(new File(languageDirectory, "68000_manx.ldefs"));

@@ -1,0 +1,54 @@
+.Key main_file,obj1,obj2,obj3,obj4,parsed/k
+;   Link a C program                                Version 4.04
+;   If you need to include any external subroutine modules
+;   then use this execute file to Link your C program.
+
+If NOT "<parsed>" EQ ""
+   SKIP DoIt
+endif
+
+if "<obj4>" EQ ""
+   SKIP Try-3
+else
+   execute Link "<main_file>" "" "" "" "" PARSED +<obj1>.o+<obj2>.o+<obj3>.o+<obj4>.o
+   SKIP END
+endif
+
+LAB Try-3
+if "<obj3>" EQ ""
+   SKIP Try-2
+else
+   execute Link "<main_file>" "" "" "" "" PARSED +<obj1>.o+<obj2>.o+<obj3>.o
+   SKIP END
+endif
+
+LAB Try-2
+if "<obj2>" EQ ""
+   SKIP Try-1
+else
+   execute Link "<main_file>" "" "" "" "" PARSED +<obj1>.o+<obj2>.o
+   SKIP END
+endif
+
+LAB Try-1
+if "<obj1>" EQ ""
+   SKIP DoIt
+else
+   execute Link "<main_file>""" "" "" "" PARSED +<obj1>.o
+   SKIP END
+endif
+; --------------- Come here to execute the link --------------------
+LAB DoIt
+if not exists <main_file>.o
+   echo "File <main_file>.o does not exist.  Try again."
+   SKIP END
+   endif
+
+Assign LIB: C-DEVEL:lib
+
+echo "-- Linking...  <main_file>.o and <parsed> to create <main_file>"
+:c/alink FROM LIB:LStartUp.obj+<main_file>.o<parsed> TO <main_file> LIBRARY LIB:lc.lib+LIB:amiga.lib
+echo "-- done linking '<main_file>'. --"
+LAB END
+date >df0:now
+

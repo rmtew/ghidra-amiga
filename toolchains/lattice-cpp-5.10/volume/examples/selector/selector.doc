@@ -1,0 +1,199 @@
+Selector.cp - Generic Selector by Tim Holloway
+
+Copyright © 1987, MTS Associates, Inc. - the accompanying software and
+documentation may be used freely by public and commercial users, as long
+as it is not sold for profit and providing all copyright notices remain
+intact.
+
+This is a definition of a generic sliding-list selector.  It permits
+easily creating and maintaining an area within a window display where
+a list of names is shown, allowing selection by rolling the mouse up or
+down - scrolling the list when items outside the current display are
+desired, and supporting for a scroll bar.  As an option, you can also
+position using the cursor keys.
+
+The immense flexibility of this function lies in the fact that unlike
+similar requesters, it is not limited to file lists - any data items
+chained together as a list of Amiga Nodes will do - you simply supply
+the item rendering routine - which can be anything, including routines
+that render graphics as well as text.
+
+Like similar selection list functions, this one divides the display
+into a series of vertically-stacked selection boxes.  However, UNLIKE
+most, they are all a single gadget!  You supply a gadget of the
+appropriate size, and the selection-list routine subdivides it, based
+on the characteristics of the current font of the RastPort supplied.
+There's only one limitation - a maximum of 32 entries are supported in
+the display area, because of the mechanism by which I disarm any deleted
+nodes which are currently displayed.  That can be changed by modifying the
+source code slightly, however.
+
+OBJECTS WHICH MAKE UP THE SYSTEM:
+
+1. A Window
+
+2. A Selector - for actual use, create a new class whose base class is
+   a Selector and define a render() function in it.  "render()" is a
+   virtual function and must be supplied or the selection gadget fills up
+   with "error - no render function supplied"-type messages.  The render
+   function can do just about anything, subject to the limitation that you
+   put the pieces back together afterwards.  On entry, the RastPort passed
+   to render() is set so that a Text() function call will place text in the
+   slot to be rendered into.  Graphics are also welcome, as are different
+   colors, etc.
+
+3. A SelectionGadget - It wasn't worth the trouble to actually define a
+   SelectionGadget class - a SelectionGadget is just a pair of Intuition
+   Gadgets - one for the selection subwindow (pane) and one for the scroll
+   bar. The scroll bar MUST be pointed to by the NextGadget pointer of the
+   selection pane.  It is a Proportional Gadget, and only the vertical axis
+   is tracked.  The selection pane is a simple BOOLEAN Gadget - to function
+   effectively, the flag GADGHNONE and the activation flags GADGIMMEDIATE,
+   FOLLOWMOUSE, and RELVERIFY must be set.
+
+   The Selector construction routine will map the rectangular space
+   defined by the gadget's Width and Height into a set of vertically
+   stacked slots, which render() will be called upon to fill in sequence.
+   The slot height is detemined by the font height parameter in the
+   window's RastPort at the time the Selector is constructed, and remains
+   constant for the life of the Selector.
+
+   In addition to render(), there is one other virtual function -
+   adjust_scrollbar() - it can be used to ModifyProp the scroll bar,
+   and is called when the display is initialized, refreshed, or when
+   Nodes are added or removed.  This one's optional, the default one is
+   what most people are used to seeing, anyway.
+
+4. A List - pointing to a set of Nodes, which can be defined as base classes
+   to any sort of structure you like.  render() will receive a pointer to
+   these nodes whenever they are to be displayed, and can use the data
+   attached to the node (or any other data) to do its rendering with.
+
+Performance criteria:
+
+Pfffftt!  Too much time is spent worrying over nanoseconds.  You CAN'T
+keep all those saved nanoseconds in a Mason jar and pour them out when
+you need them!  First priority was that the Selector work as reliably
+and predictably as possible (considering who the author is), secondly that
+it be flexible enough that its insides didn't need major surgery for each
+and every program that needed it.  Memory occupancy worried me just a tiny
+bit (it's about 6K at last count - peanuts by today's standards.  The
+graphics memory it eats up is likely to be far more).  Beyond that, it
+gives the proper real-time response to the user's actions, and doesn't
+sit too heavily on background tasks, so why turn it into an unreadable
+mess just to be ables to brag about efficiency?  So there!
+
+Reliability criteria:
+
+This is MUCH more critical.  The one thing you DON'T do is screw around with
+the selection List's innards while it's being displayed.  The basic
+selector class defines an append() and remove() function, which permits
+the most common operations to be performed safely.  append() will append
+your Node to the List, update the display, if required, etc.  remove() will
+remove the Node from the List.  it will also ghost and disable the node's
+representation if it is currently being displayed.  Once the display is
+refreshed, the deleted Node's rendering disappears entirely - the ghosting
+is to prevent having the nodes suddenly reshuffle themselves under an unwary
+user's mouse.
+
+Admittedly, there are other functions that should be here - i.e. get(),
+enqueue(), add(), insert(), but they can be easily added.  Next time around,
+I guess - when I make a proper linker library file out of it.
+
+Basic usage:
+
+1. Create a new class based on the Selector, and an instance of that class.
+2. Supply routines to build and manage the list of items being selected.
+3. Supply a render() routine to render a single selection line.
+  This routine can DO anything, but if you render into other
+  Selector slots, they may do likewise unto you!
+4. Place calls from the IDCMP event dispatcher controlling this window.
+  These typically include MOUSEMOVE, MOUSEBUTTONS,
+  GADGETDOWN, GADGETUP, and INTUITICKS.
+5. have fun!
+
+User-callable functions (and what they're good for):
+
+	Selector (Window *w, register Gadget *xsg, List *xl);
+
+This is the constructor function.  Once you call it, forget about touching
+the list nodes until you've invoked delete.  Otherwise you'll probably
+lose synchronization, Guru, or both!  Certain IDCMP flags are set when
+the user clicks on the selection list box.  They are CLEARED when the
+list box is de-activated, so if you were using the MOUSEMOVE, MOUSEBUTTONS,
+and/or INTUITICKS flags for other things, reset them after calling the
+selection functions for MOUSEBUTTONS or GADGETUP.  Rude, ain't I?
+
+	void display_nodes();
+
+Call this guy to cause the display to be updated.  Usually immediately after
+construction, 'cause otherwise all those IDCMP events are going to be
+confused!
+
+	void start(USHORT mouse_y_coordinate);
+
+Call on GADGETDOWN in the selector box.
+
+	void end_action(USHORT mouse_y_coordinate, BOOL gadget_released);
+
+Call on GADGETUP from the selector box (TRUE), MOUSEBUTTONS SELECTUP (FALSE)
+
+	void mouse_move(USHORT mouse_y_coordinate);
+
+Call on MOUSEMOVE between start() and end_action()s.
+
+	void scroll_set(int potv);
+
+Call on GADGETUP on scroll bar.
+
+	void Intuitick();
+
+call on INTUITICKS.
+
+	Node *clicked_on();
+
+Call to detect mouse double-click on current item (MOUSEBUTTONS SELECTDOWN).
+Returns a pointer to that node, or NULL, if not.
+
+	Node *selected_node()
+
+Call to return pointer to highlighed node if any, or NULL if none.
+
+	virtual void render(RastPort *, Node *);
+
+Supply your own.  On entry, the RastPort is pointing to the slot in which
+data for the indicated node is to be rendered.  The cp_x and cp_y RastPort
+variables indicate that point.  They needn't be restored before returning.
+
+	virtual void adjust_scrollbar(Gadget *bar, int pot, int body);
+
+Optional.  Allows custom control over how the scroll bar display is
+modified (NewModifyProp).  The default is good enough for most cases.
+
+	void append(Node *);	// scrollbar selector
+	void remove(Node *);
+
+From the time the selector is created (via new) until it is deleted, these
+are the ONLY ways you can add or remove nodes from the list without creating
+havoc. DON'T use the general Node routines, use the Selector ones (i.e.
+the selector is the object). Others (insert, enqueue) are pending.
+
+Optional cursor-key scrolling.  Amiga conventions (raw keycodes) are:
+
+ up-arrow 	- CURSORUP	- scroll(SELECT_UPWARDS);
+ down-arrow	- CURSORDOWN	- scroll(SELECT_DOWNWARDS);
+ shift+up	- CURSORUP,  IEQUALIFIER_LSHIFT | IEQUALIFIER+_RSHIFT
+			- scroll_page(SELECT_UP)
+ shift+down	- can't you guess?
+ ALT+up	- CURSORUP, ALTLEFT | ALTRIGHT - scroll_to(SELECT_TOP)
+ ALT+down	- CURSORDOWN,  ""		- scroll_to(SELECT_BOTTOM)
+
+ enum scroll_dir { SELECT_DOWNWARDS, SELECT_UPWARDS };
+
+	void scroll(enum scroll_dir);		// 1 line up or down
+	void scroll_page(enum scroll_dir);	// display frame up or down.
+#define SELECT_TOP 0
+#define SELECT_BOTTOM 65535
+	void scroll_to(int i);			// Absolute position. 'i'
+		is the node number relative to the start of the list (0). 
+

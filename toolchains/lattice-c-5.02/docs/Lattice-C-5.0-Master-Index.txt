@@ -1,0 +1,2244 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     Lattice C Master Index
+     ----------------------------------------------------------------------
+
+
+
+
+
+                       Master Index for the Lattice Amiga C Compiler Manual
+
+
+
+
+
+
+
+
+
+
+
+                                                              Lattice, Inc.
+                                                    2500 S. Highland Avenue
+                                                          Lombard, IL 60148
+                                                                        USA
+
+
+                                         A Subsidiary of SAS Institute Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice C Index
+
+     Copyright (C) 1988 by Lattice, Inc., Lombard, IL, USA.
+
+
+     All rights reserved.  Printed in the United States of America.  No
+     part of this publication may be reproduced, stored in a retrieval
+     system, or transmitted, in any form or by any means, electronic or
+     mechanical, photocopying, or otherwise, without the prior written
+     permission of the publisher, Lattice, Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                 Master Index
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Master Index                                                        Ii
+
+
+
+
+
+
+
+
+     A
+
+     <ALT-F#>  E17, E49
+     <ALT-#>  E17, E49
+     <ALT-S>  E24, E27, E50
+     <ALT-Y>  E15, E48
+     Abandon LSEINST Session  E44
+     abend  U66
+     abnormal termination  U66
+     Abort the current process  L1
+     abort  L1
+     abs  G77
+     absolute address range  D79
+     Absolute value  L2
+     abs  L2
+     access method  G41
+     access  L3
+     acos  L214
+     Action Keys  E13, E26, E50
+     activate  D88
+     active window  D7
+     address  D33
+     ADDSYM  C25, D3, D8, D15
+     AddTask()  G36
+     AddTask  D86, D91
+     AddTask  D2
+     Adjust the time stamp on specified files to the system time  C84
+     Allocate and clear Level 3 memory  L14
+     Allocate Level 1 memory (long)  L114
+     Allocate Level 1 memory (unsigned)  L114
+     Allocate Level 3 memory  L14
+     Amiga 1000  D28
+     AmigaDOS commands  G2
+     AmigaDOS Compatibility  G1
+     AmigaDOS COPY Command  U45
+     AmigaDOS environment variables  C86
+     AmigaDOS environment  G37
+     AmigaDOS Library Vector  L36
+     AmigaDOS linker  G8
+     AmigaDOS LIST Command  C39
+     AmigaDOS loader  D85
+     AmigaDOS string pattern match (anchored)  L9
+     AmigaDOS  G1
+     Anchored pattern match  L167
+     Anchored regular expression match of strings  U78
+     Anchored regular expression match  U76
+     ANSI compliance  G77
+     ANSI standard  G73
+     application screen  D22
+     Arccosine function  L214
+     Arcsine function  L214
+     Arctangent function  L214
+     Arctangent of x/y  L214
+     are_match  U76
+     are_smatch  U78
+     argopt  L4
+
+     Master Index                                                       Iii
+
+
+
+
+
+
+
+
+     argument type checking  G19
+     arithmetic objects  G37
+     array  D52, G21, G23, G28, G30, G38, G44, G84, G87, G88, G91
+     ASCII Characters  U71, U72
+     ASCII text files  G8
+     ASCII  D44, E10
+     asctime  L7
+     asin  L214
+     asm  C3
+     assembler directives  G53, G57
+     assembler instruction  D23
+     assembler instructions  D2
+     Assembler options  G55
+     assembly instruction  D21
+     assembly language source  G53
+     assembly language  D40
+     assembly mode  D21
+     Assembly-Language Interfaces  G34, G44
+     assembly-language routines  G34
+     Assert program validity  L8
+     _assert  L8
+     assert  L8
+     Assignment operators  G23
+     astcsma  L9
+     asterisk  D13
+     atan2  L214
+     atan  L214
+     atexit  L10
+     atof  L11
+     atoi  L12
+     atol  L12
+     Attach Level 1 file to Level 2  L50
+     Auto Indenting Option  E33, E42
+     Auto variable elimination and remapping  G64
+     auto  G40
+     Automatic Link Vector  C16
+     automatic variable  D79
+     automatic variables  D11
+     automatic  G40
+     automatically position  G8
+     autoswap mode  D9, D22
+
+     B
+
+     <BkSp>  E15, E48
+     Backslash  E32
+     Backspace  E15, E48
+     Backup Directory  E4
+     Backup File Processing Option  E43
+     Bad character class  U33
+     BAD LINE NUMBER  E35
+     Bad pattern  U34
+     BAD SEARCH PATTERN  E35
+     Base 10 logarithm function  L48
+     Batch Files  U3
+     Before Compiling  E29
+
+     Master Index                                                      Iiii
+
+
+
+
+
+
+
+
+     Beginning of Line  E14, E47
+     Beginning of Text  E14, E47
+     Big compiler pass 1  C56
+     big compiler  G75
+     big version  G75
+     binary operation  G28
+     Bit shift operations  G76
+     bitwise boolean operations  G76
+     bldmem  L13
+     BLink Command Line Syntax  U55
+     blink  D2
+     Blink  C7, D16
+     Block Command  E19
+     BLOCK NOT PROPERLY MARKED  E36
+     Block  E18, E49
+     bp_list  D73
+     breakpoint clear  D73
+     breakpoint disable  D73
+     breakpoint enable  D73
+     breakpoint list  D69
+     breakpoint  D11, D70
+     break  D31, D68, D69, D70
+     BSR  D66
+     _bufsize  L222
+     bugs  D12
+     Build a memory pool of specified size  L13
+     Build string pointer list  L181
+     BUILD  U1
+     build  C24
+     built-in functions  G77
+     Button Left Click on gadget  E13
+     Button Left Click on slider-bar  E13
+     Button Left Click on text  E13
+     Button Right Click on pull-down menu  E13
+
+     C
+
+     <CTRL-[>  E18, E49
+     <CTRL-]>  E18, E49
+     <CTRL-^>  E14, E48
+     <CTRL-ENTER>  E26
+     <CTRL-END>  E14, E47
+     <CTRL-ESC>  E26, E27, E50
+     <CTRL-HOME>  E14, E47
+     <CTRL-B>  E18, E19, E49
+     <CTRL-E>  E16, E49
+     <CTRL-F4>  E26, E28, E29, E50
+     <CTRL-F6>  E14, E48
+     <CTRL-F>  E19, E20, E49
+     <CTRL-L>  E19, E20, E50
+     <CTRL-M>  E19, E20, E31, E50
+     <CTRL-N>  E15, E48
+     <CTRL-O>  E19, E20, E50
+     <CTRL-P>  E19, E21, E50
+     <CTRL-R>  E19, E23, E50
+     <CTRL-S>  E19, E24, E50
+
+     Master Index                                                       Iiv
+
+
+
+
+
+
+
+
+     <CTRL-U>  E19, E25, E50
+     <CTRL-V>  E14, E48
+     <CTRL-W>  E16, E48
+     <CTRL-Y>  E16, E49
+     <CTRL-LEFT>  E13, E47
+     <CTRL-RIGHT>  E14, E47
+     C Language References  G66
+     C Language  D1, D40, G19
+     C mode  D21
+     C Source Code  E33
+     C structure  D51
+     C types  D41
+     Call math error handler  L121
+     Call system command processor  L208
+     calloc  L14
+     CAN'T ASSIGN WITHIN AN ASSIGN  E36
+     Can't create object file  G78
+     Can't create quad file  G78
+     CAN'T EXECUTE MACROS DURING ASSIGN  E36
+     Can't find file(s) ...  U34
+     CAN'T MOVE BLOCK FROM WITHIN BLOCK  E36
+     Can't open ...  U16, U34
+     Can't open file for pre-processor output  G78
+     Can't open prototype file  G78
+     Can't open quad file  G79
+     Can't open source file  G79
+     Can't open symbol file  G79
+     Case Folding  E31
+     cast operation  G73
+     "casting"  D40
+     catch.o  U66
+     catch  D89
+     ceil  L17
+     Change Color Keys  E12, E16, E49
+     Change current directory  L18
+     Change file protection mode  L22
+     Change mode of Level 1 file  L110
+     Change mode of Level 2 file  L60
+     Change system clock  L93
+     Change Tab Stops  E32
+     Change Window Keys  E12, E14, E40, E48
+     Change Window Size  E14, E15, E48
+     Change Window  E14, E48
+     Changing Keystroke Assignments  E13, E41
+     Changing Menu Messages  E45
+     Changing LSE Options  E42
+     char  G37, G38
+     Character constants  G20
+     chdir  L18
+     Check Compiler Output for Errors Option  E34, E43
+     Check file accessibility  L3
+     Check for Break character  L19
+     Check for largest memory block  L20
+     Check for Level 2 end-of-file  L51
+     Check for Level 2 error  L51
+     Check Level 1 file handle  L21
+
+     Master Index                                                        Iv
+
+
+
+
+
+
+
+
+     chgclk  L93
+     chip  G20, G36, G41, G74
+     chkabort  L19
+     chkml  L20
+     chkufb  L21
+     chmod  L22
+     classical edit-compile-link sequence  G8
+     Clear Level 2 I/O error flag  L24
+     clearerr  L24
+     CLI environment  G4
+     CLI window  C26, D20, G4
+     Close a Level 1 file  L25
+     Close a Level 2 file  L49
+     Close all Level 2 files  L49
+     Close an AmigaDOS file  L31
+     close  L25
+     Closing ] not found  U34
+     clrerr  L24
+     CNOP  G58
+     code generation  D17
+     code generator  G76
+     code optimizations  G77
+     Code Section  G34
+     code sequences optimized  G75
+     CodePRobe source-level debugger  C25
+     color settings  D7
+     Column Display Indicator Option  E33, E42
+     Column Display Indicator  E8, E33
+     Combined output file name too large  G79
+     Command Keys  E12, E18
+     Command Line Syntax  E5
+     Command Menu Key Functions  E49
+     Command Menu  E18
+     command processor  G4
+     command syntax  D13, D30
+     Command, Block  E19
+        Fork  E20
+        Invoke Lattice C Compiler  E19, E29
+        lc  G8
+        Line Number  E20
+        Mode  E20
+        Open  E20
+        Project  E21
+        Quit  E24
+        Replace  E23
+        Search  E24
+        Undo  E25, E33
+     command-line editing  D28
+     command-line options  C25, D19, D20, D33
+     command  G2
+     Comment Character  E32
+     Comment  G55
+     Comments  G20
+     Commodore  G9
+     common sub-expressions  G29
+     Compare strings, case-insensitive  L185
+
+     Master Index                                                       Ivi
+
+
+
+
+
+
+
+
+          length-limited  L185
+          no case, max size  L185
+     Compare strings  L185
+     Compare two AmigaDOS dates  L30
+     Compare two memory blocks  L125
+     Comparison to K&R  G19
+     Compile  E19, E49
+     Compiler code generator  C58
+     COMPILER ERROR BUFFER OVERFLOW  E36
+     compiler error messages  G78
+     Compiler executable file path  C88
+     Compiler Implementation Decisions  G25
+     Compiler Keys  E40
+     Compiler Limitations  G30
+     compiler messages  G75
+     Compiler Operation  G8
+     Compiler pass 1  C56
+     COMPILER REPORTED ERRORS  E36
+     compiler warning messages  G78
+     compiler  D2, D16, G8
+     Compiling C Files  E3
+     Compiling Your Source File  E29
+     compiling  G8
+     Complex Data Types  G38
+     Compute 2**x  L48
+     Compute floating point modulus  L58
+     Compute maximum of two values  L123
+     Compute minimum of two values  L123
+     Concatenate strings, max length  L183
+     Concatenate strings  L183
+     condition codes  G76
+     condition control register  D88
+     conditional breakpoint  D71
+     Conditional compilation  G25
+     condition  D62
+     const  G19, G20, G21, G23, G41, G90
+     contents of registers  U66
+     context lines option  D23
+     Continue Option  E22
+     Control Flow  G30
+     Conversions  G22
+     Convert ASCII to float  L11
+     Convert ASCII to integer  L12
+     Convert ASCII to long integer  L12
+     Convert character to ASCII  L211
+     Convert character to lower case  L211
+     Convert character to upper case  L211
+     Convert date array to string  L173
+     Convert decimal string to int  L159
+     Convert decimal string to long int  L159
+     Convert float to string  L41, L88
+     Convert hexadecimal string to int  L159
+     Convert hexadecimal string to long  L159
+     Convert int to decimal  L165
+     Convert int to hexadecimal  L165
+     Convert int to octal  L165
+
+     Master Index                                                      Ivii
+
+
+
+
+
+
+
+
+     Convert long int to decimal  L165
+     Convert long int to hexadecimal  L165
+     Convert long int to octal  L165
+     Convert octal string to int  L159
+     Convert octal string to long int  L159
+     Convert string to long integer  L204
+     Convert string to lower case  L190
+     Convert string to upper case  L190
+     Convert time array to string  L177
+     Convert time value to string  L27
+     Convert unsigned int to decimal  L165
+     Convert unsigned long to decimal  L165
+     Copy a memory block up to a char  L125
+     Copy a memory block  L125
+     Copy one string to another  L157
+     Copy propagation  G63
+     Copy string, length-limited  L157
+     Copy the executable  G5
+     Copy the header files  G5
+     Copy the libraries  G5
+     Copy the source files  G5
+     copy-protected  G4
+     cosh  L214
+     Cosine function  L214
+     cos  L214
+     Cotangent function  L214
+     cot  L214
+     cpr  C25
+     Create a directory  G5
+     Create a Level 1 file  L26
+     Create new AmigaDOS file  L32
+     Create or truncate AmigaDOS file  L32
+     Creating LMK Files  U39
+     creat  L26
+     ctime  L27
+     ctype  D54
+     Current Character  E8
+     Current Filename Indicator  E8
+     Current Line Indicator  E7
+     Current Mode Indicator  E8
+     Current Window  E7
+     Cursor Movement Keys  E12, E13, E40, E47
+     Customer Service Guide  G4
+     Customized Diskette System  G5
+     CXFERR  L29
+     CXREF  U1
+     cxref  C28
+     Cycle Background Color  E16, E49
+     Cycle Foreground Color  E16, E49
+     Cycle Windows  E14, E15, E48
+
+     D
+
+     <DEL>  E16, E48
+     <DOWN>  E13, E47
+     Data Alignment  G43
+
+     Master Index                                                     Iviii
+
+
+
+
+
+
+
+
+     DATA FILE LSE.DAT NOT FOUND  E35
+     Data File  E41, E44
+     Data Objects  G34,  G36
+     Data Pointers  G40
+     Data Portability  G43
+     Data Storage Classes  G40
+     data types  D1
+     datecmp  L30
+     Daylight savings time flag  L232
+     Daylight time name  L232
+     daylight  L232
+     da  D32, D44
+     db  D44
+     DC.B  G58
+     DC.L  G58
+     DC.W  G58
+     _dclose  L31
+     _dcreatx  L32
+     _dcreat  L32
+     dc  D45
+     dd  D45
+     deactivate  D88
+     Dead code elimination  G63
+     Dead store elimination  G63
+     Deallocate all allocated memory  L124
+     debug information  D3, D17
+     debugger control  D15, D90
+     debugging environment  D6, D15
+     debugging information  D2, G76
+     debugging option  D16, D18
+     debugging  U59
+     DEBUG  D16
+     Default File Extension Option  E42, E43
+     Default level 2 I/O mode  L223
+     Default Options  E42
+     Default routine for undefined routines  L207
+     Delete Current Character  E16, E48
+     Delete Keys  E12, E15, E40, E48
+     Delete Line  E16, E49
+     Delete to End of Line  E16, E49
+     Delete Word  E16, E48
+     Descriptor Line  E9
+     Determines the differences between two files  C30
+     dfind  L33
+     df  D46
+     diagnostic messages  G73
+     Dialog Window  D7, D30
+     Diff I/O Error  U16
+     DIFF  U1
+     diff  C30
+     directories  D24
+     Directory separator character  L231
+     Directory Structures  U18
+     disable particular error messages  G74
+     disassembler  D16
+     Disk Drives  U2
+
+     Master Index                                                       Iix
+
+
+
+
+
+
+
+
+     Disk font library vector  L61
+     DISKCOPY  G4
+     Diskette Contents  G69
+     DiskfontBase  L61
+     display default option  D24
+     Display Next Error  E26, E50
+     Display Option  E23
+     display  D9, D16, D17, D18, D36, D41
+     distribution diskettes  G4
+     di  D45
+     dnext  L33
+     _dopen  L35
+     DOS Error Information  L229
+     DOSBase  L36
+     double-clicking  D22
+     double  G38
+     Down One Line  E13, E47
+     dqsort  L138
+     drand48  L37
+     _dread  L39
+     _dseek  L40
+     DS.B  G58
+     DS.L  G58
+     DS.W  G58
+     DSECT  G58
+     ds  D45
+     dump all sections  U66
+     dump  D16, D18, D41
+     dumps the location  U66
+     Duplicate a string  L187
+     _dwrite  L39
+     dw  D45
+     dz  D47
+
+     E
+
+     <End>  E14, E47
+     echo mode  D22
+     ecvt  L41
+     Edit user files  C69
+     edit-compile-link  G8
+     editing modes  D28
+     editor  G8
+     ELSE  G58
+     Emit 68000 instruction word  L43
+     emit  G77
+     emit  L43
+     Empty character class  U34
+     End of file on object file  G79
+     End of Line  E14, E47
+     End of Text  E14, E47
+     END  G58
+     ENDC  G58
+     ENDM directive  G60
+     ENDM  G58
+     Enter Escape Character  E26, E27, E50
+
+     Master Index                                                        Ix
+
+
+
+
+
+
+
+
+     enter  D51, D52, D54, D55
+     entire stack  U66
+     enum  G20, G21, G24, G86
+     enumerated type  G21
+     environment variables  C86, G4
+     environment  U66
+     EQU  G58
+     Equality operators  G23
+     erand48  L37
+     errno  L44
+     Error Message Display  E9
+     Error Messages  E35
+     ERROR OPENING OUTPUT FILE  E36
+     ERROR READING INPUT FILE  E36
+     Error reading symbol file  G79
+     Error Tracking  E3
+     ERROR WRITING OUTPUT FILE  E36
+     errors  E34, G3
+     Escape Character  E10, E32
+     Establish addressability to the global data area  L90
+     Establish event traps  L153
+     EXACT LINE NUMBER NOT FOUND  E36
+     example programs  G5
+     exception handler  D90
+     except  L121
+     exclamation mark  D12
+     Exec  D88
+     executable file  G8, G9
+     executables  G5
+     Execute and Assign Macro Keys  E40
+     Execute standard gadget command  E13
+     execute  D84
+     Execution Profiler  C67
+     _exit  L46
+     EXITM  G58, G60
+     exit  L46
+     Expand Tabs to Spaces Option  E33, E42
+     Exponential function  L48
+     Expression Evaluation  G28
+     exp  L48
+     extern  G23, G24, G25, G27, G40, G41
+     External data definitions  G25
+     external  G40
+     EXTRACT  U2
+     extract  C32
+
+     F
+
+     fabs  L2
+     Failure exit for assert  L8
+     family processors  G75
+     far  G20, G21, G36, G41, G42, G73
+     faster compilation  G74
+     FATAL COMPILER ERROR  E36
+     fcloseall  L49
+     fclose  L49
+
+     Master Index                                                       Ixi
+
+
+
+
+
+
+
+
+     fcvt  L41
+     fd2pragma  C33
+     fdopen  L50
+     feof  L51
+     ferror  L51
+     fff  G81
+     fflush  L52
+     FFP format  G11
+     FFP Library Vector  L120, L213
+     fgetchar  L53
+     fgetc  L53
+     fgets  L54
+     FILE IS VIEW ONLY  E37
+     File Name Extensions  U40
+     File name missing  G79
+     File name too large  G79
+     File names  G2
+     File Size Limitation  E3
+     File Status  E21
+     fileno  L56
+     FILES  U2
+     files  C34
+     fill  D56, D57
+     Find a character in a memory block  L125
+     Find break character in string  L170
+     Find character in string  L171
+     Find character not in string  L171
+     Find first directory entry  L33
+     Find next directory entry  L33
+     Find Next Match  E26, E27, E50
+     findpath  L57
+     flag setting  D48
+     float  G38
+     Float/double absolute value  L2
+     Floating Point Error Code  L224
+     floating point  G9
+     floor  L17
+     Flush a Level 2 output buffer  L52
+     Flush all Level 2 output buffers  L52
+     flushall  L52
+     fmode  L60
+     fmod  L58
+     _fmode  L223
+     fopen  L62
+     Foreign Character Set  E4
+     Fork Command  E19, E20, E49
+     Fork with arg list  L65
+     Fork with arg vector  L65
+     forkl  L65
+     forkv  L65
+     formal  G40
+     Formatted input from a file  L82
+     Formatted input from a string  L82
+     Formatted input from stdin  L82
+     Formatted print to a file  L71
+     Formatted print to a string  L71
+
+     Master Index                                                      Ixii
+
+
+
+
+
+
+
+
+     Formatted printf to stdout  L71
+     format  D34
+     _FPERR  L224
+     fprintf  L71
+     fputchar  L77
+     fputc  L77
+     fputs  L78
+     fqsort  L138
+     fread  L79
+     Free Level 3 memory  L14
+     free  L14
+     freopen  L80
+     frexp  L81
+     fscanf  L82
+     fseek  L86
+     ftell  L86
+     full ANSI preprocessor  G73
+     full statistics  U60
+     full-screen editor  G8
+     Function Entry Rules  G45
+     Function Exit Rules  G46
+     function mode  D28, D29
+     Function prototypes  G73
+     function  D36
+     fundamental data objects  G37
+     future updates  G4
+     fwrite  L79
+
+     G
+
+     gadgets  D6
+     gcvt  L88
+     general assistance  G5
+     Generate a random number  L140
+     Generate a regular expression pattern  U74
+     Generate ASCII time string  L7
+     Generates a cross-reference listing for C language source files  C28
+     Get a character from a file  L53
+     Get a character from stdin  L53
+     Get a token  L202
+     Get an argument  L156
+     Get assigned device  L91
+     Get ceiling of a real number  L17
+     Get current directory  L92
+     Get current working directory  L95
+     Get environment variable  L97
+     Get file attribute  L98
+     Get file extension  L161
+     Get file node  L161
+     Get file number for a Level 2 file  L56
+     Get file path  L161
+     Get file time  L102
+     Get filename list  L99
+     Get floor of a real number  L17
+     Get free disk space  L96
+     Get Level 1 file position  L115
+
+     Master Index                                                     Ixiii
+
+
+
+
+
+
+
+
+     Get Level 2 file position  L86
+     Get Level 2 memory block (long)  L103
+     Get Level 2 memory block (short)  L103
+     Get Level 2 memory pool size  L155
+     Get next symbol from a string  L175
+     Get next token from a string  L179
+     Get options from argument list  L4
+     Get string from Level 2 file  L54
+     Get string from stdin  L54
+     Get system clock  L93
+     Get system clock with microseconds  L210
+     Get system time in seconds  L209
+     Get the path for a specific directory/file  L105
+     geta4  G77
+     geta4  L90
+     getasn  L91
+     getcd  L91
+     getchar  L53
+     getclk  L93
+     getcwd  L95
+     getc  L53
+     getdfs  L96
+     getenv  L97
+     getfa  L98
+     getfnl  L99
+     getft  L102
+     getmem  L103
+     getml  L103
+     getpath  L105
+     getreg  G77
+     getreg  L106
+     gets  L54
+     GfxBase  L107
+     Global common subexpression merging  G63
+     global optimizer  G12, G63
+     Global regular expression search and print  C36
+     gmtime  L108
+     Go to Line Number  E19, E20, E50
+     GO  G63
+     go  D11, D12, D60, D63, D84
+     Graphics Library Vector  L107
+     GREP - Bracket Characters  U27
+     GREP - Columnar Search  U30
+     GREP - Linking Code  U33
+     GREP - Negation Operator  U29
+     GREP - Numeric Character Matching  U28
+     GREP - Printer Format Characters  U26
+     GREP - Use with C Source Code  U31
+     GREP  U2
+     grep  C36
+
+     H
+
+     <HOME>  E14, E47
+     Hard Disk System  G5
+     hard disk  G4
+
+     Master Index                                                      Ixiv
+
+
+
+
+
+
+
+
+     Hard Disks  U2, U18
+     Hardware Clock  U36
+     Hardware Requirements  G1
+     Header file compressor  C59
+     header files  G5
+     Heap Area  G35
+     Help File  E46
+     Help Key  E16, E49
+     Help Keys  E12
+     help menu  D29
+     HELP NOT AVAILABLE  E37
+     HELP NOT FOUND IN HELP FILE  E37
+     HELP NOT FOUND  E37
+     help  D13
+     hex dump  D12, D23
+     hex dumps  D2
+     Hoisting of invariants out of loops  G63
+     huge  G41, G42, G74
+     HUNK SYMBOL  D8
+     hunks  D85
+     Hyperbolic cosine function  L214
+     Hyperbolic sine function  L214
+     Hyperbolic tangent function  L214
+
+     I
+
+     <Ins>  E15, E48
+     i option ignored  G80
+     I/O Redirection  U3, U8, U13
+     iabs  L2
+     Iconic Tools  C21
+     IDNT  G58
+     IEEE routines  G10
+     IF  G58
+     IFC  G58
+     IFD  G58
+     IFEQ  G59
+     IFGE  G59
+     IFGT  G59
+     IFLE  G59
+     IFLT  G59
+     IFND  G59
+     IFNE  G59
+     ignore redundant #include statements  G74
+     ILLEGAL OPTION  E35
+     Improper -l specification:  ...  U16
+     Improper hex specification  U34
+     in-line floating point  G75
+     Include search path  C87
+     INCLUDE  G5, G59
+     include:  C87
+     include  D17
+     Incompatible combination of options  U34
+     Indicator, Column Display  E8, E33
+        Current Filename  E8
+        Current Line  E7
+
+     Master Index                                                       Ixv
+
+
+
+
+
+
+
+
+        Current Mode  E8
+        Keystroke Active  E8
+        Marked Block  E8
+        Window Number  E8
+     Induction variable transformations  G63
+     infinite loop  D2, D89
+     Info Files  U40
+     initialization  C27, D20
+     Initialized Data Section  G34
+     Initializer expressions  G28
+     Initializers  G27
+     Input Line  E9
+     Input Modes Option  E31, E42
+     Input Modes  E4
+     Insert a Line  E15, E48
+     Insert a string  L188
+     Insert Keys  E12, E15, E40, E48
+     Insert Mode Toggle  E15, E48
+     Insert Mode  D28, E8, E10
+     Insert Option  E23
+     Inserts lines of text into a given file  C24
+     install the Lattice C  G5
+     Installation Program  E4, E40, G4
+     Installation  G4
+     Installing LSE  E5
+     instruction bytes option  D23
+     instruction bytes  D84
+     INSUFFICIENT MEMORY FOR HELP  E37
+     INSUFFICIENT MEMORY  E37
+     int  G24, G37, G38
+     Integer absolute value  L2
+     Integer constants  G20
+     Integrated Environment  E29
+     interface  D1
+     interlace mode  C26, D19
+     Interlace Toggle  E26, E28, E50
+     Intermediate file error  G79
+     Intermediate file path  C90
+     Internal Error:  ...  U16
+     Internal Errors  G78
+     internal objects  G40
+     internal  G40
+     Intuition Library Vector  L109
+     Intuition  D3, D88
+     IntuitionBase  L109
+     Invalid -e option  G79
+     Invalid command line option  G80
+     Invalid option  U34
+     Invalid symbol definition  G80
+     Invoke Lattice C Compiler Command  E19, E29
+     invoke the C compiler  G8
+     Invoking LSE  E9
+     iomode  L110
+     isalnum  L111
+     isalpha  L111
+     isascii  L111
+
+     Master Index                                                      Ixvi
+
+
+
+
+
+
+
+
+     iscntrl  L111
+     iscsymf  L111
+     iscsym  L111
+     isdigit  L111
+     isgraph  L111
+     islower  L111
+     isprint  L111
+     ispunct  L111
+     isspace  L111
+     isupper  L111
+     isxdigit  L111
+
+     J
+
+     jrand48  L37
+     JSR  D66
+
+     K
+
+     <F1>  D8, D12, E4, E16, E49
+     <F2>  D10, E26, E50
+     <F3>  E19, E24, E50
+     <F4>  D8, E19, E49
+     <F5>  E26, E30, E50
+     <F6>  E14, E15, E48
+     <F7>  E16, E49
+     <F8>  E16, E49
+     <F9>  E14, E15, E48
+     <F10>  D28
+     Kernighan and Ritchie  G8, G19
+     keypad functions  D28
+     Keys, Action  E13, E26, E50
+        Change Color  E12, E16, E49
+        Change Window  E12, E14, E40, E48
+        Command  E12, E18, E49
+        Compiler  E40
+        Cursor Movement  E12, E13, E40, E47
+        Delete  E12, E15, E40, E48
+        Execute and Assign Macro  E40
+        Help  E12
+        Insert  E12, E15, E40, E48
+        Keysaver Macro  E12, E16, E49
+        Mark Block  E12, E18, E49
+        Special Use  E40
+     Keysaver Macro Keys  E12, E16, E49
+     Keysaver Macro  E17
+     Keystroke Active Indicator  E8
+     Keywords  G20
+
+     L
+
+     <LEFT>  E13, E47
+     label field  G53
+     labs  L2
+     Language Definition  G12
+     Lattice 68000 Macro Assembler  C3
+
+     Master Index                                                     Ixvii
+
+
+
+
+
+
+
+
+     Lattice Amiga C Compiler  G4, G8
+     Lattice Bulletin Board Service (LBBS)  D4
+     Lattice C Compiler  C40, E5, E34
+     Lattice C Installation  E5
+     Lattice C  G1
+     Lattice files  G5
+     Lattice Macro Assembler  G53
+     Lattice Screen Editor  D4, G8
+     Lattice Technical Support Group  G4
+     Lattice Technical Support  G9
+     LC  G89
+     LC Command  E29, G8
+     LC ERROR CHECKING NOT AVAILABLE IN CURRENT WINDOW  E37
+     LC ERROR CHECKING NOT AVAILABLE  E37
+     LC  G6, G44
+     lc1b  C56
+     lc1  C56
+     lc2  C58
+     lc:  C88
+     LC OPT  E29
+     lcompact  C59
+     lcong48  L37
+     lc  C40
+     ldexp  L81
+     Level 2 I/O buffer size  L222
+     LIB  G6
+     lib:  C89
+     libraries  G5, G9
+     library bases  G76
+     Library file path  C89
+     library routines  G77
+     Line control  G25
+     line mode  C26, D20, D43
+     Line Number Command  E20
+     line number tables  G77
+     Line table overflow  U16
+     Linker for the Lattice AmigaDOS compiler  C7
+     linker  C25, D8, D15, G9, G11, G12
+     linking  G8
+     list default option  D23
+     LIST  G59
+     list  D82
+     LMK Action Commands  U40
+     LMK Action Rules  U45
+     LMK Colon Placement  U43
+     LMK Default Macros  U42
+     LMK File Relationships  U37
+     LMK File Search Order  U40
+     LMK Logical Name Assignments  U49
+     LMK Macro Empty Strings  U41
+     LMK Macro Rules  U42, U43
+     LMK Stack Space  U49(?), U50(?)
+     LMK Template Matching  U50
+     LMK Transformation Rules  U45
+     LMK Usage With GREP  U54
+     LMK Using Default Rules  U45
+
+     Master Index                                                    Ixviii
+
+
+
+
+
+
+
+
+     LMK  U2
+     lmk  C61
+     Load exponent  L81
+     Loading a Macro File  E17
+     localtime  L108
+     Locate file in the current path  L57
+     log10  L48
+     logical device names  G9
+     log  L48
+     Long integer absolute value  L2
+     long  G38
+     longjmp  L113
+     Low-level float error  L29
+     lprof  G74, U2, U58
+     lprof  C67
+     lqsort  L138
+     lrand48  L37
+     lsbrk  L114
+     LSE.DAT  E10, E35, E41, E44
+     LSE.HLP  E10, E46
+     LSE.MSG  E10, E35, E45
+     LSEINST Exit Menu  E44
+     LSEINST Main Menu  E41
+     LSEINST  E31, E40
+     LSE Data File  E35, E41, E44
+     LSE Help File  E46
+     LSE Message File  E35, E45
+     LSE Overview  E1
+     LSE  G8
+     lseek  L115
+     lse  C69
+     LSTAT  G74, U2
+     lstat  C70
+
+     M
+
+     M68000 processor  D12
+     M68000  D84
+     machine addresses  D32
+     machine instructions  G34
+     MACRO directive  G60
+     macro facility  G53
+     MACRO FILE NOT FOUND  E37
+     Macro File  E17
+     Macro Keystroke Saver  E8
+     MACRO TOO BIG, - MACRO ENDED  E37
+     MACRO  G59
+     Macros  E4
+     Maintain and update records of file dependencies  C61
+     _main  L227
+     main  L117
+     Make a new directory  L127
+     Make file name from components  L192
+     Make file name from path/node  L194
+     Make file name with extension  L191
+     malloc  L14
+
+     Master Index                                                      Ixix
+
+
+
+
+
+
+
+
+     manual organization  D3
+     Map Files  C17
+     Mark Beginning of Block  E18, E49
+     Mark Block Keys  E12, E18, E49
+     Mark End of Block  E18, E49
+     Marked Block Indicator  E8
+     Marking a Block  E18
+     Match Algorithms  U79
+     Math error handler  L121
+     MathBase  L120
+     matherr  L121
+     MathTranBase  L213
+     MAX LINESIZE EXCEEDED  E38
+     max  G77
+     Maximum Line Length  E10
+     max  L123
+     Measure length of a string  L189
+     Measure span of chars in set  L163
+     Measure span of chars not in set  L163
+     memccpy  L125
+     memchr  L125
+     MemCleanup  L124
+     memcmp  L125
+     memcpy  D57
+     memcpy  L125
+     Memory Expansion  U2
+     Memory Pool Increment Size  L228
+     memory  U66
+     memset  L125
+     menu accelerators  D30
+     menu bar  D6
+     menu button  D6
+     menu selections  D22
+     Menu Toggle Key  E26, E50
+     MESSAGE FILE LSE.MSG NOT FOUND  E35
+     Message File  E45
+     message port  D2
+     messages, compiler error  G78
+          compiler warning  G78
+     min  G77
+     Minimum Dynamic Memory Needed  L226
+     min  L123
+     mixed mode  D17, D21
+     mkdir  L127
+     mmm  G81
+     _MNEED  L226
+     Mode Command  E20
+     Mode Menu Options  E31
+     Mode Menu  E19, E20, E29, E50
+     Mode Options  E40
+     Models  U4
+     modf  L58
+     module  D36
+     more error messages  G74
+     Motorola 68000 processor  G43
+     Motorola 68xxx instruction mnemonics  G53
+
+     Master Index                                                       Ixx
+
+
+
+
+
+
+
+
+     Motorola Fast Floating Point  G9
+     Mouse Controls  E12
+     Move a memory block  L125
+     Move cursor to click point  E13
+     Move to relative text position  E13
+     movmem  L125
+     mrand48  L37
+     MS-DOS File Pattern Flag  L128
+     msflag  L128
+     _MSTEP  L228
+     multi-tasking application  D2
+     multi-tasking applications  D86
+     Multiple Compilation  U36
+     Multiple File Processing  E3
+     Multiple Overlay Nodes  C15
+
+     N
+
+     Natural logarithm function  L48
+     natural size  G38
+     near  G20, G22, G36, G41, G42, G73
+     Nervous Lines  D8
+     new keywords  G73
+     Next Character  E13, E47
+     Next Option  E23
+     Next Page  E14, E47
+     Next Word  E14, E47
+     nnn  G81
+     NO ALTERNATE WINDOW AVAILABLE  E38
+     NO AVAILABLE WINDOW FOR NEW FILE  E38
+     No beginning double quote in pattern  U35
+     No file arguments provided  U35
+     NO FILE NAME SPECIFIED  E38
+     No functions or data defined  G80
+     NO MORE MATCHES FOUND  E38
+     No pattern or file arguments given  U35
+     NO PREVIOUS SEARCH  E38
+     NOLIST  G59
+     non-graphic characters  D44
+     Not enough memory for ... lines per file  U16
+     NOT ENOUGH MEMORY TO START LSE  E35
+     Not enough memory  G80
+     notational conventions  D4
+     nrand48  L37
+     Number of UNIX error codes  L44
+     number  D34
+     numeric keypads  D28
+     numeric mode  D28, D29
+
+     O
+
+     object file  G8
+     Object Module Disassembler  C74
+     Object Module Librarian  C75
+     obscure keyword orderings  G77
+     Obtain 68000-specific registers  L106
+
+     Master Index                                                      Ixxi
+
+
+
+
+
+
+
+
+     OFFSET  G59
+     omd  C74, D16
+     omissions  G3
+     oml  C75
+     on-line help  D13, E4
+     onbreak  L129
+     ONE WINDOW OPEN - DISPLAY SIZE CANNOT BE CHANGED  E38
+     onexit  L131
+     op-code  D23
+     Open a Level 1 file  L133
+     Open a Level 2 file  L62
+     Open an AmigaDOS file  L35
+     Open Command  E20
+     Open New Window  E19, E20, E50
+     Open Option  E23
+     open  L133
+     operands field  G54
+     operation field  G53
+     Operational Errors  G78
+     _OSERR  L229
+     OPSYN  G59
+     Option, Auto Indenting  E33, E42
+        Backup File Processing  E43
+        Check Compiler Output for Errors  E34, E43
+        Column Display Indicator  E33, E42
+        Continue  E22
+        Default File Extension  E42, E43
+        Display  E23
+        Expand Tabs to Spaces  E33, E42
+        Input Modes  E31, E42
+        Insert  E23
+        Next  E23
+        Open  E23
+        Prompt Before Undo  E25, E33, E42
+        Quit  E22
+        Rename  E23
+        Save  E22
+        Search Parameters  E33, E42
+        Syntax Error Handling  E43
+        Tab Stops  E32, E42
+     optional parameters  D31
+     Options, Mode Menu  E31
+     options  D21
+     Out of memory  U16
+     Out of space  U35
+     Output Formats  U14
+     Overlay Call Vectors  C16
+     overlays  G34
+     overwrite mode  D28, E8, E10
+     Overwrite Mode  E8, E10
+
+     P
+
+     <PGDN>  E14, E47
+     <PGUP>  E14, E47
+     Pack UNIX time  L220
+
+     Master Index                                                     Ixxii
+
+
+
+
+
+
+
+
+     PAG  G59
+     Page Control Keys  E47
+     Parameters beyond file name ignored  G80
+     parameters  D31
+     parentheses  D31
+     Parse file path  L206
+     pass count  D61, D69
+     PATH Directive  U8
+     Pattern ill-formed:  no terminating double quote  U35
+     PC-Relative Branches  G36
+     PC-relative program  G36
+     Perform long jump  L113
+     performance analysis  U58
+     perror  L135
+     Plant break trap  L129
+     pointer  G21, G22, G23, G27, G28, G29, G39, G40, G45, G82, G83, G84,
+          G86, G87, G88, G91
+     poserr  L136
+     pow2  L48
+     Power function  L48
+     Power-type Mode  E3, E4, E32
+     pow  L48
+     Pragma Generator  C33
+     Pre-Processor Features  G26
+     Preferences  D7
+     Previous Character  E13, E47
+     Previous Page  E14, E47
+     Previous Word  E13, E47
+     Primary expressions  G22
+     Print AmigaDOS error message  L136
+     Print UNIX error message  L135
+     Print LSE Key Selections  E44
+     PRINTER ERROR  E38
+     printf  D45, D46, L71
+     Prints the names of files in specified directory  C32
+     problems  G4
+     proceed  D21, D65, D67, D84
+     Processing Errors  E35
+     Profile reader and printer  C70
+     profile script  C26, D20
+     profile scripts  C27, D25
+     profile the execution  U58
+     profiler  U58
+     Program Sections  G34
+     Programming Environment  G30
+     programming tools  G5
+     Project Command  E21
+     Project Management  U37
+     Project Menu  E19, E21, E50
+     Prompt Before Undo Option  E25, E33, E42
+     Prompt Line  E9
+     prototype files  G75
+     pruning  U60
+     pull-down menus  D27
+     Push input character back  L218
+     Put a character to a level 2 file  L77
+
+     Master Index                                                    Ixxiii
+
+
+
+
+
+
+
+
+     Put a character to stdout  L77
+     Put string into environment  L137
+     Put string to Level 2 file  L78
+     Put string to stdout  L78
+     putchar  L77
+     putc  L77
+     putenv  L137
+     putreg  G77
+     putreg  L106
+     puts  L78
+
+     Q
+
+     qsort  L138
+     QUAD  G6
+     quad:  C90
+     Quit Command  E24
+     Quit Option  E22
+     Quit  E19, E50
+     quit  C25, D20
+
+     R
+
+     <RIGHT>  E13, E47
+     RAM disk  G6
+     Random double (external seed)  L37
+     Random double (internal seed)  L37
+     Random long (external seed)  L37
+     Random long (internal seed)  L37
+     Random positive long (external seed)  L37
+     Random positive long (internal seed)  L37
+     rand  L140
+     range  D34
+     rbrk  L114
+     re_gen  U74
+     re_match  U75
+     re_smatch  U77
+     Re-allocate Level 3 memory  L14
+     Re-Define Keystrokes  E40
+     re-design steps  U58
+     Re-framing a Window  E10
+     Re-position an AmigaDOS file  L40
+     Read blocks from a Level 2 file  L79
+     Read from an AmigaDOS file  L39
+     Read from Level 1 file  L142
+     READ.ME  D4
+     read  L142
+     real  G2, G11
+     realloc  L14
+     Recursive Search  U19
+     Register Arguments  G46
+     register name  D33
+     register parameters  G76
+     register the product  G4
+     Register variables  G76
+     Register Window  D2, D7
+
+     Master Index                                                     Ixxiv
+
+
+
+
+
+
+
+
+     register  G4, G40, G41
+     register  D18, D47
+     register  D35
+     registration procedure  G4
+     Regular expression match of strings  U77
+     Regular expression match  U75
+     Regular Expressions  U24
+     Release a Level 2 memory block  L147
+     Release Level 1 memory  L114
+     relocatable  G59
+     Remove a directory  L149
+     Remove a file  L143
+     remove  L143
+     Rename a file  L145
+     Rename Option  E23
+     rename  L145
+     Reopen a Level 2 file  L80
+     Reordering of operations to reduce value lifetimes  G64
+     Replace Command  E23
+     Replace  E19, E50
+     Replay a Macro  E17, E49
+     Replicate values through a block  L125
+     repmem  L125
+     report generator  U58
+     Reset memory pool  L150
+     restart  C25, C27, D15, D20, D63
+     Restore Deleted Line  E15, E48
+     Return a substring from a string  L195
+     return  D75
+     Reverse a character string  L197
+     Reviewing Errors  E30
+     rewind  L86
+     rf  D48
+     rlsmem  L147
+     rlsml  L147
+     rmdir  L149
+     RORG  G59
+     rstmem  L150
+     rules  G11
+     run-time stack  U66
+     runtime support  G12
+
+     S
+
+     sample debugging session  D8
+     Save Option  E22
+     Save LSEINST Changes  E45
+     Saving Macros  E17
+     sbrk  L114
+     scalar variable  D52
+     scanf  L82
+     Scope of Identifiers  G27
+     scripts  D84
+     scroll bar  D7
+     Scroll Down  E14, E48
+     Scroll Up  E14, E48
+
+     Master Index                                                      Ixxv
+
+
+
+
+
+
+
+
+     Search Command  E24
+     Search Parameters Option  E33, E42
+     search path  D24
+     search rules  G74
+     Search, copy, or erase files of directories  C34
+     Search  E4, E19, E50
+     Section Addressing  G35
+     SECTION  G59
+     seed48  L37
+     Seek error on object file  G80
+     Seek to beginning of Level 2 file  L86
+     Set a memory block to a value  L125
+     Set all 48 bits of internal seed  L37
+     Set an exit trap  L10, L131
+     Set buffer mode for a Level 2 file  L151
+     Set Compiler Options  E26, E28, E50
+     set env  D89
+     Set high 32 bits of internal seed  L37
+     Set Level 1 file position  L115
+     Set Level 2 file position  L86
+     Set linear congruence parameters  L37
+     Set long jump parameters  L113
+     Set non-buffer mode for L2 file  L151
+     set search  D18, D24
+     Set seed for rand function  L140
+     set source  D21, D22
+     Set string to value, max length  L196
+     Set string to value  L196
+     set task  D87, D88
+     Set time zone variable  L216
+     Set up 68000-specific registers  L106
+     Set variable buffer for L2 file  L151
+     SET  G59
+     setbuf  L151
+     SetFunction  D91
+     setjmp  L113
+     setmem  L125
+     setnbf  L151
+     setup file  G6
+     setvbuf  L151
+     set  D21
+     several library routines  G5
+     show  D21
+     signal  L153
+     signed  G73
+     signing rule  G37
+     SigWait  D87
+     Simple Data Types  G37
+     Simulated Compilation  U6
+     Sine function  L214
+     single-step  D65
+     sinh  L214
+     sin  L214
+     sizmem  L155
+     Skip blanks (white space)  L169
+     _SLASH  L231
+
+     Master Index                                                     Ixxvi
+
+
+
+
+
+
+
+
+     Sort a data array  L138
+     Sort an array of doubles  L138
+     Sort an array of floats  L138
+     Sort an array of long integers  L138
+     Sort an array of short integers  L138
+     Sort an array of text pointers  L138
+     Sort string pointer list  L201
+     source file directory  G5
+     source file  G8
+     source files  G5, G8
+     source line  D21, D23
+     source mode  D21
+     source module  D18
+     source modules  D17, D51
+     Source Window  D7
+     SPC  G59
+     special function keys  D29
+     Special Graphics Characters  E4
+     Special Hunks  C13
+     Special Key Functions  E10
+     Special Keys  E12
+     Special Math Libraries  G10
+     special purpose keywords  G43
+     Special Use Keys  E40
+     Special version of _main  L227
+     specific advice  G5
+     specific constants  G77
+     specification  G19
+     spill file  C27, D20
+     SPLAT Append Facility  U64
+     SPLAT Directory Creation  U64
+     SPLAT Insert Facility  U65
+     SPLAT Memory Operation  U63
+     SPLAT Special Characters  U64
+     SPLAT  U2
+     splat  C80
+     Split floating point value  L58
+     Split fraction and exponent  L81
+     Split the file name  L198
+     sprintf  L71
+     sqrt  L48
+     sqsort  L138
+     square brackets  D31
+     Square root function  L48
+     srand48  L37
+     srand  L140
+     sscanf  L82
+     Stack Area  G35
+     stack backtrace  D76
+     Stack cleanup  G76
+     stack pointer  D87
+     standard diskette development system  G5
+     Standard Math Library  G9
+     Standard preprocessing for the main module  L227
+     Standard time name  L232
+     Start Keysaver Macro  E17, E49
+
+     Master Index                                                    Ixxvii
+
+
+
+
+
+
+
+
+     Start Up Errors  E35
+     start-up routine  G5
+     start  C26, D20
+     static objects  G40
+     static symbols  D17
+     static variable  D79
+     static  G40
+     statistical report  U58
+     statistics  U59
+     Status Line  E7
+     stcarg  L156
+     stccpy  L157
+     stcd_i  L159
+     stcd_l  L159
+     stcgfe  L161
+     stcgfn  L161
+     stcgfp  L161
+     stch_i  L159
+     stch_l  L159
+     stcisn  L163
+     stcis  L163
+     stci_d  L165
+     stci_h  L165
+     stci_o  L165
+     stclen  L189
+     stcl_d  L165
+     stcl_h  L165
+     stcl_o  L165
+     stco_i  L159
+     stco_l  L159
+     stcpma  L167
+     stcpm  L167
+     stcsma  L9
+     stcul_d  L165
+     stcu_d  L165
+     Stop Keysaver Macro  E17, E49
+     Storage class specifiers  G23
+     storage class  G40
+     storage classes  D2
+     stpblk  L169
+     stpbrk  L170
+     stpchrn  L171
+     stpchr  L171
+     stpcpy  L157
+     stpdate  L173
+     stpsym  L175
+     stptime  L177
+     stptok  L179
+     strbpl  L181
+     strcat  L183
+     strchr  L171
+     strcmpi  L185
+     strcmp  L185
+     strcpy  D58
+     strcpy  L157
+     strcspn  L163
+
+     Master Index                                                   Ixxviii
+
+
+
+
+
+
+
+
+     strdup  L187
+     Stream editor for performing character substitution  C80
+     stricmp  L185
+     String literals  G73
+     Strings  G20
+     strins  L188
+     strlen  L189
+     strlwr  L190
+     strmfe  L191
+     strmfn  L192
+     strmfp  L194
+     strmid  L195
+     strncat  L183
+     strncmp  L185
+     strncpy  L157
+     strnicmp  L185
+     strnset  L196
+     strpbrk  L170
+     strrchr  L171
+     strrev  L197
+     strset  L196
+     strsfn  L198
+     strspn  L163
+     strsrt  L201
+     strtok  L202
+     strtol  L204
+     Structure and union declarations  G24
+     structure comparison  G75
+     structure  D17, D52, G22, G24, G25, G27, G28, G39, G40, G43, G44, G45,
+          G82, G83, G84, G86, G87, G90
+     Structure and unions  G25
+     strupr  L190
+     stspfp  L206
+     stub  L207
+     stylistic conventions  G2
+     subdirectories  G5
+     Swap two memory blocks  L125
+     Switch statements  G77
+     swmem  L125
+     Symbol file corrupted  G80
+     symbol information  U59
+     symbols  D16, D17, U66
+     symload  D90
+     synonym  G59
+     Syntax Error Handling Option  E43
+     Syntax Errors and Warnings  G78, G81
+     Syntax Errors  E29, E30, G8
+     System Requirements  E5
+     system  L208
+     sys_errlist  L44
+     sys_nerr  L44
+
+
+
+
+
+
+     Master Index                                                     Ixxix
+
+
+
+
+
+
+
+
+     T
+
+     Tab Stops Option  E32, E42
+     Tabs to Spaces  E33
+     Tabs  E4
+     Tabulate the number of characters, words, lines within file  C85
+     Tangent function  L214
+     tanh  L214
+     tan  L214
+     target program  D15
+     Task Control Block  D86
+     task-ID  D88, D89
+     tasks all  D89
+     tasks  D86
+     TB  U2, U66
+     tb  C81
+     Technical Support Group  G1
+     tell  L115
+     Terminate with clean-up  L46
+     Terminate with closing files  L46
+     Terminate with no clean-up  L46
+     Terminating Input  U7
+     Test if alphabetic character  L111
+     Test if alphanumeric character  L111
+     Test if ASCII character  L111
+     Test if C symbol character  L111
+     Test if C symbol lead character  L111
+     Test if control character  L111
+     Test if decimal digit character  L111
+     Test if graphic character  L111
+     Test if hex digit character  L111
+     Test if lower case character  L111
+     Test if printable character  L111
+     Test if punctuation character  L111
+     Test if space character  L111
+     Test if upper case character  L111
+     TEXT IS NOT .C FILE  E38
+     Time Stamp Format  U36
+     timer  L210
+     Timezone bias from GMT  L232
+     Timezone names  L232
+     timezone  L232
+     time  L209
+     _tinymain  L227
+     title bar  D6, D28
+     toascii  L211
+     tolower  L211
+     Too few arguments to GREP  U35
+     Too many file names:  ...  U16
+     TOUCH  U2
+     touch  C84
+     toupper  L211
+     tqsort  L138
+     traceback utility  C81, U66
+     trace  D21, D65, D66, D84
+     trap handler  D88, D90
+
+     Master Index                                                      Ixxx
+
+
+
+
+
+
+
+
+     tri-graph sequences  G77
+     ts  D66
+     TTL  G59
+     Type names  G24
+     Type specifiers  G24
+     typedefs  D50
+     typename  D35
+     tzdtn  L232
+     tzname  L232
+     tzset  L216
+     tzstn  L232
+     t  D66
+
+     U
+
+     <UP>  E13, E47
+     Un-anchored pattern match  L167
+     UNABLE TO LOAD COMPILER  E38
+     Unary operators  G23
+     unassemble default  D24
+     unassemble  D23, D24, D84
+     unconditional breakpoint  D70
+     Undo Buffer  E26
+     Undo Command  E25, E33
+     Undo  E19, E50
+     ungetc  L218
+     Uninitialized Data Section  G34
+     union  D17, D52, G39
+     UNIX cpio Command  U20
+     UNIX error messages  L44
+     UNIX error number  L44
+     UNIX rm Command  U22
+     UNIX string pattern match (anchored)  L9
+     UNIX tar Command  U20
+     unlink  L143
+     Unnamed Files  E22
+     Unpack Greenwich Mean Time (GMT)  L108
+     Unpack local time  L108
+     Unpack UNIX time  L220
+     Unrecognized -c option  G80
+     Unrecognized option  U17
+     unsigned  G37
+     Up One Line  E13, E47
+     upward compatible  G73
+     USER ABORTED SEARCH  E39
+     user's guide  G1
+     Using Other Libraries  G11
+     Using the Assembler  G55
+     utpack  L220
+     utunpk  L220
+
+     V
+
+     variable  D36
+     Various control flow transformations  G64
+     Various reductions in strength  G64
+
+     Master Index                                                     Ixxxi
+
+
+
+
+
+
+
+
+     Version 4 Upgrade  G73
+     Version 4.0  G73
+     Version 5.0  G73
+     vertical bar  D31
+     Very busy expression hoisting  G64
+     View Mode  E20
+     void  G20, G22, G24
+     volatile  G20, G22, G41, G42, G73
+
+     W
+
+     Wait for child process to complete  L65
+     Wait for multiple child processes  L65
+     waitm  L65
+     wait  L65
+     Warnings  E29, E30, E34
+     watch break  D12
+     watch breaks  D77, D79
+     Watch Window  D8, D12
+     watches  D77
+     WC  U2
+     wc  C85
+     whatis  D11, D49
+     where  D76, D88
+     Wildcards  U3, U9
+     window coordinates  C26, D19
+     window mode  D43
+     Window Number Indicator  E8
+     Window Size  E7
+     Window  E7
+     Workbench routines  G11
+     Workbench  C26, D3, D6, D19, G4, G5
+     working copies  G4
+     Write blocks to a Level 2 file  L79
+     Write to an AmigaDOS file  L39
+     Write to Level 1 file  L142
+     write  L142
+
+     X
+
+     xcexit  L46
+     XDEF  G59
+     XREF  G59
+
+     Y
+
+     Your main or principal function  L117
+
+
+
+
+
+
+
+
+
+
+     Master Index                                                    Ixxxii
+
+
+

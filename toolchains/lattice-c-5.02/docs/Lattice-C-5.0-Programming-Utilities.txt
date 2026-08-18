@@ -1,0 +1,5874 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                               Lattice Programmer Utilities
+     ----------------------------------------------------------------------
+
+
+                                                               Version 1.00
+
+
+
+                                  Utilities for Efficient Amiga Programming
+
+
+
+
+
+
+
+
+
+
+                                                              Lattice, Inc.
+                                                    2500 S. Highland Avenue
+                                                          Lombard, IL 60148
+                                                                        USA
+
+
+                                         A Subsidiary of SAS Institute Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programmer Utilities Manual
+
+     Copyright (C) 1988 by Lattice, Inc., Lombard, IL, USA.
+
+     All rights reserved.  Printed in the United States of America.  No
+     part of this publication may be reproduced, stored in a retrieval
+     system, or transmitted, in any form or by any means, electronic or
+     mechanical, photocopying, or otherwise, without the prior written
+     permission of the publisher, Lattice, Inc.
+
+
+
+     Amiga is a registered trademark of Commodore-Amiga, Inc.
+     AmigaDOS is a trademark of Commodore-Amiga, Inc.
+     Commodore is a registered trademark of Commodore Electronics Limited.
+     Kickstart is a trademark of Commodore-Amiga, Inc.
+     IBM is a registered trademark of International Business Machines
+          Corporation.
+     Intuition is a trademark of Commodore-Amiga, Inc.
+     Lattice is a registered trademark of Lattice, Inc.
+     LMK is a trademark of Lattice, Inc.
+     MS-DOS is a registered trademark of Microsoft Corporation.
+     UNIX is a registered trademark of AT&T.
+     Workbench is a trademark of Commodore-Amiga, Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                               Table of Contents
+
+     1. Overview                                                         U1
+
+          1.1 Description of Tools                                       U1
+          1.2 Hardware Requirements                                      U2
+          1.3 On-Line Assistance                                         U2
+
+
+     2. BUILD and EXTRACT                                                U3
+
+          2.1 Using EXTRACT                                              U3
+          2.2 Using BUILD                                                U4
+          2.3 Examples                                                   U4
+               2.3.1 Example 1                                           U4
+               2.3.2 Example 2                                           U6
+
+
+
+     3. CXREF                                                            U8
+
+          3.1 Using CXREF                                                U8
+          3.2 Examples                                                  U10
+
+
+
+     4. DIFF                                                            U13
+
+          4.1 Using DIFF                                                U13
+          4.2 Options                                                   U13
+          4.3 Output Format                                             U14
+          4.4 Error Messages                                            U15
+
+
+
+     5. FILES                                                           U18
+
+          5.1 Using the Files Command                                   U18
+          5.2 Options                                                   U19
+
+
+     6. GREP                                                            U24
+
+          6.1 Using GREP                                                U24
+          6.2 A Simple Example                                          U24
+          6.3 Example Characters                                        U25
+          6.4 Escape Sequences                                          U26
+          6.5 Simple Patterns                                           U26
+          6.6 The Wildcard Character                                    U27
+          6.7 Character Classes                                         U27
+          6.8 Closure Characters                                        U29
+          6.9 Anchored Searches                                         U30
+          6.10 Advanced Examples                                        U30
+               6.10.1 Example 1                                         U31
+               6.10.2 Example 2                                         U31
+               6.10.3 Example 3                                         U31
+
+     Lattice Programming Utilities                                        i
+
+
+
+
+
+
+
+
+               6.10.4 Example 4                                         U31
+          6.11 Using the GREP Functions in a Program                    U32
+          6.12 Error Messages                                           U33
+
+
+     7. LMK                                                             U36
+
+          7.1 What is LMK?                                              U36
+          7.2 Time Stamps                                               U36
+          7.3 Targets and Dependents                                    U37
+          7.4 Actions                                                   U38
+               7.4.1 A Simple Example                                   U38
+          7.5 Invoking LMK                                              U39
+               7.5.1 File Naming Options                                U39
+               7.5.2 Command Syntax                                     U40
+          7.6 Macros                                                    U41
+               7.6.1 Macro Rules and Defaults                           U42
+          7.7 Summary                                                   U43
+
+
+     8. Advanced LMK                                                    U44
+
+          8.1 Multiple Targets                                          U44
+          8.2 Alternate Targets                                         U44
+          8.3 Default Rules                                             U45
+          8.4 Transformation Rules                                      U45
+          8.5 LMK Internal Rules                                        U47
+               8.5.1 Special Symbols                                    U47
+               8.5.2 Example 1                                          U48
+          8.6 Discussion                                                U48
+          8.7 LMK Options from the Command Line                         U51
+               8.7.1 Macro Command Line Override                        U52
+               8.7.2 Alternative Definition Files                       U53
+          8.8 Local Input Files                                         U53
+               8.8.1 Example 2                                          U54
+          8.9 Discussion                                                U54
+          8.10 Fake Targets                                             U55
+
+
+     9. Lattice Profiler                                                U58
+
+          9.1 Profile and Report Generator                              U58
+          9.2 LPROF Command                                             U58
+          9.3 LSTAT Command                                             U59
+               9.3.1 Examples                                           U60
+
+
+     10. SPLAT                                                          U63
+
+          10.1 SPLAT Command                                            U63
+          10.2 Using SPLAT                                              U63
+          10.3 Examples                                                 U64
+
+
+     11. Traceback Utility                                              U66
+
+
+     Lattice Programming Utilities                                       ii
+
+
+
+
+
+
+
+
+               11.0.1 Command Details                                   U66
+               11.0.2 Examples                                          U67
+
+
+     12. TOUCH                                                          U69
+
+          12.1 Using TOUCH                                              U69
+
+
+     13. WC                                                             U71
+
+          13.1 Using WC                                                 U71
+          13.2 Options                                                  U71
+          13.3 Checksum Details                                         U71
+
+
+                                  APPENDICES
+
+
+     A. GREP Libraries                                                  U73
+
+
+     B. File Matching                                                   U79
+
+          B.1 Theory of File Matching                                   U79
+          B.2 DIFF Memory Size Considerations                           U80
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      iii
+
+
+
+
+
+
+
+
+                                   Section 1
+
+                                   Overview
+
+     The Lattice Programmer Utilities offers professional programmers a
+     collection of utilities that provide greater control and functionality
+     over the programming environment.  Each utility operates as an
+     independent task within the multi-tasking operating system of the
+     Commodore Amiga.  This means that editing or compilation cycles can
+     continue uninterrupted while the programmer initiates further
+     operations using one of the utilities.  The ability to take advantage
+     of multi-tasking in this way as well as the range of facilities
+     provided by this package compliments and enhances the Lattice Amiga C
+     Compiler.
+
+     The Utilities will operate on PAL or NTSC versions of the Commodore
+     Amiga 500 and 1000, as well as both variants of the 2000 model.
+
+     1.1 Description of Tools
+
+     The Lattice Utilities contains a total of thirteen utilities for use
+     by programmers.  The purpose of this part of the Lattice Amiga C
+     Manual is to serve as a reference source for each of the utilities
+     within the package.  The utilities can be divided into two groups -
+     those which perform external operations on files, and those which
+     perform internal operations.  In this context the word external
+     signifies that the operation is performed on the file as a whole - in
+     other words, the file contents are irrelevant.  The word internal
+     means that the result of the operation depends upon the contents of
+     the file.
+
+     The utilities which operate on the internal contents of files are:
+
+          * BUILD
+          * CXREF
+          * DIFF
+          * GREP
+          * SPLAT
+          * WC
+
+     The utilities which operate externally on files are:
+
+          * EXTRACT
+          * FILES
+          * LMK
+          * LPROF
+          * LSTAT
+          * TB
+          * TOUCH
+
+     A brief description of each utility is shown below:
+
+          BUILD            Builds a command file from a list of filenames.
+          CXREF            Generates a cross-reference listing of a set of
+                           C language source files.
+          DIFF             Compares files and reports differences.
+
+     Lattice Programming Utilities                                       U1
+
+
+
+
+
+
+
+
+          EXTRACT          Extracts filenames from a directory.
+          FILES            Locates files by specified attributes.
+          GREP             Matches character patterns within a file.
+          LMK              Automates the management of files based upon
+                           dependencies and rules.
+          LPROF and LSTAT  Provides profiler and reporting capabilities for
+                           performance tuning.
+          SPLAT            Searches and replaces within one or more files.
+          TB               Provides a trace-back capability for complex
+                           problem debugging.
+          TOUCH            Updates the date and time stamps of individual
+                           files.
+          WC               Counts the number of words within a file.
+
+     1.2 Hardware Requirements
+
+     The Lattice Programmer Utilities require the following minimum
+     hardware configuration for operation:
+
+          * 512K of main system memory
+          * AmigaDOS Version 1.2 or later
+          * 880K 3.5-inch disk drive
+          * An RGB(A) color display monitor
+
+     Note that a memory expansion and a hard disk will significantly
+     improve the overall performance of your system and simplify operations
+     using any of these utilities.
+
+     1.3 On-Line Assistance
+
+     Note that many of the utilities feature some form of built-in help.
+     Entering the name of the utility will provide a screen listing of the
+     various options available with the utility.
+
+     For example, the GREP utility will give this screen:
+
+          Too few arguments to grep
+
+          grep [>outfile] [flags] pattern files ...
+
+          Flags:
+              -$    make case insignificant
+              -c    print only a count of the match lines
+              -f    print only names of files in which a match was found
+              -n    shut off line numbering
+              -p    filter input for printable characters
+              -q    don't display file names or line numbers
+              -s    show name of each file as it is being searched
+              -v    print only lines in which a match is not found
+              -V    print version of grep
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                       U2
+
+
+
+
+
+
+
+
+                                   Section 2
+
+                               BUILD and EXTRACT
+
+     BUILD and EXTRACT are two utilities which are used for quickly
+     constructing batch command files.  EXTRACT, as the name suggests,
+     extracts filenames from a specified directory.  BUILD causes the
+     insertion or interleaving of lines of text in a given file.  When used
+     in conjunction with each other they comprise a powerful tool for the
+     automating of complex tasks.  The resultant batch command file can
+     then be executed from the AmigaDOS CLI prompt.
+
+     2.1 Using EXTRACT
+
+     The command line syntax for EXTRACT is:
+
+          extract [-b | -r] [-n] file1 file2 ...
+
+     where:
+
+     -b     Refers to the basename and means only the root portion of the
+            filename is output.  Any filename extension (suffix) is
+            ignored.
+
+     -n     Refers to the no sort flag and prevents the list of filenames
+            from being sorted.  By default, the filenames are sorted in an
+            alphabetical order.
+
+     -r     Refers to the root flag and indicates that only the root
+            portion of the filename is to be output.  In other words, any
+            prefix or suffix is removed from the filename before being
+            output.
+
+     Note that all of these flags are optional and wildcard characters is
+     permitted for the filenames.  For example, the command:
+
+          extract #?.info
+
+     results in each filename with an .info extension being printed on your
+     screen (one name per line) from the current directory.  Specifying a
+     device and directory is also supported.  Thus, to redirect the output
+     to a file named beta located in a directory named omega on dh0:, use:
+
+          extract >dh0:omega/beta #?.info
+
+     The file beta would then contain the names of each .info file within
+     the current directory.  Using the same example, redirection to the
+     printer, parallel, or the serial ports takes the following form:
+
+          extract >prt: #?.info
+          extract >par: #?.info
+          extract >ser: #?.info
+
+     Note that the command line redirection of output is handled by
+     AmigaDOS and not by EXTRACT.  This is why the redirection character
+     must appear as the second parameter on the command line.
+
+     Lattice Programming Utilities                                       U3
+
+
+
+
+
+
+
+
+     2.2 Using BUILD
+
+     The command line syntax for BUILD is:
+
+          build >alpha beta
+
+     where beta is assumed to be a file consisting of a number of lines of
+     text and alpha is the generated output file.  Typically, each line
+     will be the name of a file if you are using EXTRACT and BUILD to
+     construct batch command files.  For the sake of simplicity, we call
+     each individual line of text within the file beta a name.
+
+     BUILD reads from the standard input device (usually the keyboard) and
+     will wait (without displaying a prompt) for input from the keyboard.
+     Each line of input from the keyboard is considered as a model from
+     which to construct lines which are then printed to the output file
+     named alpha.
+
+     The completion of your input is indicated by pressing the <CTRL-\>
+     keys and the RETURN key on the last line.
+
+     A model is a sequence of text lines where the exclamation point ! and
+     forward slash / have special interpretations.  Each line within a
+     model in which an exclamation point ! appears is repeated for every
+     name in the name list, and the corresponding name replaces the !
+     character.
+
+     Within any model line, the forward slash indicates that a newline
+     character is to be generated at this point.  This feature allows
+     multiple output lines to be generated for each name.  To use a literal
+     forward slash, you must escape it with a second one, hence //.
+
+     Model lines are read one at a time from standard input, and the name
+     list file is rewound to the beginning of the file.  In other words,
+     you restart at the top of the file after each sequence of output lines
+     is generated from a given model line.
+
+     2.3 Examples
+
+     The following examples are specially designed to teach you the
+     concepts of using EXTRACT and BUILD.  Please read through these
+     examples; they are meant to be both demonstrative and interactive.
+     Create some dummy files using the names given and then execute the
+     source code material.  This is the best way of learning about these
+     tools.
+
+     2.3.1 Example 1
+
+     This example using BUILD, EXTRACT and DIFF will take files with like
+     names from two directories.  Note that DIFF is discussed later in this
+     manual - refer to the section dealing with DIFF for further details.
+
+     Consider where we have two directories named version1 and version2
+     containing the following lines:
+
+          version1            version2
+
+     Lattice Programming Utilities                                       U4
+
+
+
+
+
+
+
+
+          main.c              main.c
+          file1.c             file1.c
+          file2.c             file2.c
+                              file3.c
+
+     You want to verify that each file in the directory version1 matches
+     its corresponding file in directory version2.
+
+     The command line syntax would look like this:
+
+          extract >files.txt -b version1/#?.c
+          build >compare files.txt
+          diff version1//! version2//!
+          <CTRL-\>
+          execute compare
+
+     The first line shown below:
+
+          extract >files.txt -b version1/#?.c
+
+     extracts and filename from the directory version1 with a .c extension
+     and places the filename into the file named files.txt.  The -b option
+     signals that the file extension is to be included and that the
+     directory is ignored.  The contents of the file files.txt would look
+     like this:
+
+          main.c
+          file1.c
+          file2.c
+
+     In the second line shown below:
+
+          build >compare files.txt
+
+     the file files.txt is to be operated on by BUILD together with any
+     keyboard input, and the result is to be placed in a file named
+     compare.  Executing this line will result in no prompt being displayed
+     and you should type in the third line:
+
+          diff version1//! version2//!
+
+     The third line shown above, introduces the DIFF utility as well as the
+     forward slash and exclamation mark.
+
+     When you have entered this line, you would press the RETURN key.  Note
+     that the screen remains without a prompt and to complete the task, you
+     must press the key sequence shown on the fourth line of <CTRL-\>.  You
+     must then press the RETURN key after this line and since the system
+     prompt is now visible, this indicates that the end-of-file condition
+     was reached on line 4.
+
+     The basic command line syntax for DIFF is:
+
+          diff new-file old-file
+
+     In explanation of line 3, you will recall that the forward slash
+
+     Lattice Programming Utilities                                       U5
+
+
+
+
+
+
+
+
+     indicates that a newline character is to be generated.  However, in
+     this example we do not want a newline character since the forward
+     slash serves as an AmigaDOS directory separator.  Therefore, the
+     forward slash needs to be a literal character and we have escaped this
+     by adding another forward slash.  The exclamation mark means repeat
+     the name of the file.
+
+     The contents of the file named compare would look like this:
+
+          diff version/main.c version2/main.c
+          diff version/file1.c version2/file1.c
+          diff version/file2.c version2/file2.c
+
+     Our final line is a standard execution instruction of the file named
+     compare and the results are displayed to the screen.
+
+          execute compare
+
+     You should be able to try this example by creating the directories
+     named version1 and version2 and placing the appropriately named files
+     in them.
+
+     2.3.2 Example 2
+
+     In this example we are going to construct a batch command file for
+     manipulating some files for a simulated compilation using the Lattice
+     AmigaDOS C Compiler.  The first step is to ensure that you are at the
+     CLI prompt and your current directory is the root of the RAM disk.  We
+     will assume that the following files are in your current directory:
+
+          main.c
+          graphics.c
+
+     Our plan is for the files listed above to be compiled, the object
+     files to be copied to drive df0: and then deleted from the current
+     directory.
+
+     Enter the following from the keyboard:
+
+          extract >alpha -r main.c graphics.c
+
+     This creates the file named alpha.  Note the use of the -r option to
+     strip off the file suffix.  The file alpha contains:
+
+          main
+          graphics
+
+     We now need to invoke BUILD.  Enter this line from the keyboard:
+
+          build >beta alpha
+
+     Finally, the following would be entered from the keyboard:
+
+          lc1  -i//lc// ! /lc2 !
+          copy !.o df0:!.o
+          delete !.o
+
+     Lattice Programming Utilities                                       U6
+
+
+
+
+
+
+
+
+          <CTRL-\>
+
+     Note how input is terminated with the <CTRL-\> sequence.  If you
+     examine the file beta, you will find it contains the following
+     commands:
+
+          lc1 -i/lc/ graphics
+          lc2 graphics
+          lc1 -i/lc/ main
+          lc2 main
+          copy graphics.o df0:graphics.o
+          copy main.o df0:main.o
+          delete graphics.o
+          delete main.o
+
+     Our current directory now contains the following files:
+
+          alpha
+          beta
+          main.c
+          graphics.c
+
+     Although the examples above are relatively simple, they serve to
+     illustrate the basic features of EXTRACT and BUILD.  Do not be afraid
+     to experiment with more complex applications.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                       U7
+
+
+
+
+
+
+
+
+                                   Section 3
+
+                                     CXREF
+
+     CXREF will generate a cross-reference listing from a set of C language
+     source files.  Note that CXREF is distinct from the -gx option in the
+     compiler in that -gx creates a cross-reference on only one file, where
+     CXREF will create a cross-reference on many files.  The contents of
+     the listing for CXREF are:
+
+          * Tabular Information about:
+
+               o Symbols
+               o Identifiers
+
+          * Line Numbers
+
+     3.1 Using CXREF
+
+     Output from this utility is sent to the standard output device which
+     means that you can redirect the output to other devices, rather than
+     the screen.  The basic command line syntax for CXREF is:
+
+          cxref >destination source
+
+     The following command line provides an example of this:
+
+          cxref >beta alpha
+
+     This will operate on the file alpha to produce a file named beta
+     within the current directory.
+
+          cxref >prt: alpha
+
+     In the above example, output from CXREF is sent directly to the
+     printer port.
+
+     CXREF also supports the path directive for INCLUDE files.  The command
+     line syntax used for this is similar to that used for the Lattice
+     AmigaDOS C Compiler.  A major difference is that in the CXREF command,
+     the options come after the file name.
+
+     For example:
+
+          cxref alpha.c -i/path/path
+
+     Note that more than one -i is permitted in a command line.  Thus, the
+     following is permissible:
+
+          cxref alpha.c -idf0: -idir1 -idir2 -i...
+
+     AmigaDOS wildcard nomenclature can be used with CXREF with a maximum
+     of five filenames on each command line.  Due to the range of wildcard
+     options offered, it is possible to use this feature to cross-reference
+     an entire project involving many files.
+
+
+     Lattice Programming Utilities                                       U8
+
+
+
+
+
+
+
+
+     An example of a command line using AmigaDOS wildcards is:
+
+          CXREF #?.c #?.h a#?.#? [option flags]
+
+     The source listing prefixes each line with a line number and
+     recognizes three special comment constructions.  Each construction
+     line has the following effects within the output listing:
+
+     /**      This will provide a forward slash followed by a row of
+              asterisks extending the full width of the page.
+
+     **/      This is the reverse of the above and provides a line of
+              asterisks extending the full width of the page.  The final
+              character is a forward slash.
+
+     /**/     This will result in a form feed character to be sent to the
+              output file.  In effect, a new page is started.
+
+     The cross-reference section of the output produces individual tables
+     for the following categories of symbols:
+
+          * Pre-processor Defined Identifiers.
+          * Functions.
+          * Labels.
+          * Structure Identifiers.
+          * Identifiers.
+
+     A typical table takes the form:
+
+          ==>> Functions:
+          main
+              cat.c   :     17
+              ftoc.c  :     8
+          printf
+              ftoc.c  :     18
+
+     The first line gives the table type, in this case it is the functions
+     table.  The following line names the function, in this case the
+     function is main.  Lines 3 and 4 provide the name of the file where
+     this function occurs and the line number on which the function
+     appears.  The same sequence is followed for the next function which is
+     printf.
+
+     CXREF also provides a large selection of options to control various
+     aspects of the utility.
+
+     These options are:
+
+     -ipath     This option causes #include files to be processed for both
+                listings and cross-reference information.  When this option
+                is selected, filenames will appear in both parts of the
+                output.  This takes the form:
+
+                     aaa.rrr
+
+                where aaa represents the absolute line number and rrr
+
+     Lattice Programming Utilities                                       U9
+
+
+
+
+
+
+
+
+                refers to the relative line number within the file.  In the
+                case of the former, the absolute line number means the
+                total number of lines preceding this line, including those
+                in the #include files.  Both path and INCLUDE: are searched
+                when path is unspecified with this option.
+
+     -lnn       This option defines the page length, which has a minimum
+                value of 10 lines per page.  The default value is 66 lines
+                per page using standard sized printer characters.  The nn
+                represents the lines per page value.
+
+     -n         This option removes page headings from the listing.  By
+                default, CXREF will generate a form feed and place a
+                heading on each page.
+
+     -o         This option omits identifiers.  This can be a useful memory
+                conservation device, particularly with large programming
+                projects.
+
+     -p         This option generates a program listing with no
+                cross-reference report.
+
+     -r         This option causes and C language reserved words, such as
+                if or for, to be included in the cross-reference.  When
+                this option is selected two additional categories of
+                symbols are listed:
+
+                     * Pre-processor Commands.
+                     * Reserved Keywords.
+
+     -wnn       This option controls the page width.  The default value is
+                80 characters per line.  The minimum page width value is 60
+                characters per line; the maximum value is 132 characters.
+                The "nn" represents the number of characters on a line.
+
+     -x         This option will generate a cross-reference report.  No
+                program listing will be produced.
+
+     3.2 Examples
+
+     This command line shown below will generate a listing and
+     cross-reference report for the file alpha.  No form feeds or page
+     heading will be output.  Any #include files will be processed and C
+     language reserved words will be listed in the cross reference report.
+
+          cxref alpha -i -r -n
+          cxref beta -l 60 -x
+
+     The above command line generates a cross-reference report for the file
+     beta without a program listing.  Form feeds and page headings will be
+     output, with a page length of 60 lines.
+
+     A typical program listing would look like this:
+
+          CXREF (v1.0) - `C' Cross Reference for: cat.c      Page 1
+
+
+     Lattice Programming Utilities                                      U10
+
+
+
+
+
+
+
+
+          1-cat.c   -   1    /* This program is from K&R book */
+          2-cat.c   -   2  #include <stdio.h>
+          3-cat.c   -   3
+          4-cat.c   -   4  main(argc, argv)  /* concatenate files */
+          5-cat.c   -   5  int argc;
+          6-cat.c   -   6  char *argv[];
+          7-cat.c   -   7  {
+          8-cat.c   -   8     FILE *fp, *fopen();
+          9-cat.c   -   9
+          10-cat.c  -  10    if (argc == 1) /* no args */
+          11-cat.c  -  11         fileconv(stdin);
+          12-cat.c  -  12    else
+          13-cat.c  -  13      while (--argc > 0)
+          14-cat.c  -  14       if ((fp=fopen(*++argv,"r"))==NULL){
+          15-cat.c  -  15          fprintf(stderr,
+          16-cat.c  -  16           "cat: can't open %s\n", *argv);
+          17-cat.c  -  17          exit(1);
+          18-cat.c  -  18     } else {
+          19-cat.c  -  19          filecopy(fp);
+          20-cat.c  -  20          fclose(fp);
+          21-cat.c  -  21       }  +
+          22-cat.c  -  22    exit(0);
+          23-cat.c  -  23  }
+          24-cat.c  -  24
+          25-cat.c  -  25  filecopy(fp)  /* copy file to stdout */
+          26-cat.c  -  26  FILE *fp;
+          27-cat.c  -  27  {
+          28-cat.c  -  28      int c;
+          29-cat.c  -  29
+          30-cat.c  -  30      while ((c = getc(fp)) != EOF)
+          31-cat.c  -  31          putc(c, stdout);
+          32-cat.c  -  32  }
+
+          ==>> Functions:
+
+          exit             :     17    22
+          fclose           :     20
+          filecopy         :     11    19    25
+          fopen            :      8    14
+          fprintf          :     15
+          getc             :     30
+          main             :      4
+          putc             :     31
+
+          ==>> Identifiers:
+
+          EOF              :     30
+          FILE             :      8    26
+          NULL             :     14
+          argc             :      4     5    10    13
+          argv             :      4     6    14    16
+          c                :     28    30    31
+          fp               :      8    14    19    20    25    26
+          stderr           :     15
+          stdin            :     11
+          stdout           :     31
+
+     Lattice Programming Utilities                                      U11
+
+
+
+
+
+
+
+
+          ********************************************************
+          CXREF (v1.0) - `C' Cross Reference for: ftoc.c    Page 1
+
+          1-ftoc.c  -   1    /* print Fahrenheit-Celsius table
+          2-ftoc.c  -   2         for f = 0, 20, ..., 300
+          3-ftoc.c  -   3         (This program is from K&R book)
+          4-ftoc.c  -   4          */
+          5-ftoc.c  -   5  int lower, upper, step;
+          6-ftoc.c  -   6  float fahr, celsius;
+          7-ftoc.c  -   7
+          8-ftoc.c  -   8  main()
+          9-ftoc.c  -   9  {
+          10-ftoc.c -  10
+          11-ftoc.c -  11   lower = 0;  /* lower limit of temp */
+          12-ftoc.c -  12   upper = 300;       /* upper limit */
+          13-ftoc.c -  13   step = 20;         /* step size */
+          14-ftoc.c -  14
+          15-ftoc.c -  15   fahr = lower;
+          16-ftoc.c -  16   while (fahr <= upper) {
+          17-ftoc.c -  17    celsius = (5.0/9.0) * (fahr-32.0);
+          18-ftoc.c -  18    printf("%4.0f %6.1f\n",fahr,celsius);
+          19-ftoc.c -  19    fahr = fahr + step;
+          20-ftoc.c -  20   }
+          21-ftoc.c -  21  }
+
+          ==>> Functions:
+
+          main             :      8
+          printf           :     18
+
+          ==>> Identifiers:
+
+          celsius          :      6    17    18
+          fahr             :      6    15    16    17    18    19
+          lower            :      5    11    15
+          step             :      5    13    19
+          upper            :      5    12    16
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U12
+
+
+
+
+
+
+
+
+                                   Section 4
+
+                                     DIFF
+
+     DIFF is a utility which will determine the difference in contents
+     between two files and then display these variations in an informative
+     way.  Note that a discussion of the theory of file matching and how
+     this impacts DIFF appears in Appendix B.
+
+     For example, consider two files named alpha and beta where we want to
+     compare the contents of the former with the latter file.  The contents
+     of file alpha are:
+
+          Mary had a little lamb.
+          Its fleece was white as snow.
+
+     File beta contains the following:
+
+          Mary had a little lamb.
+          Its fleece was white as snow.
+          And everywhere that Mary went
+          the lamb was sure to go.
+
+     The output from DIFF takes this form:
+
+          *** APPEND AFTER 2 IN alpha ***
+          >   And everywhere that Mary went
+          >   the lamb was sure to go.
+
+     DIFF shows the differences and in this case the output from DIFF
+     informs us that after the second line, the displayed text should be
+     appended.  Refer to the subsection titled Output Format for further
+     details.
+
+     4.1 Using DIFF
+
+     The command line syntax for DIFF is:
+
+          diff [options] newfile oldfile
+
+     DIFF normally responds by directing output to the screen.  Output may
+     be redirected to a file or device in the usual AmigaDOS fashion or by
+     using the -o option described below.  The basic command:
+
+          diff
+
+     results in a usage message being printed informing you of the options
+     available and the version of DIFF you are using.
+
+     4.2 Options
+
+     Several options are available for use with DIFF.  These are:
+
+     -bnn        This option will set the size of the I/O buffer in bytes,
+                 to the value specified in nn; the default is 4K.  The
+                 maximum size is limited by the amount of available system
+
+     Lattice Programming Utilities                                      U13
+
+
+
+
+
+
+
+
+                 memory.
+
+     -c          This option will display only lines common to the files
+                 under comparison.
+
+     -Fnn        This option will set the position of the first column in
+                 the file to be compared.  This means if you specify the
+                 value of nn as being 10, the comparison will ignore any
+                 characters to the left of the tenth character.
+
+     -Lnn        This option will set the position of the first column in
+                 the file to be compared.  This means if you specify the
+                 value of nn as being 10, the comparison will ignore any
+                 characters to the right of the tenth character.
+
+     -lnn        This option will determine the size of the table which
+                 DIFF uses for the lines in each file to nn.  By default,
+                 DIFF assumes that the files being compared will have a
+                 maximum of 2000 lines in each file and creates two tables
+                 (one for each file) of size 2000.  In situations where the
+                 files you are comparing are larger than 2000 lines, you
+                 may use this option to increase the size of the two
+                 tables.  If you seem to be running out of memory in
+                 comparing your files and the files are less than 2000
+                 lines in length, you may use this option to decrease the
+                 size of the tables and leave more memory available for
+                 DIFF to use.  Alternatively, check to see if any other
+                 tasks are running concurrently and shut down any unwanted
+                 tasks.
+
+     -o file     This option will direct the output from DIFF into the
+                 specified file.  Output device options are available by
+                 prefixing the filename with the device (e.g. df0: or prt:,
+                 etc.)
+
+     -p          This option will filter any printable characters.  This
+                 option is identical to the -p option of GREP and removes
+                 nonprintable characters from the input stream.  This is
+                 useful for cleaning out an AmigaDOS binary file.
+
+     -q          This option will not display any messages when there are
+                 no differences between the files under comparison.
+
+     -w          This option will make DIFF ignore differences which relate
+                 only to whitespace (spaces or tabs).  When two lines are
+                 compared using this option, trailing blanks are removed
+                 and sequences of whitespace are compressed to a single
+                 space.
+
+     4.3 Output Format
+
+     The output format of DIFF appears as follows.  After giving the
+     command:
+
+          diff newfile oldfile
+
+
+     Lattice Programming Utilities                                      U14
+
+
+
+
+
+
+
+
+     DIFF initially responds by displaying:
+
+          TO TRANSFORM oldfile INTO newfile ...
+
+     followed by a sequence of three different types of change blocks.
+
+     The three types of change blocks are:
+
+          * Delete
+          * Append
+          * Change
+
+     Delete     A delete block of the form:
+
+                     *** DELETE [i,j] FROM oldfile ***
+                     <aaa
+                     <bbb
+                     <ccc
+
+                where aaa, bbb, ccc, etc. will be the text of the lines to
+                be deleted from oldfile, and i and j are the first and last
+                line numbers in oldfile of the block to be deleted.  The
+                less than symbol (<) preceding the line text indicates that
+                a deletion is to take place.
+
+     Append     An append block of the form:
+
+                     *** APPEND AFTER i IN oldfile ***
+                     >aaa
+                     >bbb
+                     >ccc
+
+                where the greater than symbol (>) indicates that an append
+                operation is to take place, and i is the line in oldfile
+                after which the lines represented by aaa, bbb, ccc, etc.
+                are to be appended.
+
+     Change     A change block of the form:
+
+                     *** CHANGE [i,j] IN old TO [m,n] IN new ***
+                     <aaa
+                     <bbb
+                     <ccc
+                     ---------------
+                     >xxx
+                     >yyy
+                     >zzz
+
+                where the block of lines (number i to j in oldfile)
+                represented by aaa, bbb, ccc, etc. are to be changed to the
+                block of lines (numbers m to n in newfile) represented by
+                xxx, yyy, zzz, etc.  This replacement is equivalent to a
+                deletion of the first block and an appending of the second.
+
+     4.4 Error Messages
+
+
+     Lattice Programming Utilities                                      U15
+
+
+
+
+
+
+
+
+     The following error messages may be generated by DIFF.
+
+
+     Can't open ...
+
+          DIFF is unable to open the named file.  This could be because the
+          file does not exist or because it is protected.
+
+
+     Diff I/O Error
+
+          Although an I/O program is the usual cause of this message, you
+          should be aware that this is a general-purpose error message from
+          DIFF.
+
+
+     Improper -l specification: ...
+
+          The specification given to the -l option cannot be interpreted as
+          a number by DIFF.
+
+
+     Internal Error: ...
+
+          If you see a message of this sort place contact the Lattice
+          Technical Support Department and be prepared to provide the
+          following information:
+
+               * The version of DIFF you are using.
+               * The exact wording of the command line you used.
+               * The exact wording of the message you received.
+               * The size of the files you were trying to compare.
+
+
+     Line table overflow
+
+          The line table is too small to hold the number of lines in one of
+          the files being compared.  Try increasing the line table size
+          with the -l option.
+
+
+     Not enough memory for ... lines per file
+
+          You have used the -l option to increase the line table size, but
+          you do not have enough memory to increase it by the amount
+          specified.
+
+
+     Out of memory
+
+          Try decreasing the line table size with the -l option if this is
+          possible.  Do not use the -w option.
+
+
+     Too many file names: ...
+
+
+     Lattice Programming Utilities                                      U16
+
+
+
+
+
+
+
+
+          You have made an error on the command line in such a way that
+          DIFF assumes you are attempting to operate on more than two
+          files.
+
+
+     Unrecognized option
+
+          You have attempted to invoke an option which DIFF does not
+          recognize.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U17
+
+
+
+
+
+
+
+
+                                   Section 5
+
+                                     FILES
+
+     The FILES utility is a powerful tool which allows you to search for,
+     copy or erase files and directories.  In some respects it is similar
+     to the UNIX find utility, but in addition to the file searching
+     ability, FILES has the functionality of the UNIX cpio and rm commands.
+     This is reflected in the ability of FILES to copy, move, or remove
+     entire directory structures.
+
+     The FILES utility may be used to search one or more directories for
+     objects - either files or directories which are:
+
+          * Matching a specified name or pattern.
+          * A specific type - a directory or file.
+          * Modified within a specified number of days.
+          * Younger than a specified file or directory.
+          * Older than a specified file or directory.
+          * Smaller than a specified size.
+          * Larger than a specified size.
+
+     This utility is particularly useful if you know you have a file
+     located somewhere on your disk but have forgotten exactly where it is
+     - a common problem when using high-capacity hard disks.  Even if you
+     can only recall a part of the file's name, the FILES utility can
+     locate the file.
+
+     In addition, FILES will allow you to copy entire directory structures
+     from one subdirectory to another or from one drive to another.  The
+     utility also supports a recursive erase feature which allow you to
+     remove an entire directory structure and its contents with a single
+     command.
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  NOTE:  When a file or directory has been assigned by    |
+          |  AmigaDOS - such as your startup-sequence file, or by a  |
+          |  direct command through the CLI, the file or directory   |
+          |  cannot be deleted by the FILES utility.  To delete the  |
+          |  required file or directory, you must re-assign the      |
+          |  AmigaDOS assignment to another file or directory.       |
+          |                                                          |
+          ------------------------------------------------------------
+
+     5.1 Using the Files Command
+
+     The general form of the FILES command is:
+
+          files [options] dir1 dir2 ......
+
+     where:
+
+     dir1, dir2     Represent directory names.
+
+     options        Represents a sequence of options.
+
+     Lattice Programming Utilities                                      U18
+
+
+
+
+
+
+
+
+     FILES not only searches the specified directories but also recursively
+     searches all subdirectories of the specified directories, all
+     subdirectories of those subdirectories and so on.
+
+     For example, assume your current directory is Workbench in df0: drive.
+     To display every filename and subdirectory in the devs (devices)
+     directory, the command line syntax used is:
+
+          files devs
+
+     This results in a listing such as:
+
+          Files Version 1.00: Copyright 1985, 1988 by Lattice, Inc.
+          devs/clipboards
+          devs/system-configuration
+          devs/clipboard.device
+          devs/narrator.device
+          devs/parallel.device
+          devs/printer.device
+          devs/serial.device
+          devs/keymaps
+          devs/keymaps/gb
+          devs/keymaps/usa0
+          devs/printers
+          devs/printers/laser
+          devs/printers/generic
+
+     Similarly, the command:
+
+          files /fonts .
+
+     will generate a listing of all files in both the directory named fonts
+     and the current directory.  Note the use of the period (.) for this
+     variation of defaulting to the current directory.
+
+     5.2 Options
+
+     The FILES utility has a large number of features which make the
+     manipulation of single or multiple files very simple.  For example,
+     you may not need a listing of every file in a directory, only a
+     listing of certain files in that directory with attributes beyond the
+     capabilities of the wildcard protocols.  The FILES utility provides a
+     number of options to accomplish this goal.  Except where specifically
+     stated, these options may be used in conjunction with one another.
+
+     -b                This option is identical to the -b option in Extract
+                       and produces the base names of files.
+
+     -copy destn       This option allows you to copy files or directories
+                       from one location to another.  For example, the
+                       command:
+
+                            files -copy ram: /fonts
+
+                       will copy to ram: all files in the directory fonts
+                       (and all files in subdirectories of fonts
+
+     Lattice Programming Utilities                                      U19
+
+
+
+
+
+
+
+
+                       subdirectories, etc.).  The command will make any
+                       new directories or subdirectories necessary at the
+                       destination and copy all files.  Note the space
+                       after the colon of the destination device and before
+                       the forward slash.  Similarly, the command:
+
+                            files -name #?.pic -copy /color /paint
+
+                       will copy all files with .pic extensions which are
+                       anywhere under the directory paint to the directory
+                       color making subdirectories as necessary.
+
+                       In the above example, the directory colors must
+                       already exist or FILES will display an error message
+                       that it cannot create the new (copied) versions of
+                       the files.
+
+                       With this option, FILES provides much of the
+                       functionality of the UNIX tar or cpio commands.
+                       Used with the -erase or -rerase options, the -copy
+                       option may be used to move directory trees since the
+                       copy is done prior to the erasure.
+
+     -days nn          This option will search the current directory for
+                       files with a date stamp specified in nn.  Any
+                       positive (decimal) number may be used as the nn
+                       parameter to the -days option.  For example, you
+                       want to search the current directory and the
+                       directory /x for files which have been created or
+                       modified within the last five days, use the command:
+
+                            files -days 5 . /x
+
+     -erase            This option causes FILES to erase the files which
+                       are selected.  The -erase option will not descend
+                       into subdirectories, but will erase files only at
+                       the highest level of the specified directory.  For
+                       example, the command:
+
+                            files -erase -name #?.src /lattice
+
+                       will remove all .src files from the directory
+                       /lattice.
+
+     -m                This option will instruct FILES to use wildcards.
+                       For example:
+
+                            files -m -name *.pas
+
+                       would search for all files with the extension .pas
+                       in the current directory.
+
+     -n                This option forces FILES to refrain from recursively
+                       descending into subdirectories to do its work
+                       whether it be finding, copying or erasing.
+
+
+     Lattice Programming Utilities                                      U20
+
+
+
+
+
+
+
+
+     -name file/dir    This option will search for files which match a
+                       specified name.  For example, the command:
+
+                            files -name alpha.h
+
+                       will look for a file whose name is alpha.h in the
+                       current directory.  Note that the case of filenames
+                       is ignored by AmigaDOS.  Similarly, FILES is
+                       compatible with the usage, and will detect files
+                       whether they appear as ALPHA.H, alpha.h, Alpha.h,
+                       etc.
+
+                       Similarly, the command:
+
+                            files -name #?.c tools/tmu
+
+                       will search for all files with .c extensions in the
+                       subdirectory tools/tmu of the current directory.
+                       The command:
+
+                            files -name /tmu /tools
+
+                       will list all files found in any subdirectory
+                       (sub-subdirectory, etc.) called tmu of the directory
+                       /tools.
+
+                       The filename specified with the -name option may
+                       contain the standard AmigaDOS wildcard characters
+                       and these will be interpreted in their usual sense.
+
+     -newer            This option will locate all files or directories
+                       which have a time stamp later than the specified
+                       time stamp.  For example, to locate any files in the
+                       subdirectory named bugs which are newer than the
+                       file /src/test.c, the command used would be:
+
+                            files -newer /src/test.c bugs
+
+     -older            This option will locate all files or directories
+                       which have a time stamp earlier than the specified
+                       time stamp.  Both this and the previous option use
+                       the file or directory creation date as the operating
+                       parameter.
+
+     -pat              This option will locate files using the pattern
+                       matching facilities of GREP, rather than AmigaDOS
+                       and DOS wildcards.  These patterns are more
+                       comprehensive than those allowed by AmigaDOS and
+                       DOS.  Thus the command:
+
+                            files -pat text[0-9] /docs
+
+                       will search the directory /docs for any file whose
+                       name contains the word text followed by a decimal
+                       digit.  In using the -pat option you must remember
+                       that a number of characters such as "." "+" "*" are
+
+     Lattice Programming Utilities                                      U21
+
+
+
+
+
+
+
+
+                       interpreted in a special sense.  Refer to the
+                       section detailing GREP for more details on these
+                       patterns.
+
+                       In common with the -name option, this option
+                       translates the specified pattern to uppercase prior
+                       to beginning its search.
+
+                       Note that the -pat and -name options are
+                       incompatible with each other.
+
+     -r                This option is identical to the -b and -r options in
+                       EXTRACT, producing base and root names of files.
+
+     -rerase           This option will cause FILES to erase the selected
+                       files.  The -rerase option will recursively descend
+                       into subdirectories and remove all selected files.
+
+                       For example, the command:
+
+                            files -rerase -name #?.c /lc
+
+                       will remove all .c files anywhere under /lc or its
+                       subdirectories, sub-subdirectories, etc.  Finally,
+                       the command:
+
+                            files -rerase :
+
+                       will remove all files on your current disk drive.
+                       This is equivalent to the UNIX rm -rf * command.
+
+     -size nn          This option allows you to search for files specified
+                       by the number of bytes nn.  For example, to search
+                       for files which are at least 20K bytes in size in
+                       the current directory, use the command:
+
+                            files -size 20000
+
+     -type arg         This option allows you to restrict your search to
+                       files of a given type.  There are two arguments to
+                       this option.  These are:
+
+                            d     directories
+                            f     normal files
+
+                       This option allows you to distinguish between files
+                       and directories.
+
+                       The command:
+
+                            files -type f . /docs
+
+                       will list only the files in the current directory
+                       and the docs directory.  The command:
+
+                            files -type d . /docs
+
+     Lattice Programming Utilities                                      U22
+
+
+
+
+
+
+
+
+                       will list only the (sub)directories in these
+                       directories and recursively in their subdirectories.
+                       The -type f and -type d options are incompatible
+                       with one another.
+
+     -v                This option will cause FILES to list the files and
+                       directories it is removing to the screen.
+
+     Many of the options may be used in conjunction with one another.  For
+     example, you may copy and erase files and thus, move them, find files
+     newer than one file and older than another, and so on.  If your
+     selection of options cannot be executed, FILES will issue an error
+     message to this effect.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U23
+
+
+
+
+
+
+
+
+                                   Section 6
+
+                                     GREP
+
+     GREP (Global Regular Expression Search and Print) is a utility which
+     searches a set of files for a specified character pattern and prints
+     each line containing the expression matching the pattern.  GREP is a
+     powerful tool of great value to software developers, technical
+     authors, as well as many personal computer users because it is simple
+     to use.  It can save a great deal of time and help minimize the
+     frustration which often results from trying to find words or sequences
+     of words which may occur in a number of files.
+
+     The combination program SPLAT makes considerable use of GREP's pattern
+     matching abilities.  These abilities allow you to develop editing of
+     script files and make complex changes such as addition, deletion and
+     substitution to a set of files in an automated way.
+
+     We begin our discussion of GREP with a simple example and proceed to
+     explore the intricacies of GREP.
+
+     6.1 Using GREP
+
+     The general form of a GREP command is:
+
+          grep [flags] pattern file1 file2 ...
+
+     where:
+
+     pattern          The pattern you wish to search for.
+
+     file1  file2     The files you wish to search.
+
+     The flags parameter is discussed later in this section.  Note that the
+     enclosing square brackets ([ ]) mean that the flags parameters are
+     optional.
+
+     The patterns GREP can search for are quite general and are sometimes
+     referred to as regular expressions.  A full and precise description of
+     patterns is given later in this section.
+
+     6.2 A Simple Example
+
+     We will assume that you are a technical author who has been editing a
+     file, document.txt and the file has become quite long.  It occurs to
+     you, in certain contexts where you should have used the phrase user
+     manual, you actually used the phrase user's guide.  You would like to
+     determine how many occurrences of this error exist and where they
+     occur in your file in order to correct the error.
+
+     The correct command to use is:
+
+          grep "user's guide" document.txt
+
+     The entire phrase must be enclosed in double quotation marks (" ") to
+     inform GREP of the correct phrase to search for.  The double quotation
+
+     Lattice Programming Utilities                                      U24
+
+
+
+
+
+
+
+
+     marks are necessary in this command line since we are searching for a
+     phrase separated by space characters.  In situations where we would be
+     looking for a single word, then the double quotation marks are
+     unnecessary.  When the quotation marks are not used, for example in
+     the following command line:
+
+          grep user's guide document.txt
+
+     GREP interprets this as a request to search for the word user's in two
+     files named guide and document.txt.  You need to be quite specific in
+     describing the search pattern to GREP.  For example, using the
+     following command:
+
+          grep manual document.txt
+
+     GREP will respond by printing all of the lines in the file which have
+     the word manual in them.  However, this is not quite the desired
+     answer since there are likely to be other lines which contain the
+     character sequence manual in addition to the phrase user's manual.
+     For example, there could be phrases such as this manual, the manual,
+     you must insert the paper manually and so on, within your file.
+
+     6.3 Special Characters
+
+     Before we describe the different kinds of patterns, you should
+     appreciate that there are a number of characters which GREP interprets
+     in a special way.
+
+     For example, if you were to use the command:
+
+          grep [ document.txt
+
+     you would receive an error message from GREP.  This is because the
+     left bracket ([) has a special meaning to GREP.  This subsection
+     describes the range of special characters, later subsections will
+     describe how GREP interprets each of these special characters.  This
+     subsection will also show you how to inform GREP that you do not want
+     the character interpreted with their special meaning.
+
+     Each of the following characters is regarded as a special character to
+     GREP:
+
+          !    $    ^    *    -    +    [    ]    .    \
+
+     The last of these characters, the backslash (\) is called the escape
+     character and is used to escape any special character (including
+     itself) and cause GREP to ignore the special nature of the character.
+
+     Using the example from the previous subsection, if you wanted to
+     search for the left bracket you would use the command:
+
+          grep \[ document.txt
+
+     or if you wanted to search for the phrase 'and so on ...' you would
+     use the following command:
+
+
+     Lattice Programming Utilities                                      U25
+
+
+
+
+
+
+
+
+          grep "and so on \.\.\." document.txt
+
+     To search for the backslash (\) itself use the following:
+
+          grep \\ document.txt
+
+     If a GREP command does not respond as you expect it to, try escaping
+     any special characters in the command with the backslash \ character.
+     Alternatively, try reducing the number of the special characters being
+     used in your search pattern.
+
+     6.4 Escape Sequences
+
+     In addition to these special characters, there are several sequences
+     of characters (escape sequences) which GREP treats in a special way.
+     Each of these begins with a backslash followed by a single letter and
+     their meanings are as follows:
+
+            \n    newline character
+            \s    space character
+            \b    backspace character
+            \t    tab character
+            \\    escape character
+          \xij    hexadecimal number whose digits are i and j
+
+     For example, to locate all lines containing tab characters you would
+     use the command:
+
+          grep \t document.txt
+
+     The last escape sequence is provided for those circumstances in which
+     you might wish to search for the occurence of a character by using its
+     hexadecimal number.  Control characters are generally used as printer
+     format instructions in files produced by word processors.  For
+     example, to search for occurrences of a <CTRL-G> character, the
+     command line would be:
+
+          grep \x07 document.txt
+
+     Determining the value of the control character is simply a matter of
+     using the position of the letter of the alphabet.  For example, C is
+     the third letter of the alphabet, thus the <CTRL-C> character is
+     represented by 03.  To search for all occurrences of the <CTRL-C>
+     character, the command line would read:
+
+          grep \x03 document.txt
+
+     Similarly, Z is the twenty sixth letter of the alphabet, which equates
+     to 1A in hexadecimal.  Thus, to locate any <CTRL-Z> characters, the
+     command line would be:
+
+          grep \x1a document.txt
+
+     6.5 Simple Patterns
+
+     The simplest patterns are the types we have just seen examples of -
+
+     Lattice Programming Utilities                                      U26
+
+
+
+
+
+
+
+
+     words or strings of letters and phrases possibly containing spaces or
+     tab characters.  To search for a single word it is sufficient to use
+     just the word as the pattern.  However, to search for a string of
+     words which are separated by spaces you must enclose the entire string
+     within double quotation marks as in the following command:
+
+          grep "this is the string to search for" document.txt
+
+     6.6 The Wildcard Character
+
+     The special character, the period (.) is regarded as a wildcard
+     character by GREP in that it is taken to be matched by any single
+     character.  Thus the pattern:
+
+          .he
+
+     will be matched by any of the following:
+
+          ahe    bhe    che    she    the
+
+     Note that the dot will be matched by any single character, not just by
+     any single alphabetic or numeric character.  Thus it will be matched
+     by a space, tab, newline or control character.  The wildcard character
+     is one of those you must carefully consider when you are constructing
+     patterns.
+
+     For instance, if you wanted to see the lines in your file which
+     contain the expression 123.45.  The command you must use is:
+
+          grep 123\.45 document.txt
+
+     where the period (.) is escaped.
+
+     The pattern:
+
+          123.45
+
+     would have matched any of the following expressions:
+
+          123a45    123 45    123!45    123(45    123.45
+
+     6.7 Character Classes
+
+     A character class is a pattern which is matched by any character in a
+     given category or set of characters.  GREP uses the left and right
+     bracket symbols ([]) to mark the beginning and end of a character
+     class pattern.  For example, the expression:
+
+          [abc]
+
+     denotes a character class which is matched by any of the first three
+     (lowercase) letters of the alphabet and the expression:
+
+          [Tt]
+
+     denotes a character class which is matched by either an uppercase T or
+
+     Lattice Programming Utilities                                      U27
+
+
+
+
+
+
+
+
+     a lowercase t.
+
+     Character classes are useful in situations where you want to construct
+     a certain type of disjunctive pattern.  In other words, you want to
+     search for groups of characters where the case of an individual
+     character is unimportant.  For example, you wish to view the lines in
+     your document containing either word the or The.
+
+     Of the following commands:
+
+          grep the document.txt
+          grep The document.txt
+          grep [Tt]he document.txt
+
+     The first will only print out the lines containing the word the, the
+     second will print out only lines containing The, and the third will
+     print lines containing both the and The.
+
+     Similarly, the command:
+
+          grep [Tt][Hh][Ee] document.txt
+
+     will print any line in which any of the following occur:
+
+          THE    THe    The    the    thE    tHE    tHe    ThE
+
+     Within a character class, certain symbols are interpreted in special
+     ways.  You may use a minus sign - to indicate a range of characters,
+     as in:
+
+          [a-z]
+
+     which is matched by any lowercase letter in the English alphabet or:
+
+          [a-zA-Z0-9]
+
+     which is matched by any lowercase letter, any uppercase letter or any
+     decimal numeral.
+
+     A simple, yet practical use of character classes arises when you want
+     to view all the lines in your file where you refer to a specific year.
+     The command:
+
+          grep [0-9][0-9][0-9][0-9] document.txt
+
+     would accomplish this.
+
+     Where you are concerned with years only in the 20th century then use:
+
+          grep 19[0-9][0-9] document.txt
+
+     If you are concerned with years in the 19th and 20th centuries then
+     use the following command:
+
+          grep 1[89][0-9][0-9] document.txt
+
+
+     Lattice Programming Utilities                                      U28
+
+
+
+
+
+
+
+
+     The exclamation point (!) is regarded as special when it occurs as the
+     first character in a character class.  In this situation it acts as a
+     negation operator, thus the pattern:
+
+          [!a-z]
+
+     will be matched by any character which is not a lowercase letter of
+     the English alphabet, and the pattern:
+
+          [!#]
+
+     will be matched by any character which is not a number sign.  If an
+     exclamation point (!) occurs in a character class elsewhere than in
+     the first position, it does not have this special sense.
+
+     Character classes lend a great deal of power to GREP and allow you to
+     search for some very complex patterns.
+
+     6.8 Closure Characters
+
+     The symbols, asterisk (*) and plus sign (+) are used to denote
+     closures.  The asterisk (*) may be considered as meaning zero or more
+     of, while the plus sign (+) means one or more of.
+
+     Consider a file where you have referred to Gail and mentioned a year
+     in which some event has occurred.  You do not want to see every line
+     in which the name Gail occurs, nor do you want to see every line in
+     which a yearly date occurs.  You want to see only those lines in which
+     both Gail and an annual date occur.  The command would then be:
+
+          grep "Gail.*[0-9][0-9][0-9][0-9]" document.txt
+
+     Within the pattern, the expression .* would be matched by any string
+     containing zero or more occurrences of any character.  The entire
+     pattern will therefore match such expressions as:
+
+          Call Gail Barbara Industries on 1-999-629-9310
+          Gaillard de Marentonneau was an 1900s century botanist
+          My eldest daughter Gail, was born in 1969
+
+     Where there is a choice to be made concerning how long the pattern is
+     which matches a closure, GREP chooses to match the longest possible
+     pattern.  To consider another simple example, supposed you want to
+     view all the lines containing any of the following words:
+
+          the    The    she    She    he
+
+     If you use the pattern:
+
+          [tTsS]*he
+
+     it will be matched by the following examples:
+
+          ttttthe     TsShe     Sthe     TTTSSStthe
+
+     It would be useful to detect these obvious typographical errors in any
+
+     Lattice Programming Utilities                                      U29
+
+
+
+
+
+
+
+
+     event.  However, notice that this pattern would be matched by any
+     expression containing he because of the zero or more qualifier on the
+     character class.  A better pattern would be the following:
+
+          [!a-zA-Z][tTsS]*he[!a-zA-Z]
+
+     To eliminate those contexts where he is embedded in a longer word, or
+     to ensure that the word is isolated by spaces use the following:
+
+          " [tTsS]*he "
+
+     The plus sign symbol (+) works precisely the same as the asterisk (*)
+     except for its requirement that at least one occurrence of its
+     character or character class be present.
+
+     Thus:
+
+          [tTsS]*he
+
+     will be matched by he but the following will not:
+
+          [tTsS]+he
+
+     6.9 Anchored Searches
+
+     Frequently you may wish to view only those lines in a file in which a
+     given patterns occurs at the beginning of the line - in other words,
+     beginning at the column 0 position.  The carat (^) is a special
+     character when it is the first character in a pattern.  This signifies
+     that the pattern will be matched only if it begins a line in the file.
+     Thus, to find all lines within your file which begin with a space or a
+     tab character, use the command:
+
+          grep "^[ \t]" document.txt
+
+     Note that the double quotation marks (" ") are necessary in this
+     pattern since a space occurs within the pattern itself.  Similarly, to
+     find all lines which begin with numerals, for example, a section
+     heading, use the following:
+
+          grep ^[0-9] document.txt
+
+     The special character, dollar sign ($) works much like the carat (^)
+     except that it forces the match to occur only at the end of a line.
+     Consider for example, where you wanted to search for all occurrences
+     of the C language comment terminator */ at the end of a line, you
+     would use the following:
+
+          grep \*/$ document.txt
+
+     Here, the backslash (\) is used to escape the asterisk (*) which
+     otherwise would be interpreted in its special sense as a closure
+     operator.
+
+     6.10 Advanced Examples
+
+
+     Lattice Programming Utilities                                      U30
+
+
+
+
+
+
+
+
+     This subsection will provide some additional examples of using GREP to
+     search files for patterns.  It will concentrate on searching for files
+     containing source code text, in particular, C language source code.
+
+     6.10.1 Example 1
+
+     You have a number of C language source files, each with filenames
+     having a .c extension, and you need to search these files to find all
+     calls of either of the functions read or fread.  Use the following
+     command:
+
+          grep "[f]*read[ ]*(" #?.c
+
+     This will cause every line containing either read or fread, followed
+     by zero or more spaces, followed by a left parenthesis located in all
+     the .c files to be printed out.
+
+     6.10.2 Example 2
+
+     Consider where you want to search your files for every function
+     definition - however, this really is not possible unless you make some
+     reasonable assumptions.  It is common for most C programmers to define
+     a function by first placing the name and parameter list of the
+     function on a separate line.  This is followed with the body of the
+     function.  Making this assumption, use the command:
+
+          grep "^[a-zA-Z0-9_]+[ ]*(" #?.c
+
+     The pattern above will match only an expression which begins a line.
+     The expression must consist of one or more lower-case letters,
+     upper-case letters or the underscore.  This must be followed by zero
+     or more spaces and then a left parenthesis.  This pattern will pick
+     out lines such as the ones shown below:
+
+          getl(s)          /* get a line */
+          _read ()
+          my_read(fp)  { fread(fp,x);}
+
+     However, it will not select a line such as:
+
+          char *getl(p)        /* get a line */
+
+     which may be the beginning of a function definition.
+
+     6.10.3 Example 3
+
+     You are having problems compiling a C program because the compiler
+     complains that there is a mismatch between left and right braces
+     ({ }).  The program is very long and you have been unable to determine
+     where the problem lies.  You decide to use GREP to assist by printing
+     each line which contains either a left or right brace.  In this way
+     the error may be easier to locate.  The command to use is:
+
+          grep [{}] #?.c
+
+     6.10.4 Example 4
+
+     Lattice Programming Utilities                                      U31
+
+
+
+
+
+
+
+
+     Consider where you want to find all occurrences of strings in your
+     files, for example, sequences of characters enclosed in double
+     quotation marks (" ").  The appropriate command is:
+
+          grep \".*\" #?.c
+
+     6.11 Using the GREP Functions in a Program
+
+     The GREP utility makes use of several functions which construct an
+     internal representation of a pattern from a string of characters and
+     then checks to see if this pattern is matched in a given string.  You
+     are supplied with files on the distribution disk which allow you to
+     make use of these functions in C programs.  The functions are included
+     in the library file, grep.lib (assuming that you are using the Lattice
+     AmigaDOS C Compiler).  This allows you to build the same sophisticated
+     pattern matching capability into your own programs to the same levels
+     as GREP.  This subsection reviews the procedures to accomplish this
+     goal.
+
+     The files in the GREP library are:
+
+          re_gen.o
+          re_match.o
+          re_smatc.o
+
+     These files contain the functions:
+
+          re_gen()
+          re_match()
+          are_match()
+          re_smatch()
+          are_smatch()
+
+     The usage of these functions becomes clear with a simple example.
+     Consider a global array of strings consisting of pointers to
+     characters.  You require a function which will search this array for
+     strings containing a match for a given pattern.  In addition, assume
+     that the pattern you wish to search for may be described as:
+
+          any sequence of characters, including the empty sequence enclosed
+          in parentheses.
+
+     Finally, assume that the size of the array is defined by the constant
+     named ARYMAX.  Your code should look something like this:
+
+          extern char *ary_str[ ];
+          /*  Assumed to be defined elsewhere */
+          /*  Define a function findpars() which will search ary_str
+          * for members containing a string of characters enclosed
+          * in parentheses. For each such member of ary_str,
+          * print its array index. */
+          findpars()
+          {
+              int i;
+
+              for ( i = 0; i < ARYMAX; i++ )
+
+     Lattice Programming Utilities                                      U32
+
+
+
+
+
+
+
+
+                if ( re_smatch("(.*)",ary_str[i]) >= 0 )
+
+                   printf("Found match at index %d\n",i);
+          }
+
+     This code will work, albeit inefficiently.  Every time re_smatch() is
+     called, it calls re_gen() to generate an internal representation of a
+     pattern.  In the example the patterns never changes, so why regenerate
+     it each time around the loop?
+
+     A better definition of findpars() would be:
+
+          #include "pat.h"  /* Need to include this header */
+                            /* to have* `PATTERN' defined */
+          findpars()
+          {
+           PATTERN re_gen(); /* must declare re_gen() as */
+                                /*   returning a PATTERN */
+           PATTERN p; /* to point to the pattern generated */
+           int i;
+
+              if ( (p = re_gen("(.*)")) == NULL ) {
+                   printf("Error in generating pattern\n");
+                   return;
+              }
+
+              /* pattern was generated okay */
+
+              for ( i = 0; i < ARYMAX; i++ )
+                if ( re_match(ary_str[i],p) >= 0 )
+                  printf("Found a match at index %d\n",i);
+              }
+
+     This example should suffice to demonstrate how the supplied functions
+     may be used in programs where the pattern-matching power of GREP is
+     required.  Naturally, you must be sure to link in the appropriate
+     object modules when you link your program together.
+
+     If you are using the Lattice AmigaDOS C Compiler, then the command
+     line to the linker should appear:
+
+          LINK:blink FROM LIB:c.o+myprog.o TO myprog
+               LIBRARY grep.lib+LIB:lc.lib+LIB:amiga.lib
+
+     assuming that myprog.o is the object module you have compiled which
+     invokes calls to functions in the GREP library.  The command line
+     above assumes that you are using one of the startup-sequence files
+     provided with the Lattice AmigaDOS C Compiler.  These files make
+     logical name assignments to directories.
+
+     Note that the command line shown previously is shown as two lines due
+     to its length - in reality, it would be entered as one complete line.
+
+     6.12 Error Messages
+
+     Bad character class
+
+     Lattice Programming Utilities                                      U33
+
+
+
+
+
+
+
+
+          GREP is unable to interpret a character class in the pattern you
+          have asked it to find.  Check to see if you have used any special
+          symbols which you did not intend to.  This message can also be
+          generated if in specifying a character class and using the '-'
+          character to indicate a range of characters, the first character
+          in the range does not alphabetically precede the second (e.g.
+          [d-a]).
+
+     Bad pattern
+
+          GREP is unable to interpret the pattern you are asking it to
+          find.  Most likely this is a result of the occurrence of a
+          special character in the pattern which does not make sense to
+          GREP in this context.  Check to see if you have forgotten to
+          escape a special character.
+
+     Can't find file(s) ...
+
+          GREP is unable to find one or more of the files you have asked it
+          to search.  Most likely, they are not there or you have mis-typed
+          the file names.
+
+     Can't open ...
+
+          GREP is unable to open the named file.  This could be because the
+          file is not there at all or that it is protected.
+
+     Closing ] not found
+
+          GREP believes that you have asked it to search for a pattern that
+          contains a character class but that you have omitted the right
+          bracket (]) which terminates the character class.  If this is not
+          so, perhaps you wanted the left bracket ([) to form part of the
+          pattern but forgot to escape it to remove its special sense.
+
+     Empty character class
+
+          A character class you have used in your pattern has no members,
+          e.g. [ ].
+
+     Invalid option
+
+          You have used a command line option which GREP does not
+          recognize.  This message can also be generated if your pattern
+          begins with a minus sign (-) but you have not escaped it nor
+          enclosed the pattern in double quote marks (" ").
+
+     Improper hex specification
+
+          You have used the \x escape sequence but have not followed it
+          with two recognizable hex digits.
+
+     Incompatible combination of options
+
+          The options with which you have invoked GREP are asking it to do
+          something contradictory.
+
+     Lattice Programming Utilities                                      U34
+
+
+
+
+
+
+
+
+     No beginning double quote in pattern
+
+          GREP has detected a double quote (") in a pattern which was not
+          started with a double quote.  Perhaps you meant to escape it.
+
+     No file arguments provided
+
+          GREP believes that you have invoked it with a pattern but not
+          filenames.  This can also happen if you have invoked it with a
+          filename but no pattern.
+
+     No pattern or file arguments given
+
+          GREP cannot find either a pattern or filename on its command
+          line.
+
+     Out of space
+
+          There are several out of space messages you may see.  They mean
+          that GREP has run out of space in constructing its pattern
+          representation.  Please inform our Technical Support Department
+          if you see this message.
+
+     Pattern ill-formed:  no terminating double quote
+
+          You started the pattern with a double quote (") but failed to
+          terminate it with one.
+
+     Too few arguments to GREP
+
+          GREP demands at least two arguments on its command line, a
+          pattern and at least one filename.
+
+     In addition to the above error messages, there are some internal error
+     messages which you should never see.  If you get any error message
+     differing from the above, please inform our Technical Support
+     Department, or send us a disk and a letter.  You should be prepared to
+     provide the following information:
+
+          * The version number of GREP you are using.
+          * The exact wording of the command line you used.
+          * The exact wording of the resulting error message.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U35
+
+
+
+
+
+
+
+
+                                   Section 7
+
+                                      LMK
+
+     This section assumes you are familiar with the operation of the
+     Lattice AmigaDOS C Compiler.  In addition, those readers who are
+     familiar with the concepts behind the UNIX make utility may wish to
+     bypass the first two subsections of this part of the manual.
+
+     LMK is a tool which is used for maintaining projects composed of many
+     files.  A file can be programming source code, a data file for a
+     graphics or audio, or perhaps a spreadsheet file.  For example, a
+     word-processing document of any size beyond a few pages is usually
+     made up of sections, simply because it is easier to work with.
+     Breaking the document file into modules means that loading/saving
+     cycles are shorter, moving around the document is made easier and text
+     manipulations, such as spelling checks and cut-and-paste operations
+     are faster.
+
+     To summarize the above, breaking down a large file into smaller files
+     has a number of advantages.  However, there is a cost overhead to this
+     - how do you keep control over these files?  In other words, how do
+     you remember which files to include and in what order, how do you keep
+     track of files which have been amended?  The Lattice utility named LMK
+     will enable you to do this.
+
+     7.1 What is LMK?
+
+     The basic function of LMK is to generate a product file if any of the
+     source files have changed since the last version of the product file
+     was generated.
+
+     In essence, LMK captures and deploys the information about how to turn
+     a collection of raw materials - namely the source code files into a
+     finished product.  The information on how this is to be done is
+     contained within the description file or lmkfile.
+
+     The C programming language encourages the use of multiple compilation
+     units.  Without an LMK utility, you would have to be able to recall
+     the names of the individual files which needed to be recompiled or
+     relinked whenever a change was made to one of the files.  A lmkfile
+     specifies which pieces of a product are to be recompiled or relinked
+     when a few of the pieces are modified.  Thus, LMK automates many of
+     the tedious details associated with generating a new version of a
+     project.
+
+     7.2 Time Stamps
+
+     LMK operates on the basis of time stamps associated with each file
+     under consideration.  In other words, the time and date of creation of
+     a file determine the operation of LMK.  A file is considered to be
+     current if it has a time stamp later than that of any of its dependent
+     files.
+
+     The syntax of the date command under AmigaDOS is as follows:
+
+
+     Lattice Programming Utilities                                      U36
+
+
+
+
+
+
+
+
+          date 12-Nov-87 16:34:57
+
+     Note the semantics of the time section - this format is known as
+     Military Time in the USA, or the 24-Hour Clock in Europe and must be
+     adhered to.  Be sure to enter the month as a three character field.
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  NOTE:  It is extremely important to the successful      |
+          |  operation of LMK that a consistently accurate current   |
+          |  date and time are known to the system software.         |
+          |                                                          |
+          ------------------------------------------------------------
+
+     7.3 Targets and Dependents
+
+                                        ------------
+                                        |          |
+     Executable File                    |  MYFILE  |
+     (Primary Target)                   |          |
+                                        ------------
+                                          /      \
+                                         /        \
+                               -------------    -------------
+                               |           |    |           |
+     Object Files              |  file1.o  |    |  file2.o  |
+     (Dependents of Primary)   |           |    |           |
+                               -------------    -------------
+                                  /     \          /     \
+                                 /       \        /       \
+                      -------------     -------------    -------------
+                      |           |     |           |    |           |
+     Source Files     |  file1.c  |     |  stdio.h  |    |  file2.c  |
+     (Dependents)     |           |     |           |    |           |
+                      -------------     -------------    -------------
+
+     The diagram above outlines the concept of file dependencies and
+     illustrates the interconnection between files.  The primary target
+     file serves as the end-result for the programming process.  The object
+     files are the intermediate step in the process - in this example the
+     primary target file shows two dependent object files.  Finally, we
+     have the source code files - each object file has three dependent
+     source code files.  This means that our primary target file has a
+     total of seven file dependencies.
+
+     A file created for use with LMK describes the relationships of all
+     file modules associated with a specific project.  In simple terms, LMK
+     operates on the basis of time stamps associated with the dependent
+     files in determining the required action(s) to be taken to rebuild the
+     target files.  LMK will perform these actions to update the target
+     files.
+
+     LMK is useful in situations where more than one programmer will be
+     working on a project.  When a project is shared between programmers,
+     the LMK file will contain all the necessary information describing the
+     dependencies of the various source files.  This permits more effective
+
+     Lattice Programming Utilities                                      U37
+
+
+
+
+
+
+
+
+     management of a programming team, even when a programmer is not on
+     site or has left the project.
+
+     Each of the dependents of the target file under consideration is known
+     as a sub-target.  Hence we see that there are generations of files,
+     each generation having certain descendant and ancestor files.  The
+     commands given to make the target and each of the sub-targets are
+     known as actions.
+
+     7.4 Actions
+
+     So far, we have discussed the concepts of targets and dependencies in
+     terms of LMK, we not examine in greater detail the final element,
+     namely that of actions.
+
+     We discussed earlier that working in the C programming environment
+     usually involves using several sets of files.  The act of compilation
+     also entails an additional operation called linking.  In basic terms,
+     this means joining or amalgamating your object code files with the
+     compiler library files to form executable files.  Object files are
+     intermediate files produced by the Lattice AmigaDOS C Compiler.
+
+     The command line syntax for linking and compiling is very precise and
+     any errors will cause unwanted results.  A typical command line for
+     linking looks like this:
+
+          blink FROM LIB:c.o+file1.o TO myfile LIB LIB:lc.lib+LIB:amiga.lib
+
+     It should be obvious that considerable scope exists for typing errors,
+     particularly if such lines have to be entered each time you wish to
+     link and compile files.  To avoid this, the command lines could be
+     encapsulated into a lmkfile.
+
+     7.4.1 A Simple Example
+
+     A simple lmkfile would look like this:
+
+        myfile: file1.o
+          blink FROM LIB:c.o+file1.o TO myfile LIB LIB:lc.lib+LIB:amiga.lib
+
+        file1.o: df1:source/file1.c headers.h
+           lc -b0 -r0 -odf1: df1:source/file1.c
+
+     This lmkfile demonstrates a linking and compiling sequence and is made
+     up of four lines.  The first line:
+
+          myfile: file1.o
+
+     describes a dependency - in this case the file named myfile is
+     dependent on an object file name file1.o (the .o file extension
+     denotes an object file).  Line 3 also has a colon separator and
+     describes the dependencies of the file1.o file:
+
+          file1.o: df1:source/file1.c headers.h
+
+     The dependencies for file1.o are located on drive df1: in the
+
+     Lattice Programming Utilities                                      U38
+
+
+
+
+
+
+
+
+     directory named source for file1.c and in the current directory for
+     headers.h - file1.c would have an include directive for the headers.h
+     file.
+
+     You should now see a hierarchy of file dependencies for the executable
+     file named myfile.  Lines 2 and 4 are the action lines - in the case
+     of line 4:
+
+          lc -b0 r0 -odf1: df1:source/file1.c
+
+     this is a standard command line for compilation, with various options
+     being specified.
+
+     In line 2, the action is that of linking:
+
+          blink FROM LIB:c.o+file1.o TO myfile LIB LIB:lc.lib+LIB:amiga.lib
+
+     Refer to your compiler manual for further details of the command line
+     options for linking.
+
+     7.5 Invoking LMK
+
+     LMK can be operated from the Command Line Interpreter (CLI) of
+     AmigaDOS.  In addition, LMK can also be called under the Workbench
+     environment, using the standard Intuition icon-mouse actions.
+
+     To invoke LMK, the simplest method is to create your lmkfile using an
+     editor such as the Lattice Screen Editor (LSE), then name this file
+     lmkfile.  On calling LMK, you need only enter the following at the CLI
+     prompt:
+
+          lmk
+
+     Your lmkfile can also be named lmkfile.lmk or makefile.  The search
+     order of filenames to which LMK operates when you invoke LMK without
+     any other flags is:
+
+          lmkfile
+          lmkfile.lmk
+          makefile
+
+     A file with one of these names must be in your current directory to
+     call LMK correctly.
+
+     7.5.1 File Naming Options
+
+     Depending on your file naming conventions or if you need multiple
+     lmkfiles in the same directory, you may wish to name your makefile
+     something other than 'lmkfile' or 'makefile'.  Consider, for example,
+     where you have given your makefile the name 'alpha.lmk'.  LMK would be
+     invoked with either of the following commands:
+
+          lmk -f alpha.lmk
+          lmk -f alpha
+
+     Either of these command lines signifies to LMK that it should take
+
+     Lattice Programming Utilities                                      U39
+
+
+
+
+
+
+
+
+     input from the file specified after the -f flag rather than from the
+     default filenames.
+
+     File name extensions are not generally given to executable files
+     running under the Workbench environment.  To be called from Workbench,
+     an executable file must have an icon.  The graphical data for the icon
+     is held within a file which uses the same name as the executable file,
+     albeit with an .info name extension.  This has implications for file
+     naming conventions as demonstrated in the following example.
+
+     Consider an ASCII text file with the name readme.txt.  Attaching an
+     icon to this file will result in two files - a file named readme.txt
+     and a file named readme.txt.info.  The former is the text file, the
+     latter is the icon file.  The dot or period (.) character is
+     recognized by AmigaDOS as the filename separator.  Thus files with
+     name extensions could be construed as unnecessarily confusing.
+
+     Note that it is not recommended that you use the second type of
+     command line of lmk -f alpha and also have an executable file for
+     alpha resident in the current directory.  The order of precedence for
+     LMK when using the -f flag is to locate a file with the exact name
+     given after the -f flag.  If this search is unsuccessful, it will
+     search for a file with the name specified with an extension of .lmk.
+     If you receive an error message from LMK such as 'Line too long' or
+     'Unexpected punctuation', you should try renaming your file with an
+     explicit .lmk extension, then giving the full name of the file when
+     invoking LMK.
+
+     When running LMK from the Workbench, the search order of the files is
+     based on the assignment of the device lmk_files: (this is done from
+     the CLI using the command line assign lmk_files: your-device:).  When
+     no assignment has been made, LMK searches the current directory for
+     the required files.
+
+     7.5.2 Command Syntax
+
+     LMK is precise about the syntax it will accept from a makefile.  As
+     with any programming or specification language, it is important to
+     follow the syntactic rules in order for LMK to understand your
+     requirements.
+
+     The target name must:
+
+          * Start in the first column.
+          * Be followed by a colon (:).
+          * Be followed by the name of any dependencies of the target.
+
+     Below the target-dependency line are any action commands needed to
+     build the target from its dependencies.  Each of the action lines, if
+     any, must be indented a minimum of one tab or space.
+
+     Each sub-target and it dependencies follow the same syntax as the
+     target-dependency syntax given above.  Similarly, the action lines of
+     sub-targets must be indented a minimum of one tab or space.
+
+     Comment lines within an lmkfile are prefixed with a hash (#) sign.  An
+
+     Lattice Programming Utilities                                      U40
+
+
+
+
+
+
+
+
+     example lmkfile with comment lines is shown below:
+
+        myfile: file1.o
+          blink FROM LIB:c.o+file1.o TO myfile LIB LIB:lc.lib+LIB:amiga.lib
+        # This line is a comment line.
+
+        file1.o: df1:source/file1.c headers.h
+           lc -b0 -r0 -odf1: df1:source/file1.c
+        # This line is another comment line.
+
+     7.6 Macros
+
+     Macros are a method of overcoming potential keyboard entry errors
+     where long character strings are required, as well as saving time by
+     using shorthand to represent a constant string of text.  In common
+     with macro usage in the C programming language or with debuggers, a
+     macro invocation is expanded during processing.
+
+     Macros in an lmkfile can be used for representing directory
+     specifications, header files and flags to the compiler or assembler.
+     Any AmigaDOS command can be encapsulated into a macro.
+
+     Some example macros look like this:
+
+          PASS1 = df1:lc/lc1
+          FLAGS = / -b0 -r0 -odf1:
+
+     The first example is specifying a directory path to the compiler; the
+     second example is specifying compiler option flags.
+
+     A macro can also be defined to be the empty string:
+
+          MNAME =
+
+     To illustrate how macros are utilized consider our earlier example of
+     an lmkfile:
+
+          FLAGS = -b0 -r0 -odf1:
+          SOURCE = df1:source/
+
+          myfile: file1.o
+          blink FROM LIB:c.o+file1.o TO myfile LIB LIB:lc.lib+LIB:amiga.lib
+
+          file1.o:$(SOURCE)file1.c headers.h
+            lc $(FLAGS) $(SOURCE)file1.c
+
+     Our original file looked like this:
+
+          myfile: file1.o
+          blink FROM LIB:c.o+file1.o TO myfile LIB LIB:lc.lib+LIB:amiga.lib
+
+          file1.o: df1:source/file1.c headers.h
+             lc -b0 -r0 -odf1: df1:source/file1.c
+
+     The differences between the two files lies in the first two lines and
+     the last line.  The first two lines are the macro definitions:
+
+     Lattice Programming Utilities                                      U41
+
+
+
+
+
+
+
+
+          FLAGS = -b0 -r0 -odf1:
+          SOURCE = df1:source/
+
+     Line 1 defines the flags for the compiler, while line 2 defines the
+     directory path.  The last line in the file shows the greatest
+     difference - originally, it looked like this:
+
+          lc -b0 -r0 -odf1: df1:source/file1.c
+
+     It now takes the form:
+
+          lc $(FLAGS) $(SOURCE)file1.c
+
+     The differences are the inclusion of the dollar sign ($) and the
+     enclosure of the macro name in parentheses.  The dollar sign indicates
+     to LMK that a macro is to be processed and the name of the macro
+     follows the dollar sign.  Note that the macro name must be enclosed in
+     parentheses immediately following the dollar sign.
+
+     7.6.1 Macro Rules and Defaults
+
+     In common with any usage of macros, LMK has certain rules regarding
+     their deployment.  These rules are easy to understand and are not
+     excessively restrictive.  The previous subsection mentioned the need
+     for the dollar sign ($) to precede the macro name.  In addition the
+     macro name must be enclosed in parenthesis - a further rule relates to
+     empty strings.  When an empty or undefined macro is used in an
+     lmkfile, it will be expanded to the empty string.
+
+     Note that if you do not follow closely the 'define-before-use' rule
+     with macros, and you use a macro which has not yet been defined in the
+     file, it will receive an empty expansion.
+
+     Less common but also useful, are the default macros available after a
+     rule of dependency has been processed, but before any associated
+     actions are taken.  LMK has a total of five default macros built into
+     it.  The first two of the five default macros shown below are set
+     after processing each target-dependency line:
+
+     $@     Set to the target filename
+
+     $?     Set to the list of dependencies younger than the target (i.e.
+            have later time stamps).  This includes the full directory
+            pathname structure.
+
+     $*     Set to the prefix of the first dependent filename.  In other
+            words the filename extension is disregarded, although the full
+            directory pathname structure is included.
+
+     $<     Set to the dependent filename which caused the actions.
+            Directory pathname structures are ignored.
+
+     $>     Set to the basename of the dependent file which caused the
+            action.  This means any filename extensions together with any
+            directory paths are ignored.
+
+
+     Lattice Programming Utilities                                      U42
+
+
+
+
+
+
+
+
+     An example of the use of these macros looks like this:
+
+          obj/new/test.o:   src/new/test.c  hdr/test.h
+
+     The line above has defined the source file as test.c located in the
+     directory structure src/new together with the header file test.h
+     located in the directory hdr.  Where the source file test.c has a time
+     stamp later than our target file test.o then the default macros will
+     have the following values:
+
+          Macro     Value
+           $@       obj/new/test.o
+           $?       src/new/test.c
+           $*       src/new/test
+           $<       test.c
+           $>       test
+
+     The remaining three default macros are only set when a transformation
+     rule is used.  Refer to the following section for details of these
+     rules.
+
+     7.7 Summary
+
+     The central concepts to LMK are:
+
+          Targets - Dependencies - Actions
+
+     The colon placement determines which is the target or source file -
+     any file whose name is positioned to the right of the colon is
+     determined as a dependency.
+
+          target-file1 : dependent-file list
+                  command-sequence
+          target-file2 : dependent-file list
+                  command-sequence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U43
+
+
+
+
+
+
+
+
+                                   Section 8
+
+                                 Advanced LMK
+
+     This section is concerned with the more advanced aspects of LMK such
+     as multiple and fake targets, command line options, local input files
+     and transformation rules.
+
+     8.1 Multiple Targets
+
+     It is desirable to have all the actions associated with building a
+     software product in one place.  It might also be the case that the
+     product you are building is actually a collection of separate
+     utilities and for the purpose of source maintenance, you may want to
+     keep all bookkeeping type actions in one file.  LMK allows for the
+     specification of multiple targets within the same lmkfile to suit
+     these needs.
+
+     For example, the following lmkfile could be used for several of the
+     utilities which compose the product you are using:
+
+          ppp: diff grep
+             @rem ppp done
+
+          diff:
+             cd diff
+             lmk -f diff.lmk
+             cd /
+
+          grep:
+             cd grep
+             lmk -f grep.lmk
+             cd /
+
+     In the lmkfile shown above, each of the utilities is calling upon
+     other lmkfiles.  The relevant lmkfile for each utility will contain
+     details of the link and compile sequence.  Note the use of the cd /
+     command to return control back to the originating directory.
+
+     8.2 Alternate Targets
+
+     When LMK is invoked and no target is specified from the command line,
+     LMK defaults to building the first target specified.  Consider the
+     following:
+
+          clean:
+             delete $(OBJ)files.o
+             delete $(OBJ)os.o
+             delete $(OBJ)strbpl.o
+
+          backup:
+             copy files.c to df1:
+             copy os.c to df1:
+             copy strbpl.c to df1:
+
+     Here there are two targets, a primary and alternate target named clean
+
+     Lattice Programming Utilities                                      U44
+
+
+
+
+
+
+
+
+     and backup respectively.  Note that it is possible to specify that one
+     or more alternate targets be built instead.  The notion of alternate
+     targets can also be applied to any of the sub-targets.
+
+     The alternate target specified is backup, which invokes several
+     AmigaDOS commands to copy object files from our disk.  Notice that
+     these actions depend upon a disk being present in drive df1: (if the
+     currently logged drive is df0:).  Under AmigaDOS the copy command can
+     be used to copy to or from any directory, including copying to the
+     current drive.
+
+     Note that to use the commands within the macro backup: you must use
+     the command line:
+
+          lmk backup
+
+     8.3 Default Rules
+
+     When many of the sub-targets in an lmkfile require identical actions
+     such as compilation or copying to another directory, default rules can
+     be specified once, and invoked silently by LMK.  A default rule
+     informs LMK how to make a transformation from a file with one
+     extension to a target or sub-target of a different extension.
+
+     There are a variety of ways to use default rules.  A default rule can
+     be given explicitly inside an lmkfile or it can be placed into a
+     separate file.  There are also certain rules internal to LMK which are
+     a part of this implementation.
+
+     LMK decides which action to take when it detects a certain file must
+     be made from its dependencies.  This action is done on the basis of
+     the following hierarchy:
+
+          * Actions specified below the dependency relation.
+
+          * Transformation rules describing how to make a file of one
+            extension from one of another distinct extension.
+
+          * .DEFAULT rules specified in the same lmkfile or in the lmk.def
+            file.
+
+          * Rules taken from an alternate .def file.
+
+          * Rules taken from a file name lmk.def in the current directory.
+
+          * Rules internal to this implementation of LMK.
+
+     Action rules have highest precedence in how LMK determines the
+     building of a specific target.  These actions are passed on to
+     AmigaDOS for execution and result in the creation of a target on disk
+     or wherever specified.
+
+     8.4 Transformation Rules
+
+     Transformation rules inform LMK how to make a file with a given
+     extension from a dependent with a given extension.  For example, a
+
+     Lattice Programming Utilities                                      U45
+
+
+
+
+
+
+
+
+     file set has a suffix of .c and you want to use a transformation rule
+     to change the file suffix of .c into a .o suffix.  The name of .c.o
+     would be given to the transformation rule in this instance.  For
+     example:
+
+          .c.o:
+             LC $*
+
+     Therefore, when this transformation rule is present, and no explicit
+     command line has been given in your lmkfile to override this rule,
+     then the command sequence for the .c.o rule is employed.
+     Transformation rules are commonly applied to source code modules and
+     object modules.
+
+     Three default macros are set whenever a transformation rule is used:
+
+     $*     is set to the prefix of the first dependency filename including
+            and directory paths.  In other words the filename extension is
+            ignored.  For example, if the dependency filename is:
+
+                 df0:alpha/omega.c
+
+            then the prefix of this filename is:
+
+                 df0:/alpha/omega
+
+            Notice that the .c extension has been dropped.
+
+     $<     is set to the dependency filename which caused the actions.
+            Thus, if you have dependencies consisting of:
+
+                 df0:alpha/omega.c  df2:beta/delta.h
+
+            then the dependency filename in this example is omega.c and not
+            delta.h file.
+
+     $>     is set to the basename of the dependency which caused the
+            actions.  Using the same dependencies as our previous example:
+
+                 df0:alpha/omega.c  df1:beta/delta.h
+
+            then the dependency filename with this default macro is omega.
+
+     When there are no actions or transformation rules pertaining to this
+     relation a .DEFAULT rule is taken.  Often, .DEFAULT rules are used for
+     printing out comment lines to the screen during a LMK session.  For
+     example, the following lines in an lmkfile:
+
+          .DEFAULT
+               ; this target needs remaking $@
+          alpha.cpp: alpha.clp
+
+     will cause the message 'this target needs remaking alpha.cpp' to be
+     printed to your screen during the LMK session, provided alpha.clp has
+     a later time stamp than alpha.cpp.  Note that there are no action
+     rules below the target-dependency line, and that there are no known
+
+     Lattice Programming Utilities                                      U46
+
+
+
+
+
+
+
+
+     ways to LMK to transform a .clp file to a file with extension .cpp.
+
+     An alternative .def file can be specified from the command line with
+     the -b option.  This allows for multiple .def files to reside within
+     the same directory.  LMK looks for a file named lmk.def in the current
+     directory.  The file named lmk.def has been provided on the
+     distribution disk if you are employing other development systems.
+     When you are using the Lattice AmigaDOS C Compiler, the rules in
+     lmk.def are the same as those internal to LMK.
+
+     8.5 LMK Internal Rules
+
+     Rules internal to this implementation of LMK assume you are using the
+     Lattice AmigaDOS C Compiler.  These rules are taken from the file
+     named lmk.def on the distribution disk.  You are able to override
+     these rules if desired, by editing the lmk.def file.
+
+          LC = LC:lc
+          LC1 = LC:lc1
+          LC1FLAGS = -iINCLUDE: -iINCLUDE:lattice/
+          LC2 = LC:lc2
+          AS = ASSEM:assem
+          LINK = BLINK:blink
+
+          .DEFAULT:
+             $(LC)  $(LC1FLAGS) $*
+
+          .a.o:
+             $(AS)  $* -i Assem5.0:include -o  $*.o
+
+          .c.o:
+             $(LC)  $(LC1FLAGS)  $*
+
+          .h.o:
+             delete  $*.o
+             $(LC)  $(LC1FLAGS)  $*
+
+     8.5.1 Special Symbols
+
+     There are a set of special symbols which can be attached to actions
+     within an lmkfile and provide different resultant actions.  These
+     symbols are:
+
+          -     The minus symbol (-), when prefixed to an action line, will
+                cause LMK to continue even if an error return is generated
+                from the action.  Normally, when an action returns an error
+                message, LMK will halt.  It may be desirable to have LMK
+                continue after an error return from a specific action.  If
+                there are multiple actions within an lmkfile to which you
+                want to apply this symbol, then the command line option -k
+                will cause LMK to continue after all error returns.
+
+          @     The at symbol (@) when prefixed to an action line provides
+                for silent operation of that command.  In other words the
+                command itself will not be echoed to the screen although
+                its resultant actions will be displayed as normal.  To have
+
+     Lattice Programming Utilities                                      U47
+
+
+
+
+
+
+
+
+                all actions run silently use the -s option from the command
+                line.
+
+          ~     The tilde symbol (~) serves as an escape symbol when
+                prefixed to an action line.  This may be useful when
+                calling a process whose name begins with something LMK
+                would consider a special character.  For example, the minus
+                sign (-).  The tilde causes the next single character to be
+                escaped.  Note that multiple tilde characters may be used
+                on a single action line.
+
+          &     The ampersand symbol (&) is provided for source code
+                compatibility with previous implementations of LMK.  It is
+                ignored in the AmigaDOS version.
+
+     8.5.2 Example 1
+
+     This example demonstrates the use of macros and default rules.  In
+     addition to creating a target executable file, the lmkfile will also
+     perform and document other actions associated with a software product,
+     such as cleaning up a fragmented disk, creating a production disk,
+     backing up disks and generating program listings.  Although this
+     example may seem initially overwhelming, a fill dissertation of this
+     file follows the listing.
+
+          # An example MAKE file for AmigaDOS
+          GREP = ram:c/
+          LCHDRS = stdio.h fcntl.h
+          OBJ = obj/
+          LCFLAGS = -iINCLUDE: -iINCLUDE:lattice/ -i/grep/  -o$(OBJ)
+          LC = LC:lc
+          LIB = LIB:
+          # The above line is the logical assignment for Lattice_C:lib
+
+          .c.o:
+             $(LC)  $(LCFLAGS) -cc  $*
+
+          files: $(OBJ)files.o  $(OBJ)os.o  $(OBJ)strbpl.o
+             LINK:blink FROM $(LIB)c.o+$(OBJ)files.o+$(OBJ)os.o+ \
+          $(OBJ)strbpl.o TO files LIBRARY $(LIB)lc.lib+$(LIB)amiga.lib
+
+          $(OBJ)files.o: files.c  $(GREP)pat.h  $(LCHDRS)
+
+          $(OBJ)os.o: os.c
+
+          $(OBJ)strbpl.o: strbpl.c
+
+     8.6 Discussion
+
+     There are several groupings of lines in example 1 for files.lmk and
+     they are grouped for the purpose of modularity.
+
+     The first group of lines in example 1 are macro definitions, that is,
+     lines 2 to 7, shown below.
+
+          GREP = ram:c/
+
+     Lattice Programming Utilities                                      U48
+
+
+
+
+
+
+
+
+          LCHDRS = stdio.h fcntl.h
+          OBJ = obj/
+          LCFLAGS = -iINCLUDE: -iINCLUDE:lattice/ -i/grep/ -o$(OBJ)
+          LC = LC:lc
+          LIB = LIB:
+
+     Lines 2 and 4 are both directory specifications.  Line 2 assigns the
+     string for the absolute path name ram:c to the macro named GREP.
+     Each time the macro GREP is used in this lmkfile, it will be expanded
+     to the full string it represents.  Line 3 assigns a relative path
+     name, namely a subdirectory of the current directory, to the macro
+     named OBJ.
+
+     Notice that the entire directory structure of your filing system is at
+     your disposal.  You can call in header files, source modules, write
+     out object files from anywhere by using the appropriate macros.
+
+     Line 3 of the macro definitions assigns to the macro name LCHDRS the
+     string stdio.h fcntl.h, and will serve as shorthand later if you have
+     multiple files which require these headers.
+
+          LCFLAGS = -iINCLUDE: -iINCLUDE:lattice/ -i/grep/ -o$(OBJ)
+
+     Line 5 of the lmkfile shown above holds the string of flags you want
+     to use each time you invoke the compiler from LMK.  There are several
+     points to note about this line.  The most important point is that if
+     you had to enter this line each time it was used, the chances for
+     errors are significant.  In addition, a change in the flag settings
+     would entail editing only one line of the lmkfile, rather than each
+     line in which the macro is used.
+
+     Note, that changing the flags associated with making a specific target
+     will not affect the time stamps associated with any of your files -
+     hence LMK will not be aware that your files need to be rebuilt.  To
+     unconditionally make all targets in such a case, the -u flag can be
+     used.
+
+     Specifically, the compiler flags specify the directory locations of
+     header files with the -i option and direct where the resultant object
+     file is to be placed.
+
+          OBJ = obj/
+          LCFLAGS = -iINCLUDE: -iINCLUDE:lattice/ -i/grep/  -o$(OBJ)
+
+     Notice that macros can be nested within other macros.  The macro
+     $(OBJ) in line 4 will be expanded to the string obj/ when it is
+     processed.  Since LMK makes only one pass on an lmkfile, any nested
+     macros must be declared before being used in an expression.
+
+     Logical name assignments are used in the macro strings.  These are
+     known to AmigaDOS, provided they have been defined in your
+     startup-sequence file and these are passed on by LMK when an action
+     using them is called.  INCLUDE:, LC: and LIB: are logical assignments
+     to specific subdirectories on the Lattice AmigaDOS C Compiler.
+
+          LC = LC:lc
+
+     Lattice Programming Utilities                                      U49
+
+
+
+
+
+
+
+
+          LIB = LIB:
+
+     The macro defined on line 6 as shown above, represents the string
+     needed to call the compiler driver lc, which invokes both phases of
+     the compiler.  Line 7 is another directory specification macro, this
+     time using a logical name which has been defined to your system.
+     Notice the comment line which follows these two lines.  LMK will
+     ignore everything after the hash sign #.
+
+          .c.o:
+             $(LC)  $(LCFLAGS) -cc  $*
+
+     Lines 9 and 10 are interesting since they give a transformation rule.
+     They specify a template of action for converting a file with extension
+     .c into one with extension .o.
+
+     While this transformation is used only once within this lmkfile, it
+     can be quite useful if you have a whole group of files which depend on
+     it.  It is also possible to have multiple transformations of the same
+     type in the same file.  That is, later on another .c.o template can be
+     specified which would apply to all files following it which do not
+     have actions specified, and need a default rule.
+
+     A point worth considering in terms of the use of transformation rules
+     is template matching.  In order for LMK to detect the need for a
+     transformation rule, it must see that the dependency file following
+     the target matches the dependency file specification.  In other words,
+     LMK will not look at the extensions of the other targets, it will only
+     detect the first, and apply a transformation rule if it matches the
+     template.
+
+          $(LC)  $(LCFLAGS) -cc  $*
+
+     A further component to consider about line 10 is the use of the
+     default macro, $*, which refers to the prefix of the .c file.  Shown
+     below is line 11 which specifies the dependencies of the target files.
+
+          files: $(OBJ)files.o  $(OBJ)os.o  $(OBJ)strbpl.o
+
+     Since line 12 shown below is longer than the standard 80 column screen
+     allows, it has been continued for legibility with the continuation
+     character, the backslash \.
+
+             LINK:blink FROM $(LIB)c.o+$(OBJ)files.o+$(OBJ)os.o+ \
+          $(OBJ)strbpl.o TO files LIBRARY $(LIB)lc.lib+$(LIB)amiga.lib
+
+     Thus line 13 is effectively an extension of the preceding line.  Line
+     12 is the final action taken to build the target files from its
+     dependencies.
+
+          $(OBJ)files.o: files.c  $(GREP)pat.h  $(LCHDRS)
+
+     Line 14 shown above details how to make the sub-target files.o.
+     Notice that a macro can be used anywhere in an lmkfile, including the
+     beginning of a target filename.
+
+
+     Lattice Programming Utilities                                      U50
+
+
+
+
+
+
+
+
+          $(OBJ)os.o: os.c
+
+     The same applies to line 15 which demonstrates you can use additional
+     flags.
+
+          $(OBJ)strbpl.o: strbpl.c
+
+     Initially, the line above, namely line 16 may look a little peculiar
+     since there are no actions associated with it.  On examination of the
+     file extensions of sub-target and dependency, notice that you are
+     trying to transform a file with extension .c into a file with
+     extension .o.  Following the precedence for default rules, you see
+     that there is a transformation rule associated with such an action on
+     lines 12 and 13.
+
+     8.7 LMK Options from the Command Line
+
+          -a        This option will rebuild all targets without regard to
+                    time stamps.  All targets and sub-targets are rebuilt.
+
+          -b file   This option will use the filename specified in file as
+                    the default file, rather than the file named lmk.def.
+
+          -c        This option will create a batch file from the current
+                    LMK session.  The batch file will be passed for
+                    execution with the command execute lmkfile.bat.  The
+                    file lmkfile.bat will be left in the current directory
+                    giving a history of the actions and responses of the
+                    LMK session.
+
+          -d        This option will print out detailed debugging
+                    information about the processing of the lmkfile.
+
+          -e        This option will erase any out-of-date targets before
+                    remaking them.
+
+          -f file   This option will use the filename specified in file as
+                    the input lmkfile.
+
+          -h        This option will print out help information and exit.
+
+          -i        This option will ignore error returns from actions.
+
+          -k        This option will ignore error returns from actions
+                    passed to AmigaDOS.  In addition, this option will
+                    ignore error returns stemming from LMK not knowing how
+                    to make certain targets.
+
+          -n        This option will display the actions LMK would have
+                    taken onto the screen, but will not execute these
+                    actions.
+
+          -p        This option will print out target descriptions and
+                    expanded macros.
+
+          -q        This option will query if the target file is updated.
+
+     Lattice Programming Utilities                                      U51
+
+
+
+
+
+
+
+
+                    Print a 1 if the target is currently up to date or a 0
+                    if it is not.  LMK will not take any of the associated
+                    actions.
+
+          -s        This option will not echo actions to the screen before
+                    executing them.
+
+          -t        This object will Touch the target files by updating
+                    them with the current system time.  None of the actions
+                    usually associated with making these targets will be
+                    performed.
+
+          -u        This option will rebuild unconditionally all targets
+                    without regard to time stamps.  This will force
+                    everything (all targets and subtargets) to be rebuilt.
+
+          -x        This option is for UNIX compatibility.  If this option
+                    is used, LMK attempts to detect any features of the
+                    lmkfile which would prevent it from interfacing
+                    correctly with the UNIX make utility.
+
+                    Examples of such features are:
+
+                         * Use a local input file.
+                         * Define an action line without an initial tab
+                           character.
+                         * Specify multiple target files on a single
+                           target-dependency line.
+
+                    In each case, LMK will display an informative error
+                    message describing the incompatibility.  This option
+                    is intended for those users who wish to employ the same
+                    lmkfile or lmkfile.lmk on a variety of operating
+                    systems.
+
+     Both the -k and -i actions should be used with caution, as LMK will
+     continue its actions.  Note that the -k option incorporates all of the
+     functionality of the -i option.
+
+     To embed a literal dollar sign ($) in an lmkfile, for example within a
+     filename, you should use a second dollar sign to escape the first
+     dollar sign.  This will prevent LMK from interpreting the dollar sign
+     as a macro invocation.  At times, it may be wise to defeat some of the
+     actions LMK would otherwise take.  Although LMK is an intelligent
+     tool, it has no knowledge of your source files other than through the
+     dependencies you have given in your lmkfile.
+
+     8.7.1 Macro Command Line Override
+
+     It is possible to override the definition of a macro from the command
+     line of LMK.  This provides for an efficient method of testing new
+     actions or making quick revisions without making a permanent change to
+     our lmkfile.
+
+     Consider the previous example - suppose you wish to use a different
+     assembler, an assembler which generates 68020 code rather than 68000
+
+     Lattice Programming Utilities                                      U52
+
+
+
+
+
+
+
+
+     code.  You could invoke LMK to use your 68020 assembler asm20 by using
+     the following command:
+
+          lmk -f grep.lmk ASM=asm20
+
+     and hence provide LMK with a new definition of the macro ASM.  Note
+     that no spaces are allowed between the macro name, the equals sign (=)
+     and the macro definition.  This example is trivial in that it would
+     require the new assembler to have the same syntax as the previous one.
+
+     8.7.2 Alternative Definition Files
+
+     To use an alternate .def file, the following command line syntax is
+     used:
+
+          lmk -b other.def
+
+     This will signify to LMK that this file should be used in place of
+     lmk.def, in situations where these rules are called for.
+
+     8.8 Local Input Files
+
+     A local input files provides for a way of creating a temporary disk
+     file consisting of actions specified within an lmkfile.  The temporary
+     file is named temp_lmk.tmp by default, and is automatically deleted
+     before the end of the LMK session.
+
+     Local input files provide a method of keeping actions associated with
+     making a target in the same lmkfile rather than in a separate file on
+     disk.  Any macros defined in the lmkfile can be used within a local
+     input file.
+
+     Commands to appear within the temporary file are enclosed between the
+     two delimiter characters or < and <.
+
+     A template for construction is:
+
+          command <[preface]<[!] [ (filename) ]
+             stmt1
+             stmtN
+             <
+
+     where:
+
+          command      The action to be handed to AmigaDOS.
+
+          preface      The symbol which is to precede the local input
+                       filename when it is given to AmigaDOS.
+
+          !            The instruction to LMK to create a local input file.
+
+          filename     The optional filename given to the local input file
+                       created.
+
+          stmt1-N      The statements within the local input file.
+
+
+     Lattice Programming Utilities                                      U53
+
+
+
+
+
+
+
+
+     If the optional exclamation point ! is used after the second <, then
+     the name of the local input file will not appear on the generated
+     command line.  Note that the file preface may contain spaces.  The
+     local input filename, must be enclosed in parentheses and no spaces
+     may occur either before or after this filename.
+
+     8.8.1 Example 2
+
+     The final example illustrates a feature of LMK - the use of local
+     input files.
+
+     This example is an lmkfile creating the target GREP a UNIX derived
+     utility for finding patterns in files.  GREP is composed mainly of C
+     source files, with the addition of one assembly language module.
+     Since the GREP utility relies heavily on command line input, you are
+     using a local version of the Lattice AmigaDOS C Compiler startup
+     module named c.a.
+
+          # GREP example for AmigaDOS
+          LCHDRS = grep.h pat.h
+          OBJ = obj/
+          FLAGS = -iINCLUDE: -iINCLUDE:lattice/ -o$(OBJ)
+          LC = LC:lc
+          ASM = LC:asm
+
+          grep: $(OBJ)grep.o  $(OBJ)c.o  $(OBJ)_main.o  $(OBJ)re_gen.o
+             BLINK:blink <WITH <
+          FROM $(OBJ)c.o+$(OBJ)grep.o+(OBJ)_main.o+$(OBJ)re_gen.o
+          TO grep
+          LIBRARY LIB:lc.lib+LIB:amiga.lib
+          <
+
+          $(OBJ)grep.o: grep.c $(LCHDRS)
+             $(LC) $(FLAGS) -dGREP grep
+
+          $(OBJ)c.o: c.a
+             $(ASM) c.a -i Include:Assembler _Includes -o $(OBJ)c.o
+
+          $(OBJ)_main.o: _main.c
+             $(LC)  $(FLAGS) -dGREP _main
+
+          $(OBJ)re_gen.o: re_gen.c $(LCHDRS)
+             $(LC)  $(FLAGS) -dGREP re_gen
+
+     8.9 Discussion
+
+     The lmkfile to create the target grep is shown above.  The macros are
+     identical to those in the first example in this section of the manual
+     with the addition of the macro ASM.  This is defined to be the string
+     necessary to invoke the Lattice 68000 Macro Assembler located in the
+     subdirectory names ASSEM - the logical assignment which should be in
+     your startup-sequence file.
+
+          grep: $(OBJ)grep.o  $(OBJ)c.o  $(OBJ)_main.o  $(OBJ)re_gen.o
+          grep: $(OBJ)re_match.o  $(OBJ)os.o
+
+
+     Lattice Programming Utilities                                      U54
+
+
+
+
+
+
+
+
+     Line 6 gives the target grep, and its dependencies.  If there are too
+     many dependencies to fit on one line, continuation is specified by
+     retyping the target filename and a colon (:) on all subsequent lines.
+
+          BLINK:blink <WITH <
+
+     Line 7 begins with a command to invoke the linker.  The first
+     less-than symbol (<) on the line informs LMK that the following lines,
+     up to the terminating delimiter (<), will be taken as a local input
+     file.
+
+     Between the first delimiter and the second delimiter on line 7 is the
+     command you want to appear after the link command but before the input
+     filename.  The filename given to the local input file is by default
+     temp_lmk.tmp, therefore ensure you do not have a file of the same name
+     resident in the current directory.
+
+     The command passed to AmigaDOS is:
+
+          BLINK:blink WITH temp_lmk.tmp
+
+          FROM $(OBJ)c.o $(OBJ)grep.o $(OBJ)_main.o
+          FROM $(OBJ)re_gen.o $(OBJ)re_match.o $(OBJ)os.o
+          TO grep
+          LIBRARY LIB:lc.lib+LIB:amiga.lib
+
+     Lines 8 to 10 are the commands which will be placed into the temporary
+     file.  Note that line 8 carries over in the fragment of code shown
+     above.  A WITH file can be used when calling the linker - the linker
+     will take its parameters from the file instead of the command line.
+     Refer to the Lattice AmigaDOS C Compiler manual for full details about
+     the linker.
+
+     Line 11 terminates the local input file with a closing delimiter (<).
+
+     Notice the unique syntax required for the assembler.  A space is
+     required between the -i and its arguments and also for the -o flag and
+     its argument.  Refer to the Lattice AmigaDOS C Compiler manual for
+     full details about the assembler.
+
+     8.10 Fake Targets
+
+     LMK provides support for a number of fake targets.  In other words, an
+     expression which appears to be a target in an lmkfile is actually used
+     to control the operation of LMK.  Fake target names must always begin
+     with a period (.) and be capitalized.  The degree of control on the
+     behavior of LMK is usually that of inserting lines into the lmkfile.
+     There are five options available for fake targets:
+
+          * .DEFAULT
+          * .IGNORE
+          * .ONERROR
+          * .SET
+          * .SILENT
+
+     The results of each fake targets are tabulated below:
+
+     Lattice Programming Utilities                                      U55
+
+
+
+
+
+
+
+
+                   Fake Target               Result
+                   -----------     --------------------------
+                   .DEFAULT        Specify default rules
+                   .IGNORE         Same as -i option
+                   .ONERROR        Specify error response
+                   .SET            Set environmental variable
+                   .SILENT         Same as -s option
+
+     The following part of this subsection provides a description of these
+     options for fake targets.
+
+          .DEFAULT     This option is used to specify an individual action
+                       or a set of actions to be executed based on two
+                       parameters.  These parameters are:
+
+                            * There are no explicit instructions.
+                            * There is no default transformation rule for
+                              the given target/dependency pair.
+
+                       The command line syntax used for .DEFAULT is:
+
+                            .DEFAULT:
+                                  action-1
+                                  action-2
+                                  .....
+                                  .....
+                                  action-N
+
+                       Consider a dependency line such as:
+
+                            alpha.x:   alpha.y
+
+                       where this dependency line had no explicit action
+                       and no transformation rule with .y.x as the target.
+                       In the presence of the .DEFAULT rule, the various
+                       actions shown above action-1, action-2 and action-N
+                       would be executed.
+
+          .IGNORE      This option is equivalent to having called LMK with
+                       the -i flag.  This means that any error returns from
+                       actions will be ignored.  The command line syntax
+                       used for .IGNORE is:
+
+                            .IGNORE:
+
+          .ONERROR     This option is used to specify an action or set of
+                       actions to be performed when LMK detects an error
+                       condition.  For example, consider where LMK is to be
+                       called recursively from within a high-level lmkfile:
+
+                            product: alpha beta
+                                rem product finished
+
+                            alpha:
+                                cd dir1
+                                lmk -f alpha.lmk
+
+     Lattice Programming Utilities                                      U56
+
+
+
+
+
+
+
+
+                            beta:
+                                cd dir2
+                                lmk -f beta.lmk
+
+                       When one of the lower level invocations of LMK exits
+                       with an error, you will be left in one of the
+                       subdirectories - either dir1 or dir2.  In order to
+                       finish in a high directory level you would add these
+                       lines to your lmkfile:
+
+                            .ONERROR:
+                                cd /
+
+                       Alternatively, you may want to delete certain
+                       temporary files or transfer them elsewhere if an
+                       error condition is detected.  Either of these
+                       actions can be directed by means of the .ONERROR
+                       option.
+
+          .SET         This option allows you to adjust the values of
+                       logical name assignments from within an lmkfile.
+                       When the logical name is set in this way, it retains
+                       the specified value.  Note that this also applies to
+                       any secondary processes spawned from the main
+                       process.
+
+                       The command line syntax used for .SET is:
+
+                            .SET:     name = value
+
+                       where name is the logical name you wish to set, and
+                       value represents the value to be assigned.  The
+                       contents of value may be any character, including
+                       white space.  However, the leading and trailing
+                       white space characters will be stripped off if these
+                       are present.
+
+                       The .SET option is useful in defining the logical
+                       name INCLUDE.  For example:
+
+                            .SET:    INCLUDE: = df0:lc/examples
+
+          .SILENT      This option is equivalent to having called LMK with
+                       the -s flag.  This means that during LMK operation,
+                       the action about to be executed will not be echoed
+                       to the standard output device, usually the screen.
+                       The command line syntax used for .SILENT is:
+
+                            .SILENT:
+
+          ------------------------------------------------------------
+          |  NOTE:  For the .DEFAULT fake target, the actions will   |
+          |  always be executed - even if explicit actions have      |
+          |  been specified.  The default actions will be executed   |
+          |  first, and then the explicit actions will be executed.  |
+          ------------------------------------------------------------
+
+     Lattice Programming Utilities                                      U57
+
+
+
+
+
+
+
+
+                                   Section 9
+
+                               Lattice Profiler
+
+     9.1 Profile and Report Generator
+
+     The Lattice profiler lprof and associated report generator lstat allow
+     you to profile the execution of your application code.  The profiler
+     records the amount of time that is expended in each routine that is
+     entered during the execution of your application.  The report
+     generator, lstat, reports the times to you in a statistical report.
+     This allows you to do a performance analysis on your program,
+     identifying "hot-spots" so that intelligent improvements can be made.
+
+     When you use a profiler, you should have some objectives in mind,
+     including the application re-design steps you may want to carry out.
+     A large percentage of time spent in some program module may indicate
+     that:
+
+          * the module should be redesigned,
+
+          * the module should be incorporated into the calling routines
+            thus eliminating calling overhead,
+
+          * the routine should be re-coded in assembly language, or
+
+          * the routine needs to be modified as part of a major
+            re-structuring of the application.
+
+     It may happen that most of the work being done involves the routine in
+     question, and that the percentage of time taken is reasonable.
+
+     Considerations such as those just mentioned should be done as you
+     collect and analyze data from the profiler.
+
+     9.2 LPROF Command
+
+     The lprof command is used to gather information about where a program
+     is spending most of its execution time.  In order to gather statistics
+     on a given command, prefix the command with the lprof command.
+
+          lprof command
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  Note:  If the command you wish is not in the current    |
+          |  directory, you must fully specify the command location  |
+          |  even if it is in the path.  Also, any redirection       |
+          |  operators which were immediately after the command      |
+          |  must immediately follow the lprof command.              |
+          |                                                          |
+          ------------------------------------------------------------
+
+     After the profiler loads the command, it will execute the command and
+     gather statistics by examining the current program counter at given
+     intervals.  You can verify that the profiling is in progress by the
+
+     Lattice Programming Utilities                                      U58
+
+
+
+
+
+
+
+
+     power light fluctuating in intensity.  When the program run completes,
+     the lprof command will create the file prof.out in the current
+     directory.  You can then use the lstat command to obtain a statistical
+     report on the execution profile.
+
+     For instance, you may be interested in analyzing a simple program
+     called foo which takes no arguments.  You can gather statistics on it
+     by entering the command:
+
+          lprof foo
+
+     For a program that normally takes command-line arguments, you can add
+     them after the command name as in:
+
+          lprof mycmd -opt 1 -flag
+
+     Assume the program needs to have output redirected as in:
+
+          myprog >outfile -opt 2 -doit
+
+     If you intend to run the profiler, you would need to move the
+     redirection operators after the lprof command as in:
+
+          lprof >outfile myprog -opt 2 -doit
+
+     If the program were in the C: directory or another directory
+     automatically searched by the CLI, you would need to give the full
+     path name as in:
+
+          lprof C:mynewcmd -opt 2
+
+     9.3 LSTAT Command
+
+     The lstat command is used to analyze a profile statistics file
+     created by the lprof command.  It prints the statistics gathered by
+     the lprof command.
+
+     The lstat command is invoked by:
+
+          lstat [>output] [options] program profile
+
+     The program field is required and indicates the name of the executable
+     for which the statistics were gathered.  lstat uses this to obtain all
+     the debugging and symbol information for its report.  The profile
+     field is optional and is used to override the default of prof.out
+     which is written by the lprof command.  You will need to use this if
+     the file is in a different directory, or you have renamed the file.
+
+     The >output field is optional and redirects lstat's output from the
+     screen to an output device or file.  Most programmers use lstat by
+     redirecting its output to a file and then printing the file.  See the
+     examples which follow.
+
+     The options field need not be present.  lstat accepts the following
+     options
+
+
+     Lattice Programming Utilities                                      U59
+
+
+
+
+
+
+
+
+          -z     This option instructs lstat to display statistics for all
+                 subroutines even if they were not encountered in
+                 profiling.  The default is to suppress all entries that
+                 have a 0 hit count.
+
+          -f     This option instructs lstat to display full statistics for
+                 each subroutine indicating the line numbers within a
+                 module that were hit by profiling.  By default, only
+                 summary information about the subroutine is printed.
+
+          -t=n   This option allows pruning of the information presented.
+                 By default, lstat will print all subroutines which had
+                 even a single hit.  It you specify n it will only display
+                 those which have at least n or more hits.
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  Note that this command assumes that you have compiled   |
+          |  with at least the -d1 debugging option from lc1 in      |
+          |  order to be able to associate the code with the given   |
+          |  line.  In the absence of this information, the lstat    |
+          |  command will only report statistics on a subroutine by  |
+          |  subroutine basis.                                       |
+          |                                                          |
+          ------------------------------------------------------------
+
+     9.3.1 Examples
+
+     These examples assume that the file lprof.out is in the current
+     directory.  It is created by running the command:
+
+          lprof testprog
+
+     To simply view the basic statistics about the run, we can give the
+     command:
+
+     1> lstat testprog
+     header size 0x1c, ProfileHeader 0x1c
+     719 run + 158 ready + 77 wait = 954
+      75.367% run,  16.562% ready,   8.071% wait
+       8.067% samples (58) out of profile range
+
+     counted = 660, RUN - NonTable 661
+
+     Routine %   Total % Offset     Hits   Label
+      59.5455%  59.5455%  1c44c      393  getrsc
+       8.9394%  68.4848%  1c6fa       59  frersc
+       3.6364%  72.1212%  10d38       24  alcmem [lines 64-102 in memory.c]
+                                           Most hits -  1.2121% (8) on line
+                                                                       80
+       2.2727%  74.3939%  18252       15  instal [lines 117-146 in sym.c]
+                                           Most hits -  1.2121% (8) on line
+                                                                       132
+                         ...
+       0.1515% 100.0000%  1ca18        1  CXM22
+
+
+     Lattice Programming Utilities                                      U60
+
+
+
+
+
+
+
+
+     We can include statistics on the additional routines that did not get
+     encountered by the profiler with the -z option.  Note the extra
+     routines at the end of the following example have 0 hits and account
+     for 0.0000% of the execution time but now appear in the output as a
+     result of using the -z option.
+
+     1> lstat -z testprog
+     header size 0x1c, ProfileHeader 0x1c
+     719 run + 158 ready + 77 wait = 954
+      75.367% run,  16.562% ready,   8.071% wait
+       8.067% samples (58) out of profile range
+
+     counted = 660, RUN - NonTable 661
+
+     Routine %   Total % Offset     Hits   Label
+      59.5455%  59.5455%  1c44c      393  getrsc
+       8.9394%  68.4848%  1c6fa       59  frersc
+       3.6364%  72.1212%  10d38       24  alcmem [lines 64-102 in memory.c]
+                                           Most hits -  1.2121% (8) on line
+                                                                       80
+       2.2727%  74.3939%  18252       15  instal [lines 117-146 in sym.c]
+                                           Most hits -  1.2121% (8) on line
+                                                                       132
+                    ...
+       0.0000% 100.0000%  1ca60        0  strcat
+       0.0000% 100.0000%  1ca78        0  strncpy
+
+     More information about the individual lines in a subroutine may be
+     obtained with the -f option.  For each routine that has line number
+     information, it will indicate the percentage of total execution that
+     was spent on that line in the subroutine.  Note that subroutines
+     without line number information will not show any additional
+     information.
+
+     1> lstat -f testprog
+     header size 0x1c, ProfileHeader 0x1c
+     719 run + 158 ready + 77 wait = 954
+      75.367% run,  16.562% ready,   8.071% wait
+       8.067% samples (58) out of profile range
+
+     counted = 660, RUN - NonTable 661
+
+     Routine %   Total % Offset     Hits   Label
+      59.5455%  59.5455%  1c44c      393  getrsc
+       8.9394%  68.4848%  1c6fa       59  frersc
+       3.6364%  72.1212%  10d38       24  alcmem [lines 64-102 in memory.c]
+                                             0.3030% (2) on line 64
+                                             1.0606% (7) on line 68
+                                             0.7576% (5) on line 69
+                                             1.2121% (8) on line 80
+                                             0.3030% (2) on line 90
+       2.2727%  74.3939%  18252       15  instal [lines 117-146 in sym.c]
+                                             0.1515% (1) on line 117
+                                             0.1515% (1) on line 129
+                                             0.4545% (3) on line 131
+                                             1.2121% (8) on line 132
+
+     Lattice Programming Utilities                                      U61
+
+
+
+
+
+
+
+
+                                             0.1515% (1) on line 133
+                                             0.1515% (1) on line 138
+                  ...
+       0.1515% 100.0000%  1ca18        1  CXM22
+
+     With a large program, the amount of information presented by the
+     profiler can be overwhelming.  In attempting to improve performance of
+     such a program, it is beneficial to limit the amount of information
+     that the lstat program presents.  The -t option can be used to set a
+     threshold below which no information is reported.  With this option,
+     the final total will not be 100%
+
+     1> lstat -f -t=2 testprog
+     header size 0x1c, ProfileHeader 0x1c
+     719 run + 158 ready + 77 wait = 954
+      75.367% run,  16.562% ready,   8.071% wait
+       8.067% samples (58) out of profile range
+
+     counted = 660, RUN - NonTable 661
+
+     Routine %   Total % Offset     Hits   Label
+      59.5455%  59.5455%  1c44c      393  getrsc
+       8.9394%  68.4848%  1c6fa       59  frersc
+       3.6364%  72.1212%  10d38       24  alcmem [lines 64-102 in memory.c]
+                                             0.3030% (2) on line 64
+                                             1.0606% (7) on line 68
+                                             0.7576% (5) on line 69
+                                             1.2121% (8) on line 80
+                                             0.3030% (2) on line 90
+       2.2727%  74.3939%  18252       15  instal [lines 117-146 in sym.c]
+                                             0.1515% (1) on line 117
+                                             0.1515% (1) on line 129
+                                             0.4545% (3) on line 131
+                                             1.2121% (8) on line 132
+                                             0.1515% (1) on line 133
+                                             0.1515% (1) on line 138
+                    ...
+       0.3030%  98.3333%  1ca00        2  xcovf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U62
+
+
+
+
+
+
+
+
+                                  Section 10
+
+                                     SPLAT
+
+     SPLAT is a stream or line-based editor for files similar to the
+     AmigaDOS system editor named Edit.  However, SPLAT is both easier to
+     use and faster in operation than the system editor.  Given a pattern,
+     a substitution string, and a set of files, SPLAT replaces all
+     occurrences of the pattern with the string in each of the files.  The
+     original version of the file is left untouched, unless the -o option
+     is used.  SPLAT will either place the result of its substitutions in a
+     temporary file, or within a specified directory with the same root
+     filename, but with an .$$$ extension.
+
+     10.1 SPLAT Command
+
+     SPLAT is especially useful when fairly simple substitutions need to be
+     made in a number of source files.  For example, consider a situation
+     where you wanted to replace all occurrences of unsigned character
+     declarations with character declarations in each of your C language
+     source files.
+
+     The SPLAT command to do this would be:
+
+          splat "unsigned char" char #?.c
+
+     The effect of this command is to replace all occurrences of the string
+     "unsigned char" with "char" within all ".c" files of the current
+     directory.
+
+     SPLAT is more efficient than a text editor since:
+
+          * There is no need to read the entire file into memory while
+            SPLAT does its substitutions.
+          * SPLAT can be applied once to several files rather than making
+            the same repetitious change to a number of files one at a time.
+          * It will not modify the original version of the file it is
+            working on.
+
+     10.2 Using SPLAT
+
+     SPLAT is invoked in the following way:
+
+          splat [-s] [-o | -dPREFIX] [-v] pattern string files
+
+     where:
+
+          -s         This option forces SPLAT to announce the name of each
+                     file as it begins its work on the file and to announce
+                     that no substitutions have been performed on a file if
+                     it was unable to find the specified pattern in the
+                     file.  Without the -s flag SPLAT does its work
+                     silently.
+
+          -o         This option tells SPLAT to overwrite the original
+                     version of the file with the new version.
+
+     Lattice Programming Utilities                                      U63
+
+
+
+
+
+
+
+
+          -dPREFIX   This option requires you to specify a directory prefix
+                     indicating the directory into which SPLAT will place
+                     the new files - leaving the original versions
+                     untouched.
+
+          -v         This option means verbose and causes SPLAT to display
+                     all lines in which substitutions are made to standard
+                     output.  No files are created when using this option,
+                     and it is intended only to give you a quick preview of
+                     the changes SPLAT will make when it is creating
+                     modified files.
+
+          pattern    This option refers to a regular expression pattern as
+                     described in the section dealing with GREP.
+
+          string     This option designates the string you desire to be
+                     substituted for the pattern.
+
+     Note that SPLAT uses the same technique as GREP in performing its
+     substitutions.  Characters in the substitution string which are
+     special to GREP, such as the ampersand (&), are also special to SPLAT
+     in the same way.  Just like GREP, SPLAT treats the following
+     characters in the pattern argument as special:
+
+          $    ]    .    [
+
+     Refer to the section on GREP for a complete description of these
+     special characters.
+
+     Only one of the -o or -d options may be used since they are
+     incompatible with one another.  Thus, the command:
+
+          splat -d/backup/ int INT #?.headers #?.source
+
+     causes int to be replaced with INT in all files with .headers and
+     .source extensions, and the new versions of these files to be placed
+     in the directory named /backup.  Note that this command will replace
+     such expressions as printf with prINTf - which may not be the desired
+     result.  Similarly, the command:
+
+          splat -dbackup/ int INT #?.headers #?.source
+
+     will perform the same substitutions, but it will place the new
+     versions of the files in the subdirectory backup/ of the current
+     directory.
+
+     If the specified directory does not exist, SPLAT attempts to create
+     it.  When the attempt to create the directory fails, an error message
+     will be displayed on the screen.
+
+     10.3 Examples
+
+     In the absence of the -o option SPLAT will not overwrite the original
+     versions of your files.  Therefore, it is quite safe to experiment
+     with SPLAT.  Such experimentation is often wise since an erroneous
+     specification of the regular expression pattern may result in
+
+     Lattice Programming Utilities                                      U64
+
+
+
+
+
+
+
+
+     undesired changes.
+
+     For example, we wish to go through each of our source files and
+     substitute INT for int in every declaration of an integer identifier.
+     However, we do not want our printf calls to become prINTf.  If we know
+     that in each such integer declaration, the expression int is preceded
+     and succeeded by a space, then the command to use is:
+
+          splat -dbackup/" int "" INT " #?.source
+
+     Recall that in common with GREP, a pattern containing white space must
+     be enclosed in double quotes.
+
+     For example, on each line of the file comp.bat where the expression
+     lc1 occurs we wish to append the expression -cc at the end of the
+     line.  Then the command:
+
+          splat -dbak/ "lc1.*$" "& -cc" comp.bat
+
+     will perform this objective.  The pattern lc1.*$ will match a string
+     beginning with lc1 followed by zero or more of any character, and
+     ending with the end of the line.  The substitution string & -cc will
+     expand the matched string by a space followed by -cc.
+
+     It is also possible to insert lines in a file with SPLAT or to break
+     single lines into multiple lines.  For example, if the expression:
+
+          parms(s);usage();exit(1);
+
+     occurs on a single line of the file test.c and you want any function
+     calls to usage() and exit() to be positioned on separate lines and
+     indented one tab stop, you would use the command:
+
+       splat parms(s);usage();exit(1) parms(s);ntusage();ntexit(1);nttext.c
+
+     to insert the newline and tab characters.
+
+     Once you have gained familiarity with SPLAT, you will see that complex
+     substitutions may be accomplished with a wide-ranging choice of the
+     regular expression pattern and substitution string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U65
+
+
+
+
+
+
+
+
+                                  Section 11
+
+                               Traceback Utility
+
+     The traceback utility (tb) is used to debug those situations where
+     your application program is causing an abend, or abnormal termination.
+     The information provided in the traceback utility is the run-time
+     stack, the registers at the time of termination, the memory,
+     application data, and the environment.  This information is usually
+     sufficient to enable you to debug the application with this problem.
+
+     11.0.1 Command Details
+
+     The traceback utility is invoked by:
+
+          tb [-<options>] [[tbfile] file]
+
+     This command is used to process a Snapshot.TB file produced by a
+     program linked with catch.o.  This file is a standard IFF format file
+     that contains information about the program abend and environment at
+     the time of the exception.
+
+     If given, options must be one or more of the following characters in
+     any order:
+
+          -l     This will dump all sections present in the traceback file.
+
+          -x     Symbol Xref.  This dumps the location of all symbols
+                 encountered in the program.
+
+          -s     Stack.  This dumps the contents of the entire stack at the
+                 time of the snapshot.
+
+          -r     Registers.  This displays the current contents of
+                 registers at the time of the snapshot.
+
+          -v     Environment.  This is the default to display where the
+                 program was executing and the call back chain.
+
+          -m     Memory.  If present in the snapshot file, this will
+                 display the amount of memory available at the time of the
+                 snapshot.
+
+          -u     User data.  If present in the snapshot file, this will
+                 display any program generated user data section.
+
+     If no options are given, tb will default to printing out the current
+     stack frame call back to indicate the current code location.
+
+     The optional parameter file indicates from which to read the debugging
+     information.  If not given, the tb command will use the program
+     specified in the snapshot file.
+
+
+
+
+
+     Lattice Programming Utilities                                      U66
+
+
+
+
+
+
+
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  Note that a file option is most useful when you use     |
+          |  two images:  one with full debugging information and    |
+          |  another without debugging information that you          |
+          |  normally run.  In this way, you get the benefits of     |
+          |  faster loading of the non-debug version yet still have  |
+          |  access to the traceback information if it does crash.   |
+          |                                                          |
+          ------------------------------------------------------------
+
+     The tbfile parameter is used to override the default of Snapshot.TB in
+     the current directory.  If you give this option, you MUST also specify
+     a program name.
+
+     11.0.2 Examples
+
+     Assume that you have a program testit linked with catch.o that has
+     created a file Snapshot.TB in the current directory.  We run the tb
+     command to produce a traceback:
+
+          1> tb
+          Program Name: testit; run from CLI
+          Program load map (addresses are APTRs, sizes are in bytes)
+          220f78 $1110  211268 $5b4
+          Terminated with GURU number 00000005, Divide by Zero Error
+          Error occurred at address 221cde =  foo line 5
+             called from 22156a = main line 11
+             called from 221c60 =  main + 704
+             called from 2210ca = hunk 0 + $152
+
+     To obtain a full dump of all information, we can use the -l option:
+
+          1> tb
+          TraceDump 0.88 Copyright (c) 1988 The Software Distillery
+
+          TraceDump Utility: catch.o; Version 1, Revision 0
+          Processor type: 68000
+          VBlankFreq 60, PowerSupFreq 60
+
+          Symbols for hunk 0
+                           foo = 22153c                 main = 22155c
+
+          Program Name: testit; run from CLI
+          Program load map (addresses are APTRs, sizes are in bytes)
+          220f78 $1110  211268 $5b4
+          Terminated with GURU number 00000005, Divide by Zero Error
+          Error occurred at address 221cde =  foo line 5
+             called from 22156a = main line 11
+             called from 221c60 =  main + 704
+             called from 2210ca = hunk 0 + $152
+
+          Registers:
+          D0=00221cde D1=00000000 D2=00000001 D3=00002718
+          D4=00000001 D5=0000002b D6=0000003b D7=00000000
+          A0=00221f54 A1=00243fcc A2=0024460a A3=00225c68
+
+     Lattice Programming Utilities                                      U67
+
+
+
+
+
+
+
+
+          A4=00211268 A5=002445be A6=002033c8 A7=002445ae
+          PC 221cde   C=0 V=0 Z=1 N=0 X=0
+
+          stack top: 244640, stack pointer: 2445ae, stack length: $94
+          entire stack, size = $94 bytes
+          2445AE: 000003ED 00221558 0000002B 00000000 : ...m.".X...+....
+          2445BE: 002445CA 0022156A 00225C68 002445F6 : .$EF.".j."h.$E.
+          2445CE: 00221C60 00000001 00211620 00225CC4 : .".`.....!. ."
+          2445DE: 00226030 00225C68 83D10000 00000021 : ."`0."h.Q.....!
+          2445EE: 13230021 00211620 00244640 002210CA : .#.!.!. .$F@.".J
+          2445FE: 00244602 74657374 6974000A 00000022 : .$F.testit....."
+          22460E: 60300000 27100000 27180000 00010000 : `0..'...'.......
+          24461E: 002B0000 003B0022 60300022 61300020 : .+...;."`0."a0.
+          24462E: 35300022 0F740024 464400FF 425800FF : 50.".t.$FD..BX..
+          24463E: 424C0022                            : BL."
+
+     The tb utility can present each individual piece of the information
+     based on additional option letters.  In the above dump, you can
+     examine the sections:
+
+          (1) Xref section -x option
+
+          (2) Environment section -e option
+
+          (3) Register section -r option
+
+          (4) Stack section -s option
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U68
+
+
+
+
+
+
+
+
+                                  Section 12
+
+                                     TOUCH
+
+     TOUCH is a utility which adjusts the time and date stamp on specified
+     files to the current system time and date.  This allows you to change
+     the file time stamp to any date and time within system limits.  In the
+     case of the current version of AmigaDOS, this means a time stamp
+     within the range 2 January 1978 - 31 December 2045.
+
+     12.1 Using TOUCH
+
+     The basic command line syntax for TOUCH is:
+
+          touch [-m] file1 file2 ...
+
+     Note that there is only one option for TOUCH which refers to a
+     wildcard.  The -m option is employed when you are using the MS-DOS
+     wildcard convention of the asterisk.  For example, consider the
+     listing of a directory which gives the following:
+
+          alpha1             5304  rwed    31-Jul-86  10:03:45
+          amiga               Dir  rwed    05-Aug-86  14:34:12
+          alpha3             1904  rwed    31-Jul-86  10:04:22
+          beta3               777  rwed    07-Aug-86  02:22:09
+          beta1              6672  rwed    31-Jul-86  10:04:35
+          gamma2             1392  rwed    31-Jul-86  10:04:58
+          gamma1             3280  rwed    31-Jul-86  10:05:16
+          assembler           Dir  rwed    05-Dec-87  09:56:33
+          alpha2             4869  rwed    31-Jul-86  10:05:42
+          beta2              6432  rwed    12-Nov-87  16:23:03
+
+     If the system date is 08-Jan-88 and the system time is 00:00:00
+     (midnight), entering the command:
+
+          touch -m b*
+
+     will result in a directory listing of:
+
+          alpha1             5304  rwed    31-Jul-86  10:03:45
+          amiga               dir  rwed    05-Aug-86  14:34:12
+          alpha3             1904  rwed    31-Jul-86  10:04:22
+          beta3               777  rwed    08-Jan-88  00:00:01
+          beta1              6672  rwed    08-Jan-88  00:00:02
+          gamma2             1392  rwed    31-Jul-86  10:04:58
+          gamma1             3280  rwed    31-Jul-86  10:05:16
+          assembler           Dir  rwed    05-Dec-87  09:56:33
+          alpha2             4869  rwed    31-Jul-86  10:05:42
+          beta2              6432  rwed    08-Jan-88  00:00:03
+
+     Note that the files beta1, beta2 and beta3 have been updated.  The
+     command:
+
+          touch a#?
+
+     specifies the use of AmigaDOS wildcards #? and results in a directory
+
+     Lattice Programming Utilities                                      U69
+
+
+
+
+
+
+
+
+     listing of:
+
+          alpha1             5304  rwed    08-Jan-88  00:00:01
+          amiga               Dir  rwed    05-Aug-86  14:34:12
+          alpha3             1904  rwed    08-Jan-88  00:00:02
+          beta3               777  rwed    07-Aug-86  02:22:09
+          beta1              6672  rwed    31-Jul-86  10:04:35
+          gamma2             1392  rwed    31-Jul-86  10:04:58
+          gamma1             3280  rwed    31-Jul-86  10:05:16
+          assembler           Dir  rwed    05-Dec-87  09:56:33
+          alpha2             4869  rwed    08-Jan-88  00:00:03
+          beta2              6432  rwed    12-Nov-87  16:23:03
+
+     The files alpha1, alpha2 and alpha3 have been updated.  Note that
+     directories are unchanged by TOUCH, thus the time stamps on amiga and
+     assembler remain unchanged.
+
+     To amend the time stamps on specific files, the command line:
+
+          touch gamma1 gamma2
+
+     would result in a directory listing of:
+
+          alpha1             5304  rwed    31-Jul-86
+          amiga               Dir  rwed    05-Aug-86
+          alpha3             1904  rwed    31-Jul-86
+          beta3               777  rwed    07-Aug-86
+          beta1              6672  rwed    31-Jul-86
+          gamma2             1392  rwed    08-Jan-88
+          gamma1             3280  rwed    08-Jan-88
+          assembler           Dir  rwed    05-Dec-87
+          alpha2             4869  rwed    31-Jul-86
+          beta2              6432  rwed    12-Nov-87
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U70
+
+
+
+
+
+
+
+
+                                  Section 13
+
+                                      WC
+
+     WC (Word Count) is a companion utility to DIFF and will tabulate the
+     number of characters, words and lines within a file.  The concept of a
+     word as used by WC is an intuitive one, word ends when whitespace (a
+     space, tab, carriage return or linefeed) is encountered.  In this
+     context, a word is a sequence of printable characters.
+
+     A line ends with a newline character, WC operates in translated mode
+     which means a file which contains a combination of a newline character
+     followed by a carriage return character, is reduced to a single
+     linefeed character.
+
+     13.1 Using WC
+
+     The command line syntax for WC is:
+
+          wc [-p] [-s] file
+
+     WC will respond by displaying counts of the number of characters,
+     words, and lines in the specified file.  The options are described
+     below.
+
+     WC provides a convenient way of obtaining some basic statistics on a
+     file.  It can be helpful in using DIFF with the -l option.  In this
+     case, WC can detail how large the line number tables for DIFF should
+     be.
+
+     13.2 Options
+
+     WC has two options:
+
+          -p        This option will filter any printable characters.  This
+                    action is identical to the -p option of GREP and DIFF
+                    and removes non-printable characters from the input
+                    stream.
+
+          -s file   This option calculates a checksum for the filename
+                    specified in file.  In addition, this option also
+                    provides information concerning the number of
+                    characters, words and lines in the specified file.  The
+                    checksum is calculated in two parts.  The first part is
+                    simply the number of printable ASCII characters in the
+                    file.  The second part is computed with the help of an
+                    internal table which matches printable ASCII characters
+                    uniquely to numbers - the exact correspondence is
+                    unimportant.  Each time a printable ASCII character
+                    (excluding whitespace) is encountered in the file, its
+                    numeric representative from the table is added to the
+                    sum.  The final sum is the second part of the checksum
+                    reported by WC.
+
+     13.3 Checksum Details
+
+
+     Lattice Programming Utilities                                      U71
+
+
+
+
+
+
+
+
+     The checksum consists of the two parts, and is displayed in the
+     following format:
+
+          (number of printable ASCII characters)   (checksum)
+
+     This checksum provided by WC can be useful in one of two
+     circumstances:
+
+          * It provides a quick check on whether two files are identical in
+            terms of content.  If their checksums differ, then they are not
+            identical.
+
+          * It can be used in the context of uploading or downloading a
+            file from one machine to another to ensure that no inadvertent
+            character translation has taken place.
+
+     This can be troublesome when uploading a text file from the Amiga to
+     an IBM(R) mainframe computer which uses the EBCDIC character set, or
+     downloading from such a mainframe to the Amiga.  Since the character
+     representation table of WC is independent of the character set used,
+     and since it ignores whitespace, then the net result of running WC on
+     a file on the Amiga and on the same file uploaded to an IBM mainframe
+     should be that the checksums are identical.
+
+     In order to carry this out you must have WC on both the host and
+     target machines.  For this reason we have provided the source code of
+     WC.  You only need transfer it to the mainframe and compile WC there.
+     It is sufficiently small to be directly entered from a terminal
+     keyboard.  Many hours of needless debugging can be avoided by
+     comparing checksums after file transfer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U72
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Appendix A
+
+                                GREP Libraries
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U73
+
+
+
+
+
+
+
+
+     re_gen                           Generate a regular expression pattern
+                                                            Class:  LATTICE
+
+     NAME
+
+          re_gen     Generate a regular expression pattern
+
+     SYNOPSIS
+
+          #include "pat.h"
+          pat = re_gen(str)
+          PATTERN pat;  pattern generated
+          char *str;    character string representation of the pattern
+
+     DESCRIPTION
+
+     The function re_gen translates the string representation str of a
+     pattern into an internal representation pat described in pat.h.  This
+     PATTERN may then be used by the functions re_match() and are_match()
+     to match against a string.
+
+     RETURNS
+
+     The PATTERN, if successful; otherwise NULL
+
+     SEE
+
+     grep, re_match()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U74
+
+
+
+
+
+
+
+
+     re_match                                      Regular expression match
+                                                            Class:  LATTICE
+
+     NAME
+
+          re_match     Regular expression match
+
+     SYNOPSIS
+
+          #include "pat.h"
+          found = re_match(str,pat)
+          int found;
+          int index;             index to anchor match
+          PATTERN pat;           regular expression pattern
+          char *str;             string being scanned
+
+     DESCRIPTION
+
+     The function re_match scans the specified string to determine if it
+     contains an occurrence of the given pattern.  The pattern is an
+     internal representation of a regular expression (RE), usually obtained
+     via a call to the function re_gen().  Note that you must #include the
+     file pat.h in order to declare any variable of type PATTERN.
+
+     RETURNS
+
+          found = the index of the last character in the first sub-string
+                  of str which matches pat, if there is one.
+
+          found = -1 if there is no match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U75
+
+
+
+
+
+
+
+
+     are_match                            Anchored regular expression match
+                                                            Class:  LATTICE
+
+     NAME
+
+          are_match     Anchored regular expression match
+
+     SYNOPSIS
+
+          #include "pat.h"
+          found = are_match(str,index,pat)
+          int found;
+          int index;             index to anchor match
+          PATTERN pat;           regular expression pattern
+          char *str;             string being scanned
+
+     DESCRIPTION
+
+     The function are_match scans the specified string to determine if it
+     contains an occurrence of the given pattern.  The pattern is an
+     internal representation of a regular expression (RE), usually obtained
+     via a call to the function re_gen().  Note that you must #include the
+     file pat.h in order to declare any variable of type PATTERN.
+
+     RETURNS
+
+          found = the index of the last character in the first sub-string
+                  of str which matches pat, if there is one.
+
+          found = -1 if there is no match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U76
+
+
+
+
+
+
+
+
+     re_smatch                          Regular expression match of strings
+                                                            Class:  LATTICE
+
+     NAME
+
+          re_smatch     Regular expression match of strings
+
+     SYNOPSIS
+
+          #include "pat.h"
+          found = re_smatch(str1,str2)
+          int found;
+          int index;             index to anchor match
+          char *str1;            pattern string
+          char *str2;            string being scanned
+
+     DESCRIPTION
+
+     The function re_smatch scans the specified string str2 to determine if
+     it contains an occurrence of the given pattern str1.  The string str2
+     denotes a pattern as characterized in previous sections.  are_smatch()
+     is like re_smatch() except that it performs an anchored search from
+     index.  These functions are similar to re_match() and are_match() with
+     the exception that the pattern specified in re_match() and are_match()
+     is the internal representation of a pattern produced by re_gen().
+
+     SEE
+
+     re_match, are_match, and are_smatch
+
+     RETURNS
+
+          found = the index of the last character in the first sub-string
+                  of str2 which matches str1, if there is one.
+
+          found = -1 if there is no match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U77
+
+
+
+
+
+
+
+
+     are_smatch                Anchored regular expression match of strings
+                                                            Class:  LATTICE
+
+     NAME
+
+          are_smatch     Anchored regular expression match of strings
+
+     SYNOPSIS
+
+          #include "pat.h"
+          found = are_smatch(index,str1,str2)
+          int found;
+          int index;             index to anchor match
+          char *str1;            pattern string
+          char *str2;            string being scanned
+
+     DESCRIPTION
+
+     The function are_smatch scans the specified string str2 to determine
+     if it contains an occurrence of the given pattern str1.  The string
+     str2 denotes a pattern as characterized in previous sections.
+     are_smatch() is like re_smatch() except that it performs an anchored
+     search from index.
+
+     SEE
+
+     re_smatch, re_match, and are_match
+
+     RETURNS
+
+          found = the index of the last character in the first sub-string
+                  of str2 which matches str1, if there is one.
+
+          found = -1 if there is no match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U78
+
+
+
+
+
+
+
+
+                                  Appendix B
+
+                                 File Matching
+
+     This appendix discusses the implications of file matching and its
+     impact upon DIFF.  There are several different designs available for a
+     file comparator program.  The one used here is described in "A
+     Technique for Isolating Differences Between Files" - P. Heckel,
+     Communications of the ACM, April 1978, pp. 264-268.
+
+     B.1 Theory of File Matching
+
+     The matching algorithm described by Heckel is simple, fast and
+     effective.  Briefly, it works as follows:
+
+          * Identify those lines which occur only once in each file.
+            Assume that these lines match one another.
+          * Sweep downward into the first file.  Each time you come to a
+            line L which is already matched to the line L1 in the second
+            file, examine the next line.  This second line is referred to
+            as L+1.
+          * If L+1 is the same as the corresponding line L1+1 in the second
+            file, then match those lines as well.
+          * Once this downward sweep is completed, sweep upward in the
+            first file attempting to match in the same way - except you
+            look at L-1 and L1-1 when finding a matched line L.
+
+     There are some problems with this algorithm which a knowledgeable user
+     may wish to consider.  Notice that the effect of the matching
+     algorithm is to match blocks of text to each other in the two files.
+     However, as just described, the algorithm frequently will cross match
+     single lines or two blocks of lines.  That is, line L and L+k may be
+     matched to line L1 and L1-j.  Consequently, after the process
+     described above is completed, the matches must be untangled in order
+     to generate a coherent report of the differences.
+
+     The concept employed is to examine two cross-matched blocks and then
+     unmatch the smaller of the blocks.  This is an attempt to satisfy the
+     notion that the differences reported should strive to be minimal.
+
+     The second problem is that the algorithm must first seed itself by
+     identifying lines which occur exactly once in each file.  It is
+     possible for it to fail to match any lines even when there is an
+     obvious match.
+
+     Consider the two files with the following contents:
+
+          aaa                        bbb
+          xxx                        xxx
+          xxx                        xxx
+          yyy                        zzz
+
+     The algorithm will fail to match the blocks of xxx lines since it does
+     not find any lines which occur exactly once in each file to seed its
+     block matching algorithm.  Such an arrangement of lines in normal text
+     files is highly improbable.  However, if something similar to this
+
+     Lattice Programming Utilities                                      U79
+
+
+
+
+
+
+
+
+     occurs, you will be aware of the reason for it.
+
+     B.2 DIFF Memory Size Considerations
+
+     In addition to these algorithmic points, there are some considerations
+     of memory size which you may wish to keep in mind.  The program uses
+     two tables (one for each file) to keep track of the lines read in from
+     each file.  The default size of each of these tables is 1000, however,
+     as mentioned above this may be varied by use of the -l option.
+
+     When the -w option is invoked, additional memory is required since the
+     program needs to keep a representative of each line in both its
+     compressed and original form.  Thus the -w option forces the creation
+     of a third table used in the storage and comparison of lines.
+
+     Note, in all cases only the minimal number of strings will be stored
+     since only one copy of a line's text is ever stored.  The program also
+     will dynamically allocate storage for any line text it needs to store.
+
+     Finally, the program uses an input/output buffer of 8K in size.  There
+     are, therefore, several circumstances in which the DIFF utility may
+     run out of space.  Should DIFF run out of memory space, there are
+     several responses which you may employ.  These are:
+
+          * You may attempt to decrease the size of the line tables by
+            employing the -l option.
+          * You may try to use DIFF without using the -w option.
+          * You may decrease the size of the I/O buffer by using the -b
+            option.
+
+     Note that decreasing the size of the I/O buffer may result in some
+     speed degradation since more disk accesses may be required.  However,
+     if you are using a hard disk, this factor can be considered
+     negligible.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities                                      U80
+
+
+
+
+
+
+
+
+                                     INDEX
+
+     A
+
+     abend  U66
+     abnormal termination  U66
+     AmigaDOS COPY Command  U45
+     Anchored regular expression match of strings  U78
+     Anchored regular expression match  U76
+     are_match  U76
+     are_smatch  U78
+     ASCII Characters  U71, U72
+
+     B
+
+     Bad character class  U33
+     Bad pattern  U34
+     Batch Files  U3
+     BLink Command Line Syntax  U55
+     BUILD  U1
+
+     C
+
+     Can't find file(s) ...  U34
+     Can't open ...  U16, U34
+     catch.o  U66
+     Closing ] not found  U34
+     contents of registers  U66
+     Creating LMK Files  U39
+     CXREF  U1
+
+     D
+
+     debugging  U59
+     Diff I/O Error  U16
+     DIFF  U1
+     Directory Structures  U18
+     Disk Drives  U2
+     dump all sections  U66
+     dumps the location  U66
+
+     E
+
+     Empty character class  U34
+     entire stack  U66
+     environment  U66
+     EXTRACT  U2
+
+     F
+
+     File Name Extensions  U40
+     FILES  U2
+     full statistics  U60
+
+
+
+
+     Lattice Programming Utilities INDEX                                  i
+
+
+
+
+
+
+
+
+     G
+
+     Generate a regular expression pattern  U74
+     GREP - Bracket Characters  U27
+     GREP - Columnar Search  U30
+     GREP - Linking Code  U33
+     GREP - Negation Operator  U29
+     GREP - Numeric Character Matching  U28
+     GREP - Printer Format Characters  U26
+     GREP - Use with C Source Code  U31
+     GREP  U2
+
+     H
+
+     Hard Disks  U2, U18
+     Hardware Clock  U36
+
+     I
+
+     I/O Redirection  U3, U8, U13
+     Improper -l specification:  ...  U16
+     Improper hex specification  U34
+     Incompatible combination of options  U34
+     Info Files  U40
+     Internal Error:  ...  U16
+     Invalid option  U34
+
+     L
+
+     Line table overflow  U16
+     LMK Action Commands  U40
+     LMK Action Rules  U45
+     LMK Colon Placement  U43
+     LMK Default Macros  U42
+     LMK File Relationships  U37
+     LMK File Search Order  U40
+     LMK Logical Name Assignments  U49
+     LMK Macro Empty Strings  U41
+     LMK Macro Rules  U42, U43
+     LMK Stack Space  U49(?), U50(?)
+     LMK Template Matching  U50
+     LMK Transformation Rules  U45
+     LMK Usage With GREP  U54
+     LMK Using Default Rules  U45
+     LMK  U2
+     LPROF  U2, U58
+     LSTAT  U2
+
+     M
+
+     Match Algorithms  U79
+     Memory Expansion  U2
+     memory  U66
+     Models  U4
+     Multiple Compilation  U36
+
+
+     Lattice Programming Utilities INDEX                                 ii
+
+
+
+
+
+
+
+
+     N
+
+     No beginning double quote in pattern  U35
+     No file arguments provided  U35
+     No pattern or file arguments given  U35
+     Not enough memory for ... lines per file  U16
+
+     O
+
+     Out of memory  U16
+     Out of space  U35
+     Output Formats  U14
+
+     P
+
+     PATH Directive  U8
+     Pattern ill-formed:  no terminating double quote  U35
+     performance analysis  U58
+     profile the execution  U58
+     profiler  U58
+     Project Management  U37
+     pruning  U60
+
+     R
+
+     re-design steps  U58
+     Recursive Search  U19
+     Regular expression match of strings  U77
+     Regular expression match  U75
+     Regular Expressions  U24
+     report generator  U58
+     re_gen  U74
+     re_match  U75
+     re_smatch  U77
+     run-time stack  U66
+
+     S
+
+     Simulated Compilation  U6
+     SPLAT Append Facility  U64
+     SPLAT Directory Creation  U64
+     SPLAT Insert Facility  U65
+     SPLAT Memory Operation  U63
+     SPLAT Special Characters  U64
+     SPLAT  U2
+     statistical report  U58
+     statistics  U59
+     symbol information  U59
+     symbols  U66
+
+     T
+
+     TB  U2, U66
+     Terminating Input  U7
+     Time Stamp Format  U36
+     Too few arguments to GREP  U35
+
+     Lattice Programming Utilities INDEX                                iii
+
+
+
+
+
+
+
+
+     Too many file names:  ...  U16
+     TOUCH  U2
+     traceback utility  U66
+
+     U
+
+     UNIX cpio Command  U20
+     UNIX rm Command  U22
+     UNIX tar Command  U20
+     Unrecognized option  U17
+
+     W
+
+     WC  U2
+     Wildcards  U3, U9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Programming Utilities INDEX                                 iv
+
+
+

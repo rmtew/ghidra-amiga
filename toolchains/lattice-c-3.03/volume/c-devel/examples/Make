@@ -1,0 +1,20 @@
+.Key file,opt1,opt2,opt3
+;           Compile a C program                       Version 4.00
+;           Works with Lattice version 3.03 and above
+if not exists <file>.c
+   echo "File <file>.c does not exist.  Try again."
+   skip END
+   endif
+echo "-- compiling...<file>.c"
+
+:c/lc1 <opt1> <opt2> <opt3> -i:include/ -i:include/lattice/ <file>
+if not exists "<file>.q"
+   echo "Compile failed."
+   quit 20
+   endif
+:c/lc2 <file>
+
+echo "-- done compiling '<file>'. --"
+LAB END
+date >df0:now
+

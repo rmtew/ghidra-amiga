@@ -1,0 +1,25 @@
+ÄàEXEC_TASKS_HÄEXEC_TASKS_Hàµå"exec/nodes.h"áà∑å"exec/lists.h"á
+ÅÉTask{
+É¨tc_Node;
+ätc_Flags;
+ätc_State;
+ötc_IDNestCnt;
+ötc_TDNestCnt;
+ótc_SigAlloc;
+ótc_SigWait;
+ótc_SigRecvd;
+ótc_SigExcept;
+âtc_TrapAlloc;
+âtc_TrapAble;
+îtc_ExceptData;
+îtc_ExceptCode;
+îtc_TrapData;
+îtc_TrapCode;
+îtc_SPReg;
+îtc_SPLower;
+îtc_SPUpper;
+VOID(*tc_Switch)();
+VOID(*tc_Launch)();
+ÉÆtc_MemEntry;
+îtc_UserData;
+};ÄTB_PROCTIME 0ÄTB_STACKCHK 4ÄTB_EXCEPT 5ÄTB_SWITCH 6ÄTB_LAUNCH 7ÄTF_PROCTIME (1<<0)ÄTF_STACKCHK (1<<4)ÄTF_EXCEPT (1<<5)ÄTF_SWITCH (1<<6)ÄTF_LAUNCH (1<<7)ÄTS_INVALID 0ÄTS_ADDED 1ÄTS_RUN 2ÄTS_READY 3ÄTS_WAIT 4ÄTS_EXCEPT 5ÄTS_REMOVED 6ÄSIGB_ABORT 0ÄSIGB_CHILD 1ÄSIGB_BLIT 4ÄSIGB_SINGLE 4ÄSIGB_DOS 8ÄSIGF_ABORT (1<<0)ÄSIGF_CHILD (1<<1)ÄSIGF_BLIT (1<<4)ÄSIGF_SINGLE (1<<4)ÄSIGF_DOS (1<<8)á

@@ -34,6 +34,19 @@ The snapshots currently cover:
 - Aztec C 5.0a / MANX: compiler ABI, runtime A4 anchor, relocations, and
   SegLoad experiments.
 - SAS/C 6.50: `c.o` LinkerDB A4 context and SLink overlay output.
+- Lattice C 3.03, 4.00, 5.00, 5.02, and the 5.04 update: every available C
+  release has its own retained media and volume. C 4.00, 5.00, and 5.02 have
+  independently generated LinkerDB A4 and BLINK-overlay fixtures; 3.03 and
+  the 5.04 update record their current Vamos blockers rather than borrowing
+  another release's output.
+- Lattice C++ 1.00 and 5.10: separate two-disk C++ distributions, each with
+  its own tools, headers, libraries, and smoke source. Their native drivers
+  currently reach a documented Vamos `CreateProc` limitation, so neither is
+  misrepresented as a linked-output or ABI fixture.
+
+Output similarity never justifies collapsing releases: each version retains
+its own media, runnable volume, samples, validation record, and (where the
+toolchain can complete) generated artifacts.
 
 The snapshots are historical evidence, not a package-management mechanism.
 Do not replace a tool, disk, or generated sample in place without recording

@@ -1,0 +1,91 @@
+; This file is a SUGGESTION of how you might trim "the fat" 
+; off a Workbench diskette and create a CLI diskette.  It
+; assumes that you will be booting with the resultant 
+; diskette.  If executed without change it will reduce
+; disk usage of a 1.1 Workbench diskette from 91% to 33%.
+;
+assign oldwb: df0:
+; Utilities in the C directory that you will not use frequently:
+echo "Clearing excess in C directory"
+delete oldwb:c/install
+delete oldwb:c/format
+delete oldwb:c/status
+delete oldwb:c/edit
+delete oldwb:c/relabel
+delete oldwb:c/filenote
+; delete oldwb:c/diskcopy
+delete oldwb:c/sort
+delete oldwb:c/loadwb
+delete oldwb:c/protect
+delete oldwb:c/say
+; Also consider removing "copy" as join can do that job
+;
+; Fonts may be eliminated entirely, unless your application
+; uses them.  60 and 80 column fonts are still in "ROM".
+echo "Clearing excess in Fonts directory"
+delete oldwb:fonts all quiet
+;
+; Likewise some devices can be removed unless your 
+; application needs them:
+echo "Clearing excess in Devs directory"
+delete oldwb:devs/clipboard.device
+delete oldwb:devs/narrator.device
+;
+; and likewise some libraries can be removed:
+echo "Clearing excess in Libs directory"
+delete oldwb:libs/mathtrans.library
+delete oldwb:libs/translator.library
+delete oldwb:libs/mathieeedoubbas.library
+delete oldwb:libs/version.library
+delete oldwb:libs/diskfont.library
+;
+; Each printer driver takes from 1k to 5k of disk, un-comment
+; the printer drivers you don't need:
+; delete oldwb:devs/printers/qume_ltrpro_20           
+; delete oldwb:devs/printers/cbm_mps1000              
+; delete oldwb:devs/printers/diablo_630               
+; delete oldwb:devs/printers/diablo_c-150             
+; delete oldwb:devs/printers/generic                  
+; delete oldwb:devs/printers/brother_hr-15xl          
+; delete oldwb:devs/printers/hp_laserjet              
+; delete oldwb:devs/printers/okimate_20               
+; delete oldwb:devs/printers/alphacom_pro101          
+; delete oldwb:devs/printers/diablo_adv_d25           
+; delete oldwb:devs/printers/epson_jx-80              
+; delete oldwb:devs/printers/epson                    
+; delete oldwb:devs/printers/hp_laserjet_plus         
+;
+; Remove workbench specific demos and utilities:
+;
+echo "Clearing excess in Root directory"
+delete oldwb:.info
+delete oldwb:clock
+delete oldwb:clock.info
+delete oldwb:demos all quiet
+delete oldwb:demos.info
+delete oldwb:disk.info
+; delete oldwb:preferences  -- or --
+; Move preferences to C: directory so you can
+; get to it from anywhere
+rename oldwb:preferences oldwb:c/Preferences
+delete oldwb:preferences.info
+delete oldwb:system all quiet
+delete oldwb:system.info
+delete oldwb:utilities all quiet
+delete oldwb:utilities.info
+delete oldwb:trashcan all quiet
+delete oldwb:trashcan.info
+delete oldwb:empty all quiet
+delete oldwb:empty.info
+;
+; Fix startup sequence so that it does not try to start
+; workbench:
+echo "Fixing startup sequence in S directory."
+rename oldwb:s/Startup-Sequence oldwb:s/ss.old
+echo >oldwb:s/A "echo *"CLI disk.  Use Date command to set date and time.*""
+echo >oldwb:s/B "stack 15000"
+echo >oldwb:s/C "stack"
+join oldwb:s/A oldwb:s/B oldwb:s/C as oldwb:s/Startup-Sequence
+delete oldwb:s/A oldwb:s/B oldwb:s/C
+echo "Done."
+

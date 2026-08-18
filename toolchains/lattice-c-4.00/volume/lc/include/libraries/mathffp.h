@@ -1,0 +1,20 @@
+€ˆLIBRARIES_MATHFFP_H€LIBRARIES_MATHFFP_HˆPI€PI ((¤)3.141592653589793)‡€TWO_PI (((¤)2)*PI)€PI2 (PI/((¤)2))€PI4 (PI/((¤)4))ˆE€E ((¤)2.718281828459045)‡€LOG10 ((¤)2.302585092994046)€FPTEN ((¤)10.0)€FPONE ((¤)1.0)€FPHALF ((¤)0.5)€FPZERO ((¤)0.0)€trunc(x) ((‚)(x))€round(x) ((‚)((x)+0.5))€itof(i) ((¤)(i))
+‚SPFix();
+¤SPFlt();
+‚SPCmp();
+‚SPTst();
+¤SPAbs();
+¤SPFloor();
+¤SPCeil();ˆabs
+¤abs();‡
+¤SPNeg();
+¤SPAdd();
+¤SPSub();
+¤SPMul();
+¤SPDiv();
+¤SPAsin(),SPAcos(),SPAtan();
+¤SPSin(),SPCos(),SPTan(),SPSincos();
+¤SPSinh(),SPCosh(),SPTanh();
+¤SPExp(),SPLog(),SPLog10(),SPPow();
+¤SPSqrt(),SPFieee();
+¤afp(),dbf();‡

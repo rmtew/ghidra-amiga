@@ -1,0 +1,24 @@
+.Key file,opt1,opt2,opt3
+;     Compile and link a C program                       Version 4.06
+;     Works with Lattice version 3.03 and above
+if not exists <file>.c
+   echo "File <file>.c does not exist.  Try again."
+   skip END
+   endif
+echo "-- compiling...<file>.c"
+
+:c/lc1 <opt1> <opt2> <opt3> -i:include/ -i:include/lattice/ <file>
+if not exists "<file>.q"
+   echo "Compile failed."
+   quit 20
+   endif
+:c/lc2 <file>
+
+Assign LIB: C-DEVEL:lib
+
+echo "-- Linking...  <file>.o to create <file>"
+:c/alink FROM LIB:LStartUp.obj+<file>.o TO <file> LIBRARY LIB:lc.lib+LIB:amiga.lib
+echo "-- done linking '<file>'. --"
+LAB END
+date >df0:now
+

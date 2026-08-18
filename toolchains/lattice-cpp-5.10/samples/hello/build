@@ -1,0 +1,5 @@
+.key file/a
+cpp <[file].cp >[file].p -f[file].cp -dc_plusplus=1 -dLATTICE -iCPInclude:
+cfront <[file].p +f[file].cp +LM [file].c
+lc -csw+ -o[file].o [file].c
+blink FROM [file].o,lib:c.o LIB lib:cplus.lib,lib:lc.lib,lib:amiga.lib TO [file]

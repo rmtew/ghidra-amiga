@@ -1,0 +1,16 @@
+These are some simple examples of Lattice C++ in action.
+
+To compile them, for each program, the command is:
+
+CC -L program-name.cp
+
+The "-L" option causes the program to be linked after compiling.  Use the
+option "-Lm" for the complex arithemetic examples; the 'm' invokes
+the floating-point math library.
+
+The examples which use Intuition facilities take a few minutes to compile -
+even at 3000 lines per minute, the Intuition headers take a while to
+process, and with QUAD: Assigned to RAM:, it might appear as though the
+machine had stalled.  Have patience.  Try running the PM program supplied
+on your Amiga Extras disk - you'd be suprised at what's going on!
+

@@ -1,0 +1,23 @@
+€ƒtm
+{
+‚tm_sec,tm_min,tm_hour,
+tm_mday,tm_mon,tm_year,
+tm_wday,tm_yday,tm_isdst;
+};ˆª
+„*asctime(ƒtm*);
+„*ctime(*);
+ƒtm*gmtime(*);
+ƒtm*localtime(*);
+time(*);
+„*asctime();
+„*ctime();
+ƒtm*gmtime();
+ƒtm*localtime();
+time();‡
+‹tzset();
+¥time_t;
+‚daylight;
+timezone;
+„*tzname[2];
+„tzstn[4];
+„tzdtn[4];€TZ "CST6"€YEAR0 1978€DAY0 0

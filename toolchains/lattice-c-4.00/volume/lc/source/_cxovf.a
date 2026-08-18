@@ -1,0 +1,23 @@
+***     Copyright 1986, Lattice, Inc.
+*
+* name          xcovf
+*
+* description   this function is called when a stack overflow is
+*               detected. It resets the stack pointer and calls
+*               the overflow handler
+*
+***
+
+;       csect   text,0
+        section text,CODE
+
+        xdef    _xcovf
+        xref    cxovf
+        xref    exit
+        xref    _StackPtr
+
+_xcovf move.l  _StackPtr,A7             ; reset stack pointer
+        jsr     cxovf                   ; display requestor
+        move.l  #20,-(A7)
+        jsr     exit                    ; call exit
+        end

@@ -202,9 +202,12 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		
 		Address[] segmentAddresses = new Address[segments.length];
 		int lastSectAddress = mapNodes(hunkFile, segments, datas, addrs, fpa, log, segmentAddresses);
-		boolean manxA4ContextApplied = applyValidatedManxA4Context(hunkFile, segments, segmentAddresses, fpa, log);
-		if (!manxA4ContextApplied) {
-			applyValidatedSasCA4Context(hunkFile, segments, segmentAddresses, fpa, log);
+		boolean a4ContextApplied = applyValidatedManxA4Context(hunkFile, segments, segmentAddresses, fpa, log);
+		if (!a4ContextApplied) {
+			a4ContextApplied = applyValidatedSasCA4Context(hunkFile, segments, segmentAddresses, fpa, log);
+		}
+		if (!a4ContextApplied) {
+			applyValidatedLatticeCA4Context(hunkFile, segments, segmentAddresses, fpa, log);
 		}
 		lastSectAddress = mapOverlayMetadata(hunkFile, segments, fpa, log, segmentAddresses, lastSectAddress);
 
@@ -472,15 +475,15 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 	 * prologue is sufficient to establish the context in every executable block,
 	 * including hierarchical-overlay nodes.
 	 */
-	private static void applyValidatedSasCA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
+	private static boolean applyValidatedSasCA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
 			Address[] segmentAddresses, FlatProgramAPI fpa, MessageLog log) {
 		HunkLoadSegFile.Node root = findRootNode(hunkFile);
 		if (root == null) {
-			return;
+			return false;
 		}
 		Address linkerDb = findSasCLinkerDb(hunkFile, segments, segmentAddresses, fpa.getCurrentProgram());
 		if (linkerDb == null || !applyA4Context(fpa.getCurrentProgram(), linkerDb, "SAS/C", log)) {
-			return;
+			return false;
 		}
 		try {
 			AmigaUtils.applyAnalysisGlobalLabel(fpa.getCurrentProgram(), linkerDb, "SasCLinkerDB");
@@ -489,6 +492,28 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 		catch (Exception exception) {
 			log.appendException(exception);
 		}
+		return true;
+	}
+
+	/**
+	 * Lattice C 5.02's c.o startup establishes its linker-defined LinkerDB in A4.
+	 * The code is independently documented in the shipped c.a source and differs
+	 * from SAS/C 6.50's c.o prologue, so it has a separate exact signature.
+	 */
+	private static boolean applyValidatedLatticeCA4Context(HunkLoadSegFile hunkFile, Segment[] segments,
+			Address[] segmentAddresses, FlatProgramAPI fpa, MessageLog log) {
+		Address linkerDb = findLatticeCLinkerDb(hunkFile, segments, segmentAddresses, fpa.getCurrentProgram());
+		if (linkerDb == null || !applyA4Context(fpa.getCurrentProgram(), linkerDb, "Lattice C", log)) {
+			return false;
+		}
+		try {
+			AmigaUtils.applyAnalysisGlobalLabel(fpa.getCurrentProgram(), linkerDb, "LatticeCLinkerDB");
+			log.appendMsg(String.format("Validated Lattice C c.o startup LinkerDB at %s; applied A4 context to executable root and overlay blocks.", linkerDb));
+		}
+		catch (Exception exception) {
+			log.appendException(exception);
+		}
+		return true;
 	}
 
 	/** Applies a compiler-validated A4 base to every executable Hunk block. */
@@ -666,6 +691,100 @@ public class AmigaHunkLoader extends AbstractLibrarySupportLoader {
 				return null;
 			}
 			linkerDb = candidate;
+		}
+		return linkerDb;
+	}
+
+	/**
+	 * Recognises the documented Lattice C 5.02 c.o startup sequence.  BLINK may
+	 * place the CRT after the application's first code Hunk, so callers scan the
+	 * complete resident node rather than assuming the Hunk entry is the CRT.
+	 */
+	static Address findLatticeCLinkerDb(Address startup, Program program) {
+		Address linkerDb = findLatticeC500LinkerDb(startup, program);
+		return linkerDb != null ? linkerDb : findLatticeC400LinkerDb(startup, program);
+	}
+
+	/** Lattice C 5.x c.o: initialize A4, clear BSS, then fetch ExecBase. */
+	private static Address findLatticeC500LinkerDb(Address startup, Program program) {
+		try {
+			Memory memory = program.getMemory();
+			if (Short.toUnsignedInt(memory.getShort(startup)) != 0x2448 || // move.l A0,A2
+					Short.toUnsignedInt(memory.getShort(startup.add(2))) != 0x2400 || // move.l D0,D2
+					Short.toUnsignedInt(memory.getShort(startup.add(4))) != 0x49f9 || // lea LinkerDB,A4
+					Short.toUnsignedInt(memory.getShort(startup.add(10))) != 0x47f9 || // lea _BSSBAS,A3
+					Short.toUnsignedInt(memory.getShort(startup.add(16))) != 0x7200 || // moveq #0,D1
+					Short.toUnsignedInt(memory.getShort(startup.add(18))) != 0x203c || // move.l #_BSSLEN,D0
+					Short.toUnsignedInt(memory.getShort(startup.add(24))) != 0x6002 || // bra.s clear loop
+					Short.toUnsignedInt(memory.getShort(startup.add(26))) != 0x26c1 || // move.l D1,(A3)+
+					Short.toUnsignedInt(memory.getShort(startup.add(28))) != 0x51c8 || // dbf D0,clear loop
+					Short.toUnsignedInt(memory.getShort(startup.add(32))) != 0x2c78 || // movea.l (4).w,A6
+					Short.toUnsignedInt(memory.getShort(startup.add(34))) != 4) {
+				return null;
+			}
+			Address linkerDb = startup.getNewAddress(Integer.toUnsignedLong(memory.getInt(startup.add(6))));
+			return memory.contains(linkerDb) ? linkerDb : null;
+		}
+		catch (MemoryAccessException exception) {
+			return null;
+		}
+	}
+
+	/**
+	 * Lattice C 4.00 c.o: save D1-D6/A0-A6, establish A5, load LinkerDB into
+	 * A4, then initialize its runtime globals through A4.  The exact opcode
+	 * sequence is taken from the shipped {@code source/c.a} and intentionally
+	 * excludes linker-populated addresses and runtime-global offsets.
+	 */
+	private static Address findLatticeC400LinkerDb(Address startup, Program program) {
+		try {
+			Memory memory = program.getMemory();
+			if (Short.toUnsignedInt(memory.getShort(startup)) != 0x48e7 || // movem.l d1-d6/a0-a6,-(sp)
+					Short.toUnsignedInt(memory.getShort(startup.add(2))) != 0x7efe ||
+					Short.toUnsignedInt(memory.getShort(startup.add(4))) != 0x4bef || // lea 0x34(sp),a5
+					Short.toUnsignedInt(memory.getShort(startup.add(6))) != 0x0034 ||
+					Short.toUnsignedInt(memory.getShort(startup.add(8))) != 0x2448 || // move.l a0,a2
+					Short.toUnsignedInt(memory.getShort(startup.add(10))) != 0x2400 || // move.l d0,d2
+					Short.toUnsignedInt(memory.getShort(startup.add(12))) != 0x49f9 || // lea LinkerDB,a4
+					Short.toUnsignedInt(memory.getShort(startup.add(18))) != 0x2c78 || // movea.l (4).w,a6
+					Short.toUnsignedInt(memory.getShort(startup.add(20))) != 4 ||
+					Short.toUnsignedInt(memory.getShort(startup.add(22))) != 0x294e || // save ExecBase through A4
+					Short.toUnsignedInt(memory.getShort(startup.add(26))) != 0x294f || // save stack through A4
+					Short.toUnsignedInt(memory.getShort(startup.add(30))) != 0x42ac) { // clear workbench message
+				return null;
+			}
+			Address linkerDb = startup.getNewAddress(Integer.toUnsignedLong(memory.getInt(startup.add(14))));
+			return memory.contains(linkerDb) ? linkerDb : null;
+		}
+		catch (MemoryAccessException exception) {
+			return null;
+		}
+	}
+
+	/** Finds the unique Lattice C c.o startup in the resident Hunk node. */
+	static Address findLatticeCLinkerDb(HunkLoadSegFile hunkFile, Segment[] segments, Address[] segmentAddresses,
+			Program program) {
+		HunkLoadSegFile.Node root = findRootNode(hunkFile);
+		if (root == null) {
+			return null;
+		}
+		Address linkerDb = null;
+		for (Segment segment : getSegmentsForNode(root, segments)) {
+			if (segment.getType() != SegmentType.SEGMENT_TYPE_CODE ||
+					program.getMemory().getBlock(segmentAddresses[segment.getId()]) == null) {
+				continue;
+			}
+			Address segmentStart = segmentAddresses[segment.getId()];
+			for (int offset = 0; offset + 36 <= segment.getSize(); offset += 2) {
+				Address candidate = findLatticeCLinkerDb(segmentStart.add(offset), program);
+				if (candidate == null) {
+					continue;
+				}
+				if (linkerDb != null && !linkerDb.equals(candidate)) {
+					return null;
+				}
+				linkerDb = candidate;
+			}
 		}
 		return linkerDb;
 	}

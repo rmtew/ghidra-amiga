@@ -1,0 +1,277 @@
+
+                  Lattice AmigaDOS C 5.04 Patch Disk
+                  
+This patch disk is designed to be installed to version 5.02
+of the Lattice AmigaDOS C Compiler.  If you have not installed 
+the 5.02 patch, you must do so before installing this patch.
+Invoke phase 1 (LC1) directly to determine the version of the 
+compiler you are working with.
+ 
+Due to known problems with the ARP (Amiga Replacement Project) version
+of the Execute command, you should use the AmigaDOS commands to install
+this patch.
+
+To install the patch on a set of 5.02 master disks, type
+      execute install_floppy
+
+To install the patch on a hard disk with 5.02 installed according to
+the Lattice install procedures, type
+      execute install_hd
+
+With other configurations you will have to check one of the install
+scripts and install the patches by hand.
+
+After installing this patch with install_floppy, this readme.504 file can be
+found on Volume 5 of the Lattice Compiler disk set.
+
+
+Changes to the Compiler
+-----------------------
+ New Features/Enhancements:
+
+    Equivalent structures can be passed silently with the "-cq" switch.
+        (i.e., Passing an IOStdReq to DoIO).
+
+    More than 32K of code may be generated for a single source module.
+
+    Code quality for switch statements has been greatly improved.
+
+    __interrupt now performs a TST.L D0 on immediately before an RTS
+    instruction.
+
+    Additional support for #pragma calls overlapping register variables
+
+    An improved macro processor with significantly expanded limits
+
+    Support for the UNIX form of offsetof which casts NULL to the structure
+    pointer and takes the address of the member.
+
+    Expansion of the identifier length limit to 100 (to support C++)
+
+    Additional Preprocessor symbols:
+      LATTICE_54 - Identifies this version
+      __VERSION__ - A numeric value 5 indicating the major version
+      __REVISION__ - A numeric value 4 indicating the minor revision level
+    The last two will be updated for all future releases
+
+    Final support for the "-ml" flag to use when generating libraries
+
+
+ Major Fixes:
+------------
+
+    "volatile" should work in all cases.
+    Unterminated quoted strings and \n's appearing outside of a
+        quoted string no longer crash the compiler.
+    Several CXERR: 26's associated with Auto-increment addressing
+        mode have been fixed.
+    Several CXERR: 22's associated with __chip and redefinition of
+        external symbols have been eliminated.
+    Many problems associated with inline library calls have been
+        corrected, especially in the area of passing register variables.
+    All known 68881 code generation problems have been corrected.
+    68020 Addressing mode now generates significantly improved code.
+    Several problems associated with invalid relocations have been
+        corrected.
+    Addressing an array element with a compile time constant greater
+        than 32K from the base is now accepted.
+    __regargs may now be specified for function pointers.
+    Several CXERR: 25 when using "-f8 -m2" have been corrected.
+    Macros substituting the 9th parameter as the last piece of a
+        substitution no longer fail.
+    Some incorrect error messages with builtin library calls have been
+        improved.
+    Several CXERR: 124's with "-f8" have been corrected.
+    Using the incorrect register in obscure cases has been fixed.  This
+        occurred with a simple set of assignments to swap two variables.
+    Using unions in prototypes with precompiled header files now works.
+    Libcall functions now preserve A5 correctly.
+    Several minor FFP problems have been fixed.
+    Can now handle empty source files.
+    No longer loses debugging information for aliased variables.
+
+
+Changes to CodePRobe
+--------------------
+
+    Fixed the problem where CPR only used 1/4 of the specified stack size.
+    Problems related to static functions, including setting break points
+        and displaying data, have been fixed.
+    Keyboard input is now sent to the Dialog Window if the current window
+        does not normally accept keyboard input.  Special function keys
+        do not get passed to the Dialog Window.
+    Symbol names are now displayed instead of addresses when in assembler
+        mode.  Symbol names are displayed as absolute addresses and offsets
+        from A4 when appropriate.  Both PC relative and absolute JSR's and
+        BSR's show labels when possible.  Branches to ALV's do not currently
+        show up as labels.  The effective address of any branch or reference
+        off of A4 will be shown as a comment after the assembler instruction.
+    A number of optimizations have been made to reduce the size of the
+        debugger and to speed up some parts of its operation.
+    The "Find Address" item of the File Menu (Asm Mode only) will now accept
+        a symbolic name as well as a hexadecimal constant.
+    The "Display Default" item of the Options menu has been changed to
+        "Radix Default".  This option now affects the radix of any numeric
+        input (except line numbers) as well as displayed output.  
+        The set commmand has been modified to reflect this change.
+    A new command "symbol" has been added to allow the user to find the
+        nearest symbolic name less than a specified constant address.
+        The syntax is as follows:
+   
+              > symbol 0x123456
+              main+0x123 (163)
+   
+        The output indicates that the address is 163 bytes past the beginning
+        of the function main.  symbol will work for functions and external or
+        static data.
+    The initialization process has been changed.
+        CPR now opens its screen before loading the application.  The report
+        on the number of modules, externals, and functions, now appears inside
+        of the Dialog Window instead of in the invoking CLI window.  The
+        debugger no longer displays dis-assembled code when it first comes up.
+    CPR no longer loses track of the current display area when changing
+        between assembler and source display modes.
+    CPR now allows the viewing of C source when the program has stopped at a
+        location without source while in source mode.
+    Chip data now displays correctly.
+    The "list $" command and <left>-<Amiga>-<H> key combination will now
+        take you back to the current execution point in asm mode as well as
+        C mode.
+    A number of disassembly problems have been fixed including FMOVE,
+        FMOVEM, and FMOVECR.
+
+
+Changes to OMD
+--------------
+    Fixed disassembly problems with the FMOVE, FMOVEM, and FMOVECR
+        instructions.
+
+
+Changes to LSE
+--------------
+    LSE will now save all macros instead of just the first one.
+    Block Read now works every time.
+    When compiling from LSE, the compiler is now fed the source line by
+        line instead of from RAM:
+
+
+Changes to BLINK
+----------------
+    Fixed overlay support.
+    Now supports debugger chip hunk.
+    Blink will no longer look through libraries after all references
+        have been resolved.
+    Blink no longer generates any 0 length code hunks.
+    Blink now allows for generation of resident libraries (see blink.readme)
+    Verbose mode has been fixed so that the last missing symbol message
+        does not get overwritten.
+
+
+Changes to LC
+-------------
+    Now works when a .C extension is specified.
+    LC no longer calls Blink when a non-existent file is specified with
+        the "-L" option.
+    A "-C" option has been added to allow an abort without prompting when
+        an error occurs while compiling multiple source files.
+    The "-R" option has been fixed.
+
+
+Changes to LMK
+--------------
+    Now handles a.o dependencies properly.
+    LMK no longer forces a 15K stack size (the default).
+
+
+Changes to ASM
+--------------
+    Fixed bug where a conditional assembly always caused the code to
+        be assembled.
+    Fixed problems with the FMOVE operation.
+
+
+Changes to the Libraries
+------------------------
+    strbpl() now works for max pointers.
+    dfind()/dnext()/getfnl() will no longer convert filenames to
+        lowercase.  Fixed memory allocation bug in dfind().  dfind()
+        no longer bombs when using default SYS: when no cd has occurred.
+    chdir() will now give an error when attempting to cd to a non-directory.
+    getfa() now checks that malloc() succeeds.
+    getcwd() now works with registerized parameters.
+    stcl_d() now returns correct a value with registerized parameters.
+    Fixed "-r" and "-w" problems for stubs in scrollraster.a, setrgb4cm.a,
+        bbmrport.a, bltbitmap.a, bltpattern.a, modifyprop.a, blttemplate.a,
+        bmbmrport.a, buildsysrequest.a, clipblit.a, createbehindlayer.a,
+        and createupfrontlayer.a.
+    perror() now works.
+    newlist() now included in the libraries.
+    time() now has correct getclk prototype for registerized parameters.
+    chgclk() now calls DeleteExtIO() properly.
+    memccpy() now works properly.
+    memchr() now works properly.
+    movmem() now works properly.
+    Fixed printf() precision bug. Includes floating point fixes and
+        enhancements.  Fixed "%g" format.
+    read() and write() now return ints.
+    rlsml() now properly releases memory chunks.
+    strcpy() now works with registerized parameters.
+    poserr() now works.
+    strtol() is now ANSI compatible and checks for overflows.
+    strtoul() is now supported.
+    vprintf(), vfprintf(), and vsprintf() have been added.
+    memcmp() no longer tests too far for registerized parameters.
+    waitm() now works properly when more than one child terminates
+        before it is called.
+    signal() now returns void *().
+    strstr() has been added.
+    _sfmt() now fully supports the h size for *scanf() functions.
+    chkabort() will no longer cause problems when it calls _exit().
+    ***  chkabort() now conforms to the documentation and does not
+    ***  return a value.  Do not expect one.
+
+
+Changes to Sources
+------------------
+    cback.a now calls __fpinit before calling _main() under CLI.
+    cres.a has been fixed.
+
+
+Changes to Includes
+-------------------
+    stdlib.h no longer has a prototype for main().
+    m68881.h has defines fixed for log() and exp().
+    ios1.h - UFB_NC has been changed to 0x10 to avoid a conflict with
+        UFB_NDELAY for UNIX.
+    signal.h - modified the prototype for signal() to conform to the
+        ANSI Draft specification.
+    proto/icon.h  -  Fixed the prototype for AllocWBObject().
+    workbench/icon.h  -  Fixed the prototype for AddFreeList().
+    string.h, etc. - changed from char * to void * for all mem* functions
+
+
+Changes to LPROF and LSTAT
+--------------------------
+    Now allows the sampling rate to be user specified down to 1 millisecond.
+    Now handles chip hunks.
+
+
+Changes to OML
+--------------
+    Module names are no longer case sensitive.
+    Extracted modules will now have .o filename extensions.
+
+
+Changes to DIFF
+---------------
+    Now ignores any leading white space when using the -w option.
+
+
+Changes to Message Files
+------------------------
+    A new version of the lcerrs.deutsch file has been provided.
+
+    A new german version of the lse.hlp file has been provided and
+    is called lsehlp.deutsch.
+
+    Installation of the above two files must be done by hand.

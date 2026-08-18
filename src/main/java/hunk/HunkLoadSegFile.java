@@ -147,31 +147,39 @@ public class HunkLoadSegFile {
 		HunkHeaderBlock nodeHeader = null;
 		int nodeHeaderOffset = -1;
 		List<HunkBlock> nodeBlocks = new ArrayList<>();
+		boolean sawRootOverlay = false;
 		for (Pair<Integer, HunkBlock> pair : blocks) {
 			HunkBlock block = pair.second;
 			if (block instanceof HunkHeaderBlock) {
 				if (nodeHeader != null) {
-					throw new HunkParseError("Overlay node is missing its terminator");
+					if (!sawRootOverlay || !nodes.isEmpty()) {
+						throw new HunkParseError("Overlay node is missing its terminator");
+					}
+					// Early BLINK writes HUNK_OVERLAY within the root node, before its
+					// remaining root hunks. The following HUNK_HEADER is the first
+					// actual overlay node and therefore closes the root implicitly.
+					addOverlayNode(nodeHeader, nodeHeaderOffset, nodeBlocks, false);
 				}
 				nodeHeader = (HunkHeaderBlock) block;
 				nodeHeaderOffset = pair.first;
+				nodeBlocks = new ArrayList<>();
 				continue;
 			}
 			if (nodeHeader == null) {
 				throw new HunkParseError("Hunk data found outside a HUNK_HEADER node");
 			}
-			if (block.getHunkType() == HunkType.HUNK_OVERLAY || block.getHunkType() == HunkType.HUNK_BREAK) {
-				boolean isRootTerminator = block.getHunkType() == HunkType.HUNK_OVERLAY;
-				if (isRootTerminator) {
-					if (!nodes.isEmpty() || !(block instanceof HunkOverlayBlock)) {
-						throw new HunkParseError("HUNK_OVERLAY may only terminate the root node");
-					}
-					HunkOverlayBlock overlayBlock = (HunkOverlayBlock) block;
-					overlayTable = overlayBlock.getHierarchicalTable();
-					manxOverlayTable = overlayBlock.getManxTable();
-					overlayTableData = overlayBlock.getTableData();
+			if (block.getHunkType() == HunkType.HUNK_OVERLAY) {
+				if (!nodes.isEmpty() || !(block instanceof HunkOverlayBlock)) {
+					throw new HunkParseError("HUNK_OVERLAY may only occur in the root node");
 				}
-				addOverlayNode(nodeHeader, nodeHeaderOffset, nodeBlocks, !isRootTerminator);
+				HunkOverlayBlock overlayBlock = (HunkOverlayBlock) block;
+				overlayTable = overlayBlock.getHierarchicalTable();
+				manxOverlayTable = overlayBlock.getManxTable();
+				overlayTableData = overlayBlock.getTableData();
+				sawRootOverlay = true;
+			}
+			else if (block.getHunkType() == HunkType.HUNK_BREAK) {
+				addOverlayNode(nodeHeader, nodeHeaderOffset, nodeBlocks, true);
 				nodeHeader = null;
 				nodeHeaderOffset = -1;
 				nodeBlocks = new ArrayList<>();
