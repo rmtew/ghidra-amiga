@@ -1,0 +1,13 @@
+ÄàCLIB_MATHFFP_PROTOS_HÄCLIB_MATHFFP_PROTOS_HàEXEC_TYPES_Hå<exec/types.h>á
+íSPFix(§parm);
+§SPFlt(çinteger);
+íSPCmp(§leftParm,§rightParm);
+íSPTst(§parm);
+§SPAbs(§parm);
+§SPNeg(§parm);
+§SPAdd(§leftParm,§rightParm);
+§SPSub(§leftParm,§rightParm);
+§SPMul(§leftParm,§rightParm);
+§SPDiv(§leftParm,§rightParm);
+§SPFloor(§parm);
+§SPCeil(§parm);á

@@ -1,0 +1,34 @@
+€ˆDATATYPES_ANIMATIONCLASS_H€DATATYPES_ANIMATIONCLASS_HˆUTILITY_TAGITEM_HŒ<utility/tagitem.h>‡ˆDATATYPES_DATATYPESCLASS_HŒ<datatypes/datatypesclass.h>‡ˆDATATYPES_PICTURECLASS_HŒ<datatypes/pictureclass.h>‡ˆDATATYPES_SOUNDCLASS_HŒ<datatypes/soundclass.h>‡ˆLIBRARIES_IFFPARSE_HŒ<libraries/iffparse.h>‡€ANIMATIONDTCLASS "animation.datatype"€ADTA_Dummy (DTA_Dummy+600)€ADTA_ModeID PDTA_ModeID€ADTA_KeyFrame PDTA_BitMap€ADTA_ColorRegisters PDTA_ColorRegisters€ADTA_CRegs PDTA_CRegs€ADTA_GRegs PDTA_GRegs€ADTA_ColorTable PDTA_ColorTable€ADTA_ColorTable2 PDTA_ColorTable2€ADTA_Allocated PDTA_Allocated€ADTA_NumColors PDTA_NumColors€ADTA_NumAlloc PDTA_NumAlloc€ADTA_Remap PDTA_Remap€ADTA_Screen PDTA_Screen€ADTA_NumSparse PDTA_NumSparse€ADTA_SparseTable PDTA_SparseTable€ADTA_Width (ADTA_Dummy+1)€ADTA_Height (ADTA_Dummy+2)€ADTA_Depth (ADTA_Dummy+3)€ADTA_Frames (ADTA_Dummy+4)€ADTA_Frame (ADTA_Dummy+5)€ADTA_FramesPerSecond (ADTA_Dummy+6)€ADTA_FrameIncrement (ADTA_Dummy+7)€ADTA_Sample SDTA_Sample€ADTA_SampleLength SDTA_SampleLength€ADTA_Period SDTA_Period€ADTA_Volume SDTA_Volume€ADTA_Cycles SDTA_Cycles€ID_ANIM MAKE_ID('A','N','I','M')€ID_ANHD MAKE_ID('A','N','H','D')€ID_DLTA MAKE_ID('D','L','T','A')
+ƒAnimHeader
+{
+Šah_Operation;
+Šah_Mask;
+‰ah_Width;
+‰ah_Height;
+˜ah_Left;
+˜ah_Top;
+—ah_AbsTime;
+—ah_RelTime;
+Šah_Interleave;
+Šah_Pad0;
+—ah_Flags;
+Šah_Pad[16];
+};€ADTM_Dummy (0x700)€ADTM_LOADFRAME (0x701)€ADTM_UNLOADFRAME (0x702)€ADTM_START (0x703)€ADTM_PAUSE (0x704)€ADTM_STOP (0x705)€ADTM_LOCATE (0x706)
+ƒadtFrame
+{
+—MethodID;
+—alf_TimeStamp;
+—alf_Frame;
+—alf_Duration;
+ƒBitMap*alf_BitMap;
+ƒColorMap*alf_CMap;
+š*alf_Sample;
+—alf_SampleLength;
+—alf_Period;
+”alf_UserData;
+};
+ƒadtStart
+{
+—MethodID;
+—asa_Frame;
+};‡

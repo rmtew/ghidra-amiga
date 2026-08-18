@@ -1,0 +1,18 @@
+€ˆPREFS_PRINTERGFX_H€PREFS_PRINTERGFX_HˆEXEC_TYPES_HŒ<exec/types.h>‡ˆLIBRARIES_IFFPARSE_HŒ<libraries/iffparse.h>‡€ID_PGFX MAKE_ID('P','G','F','X')
+ƒPrinterGfxPrefs
+{
+’pg_Reserved[4];
+‰pg_Aspect;
+‰pg_Shade;
+‰pg_Image;
+˜pg_Threshold;
+Špg_ColorCorrect;
+Špg_Dimensions;
+Špg_Dithering;
+‰pg_GraphicFlags;
+Špg_PrintDensity;
+‰pg_PrintMaxWidth;
+‰pg_PrintMaxHeight;
+Špg_PrintXOffset;
+Špg_PrintYOffset;
+};€PA_HORIZONTAL 0€PA_VERTICAL 1€PS_BW 0€PS_GREYSCALE 1€PS_COLOR 2€PS_GREY_SCALE2 3€PI_POSITIVE 0€PI_NEGATIVE 1€PCCB_RED 1€PCCB_GREEN 2€PCCB_BLUE 3€PCCF_RED (1<<0)€PCCF_GREEN (1<<1)€PCCF_BLUE (1<<2)€PD_IGNORE 0€PD_BOUNDED 1€PD_ABSOLUTE 2€PD_PIXEL 3€PD_MULTIPLY 4€PD_ORDERED 0€PD_HALFTONE 1€PD_FLOYD 2€PGFB_CENTER_IMAGE 0€PGFB_INTEGER_SCALING 1€PGFB_ANTI_ALIAS 2€PGFF_CENTER_IMAGE (1<<0)€PGFF_INTEGER_SCALING (1<<1)€PGFF_ANTI_ALIAS (1<<2)‡

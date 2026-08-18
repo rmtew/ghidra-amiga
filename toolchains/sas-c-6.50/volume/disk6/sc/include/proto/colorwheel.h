@@ -1,0 +1,2 @@
+ÄàPROTO_COLORWHEEL_HÄPROTO_COLORWHEEL_Hå<exec/types.h>
+ÅÉLibrary*ColorWheelBase;å<clib/colorwheel_protos.h>å<pragmas/colorwheel_pragmas.h>á

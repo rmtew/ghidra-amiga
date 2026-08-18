@@ -1,0 +1,373 @@
+                          AZTEC C FOR THE AMIGA
+                              RELEASE NOTES
+                              VERSION 5.0a
+                                 01/09/89
+
+                              TECH SUPPORT
+                              ------------
+
+A new phone support line has been set up exclusively to provide technical
+support for Amiga Aztec C 5.0a owners.  If you have problems or questions
+regarding the 5.0a release, you should call this number instead of the
+usual technical support number.
+
+    Amiga Aztec C Tech. Support: (201)542-1798
+
+This line is open from 10-12 EST and 2-5 EST Mondays->Fridays.
+
+                             DISK CONTENTS
+                             -------------
+The file 'contents' on disk one lists all of the files contained on the
+four Aztec distribution disks, along with a brief description of each file.
+A unique 'crc' number is also given for each number, which was obtained from
+the Aztec utility crc.  This number may be used if you suspect that one of
+your files may be damaged - simply run the crc on the suspect file, and
+compare it with the number in the 'contents' file.
+
+                              INSTALLATION
+                              ------------
+
+Aztec C v5.0a may be installed on either a dual-floppy drive or a hard
+drive system.  Single-floppy machines are not supported.  To install
+your package, from the CLI prompt type:
+
+        execute df0:install
+
+This will start up an installation script, which will allow you to
+choose between hard disk and dual-floppy installation.
+
+Hard Disk Installation
+----------------------
+
+If you choose hard disk installation, the install script will call up
+the program 'hdinstall'.  This program allows you to customize your 
+installation to suit your needs.  Specifically, you may specify the
+directories in which your files should go on your hard disk, as well as 
+which sets of libraries to copy, and whether source-code examples 
+should also be copied.
+
+The following information may be specified regarding the directories and
+drives that will be used:
+
+    SOURCE DRIVE 
+    This is the device (df0:, df1:, etc.) from which the installation 
+    program should copy disks FROM.  It is set to device 'df0:' by default.  
+    Note that if you change this you MUST include the ending ':' in the 
+    device name (i.e., you must say 'df2:', not 'df2').
+
+    DESTINATION DRIVE
+    This is the device (dh0:, etc.) to which the installation program
+    should copy the Aztec files.  This defaults to 'dh0:'.  Note that if you
+    change this you MUST include the ending ':' in the device name.
+
+    MAIN DIRECTORY
+    This will be your "main" Aztec directory.  The other directories for
+    libraries, header files, etc. will always be created as subdirectories
+    beneath this directory.  The startup script, 'Aztec.sh', is placed into
+    this directory.  The name of this directory defaults to 'Aztec'.
+
+    EXECUTABLE DIRECTORY
+    This is the sub-directory in which all executable files in the Aztec C
+    system will be placed, including the compiler assembler, and linker.
+    This defaults to 'Bin' under the main directory.
+
+    INCLUDE DIRECTORY
+    This is the sub-directory in which all C header files will be placed.
+    It defaults to  'Include'.
+
+    LIBRARY DIRECTORY
+    This is the sub-directory in which your Aztec C linker-libraries will
+    be placed.  This defaults to 'Lib'.
+
+You may additionally select which sets of libraries you wish to
+install on the system.  The various combinations are large code/large data,
+small code/small data, 16-bit integer size, 32-bit integer size, and 
+the various types of floating point support.  You should consult your
+Aztec C Reference Manual for details concerning these various libraries.
+The default library set is the small code/small data, 32-bit integer
+libraries, as well as the Manx IEEE floating point library.
+
+At any point, you may click on "Reset Defaults" to restore the default
+directory structure and library options.
+
+When you are finished selecting your options, you should then click
+on 'BEGIN INSTALLATION'.  The installation program will then prompt you
+for disks as needed.
+
+After the installation program is complete, you may then change directories
+to your MAIN AZTEC directory.  From there, you should type:
+
+        execute Aztec.sh
+
+This shell file will then initialize your system for use with Aztec C, which
+should be done each time you reboot the machine (for this reason, you may
+wish to place the contents of the Aztec.sh file directly in your 
+'Startup-Sequence' file).  Your system will then be installed, and you'll
+be ready to use Aztec C!
+
+FLOPPY DISK INSTALLATION
+------------------------
+
+The two-drive floppy disk installation is handled jointly by the 'install'
+script and the program 'floppyinst'.  Two blank (but not necessarily 
+formatted) disks are required for this installation.
+
+The floppy installation script will first prompt you whether or not your
+second floppy drive is designated as 'df1:'.  If you own an Amiga 1000 or
+Amiga 500 system with an external floppy drive, you should answer 'yes'
+to this question.  If you own an Amiga 2000 or 2500 with one internal
+and one external drive, than the answer to this question should be 'no'.
+This is because the external drive designation on 2000 and 2500 systems
+is 'df2:' instead of the usual 'df1:'.  If your 2000 or 2500 has 2 
+internal floppies, then you should answer 'yes', as the second internal
+drive is considered 'df1:'.
+
+The script will then copy the 1st Aztec distribution disk to your first
+blank floppy, and prepare it for normal booting.  It will then prompt 
+you for the second disk, which will be formatted with the name 'Az2:'.
+Please insure that NOTHING of importance is contained on either of
+these disks, as ALL information on them will be lost during the
+installation process.
+
+After formatting the second disk, the install script will then invoke the
+'floppyinst' program.  This program will allow you to choose which
+library set you wish to install on your disks.  Only one set may be
+chosen due to disk space limitations.  When you have chosen your libraries,
+you should click 'OK'.  The program will then prompt you for the Aztec
+distribution disks, starting with disk 2, which should be placed in your 1st
+floppy drive (df0:).  When installation is complete, you should reboot
+your system with the new disk 1 in your first floppy drive, and the second
+disk in the second drive.  After the system boots, type:
+
+        cd Az2:
+
+to change to your work-disk.
+
+                        VERSION 3.6A COMPATABILITY NOTES
+                        --------------------------------
+
+Several important things have changed between the 3.6a and 5.0a versions.
+The most important differences are:
+
+        COMPILER OPTIONS
+        Almost all compiler options have changed in version 5.0, which
+        means you will eventually have to translate your script and
+        makefiles to use the new options.  However, we have provided
+        a 'compatability-switch' which will allow you to use the old
+        options.  This switch is '-3'.  Any 3.6a compiler options you
+        have MUST come after a '-3' option for them to be recognized
+        properly.  For example, the compile line:
+
+                cc -n +c +d test.c
+
+        Should be changed to:
+
+                cc -3 -n +c +d test.c
+
+        To avoid having to change all your makefiles, you may optionally
+        set the '-3' option using the CCOPTS environment variable.  The
+        command:
+
+                set CCOPTS=-3
+
+        will in effect set the default option parsing to 3.6a syntax.  Note
+        that if you do use the -3 option, any 5.0a options must be prefixed
+        with '-5'.  The '-5' and '-3' options may be mixed freely on the
+        command line.  See the compiler reference documentation for details.
+
+        ANSI COMPILER CHANGES
+        The way the compiler handles expressions and other language rules
+        has changed somewhat from version 3.6a in order to be compatible
+        with the proposed ANSI standard.  These changes should not affect
+        most programs, but will change the behavior of some user code.  For
+        maximum source compatability with 3.6a, you should use the '-k'
+        compiler option.  This forces the compiler to evaluate C expresions
+        using Kernighan & Ritchie rules rather than ANSI rules.  The -k
+        option is recognized both under -5 and -3.  To achive maximum
+        3.6a compatability, it may be desirable to set CCOPTS as follows:
+
+                set "CCOPTS=-3 -k"
+
+        The compiler will give the error "can't take address of
+        register class" for the following type of code:
+
+            funky_func ()
+            {
+                register char array[30];
+
+                call (array);
+            }
+
+        Under previous versions of the compiler, the 'register' modifier
+        would simply be ignored.  However, ANSI requires that taking the 
+        address of a 'register' class object is always in error, even if the
+        object actually is placed in addressable memory.  For arrays this 
+        effectively means that you cannot access any elements within the
+        array, or use the array in any useful manner at all.
+
+        The fix for this is to remove the 'register' modifier from the
+        array declaration.
+
+        ANSI LIBRARY/HEADER CHANGES
+        Due to space limitations, we are not able to provide fully 3.6a
+        compatabile libraries along with the new ANSI compatable libraries.
+        This should not be a problem with most programs since the new 
+        libraries are mostly the same as those under 3.6a.  However, some 
+        code will still break.  Things to look out for include:
+
+            - agetc() and aputc() are gone.  They may be defined as:
+                    #define agetc() putc()
+                    #define aputc(x,file) putc (x,file)
+
+            - The size returned by the sizeof operator is now equivalent
+              to the new ANSI type 'size_t', as well as the result of
+              pointer subtraction.  Since 'size_t' is typedef'd to be
+              of type 'unsigned long', and 3.6a used 'unsigned int' for
+              these operations, code which depends on this will break.
+              Notable functions which require arguments of type 'size_t'
+              include malloc() and fread().  If you are using 16-bit
+              integers, you MUST cast the values passed to malloc()
+              and similar functions to type 'size_t' for the call to work.
+              For example, to allocate 50 bytes you should say:
+
+                      cptr = malloc ((size_t)50);
+
+              The best way to avoid problems with these is to always include
+              the appropriate header files.  The most commonly used ones
+              are stdio.h for standard I/O, string.h for string operations,
+              and stdlib.h for miscellaneous operations such as memory
+              allocation.
+
+            - The module 'heapmem.o' is no longer included with the package.
+              All heap mangement, including the realloc() function, is
+              contained within the normal c.lib library.
+
+        CALLING OF AMIGA FUNCTIONS
+        By default, if you #include the file functions.h, the compiler
+        will generate inline calls to Amiga resident library routines,
+        rather than calling an assembly language stub.  This method is
+        generally smaller and faster than using stub routines.  If for
+        some reason you wish to use the old stubs and want to compile with
+        functions.h, you should fist define the pre-processor macro
+        __NO_PRAGMAS before you include functions.h.  This should be done
+        like this:
+
+                #define __NO_PRAGMAS
+                #include <functions.h>
+
+         If you are not compiling with functions.h, then you don't need to
+         do anything - the linker will automatically pull in the appropriate
+         stub routines in from the standard C library.
+
+         OLD OBJECT CODE/LIBARIES
+         Version 5.0a is NOT object code or library compatable with
+         earlier versions of Aztec C.  The reason for this is that
+         the default register usage conventions of the compiler have been
+         changed from that of previous versions.  This means that all
+         source code must be re-compiled for use with 5.0a.  In addition,
+         assembly code called by C must be changed to reflect the new
+         register conventions.
+
+         DEFAULT INTEGER SIZE
+         The default integer size has been changed from 16-bits to 32-bits.
+         This was done to make it easier to port code from other systems,
+         as well as to minimize crashing in 'beginner' code.  Because of
+         this, the library naming conventions have also changed.  The
+         libraries now map in this fashion:
+
+             3.6a   |  5.0a
+         ---------------------
+             c.lib  |   c16.lib     small code/small data 16-bit ints
+            cl.lib  |  cl16.lib     large code/large data 16-bit ints
+          cl32.lib  |    cl.lib     large code/large data 32-bit ints
+           c32.lib  |     c.lib     small code/small data 32-bit ints
+
+          DEFAULT MATH LIBRARIES
+          A new math library, based on Manx IEEE floating point, has been
+          added.  This library is the most accurate of all the libraries,
+          and is now set to be the default.  The libraries from 3.6a to
+          5.0a map in this fashion with regards to naming conventions:
+
+             3.6a   |  5.0a
+         ---------------------
+            ------  |  m.lib        Manx IEEE floating point
+            ma.lib  |  ma.lib       Amiga IEEE floating point
+             m.lib  |  mf.lib       Motorola Fast Floating Point (FFP)
+            m8.lib  |  m8.lib       68881 Coprocessor
+
+          BITFIELDS
+          Bitfields may only be of type 'int' or 'unsigned int' in version
+          5.0a.  Previous versions also allowed bitfields to be of type
+          'short' and 'unsigned short'.
+
+          FUNCTIONS.H
+          The declarations in the functions.h header file now include
+          ANSI prototyping of Amiga function arguments, in addition to
+          declaring function return types.  This can cause a large number
+          of ptr/ptr and ptr/int conversion warnings to be generated in
+          certain types of programs.  If you receive a large number of
+          these types of warnings in code which includes functions.h and
+          do not wish to make the necessary corrections, you will have to
+          remove the inclusion of functions.h and declare function return
+          types yourself.
+
+          The majority of problems will most likely be with messages and
+          I/O requests.  In most cases warnings in these areas can be
+          cured with a simple cast in the function call.  For example:
+
+               AbortIO ((struct IORequest *)req);
+               ReplyMsg ((struct Message *)msg);
+
+          Simple casts of this type should remove 90%-95% of warnings due to
+          prototypes in typical code.
+
+
+                            VERSION 5.0A NOTES
+                            ------------------
+
+SDB
+---
+     There are now two versions of SDB - SDB and SDBF.  The two
+     programs are identical except in the handling of floating
+     point.  SDB is designed for use with code compiled for use
+     with the m.lib (MANX IEEE), ma.lib (AMIGA IEEE), or m8.lib
+     (68881 coprocessor) libraries.  SDBF should be used with
+     programs compiled with mf.lib (Motorola Fast Floating Point,
+     FPP).
+
+KNOWN BUGS
+----------
+The following are known bugs in the 5.0a system:
+
+    1-- The compiler occasionally generates a fatal error message
+        "Out of Registers".  This is an internal error, and cannot be
+        fixed by the user.  The workaround for this is to compile the
+        problem module with the -at option, and then look at the generated
+        assembly source.  The last source line for which code is generated
+        is the line which is causing the problem.  This line should be
+        split into one or more source lines to avoid the problem.  This
+        error occurs only on very complex expressions.
+
+    2-- The compiler occasionsally generates the internal error message
+        'Attempt to release item already free'.  This is an internal
+        error, and may be worked around the same manner as (1) above.
+
+    3-- The ma.lib-libraries do not accurately convert float-type
+        variables to type double.  This is due to errors in the Amiga
+        resident library routines.
+
+    4-- SDB occasionally prints the message "Line Table Botch" while
+        single-stepping through source.  The work around for this is
+        to re-arrange the ordering of your object modules on your
+        link invocation line, re-link, and then re-invoke SDB.
+
+    5-- The assembler incorrectly optimizes certain sequences and
+        terminates with an "ending PCs differ" error message.  This
+        problem is usually fixed by using the -n assembler switch to
+        disable optimiztion.
+
+    6-- The 'make' utility will crash if it encounters a recursive 
+        dependency like:
+
+            myfile.o: myfile.o
+

@@ -1,0 +1,2 @@
+ÄàPROTO_MATHIEEESINGTRANS_HÄPROTO_MATHIEEESINGTRANS_Hå<exec/types.h>
+ÅÉLibrary*MathIeeeSingTransBase;å<clib/mathieeesingtrans_protos.h>å<pragmas/mathieeesingtrans_pragmas.h>á

@@ -1,0 +1,2494 @@
+@database "sc"
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@master "sc.guide"
+
+@Remark $VER: sc.guide 6.00a (8.10.92)
+@Remark AmigaGuide database for the SC Driver options
+
+@Node Main "sc.guide"
+@{" AbsFuncPointer             " Link "AbsFuncPointer"}           @{" ADDSYMbols                 " Link "ADDSYM"}
+@{" ANSI                       " Link "ANSI"}           @{" ARGumentSIZe               " Link "ARGumentSIZe"}
+@{" ASseMbler                  " Link "ASseMbler"}           @{" AUTOREGister               " Link "AUTOREGister"}
+@{" BATCH                      " Link "BATCH"}           @{" BSSMEMory                  " Link "BSSMEM"}
+@{" BSSNAME                    " Link "BSSNAME"}           @{" CODE                       " Link "CODE"}
+@{" CODEMEMory                 " Link "CODEMEM"}           @{" CODENAME                   " Link "CODENAME"}
+@{" CommentNEST                " Link "CommentNEST"}           @{" COMMON                     " Link "COMMON"}
+@{" CONSTLIBbase               " Link "CONSTLIBbase"}           @{" COVERage                   " Link "COVERage"}
+@{" CPU                        " Link "CPU"}           @{" CSouRCe                    " Link "CSouRCe"}
+@{" DATA                       " Link "DATA"}           @{" DATAMEMory                 " Link "DATAMEM"}
+@{" DATANAME                   " Link "DATANAME"}           @{" DeBuG                      " Link "DeBuG"}
+@{" DEFine                     " Link "DEFine"}           @{" DISASseMble                " Link "DISASseM"}
+@{" ERRor                      " Link "ERRor"}           @{" ERRorCONsole               " Link "ERRorCONsole"}
+@{" ERRorHIGHlight             " Link "ERRorHIGHlight"}           @{" ERRorLIST                  " Link "ERRorLISTing"}
+@{" ERRorREXX                  " Link "ERRorREXX"}           @{" ERRorSouRCe                " Link "ERRorSouRCe"}
+@{" EXTernalDEFs               " Link "EXTernalDEFs"}           @{" FindSYMbol                 " Link "FindSYMbol"}
+@{" FROM                       " Link "FROM"}           @{" GenProtoDATAitems          " Link "GenProtoDATAitems"}
+@{" GenProtoEXTerns            " Link "GenProtoEXTerns"}           @{" GenProtoFILE               " Link "GenProtoFILE"}
+@{" GenProtoPARaMeters         " Link "GenProtoPARMs"}           @{" GenPROTOs                  " Link "GenPROTO"}
+@{" GenProtoSTATics            " Link "GenProtoSTATics"}           @{" GenProtoTypeDEFs           " Link "GenProtoTypeDEFs"}
+@{" GlobalSymbolTable          " Link "GST"}           @{" GSTIMMediate               " Link "GSTIMMediate"}
+@{" ICONs                      " Link "ICONs"}           @{" IDentifierLENgth           " Link "IDentifierLENgth"}
+@{" IGNore                     " Link "IGNore"}           @{" IncludeDIRectory           " Link "IncludeDIRectory"}
+@{" KeepLINE                   " Link "KeepLINE"}           @{" LIBCODE                    " Link "LIBCODE"}
+@{" LIBrary                    " Link "LIBraries"}           @{" LINK                       " Link "LINK"}
+@{" LINKerOPTions              " Link "LINKerOPTs"}           @{" LIST                       " Link "LIST"}
+@{" ListFILE                   " Link "ListFILE"}           @{" ListHEADers                " Link "ListHEADers"}
+@{" ListINCludes               " Link "ListINCludes"}           @{" ListMACros                 " Link "ListMACros"}
+@{" ListNARRow                 " Link "ListNARRow"}           @{" ListSYStem                 " Link "ListSYStem"}
+@{" MakeGlobalSymbolTable      " Link "MakeGST"}           @{" MAP                        " Link "MAP"}
+@{" MapFILE                    " Link "MapFILE"}           @{" MapHUNK                    " Link "MapHUNK"}
+@{" MapLIB                     " Link "MapLIBraries"}           @{" MapOVerLaY                 " Link "MapOVerLaY"}
+@{" MapSYMbols                 " Link "MapSYMbols"}           @{" MapXREFerence              " Link "MapXREF"}
+@{" MATH                       " Link "MATH"}           @{" MAXimumERRors              " Link "MAXERRor"}
+@{" MAXimumWaRNings            " Link "MAXWaRN"}           @{" MEMorySIZE                 " Link "MEMSIZE"}
+@{" MODified                   " Link "MODified"}           @{" MultipleCharacterCONStants " Link "MultipleCharacterCONStants"}
+@{" MultipleINCludes           " Link "MultipleINCludes"}           @{" OBJect                     " Link "OBJects"}
+@{" OBJectLIBrary              " Link "OBJectLIB"}           @{" OBJectNAME                 " Link "OBJectNAME"}
+@{" OLDPreProcessor            " Link "OLDPreProcessor"}           @{" ONERRor                    " Link "ONERRor"}
+@{" OPTimize                   " Link "OPTimize"}           @{" OPTimizerALIAS             " Link "OPTALIAS"}
+@{" OPTimizerCOMPlexity        " Link "OPTCOMP"}           @{" OPTimizerDEPth             " Link "OPTDEPth"}
+@{" OPTimizerGlObal            " Link "OPTimizeGlObal"}           @{" OPTimizerINLine            " Link "OPTINLine"}
+@{" OPTimizerINLOCAL           " Link "OPTINLOCAL"}           @{" OPTimizerLOOP              " Link "OPTLOOP"}
+@{" OPTimizerPEEPhole          " Link "OPTimizePEEP"}           @{" OPTimizerRecurDEPth        " Link "OPTRDEPth"}
+@{" OPTimizerSIZE              " Link "OPTSIZE"}           @{" OPTimizerTIME              " Link "OPTTIME"}
+@{" PARaMeters                 " Link "PARMs"}           @{" PRECision                  " Link "PRECision"}
+@{" PreProcessorBUFfer         " Link "PreProcessorBUFfer"}           @{" PreProcessorONLY           " Link "PreProcessONLY"}
+@{" ProgramNAME                " Link "ProgramNAME"}           @{" RESetOPTions               " Link "RESetOPTions"}
+@{" SAVEDS                     " Link "SAVEDS"}           @{" ShortINTegers              " Link "ShortINTegers"}
+@{" SmallCODE                  " Link "SmallCODE"}           @{" SmallDATA                  " Link "SmallDATA"}
+@{" SouRCeIS                   " Link "SouRCeIS"}           @{" STacKCHecK                 " Link "STacKCHecK"}
+@{" STacKEXTend                " Link "STacKEXTend"}           @{" STanDardIO                 " Link "STDIO"}
+@{" STaRTup                    " Link "STaRTup"}           @{" STRICT                     " Link "STRICT"}
+@{" STRingMERge                " Link "STRingMERge"}           @{" STRingsCONst               " Link "STRingsCONst"}
+@{" STRIPDeBuG                 " Link "STRIPDeBuG"}           @{" STRuctureEQuivalence       " Link "STRuctEQuivalence"}
+@{" TO                         " Link "TO"}           @{" TRIGraph                   " Link "TRIGraph"}
+@{" UnderSCORE                 " Link "UnderSCORE"}           @{" UnsignedCHAR               " Link "UnsignedCHAR"}
+@{" UTILityLIBrary             " Link "UTILLIB"}           @{" VERBOSE                    " Link "VERBOSE"}
+@{" VERsion                    " Link "VERsion"}           @{" WaRN                       " Link "WaRN"}
+@{" WarnVoidRETurn             " Link "WarnVoidRETurn"}           @{" WITH                       " Link "WITH"}
+@{" XREFerence                 " Link "XREF"}           @{" XreferenceHEADers          " Link "XrefHEADers"}
+@{" XreferenceSYStem           " Link "XrefSYStem"}
+@{" OptimizeSchedule           " Link "OPTimizeSCHEDule"}
+@{" PubScreen                  " Link "PUBSCREEN"}
+@EndNode
+
+@Node "MainPanel"
+@{" GenProto     " Link "GenPROTO"}
+@{" Link         " Link "LINK"}
+@{" List         " Link "LIST"}
+@{" Map          " Link "MAP"}
+@{" Optimize     " Link "OPTimize"}
+@{" ProgramName  " Link "ProgramNAME"}
+@{" SPECIAL      " Link "SPECIAL"}
+@{" Verbose      " Link "VERBOSE"}
+@{" Version      " Link "VERsion"}
+@{" Xref         " Link "XREF"}
+
+@{" Save         " Link "Save"}
+@{" Save Default " Link "Save Default"}
+@{" Cancel       " Link "Cancel"}
+@EndNode
+
+@Node "CompilerPanel"
+@{" CommentNest      " Link "CommentNEST"}                 @{" Debug            " Link "DeBuG"}
+@{" Define           " Link "DEFine"}                 @{" GST              " Link "GST"}
+@{" Icons            " Link "ICONs"}                 @{" IncludeDirectory " Link "IncludeDIRectory"}
+@{" MakeGST          " Link "MakeGST"}                 @{" MemSize          " Link "MEMSIZE"}
+@{" Modified         " Link "MODified"}                 @{" MultipleIncludes " Link "MultipleINCludes"}
+@{" PreProcessOnly   " Link "PreProcessONLY"}                 @{" ShortIntegers    " Link "ShortINTegers"}
+@{" StringMerge      " Link "STRingMERge"}                 @{" StringsConst     " Link "STRingsCONSt"}
+@{" UnsignedChar     " Link "UnsignedCHAR"}
+
+@{" OK               " Link "OK"}
+@EndNode
+
+@Node "MessagePanel"
+@{" Ansi              " Link "ANSI"}                @{" Error             " Link "ERRor"}
+@{" ErrorConsole      " Link "ERRorCONsole"}                @{" ErrorHighlight    " Link "ERRorHIGHlight"}
+@{" ErrorListing      " Link "ERRorLISTing"}                @{" ErrorRexx         " Link "ERRorREXX"}
+@{" ErrorSource       " Link "ERRorSouRCe"}                @{" Ignore            " Link "IGNore"}
+@{" MaxError          " Link "MAXERRor"}                @{" MaxWarn           " Link "MAXWaRN"}
+@{" OnError           " Link "ONERRor"}                @{" Strict            " Link "STRICT"}
+@{" StructEquivalence " Link "STRuctEQuivalence"}                @{" Warning           " Link "WaRN"}
+
+@{" OK                " Link "OK"}
+@EndNode
+
+@Node "CodePanel"
+@{" AbsFuncPointer " Link "AbsFuncPointer"}                   @{" AutoRegister   " Link "AUTOREGister"}
+@{" BSSMem         " Link "BSSMEM"}                   @{" BSSName        " Link "BSSNAME"}
+@{" Code           " Link "CODE"}                   @{" CodeMem        " Link "CODEMEM"}
+@{" CodeName       " Link "CODENAME"}                   @{" Common         " Link "COMMON"}
+@{" ConstLibBase   " Link "CONSTLIBbase"}                   @{" Coverage       " Link "COVERage"}
+@{" CPU            " Link "CPU"}                   @{" Data           " Link "DATA"}
+@{" DataMem        " Link "DATAMEM"}                   @{" DataName       " Link "DATANAME"}
+@{" DisAssem       " Link "DISASseM"}                   @{" LibCode        " Link "LIBCODE"}
+@{" ObjectLib      " Link "OBJectLIB"}                   @{" ObjectName     " Link "OBJectNAME"}
+@{" Parms          " Link "PARMs"}                   @{" Precision      " Link "PRECision"}
+@{" SaveDS         " Link "SAVEDS"}                   @{" SourceIs       " Link "SouRCeIS"}
+@{" StackCheck     " Link "STacKCHecK"}                   @{" StackExtend    " Link "STacKEXTEND"}
+@{" UtilLib        " Link "UTILLIB"}
+
+@{" OK             " Link "OK"}
+@EndNode
+
+@Node "ListPanel"
+@{" ErrorListing " Link "ERRorLISTing"}
+@{" List         " Link "LIST"}
+@{" ListFile     " Link "ListFILE"}
+@{" ListHeaders  " Link "ListHEADers"}
+@{" ListIncludes " Link "ListINCludes"}
+@{" ListMacros   " Link "ListMACros"}
+@{" ListNarrow   " Link "ListNARRow"}
+@{" ListSystem   " Link "ListSYStem"}
+@{" Xref         " Link "XREF"}
+@{" XrefHeaders  " Link "XrefHEADers"}
+@{" XrefSystem   " Link "XrefSYStem"}
+
+@{" OK           " Link "OK"}
+@EndNode
+
+@Node "OptimizerPanel"
+@{" OptAlias        " Link "OPTALIAS"}
+@{" OptComp         " Link "OPTCOMP"}
+@{" OptDepth        " Link "OPTDEPth"}
+@{" Optimize        " Link "OPTimize"}
+@{" OptimizePeep    " Link "OPTimizePEEP"}
+@{" OptimizeGlobal  " Link "OPTimizeGlObal"}
+@{" OptimizeSchedule" Link "OPTimizeSCHEDule"}
+@{" OptInline       " Link "OPTINLine"}
+@{" OptInLocal      " Link "OPTINLOCAL"}
+@{" OptLoop         " Link "OPTLOOP"}
+@{" OptRDepth       " Link "OPTRDEPth"}
+@{" OptSize         " Link "OPTSIZE"}
+@{" OptTime         " Link "OPTTIME"}
+
+@{" OK             " Link "OK"}
+@EndNode
+
+@Node "PrototypePanel"
+@{" GenProtoDataItems " Link "GenProtoDATAitems"}
+@{" GenProtoExterns   " Link "GenProtoEXTerns"}
+@{" GenProtoFile      " Link "GenProtoFILE"}
+@{" GenProtoParms     " Link "GenProtoPARMs"}
+@{" GenProto          " Link "GenPROTO"}
+@{" GenProtoStatics   " Link "GenProtoSTATics"}
+@{" GenProtoTypedefs  " Link "GenProtoTypeDEFs"}
+
+@{" OK                " Link "OK"}
+@EndNode
+
+@Node "LinkerPanel"
+@{" AddSym       " Link "ADDSYM"}
+@{" Batch        " Link "BATCH"}
+@{" Libraries    " Link "LIBraries"}
+@{" Link         " Link "LINK"}
+@{" LinkerOpts   " Link "LINKEROPTS"}
+@{" Objects      " Link "OBJects"}
+@{" SmallCode    " Link "SMALLCODE"}
+@{" SmallData    " Link "SMALLDATA"}
+@{" Startup      " Link "STARTUP"}
+@{" StdIO        " Link "STDIO"}
+@{" StripDebug   " Link "STRIPDeBuG"}
+@{" User Startup " Link "User"}
+
+@{" OK           " Link "OK"}
+@EndNode
+
+@Node "MapPanel"
+@{" Map          " Link "MAP"}
+@{" MapFile      " Link "MAPFILE"}
+@{" MapHunk      " Link "MAPHUNK"}
+@{" MapLibraries " Link "MAPLIBraries"}
+@{" MapOverlay   " Link "MAPOVERLAY"}
+@{" MapSymbols   " Link "MAPSYMBOLS"}
+@{" MapXref      " Link "MapXREF"}
+
+@{" OK           " Link "OK"}
+@EndNode
+
+@Node "Save"
+Clicking over this gadget will create (or update) a file named SCOPTIONS
+in the current directory.
+@EndNode
+
+@Node "Save Default"
+Clicking over this gadget will create (or update) a global SCOPTIONS file,
+which resides in the ENV:SC directory.
+@EndNode
+
+@Node "Cancel"
+Clicking over this gadget will cancel any changes made, and will exit the
+SCOPTS program without modifying any files.
+@EndNode
+
+@Node "SPECIAL"
+This string gadget may be used for any option not directly supported
+through gadgets in the SCOPTS program.
+@EndNode
+
+@Node "OK"
+Accept changes on this subpanel and return to Main panel.
+@EndNode
+
+@Node "User"
+This string gadget is used to enter the name of a user-created startup
+file.  This gadget is only active if @{" STARTUP " Link "STARTUP"}=<user>.
+@EndNode
+
+@Node "AbsFuncPointer"
+AFP=AbsFuncPointer/S			Default: noafp
+
+Description
+
+   generates 32-bit references to functions when loading function
+   pointers.  If you specify noabsfuncpointer and you take the address of
+   a function that is more than 32k away, the linker generates an ALV
+   (automatic link vector) jump instruction that allows your code to work.
+   However, if you compare the address of the function to a function
+   pointer assigned elsewhere, you may get a different value.  Specify
+   absfuncpointer if your code is larger than 64K or in multiple code
+   hunks and you compare function pointers.  Specifying absfuncpointer may
+   increase the size of your executable.
+@EndNode
+
+@Node "ADDSYM"
+@Title "ADDSYMbols"
+ADDSYM=ADDSYMbols/S			Default: noaddsym
+
+Description
+
+   Tells the linker to add symbol information to the executable module.
+
+   This option is automatically enabled if you specify the @{" DeBuG " Link "DeBuG"} option.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" DeBuG " Link "DeBuG"} , @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "ANSI"
+ANSI/S					Default: noansi
+
+Description
+
+   This option enforces the strictest interpretation of the @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"} C
+   standard.  Using this option produces many additional warning messages.
+
+   To be completely @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"}-compliant (that is, if you require a pure
+   @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"} namespace), you should also define the preprocessor symbol
+   @{" _STRICT_ANSI " Link "sc:help/sc_lib.guide/_STRICT_ANSI"} before including any header files.
+
+   If you require support for @{" ANSI " Link "sc:help/sc_lig.guide/Glossary - ANSI"} trigraphs, specify the  @{" TRIGraph " Link "TRIGraph"}
+   option also.
+
+   In addition to turning on the warning messages listed under the @{" ANSI " link sc:help/scmsg.guide/ansi}
+   button in the Error Message Help Utility and on page 265 
+   of the User's Guide Volume 1, the ANSI compiler option also does the 
+   following:
+
+   - Disallows the initialization of variables declared with the extern
+     keyword.  For example, the following line is not allowed under ANSI
+     but is normally allowed by the compiler:
+ 
+            extern int i = 7;
+    
+   - Suppresses the definition of certain preprocessor symbols.  Please 
+     see table 8.3 on page 120 for a list of pre-processor symbols that 
+     are only defined when the NOANSI option is on.
+
+   - Disables the far, near, and chip keywords.  The keywords __far,
+     __near, and __chip are still valid with the ANSI option.
+
+   - Suppresses @{" Warning 95 " link sc:help/scmsg.guide/scm095}: Unrecognized #pragma operand.  The ANSI 
+     standard requires that the compiler accept unrecognized #pragmas 
+     silently.
+
+   - Promotes @{" Warning 193 " link sc:help/scmsg.guide/scm193}: implicit reference to struct/union member
+     Reference assumed to be "<reference>", to an error in all cases.
+
+See Also
+   @{" ANSI Definition " Link "sc:help/sc_lib.guide/Glossary - ANSI"} , @{" _STRICT_ANSI " Link "sc:help/sc_lib.guide/_STRICT_ANSI"} , @{" TRIGraph " Link "TRIGraph"}
+@EndNode
+
+@Node "ARGumentSIZe"
+ARGSIZ=ARGumentSIZe/K/N 		Default: 512
+
+Description
+
+   This option sets the size of the maximum argument to a preprocessor
+   macro.
+
+   This option does not have a negative form.
+
+   The @{" MEMorySIZE " Link "MEMSIZE"} option sets the ARGumentSIZe (and other internal
+   limits) to different default values if you do not specify ARGumentSIZe.
+
+See Also
+
+   @{" MEMorySIZE " Link "MEMSIZE"}
+@EndNode
+
+@Node "ASseMbler"
+ASM=ASseMbler/K
+
+Description
+
+   This option specifies assembly-language files that are to be assembled
+   and, if you specify the @{" LINK " Link "LINK"} option, linked into the program.
+
+   This option does not have a negative form.
+
+See Also
+
+   @{" CSouRCe " Link "CSouRCe"} , @{" LIBrary " Link "LIBraries"} , @{" LINK " Link "LINK"} , @{" OBJect " Link "OBJects"}
+@EndNode
+
+@Node "AUTOREGister"
+AUTOREG=AUTOREGister/S			Default: autoreg
+
+Description
+
+   This option enables automatic register selection by the code generator.
+   If you specify AUTOREGister, the compiler attempts to add register
+   variables to the variables that have already been chosen by the global
+   optimizer or declared with the register keyword.
+@EndNode
+
+@Node "BATCH"
+BATCH/S 				Default: nobatch
+
+Description
+
+   This option tells the linker not to prompt for definitions of undefined
+   symbols.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "BSSMEM"
+@Title "BSSMEMory"
+BSSMEM=BSSMEMory/K			Default: any
+
+Description
+
+   This option specifies the type of memory into which uninitialized
+   external data items should be loaded.  You can specify ANY, CHIP, or
+   FAST for type.  You can abbreviate these values as A, C, or F.  This
+   option does not have a negative form.
+
+   This option affects code generated by both the compiler and the
+   assembler.
+
+See also
+
+   @{" CODEMEMory " Link "CODEMEM"} , @{" DATAMEMory " Link "DATAMEM"}
+@EndNode
+
+@Node "BSSNAME"
+BSSName/K				Default: "udata"
+
+Description
+
+   This option names the uninitialized data section.  You can specify
+   BSSNAME=NONE or NOBSSNAME if you want an unnamed BSS section.  The
+   linker automatically merges all sections with the same name.
+
+See Also
+
+   @{" CODENAME " Link "CODENAME"} , @{" DATANAME " Link "DATANAME"}
+@EndNode
+
+@Node "CODE"
+CODE/K					Default: near
+
+Description
+
+   This option specifies whether you want 16-bit or 32-bit references to
+   functions not declared in the current file.	You can specify NEAR or
+   N for 16-bit references or FAR or F for 32-bit references.
+
+   This option does not have a negative form.
+
+   Most programs do not need this option even if they are very large,
+   because the linker creates a jump instruction (an ALV) for any
+   references to functions that are out of range.
+
+See Also
+
+   @{" DATA " Link "DATA"}
+@EndNode
+
+@Node "CODEMEM"
+@Title "CODEMEMory"
+CODEMEM=CODEMEMory/K			Default: any
+
+Description
+
+   This option specifies the type of memory into which code should be
+   loaded.  You can specify ANY, CHIP, or FAST.  You can abbreviate these
+   values as A, C, or F.
+
+   This option does not have a negative form.
+
+   This option affects code generated by both the compiler and the
+   assembler.
+
+See Also
+
+   @{" BSSMEMory " Link "BSSMEM"} , @{" DATAMEMory " Link "DATAMEM"}
+@EndNode
+
+@Node "CODENAME"
+CODENAME/K				Default: "text"
+
+Description
+
+   This option names the code section.	You can specify CODENAME=NONE or
+   NOCODENAME if you want an unnamed code section.  The linker
+   automatically merges all sections with the same name.
+
+See Also
+
+   @{" BSSNAME " Link "BSSNAME"} , @{" DATANAME " Link "DATANAME"}
+@EndNode
+
+@Node "CommentNEST"
+CNEST=CommentNEST/S			Default: nocnest
+
+Description
+
+   This option allows nested comments.	Nested comments occur when one
+   comment is totally contained inside another.  The @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"} Standard
+   prohibits nested comments, so in @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"}-compliant code, the first
+   comment end sequence (*/) terminates both comments.
+
+See Also
+
+   @{" ANSI Definition " Link "sc:help/sc_lib.guide/Glossary - ANSI"} , @{" ANSI Switch " Link "ANSI"}
+@EndNode
+
+@Node "COMMON"
+COMMON/S				Default: nocommon
+
+Description
+
+   This option tells the compiler to use the common model for external
+   data.  If you specify NOCOMMON, the compiler uses the strict
+   reference-definition model.
+@EndNode
+
+@Node "CONSTLIBbase"
+CONSTLIB=CONSTLIBbase/S 		Default: constlib
+
+Description
+
+   This option tells the compiler that library base pointers are set once
+   then remain constant throughout your entire program.  If you change the
+   value of your library bases after setting them, you should specify the
+   NOCONSTLIBBASE option.  Specifying CONSTLIBBASE allows the compiler to
+   prevent extra register loading when making a series of calls to library
+   functions through an external variable containing the library base.
+@EndNode
+
+@Node "COVERage"
+COVER=COVERage/S			Default: nocover
+
+Description
+
+   This option tells the compiler to generate code to collect coverage
+   analysis information.  Coverage analysis information allows you to
+   determine which lines of your program have been executed by your test
+   cases.
+
+   If you specify the COVER option, make sure that you:
+
+	� Link with the file LIB:covutil.o.
+	� Do not specify the @{" NOSTDIO " Link "STDIO"} option.
+	� Use @{" STARTUP " Link "STARTUP"}=C to link with the standard c.o startup module.
+
+See Also
+
+   @{" STARTUP " Link "STARTUP"} , @{" STDIO " Link "STDIO"}
+@EndNode
+
+@Node "CPU"
+CPU/K					Default: any
+
+Description
+
+   This option generates code specific to the specified processor.  You
+   can specify ANY, A, or 68000 to generate code for any processor.  You
+   can also specify 68010, 68020, 68030, or 68040 to generate code for a
+   specific processor.
+
+   This option does not have a negative form.
+
+   This option defines one or more preprocessor symbols.
+
+   This option affects code generated by both the compiler and the
+   assembler.
+@EndNode
+
+@Node "CSouRCe"
+CSRC=CSouRCe/K
+
+Description
+
+   This option specifies C source files that are to be compiled and, if
+   you specify the @{" LINK " Link "LINK"} option, linked into the program.
+
+   This option does not have a negative form.
+
+See Also
+
+   @{" ASseMbler " Link "ASseMbler"} , @{" LIBrary " Link "LIBraries"} , @{" LINK " Link "LINK"} , @{" OBJect " Link "OBJects"}
+@EndNode
+
+@Node "DATA"
+DATA/K					Default: near
+
+Description
+
+   This option specifies whether you want the compiler to generate 16-bit
+   or 32-bit references to external and static data items.  You can
+   specify any of the following:
+
+	NEAR or N tells the compiler to use 16-bit references.
+
+	FAR or F tells the compiler to use 32-bit references.  Register A4
+	is still reserved to point to the near data section so that you
+	can mix code compiled with DATA=NEAR and DATA=FAR.
+
+	FARONLY or FO tells the compiler that your program never uses near
+	data.  Register A4 is not reserved, therefore you cannot mix code
+	compiled with DATA=NEAR.
+
+	AUTO or A indicates that the first 64k of external data should
+	generate 16-bit references and the remaining external data should
+	generate 32-bit references.
+
+   You can override this option on individual data items by using the
+   __near, __far, or __chip keywords.
+
+See Also
+
+   @{" CODE " Link "CODE"}
+@EndNode
+
+@Node "DATAMEM"
+@Title "DATAMEMory"
+DATAMEM=DATAMEMory/K			Default: any
+
+Description
+
+   This option specifies the type of memory into which initialized static
+   or external data should be loaded.  You can specify ANY, CHIP, or
+   FAST.  You can abbreviate these values as A, C, or F.
+
+   This option does not have a negative form.
+
+   This option affects code generated by both the compiler and the
+   assembler.
+
+See Also
+
+   @{" BSSMEMory " Link "BSSMEM"} , @{" CODEMEMory " Link "CODEMEM"}
+@EndNode
+
+@Node "DATANAME"
+DATANAME/K				Default: "data"
+
+Description
+
+   This option names the initialized data section.  You can specify
+   DATANAME=NONE or NODATANAME if you want an unnamed data section.
+   The linker automatically merges all sections with the same name.
+
+See Also
+
+   @{" BSSNAME " Link "BSSNAME"} , @{" CODENAME " Link "CODENAME"}
+@EndNode
+
+@Node "DeBuG"
+DBG=DeBuG/K				Default: nodbg
+
+Description
+
+   This option sets the debugging level of the compiler.  If you do not
+   want the compiler to generate debugging information, specify NODEBUG.
+   To generate debugging information, specify DEBUG=LEVEL, where LEVEL is
+   one of the following:
+
+	LINE or L produces line number information only.
+
+	SYMBOL or S produces line number information, information on
+	automatic and formal variables, and information on external and
+	static symbols that are referenced in the module being compiled.
+
+	SYMBOLFLUSH or SF produces the same information as SYMBOL, and
+	flushes any non-register variables being held in registers to
+	memory at each line boundary to allow the debugger to accurately
+	display their values in C source mode.
+
+	FULL or F produces the same information as SYMBOL.  However,
+	DEBUG=FULL produces information on all symbols whether or not the
+	module references the symbol.
+
+	FULLFLUSH or FF produces the same information as FULL, and flushes
+	any non-register variables being held in registers to memory at
+	each line boundary to allow the debugger to accurately display
+	their values in C source mode.
+
+   Any debug option except NODEBUG adds the -d assembler option to any
+   assembled files to force debugging line number information on assembler
+   output.  Also, if you specify the @{" LINK " Link "LINK"} option and any debug option
+   except NODEBUG, the @{" ADDSYM " Link "ADDSYM"} option is passed to the linker.
+
+See Also
+
+   @{" ADDSYM " Link "ADDSYM"} , @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "DEFine"
+DEF=DEFINE/K
+
+   This option defines the specified preprocessor symbol, as if with a
+   #define statement.
+
+   This option does not have a negative form.
+
+   Do not enter a space between the symbol name and the following equal
+   sign.  If the value contains a space, enclose the entire argument in
+   double quotes (").
+
+   Any symbols defined with the DEFINE option are defined in the assembler
+   as well.
+
+   NOTE:  The DEFINE compiler option does not affect the linker.  Do not
+   confuse this option with the DEFINE linker option.
+@EndNode
+
+@Node "DISASseM"
+@Title "DISASseMble"
+DISASM=DISASseMble/K			Default: nodisasm
+
+Description
+
+   This option tells the compiler to disassemble the code as it is
+   generated and to send the disassembly to the file you specify.
+
+   To send the disassembly to the Shell, use DISASM=*.
+@EndNode
+
+@Node "ERRor"
+ERR=ERRor/K/N
+
+Description
+
+   This option tells the compiler to treat the specified message as an
+   error.  You can specify ALL or A to promote all enabled warnings to
+   errors, or you can specify one or more message numbers to promote only
+   those messages.
+
+   This option does not have a negative form.
+
+See Also
+
+   @{" IGNore " Link "IGNore"} , @{" WaRN " Link "WaRN"}
+@EndNode
+
+@Node "ERRorCONsole"
+ERRCON=ERRorCONsole/S			Default: errcon
+
+Description
+
+   This option enables printing of diagnostics to the console (stdout).
+
+See Also
+
+   @{" ERRorHIGHlight " Link "ERRorHIGHlight"} , @{" ERRorLIST " Link "ERRorLISTing"} , @{" ERRorREXX " Link "ERRorREXX"} , @{" ERRorSouRCe " Link "ERRorSouRCe"}
+@EndNode
+
+@Node "ERRorHIGHlight"
+ERRHIGH=ERRorHIGHlight/S		Default: errhigh
+
+Description
+
+   This option highlights the token that caused the error using @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"}
+   escape sequences in diagnostic output that is sent to the console.
+
+See Also
+
+   @{" ERRorCONsole " Link "ERRorCONsole"} , @{" ERRorLIST " Link "ERRorLISTing"} , @{" ERRorREXX " Link "ERRorREXX"} , @{" ERRorSouRCe " Link "ERRorSouRCe"}
+@EndNode
+
+@Node "ERRorLISTing"
+@Title "ERRorLIST"
+ERRLIST=ERRorLIST/S			Default: errlist
+
+Description
+
+   This option prints diagnostic messages to the listing file.
+
+   This option is ignored if you do not specify the LIST option.
+
+See Also
+
+   @{" ERRorCONsole " Link "ERRorCONsole"} , @{" ERRorHIGHlight " Link "ERRorHIGHlight"} , @{" ERRorREXX " Link "ERRorREXX"} , @{" ERRorSouRCe " Link "ERRorSouRCe"}
+@EndNode
+
+@Node "ERRorREXX"
+ERRREXX=ERRorREXX/S			Default: noerrrexx
+
+Description
+
+   This option sends diagnostic messages to the SCMSG utility.
+
+See Also
+
+   @{" ERRorCONsole " Link "ERRorCONsole"} , @{" ERRorHIGHlight " Link "ERRorHIGHlight"} , @{" ERRorLIST " Link "ERRorLISTing"} , @{" ERRorSouRCe " Link "ERRorSouRCe"}
+@EndNode
+
+@Node "ERRorSouRCe"
+ERRSRC=ERRorSouRCe/S			Default: errsrc
+
+   This option prints lines from the C source file with the diagnostic
+   messages that are sent to the console.
+
+See Also
+
+   @{" ERRorCONsole " Link "ERRorCONsole"} , @{" ERRorHIGHlight " Link "ERRorHIGHlight"} , @{" ERRorLIST " Link "ERRorLISTing"} , @{" ERRorREXX " Link "ERRorREXX"}
+@EndNode
+
+@Node "EXTernalDEFs"
+EXTDEF=EXTernalDEFs/S			Default: extdef
+
+Description
+
+   This option treats all external declaration as definitions.
+@EndNode
+
+@Node "FindSYMbol"
+FSYM=FindSYMbol/K
+
+Description
+
+   This option tells the compiler to print a warning message each time the
+   specified symbol is defined.
+
+   This option does not have a negative form.
+@EndNode
+
+@Node "FROM"
+FROM/S
+
+Description
+
+   This option is included only for compatibility with the SLINK command.
+
+   The compiler ignores this option.
+
+   This option does not have a negative form.
+@EndNode
+
+@Node "GenProtoDATAitems"
+GPDATA=GenProtoDATAitems/S		Default: gpdata
+
+Description
+
+   This option generates external declarations for variables defined in
+   the source files that are not defined as STATIC.
+
+   This option is ignored if you do not specify the @{" GenPROTOs " Link "GenPROTO"} option.
+
+See Also
+
+   @{" GenPROTOs " Link "GenPROTO"}
+@EndNode
+
+@Node "GenProtoEXTerns"
+GPEXT=GenProtoEXTerns/S 		Default: gpext
+
+Description
+
+   This option generates prototypes for externally-known routines.
+
+   This option is ignored if you do not specify the @{" GenPROTOs " Link "GenPROTO"} option.
+
+See Also
+
+   @{" GenPROTOs " Link "GenPROTO"}
+@EndNode
+
+@Node "GenProtoFILE"
+GPFILE=GenProtoFILE/K			Default: <filename>_protos.h
+
+Description
+
+   This option specifies the name of the file in which to place the
+   generated prototypes.
+
+   This option is ignored if you do not specify the @{" GenPROTOs " Link "GenPROTO"} option.
+
+See Also
+
+   @{" GenPROTOs " Link "GenPROTO"}
+@EndNode
+
+@Node "GenProtoPARMs"
+@Title "GenProtoPARaMeters"
+GPPARM=GenProtoPARaMeters/S		Default: nogpparm
+
+Description
+
+   This option generates prototypes using the __PARMS macro.
+
+   This option is ignored if you do not specify the @{" GenPROTOs " Link "GenPROTO"} option.
+
+See Also
+
+   @{" GenPROTOs " Link "GenPROTO"}
+@EndNode
+
+@Node "GenPROTO"
+@Title "GenPROTOs"
+GPROTO=GenPROTOs/S			Default: nogproto
+
+Description
+
+   This option generates prototypes and data declarations instead of
+   compiling your file.
+
+See Also
+
+   @{" GenProtoDATAitems " Link "GenProtoDATAitems"} , @{" GenProtoEXTerns " Link "GenProtoEXTerns"} , @{" GenProtoFILE " Link "GenProtoFILE"} ,
+   @{" GenProtoPARaMeters " Link "GenProtoPARMs"} , @{" GenProtoSTATics " Link "GenProtoSTATics"} , @{" GenProtoTypeDEFs " Link "GenProtoTypeDEFs"}
+@EndNode
+
+@Node "GenProtoSTATics"
+GPSTAT=GenProtoSTATics/S		Default: nogpstat
+
+Description
+
+   This option generates prototypes for static routines.
+
+   This option is ignored if you do not specify the @{" GenPROTOs " Link "GenPROTO"} option.
+
+See Also
+
+   @{" GenPROTOs " Link "GenPROTO"}
+@EndNode
+
+@Node "GenProtoTypeDEFs"
+GPTDEF=GenProtoTypeDEFs/S		Default: gptdef
+
+Description
+
+   This option tells the compiler to use typedefs instead of resolved
+   types when generating prototypes for any functions using typedefs for
+   parameters or return values.
+
+   This option is ignored if you do not specify the @{" GenPROTOs " Link "GenPROTO"} option.
+
+See Also
+
+   @{" GenPROTOs " Link "GenPROTO"}
+@EndNode
+
+@Node "GST"
+@Title "GlobalSymbolTable"
+GST=GlobalSymbolTable/K 		Default: nogst
+
+Description
+
+   This option tells the compiler to use the specified GST (Global Symbol
+   Table).
+
+   The GST must have been created using the @{" MakeGlobalSymbolTable " Link "MakeGST"} option
+   during a previous compilation.
+
+   The GST option is ignored if you specify the @{" MakeGlobalSymbolTable " Link "MakeGST"}
+   option.
+
+See Also
+
+   @{" MakeGlobalSymbolTable " Link "MakeGST"}
+@EndNode
+
+@Node "GSTIMMediate"
+GSTIMM=GSTIMMediate/S			Default: nogstimm
+
+Description
+
+   This option is included for compatibility with projects using
+   precompiled header files as implemented in Version 5 of the compiler.
+   This option makes the contents of the GST you specify with the @{" GST " Link "GST"}
+   option immediately available to the program.
+
+See Also
+
+   @{" GlobalSymbolTable " Link "GST"} , @{" MakeGlobalSymbolTable " Link "MakeGST"}
+@EndNode
+
+@Node "ICONs"
+ICON=ICONs/S				Default: icon
+
+Description
+
+   This option tells the compiler to create icons for files that it
+   creates, including listing files, preprocessor output files, prototype
+   files, and object files.
+
+   If you specify NOICONS and @{" LINK " Link "LINK"}, the NOICONS option is also passed to
+   the linker.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "IDentifierLENgth"
+IDLEN=IDentifierLENgth/K/N		Default: 31
+
+Description
+
+   This option specifies the maximum number of significant characters in
+   an identifier.
+
+   This option does not have a negative form.
+
+   Identifiers longer than the max are truncated without warning.
+
+   Identifiers longer than IDLEN bytes that differ after the first IDLEN
+   bytes are treated as identical.
+@EndNode
+
+@Node "IGNore"
+IGN=IGNore/K/N
+
+Description
+
+   This option tells the compiler to ignore the specified warning message.
+
+   This option does not have a negative form.
+
+   You cannot ignore error messages.
+
+   You can specify ALL or A to ignore all warning messages, or you can
+   specify one or more message numbers to ignore only those messages.
+
+See Also
+
+   @{" ERRor " Link "ERRor"} , @{" WaRN " Link "WaRN"}
+@EndNode
+
+@Node "IncludeDIRectory"
+IDIR=IncludeDIRectory/K 		Default: <current dir>, Include:
+
+Description
+
+   This option adds a directory to the list of directories to search for
+   include files.
+
+   This option does not have a negative form.
+
+   Any directories you specify with INCLUDEDIRECTORY are also passed to
+   the assembler as header file search directories.
+@EndNode
+
+@Node "KeepLINE"
+KLINE=KeepLINE/S			Default: nokline
+
+   This option generates #line directives in the preprocessor output file
+   that correspond to the lines in the original source files.
+
+   This option allows you to compile the preprocessed source and get error
+   and warning messages that refer you to the correct line in the
+   nonpreprocessed version of the file.  This option is ignored if you do
+   not specify the @{" PPONLY " Link "PreProcessONLY"} option.
+
+See Also
+
+   @{" PreProcessorONLY " Link "PreProcessONLY"}
+@EndNode
+
+@Node "LIBCODE"
+LIBCODE/S				Default: nolibcode
+
+Description
+
+   This option tells the compiler that the compiled code will be linked
+   into a shared library.  Any functions compiled with LIBCODE and either
+   the __saveds keyword or the @{" SAVEDS " Link "SAVEDS"} option load their near data
+   section from a point relative to the library base register A6 instead
+   of from a global data area.	LIBCODE also guarantees that the current
+   library base will be in register A6 whenever A6 is referenced or an
+   internal call is made.
+
+   Do not use this option when creating a normal executable module.
+
+See Also
+
+   @{" SAVEDS " Link "SAVEDS"}
+@EndNode
+
+@Node "LIBraries"
+@Title "LIBrary"
+LIB=LIBrary/K
+
+Description
+
+   This option specifies the link libraries that are to be passed to the
+   linker.
+
+   This option does not have a negative form.
+
+   Any libraries you specify are passed to the linker before the SAS/C
+   libraries.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" ASseMbler " Link "ASseMbler"} , @{" CSouRCe " Link "CSouRCe"} , @{" LINK " Link "LINK"} , @{" OBJect " Link "OBJects"}
+@EndNode
+
+@Node "LINK"
+LINK/S					Default: nolink
+
+Description
+
+   This option tells the compiler to invoke the linker to produce a final
+   executable.
+
+   If you do not specify LINK, the compiler ignores any object files and
+   link libraries that you specify.
+
+   The options passed to the linker are placed into the file
+   <program>.lnk, and the linker is invoked using this file as a WITH
+   file.
+
+   To see which linker options were generated, look at the .lnk file after
+   sc runs the linker.
+
+See Also
+
+   @{" LINKerOPTions " Link "LINKerOPTs"}
+@EndNode
+
+@Node "LINKerOPTs"
+@Title "LINKerOPTions"
+LINKOPT=LINKerOPTions/K 		Default: nolinkopt
+
+Description
+
+   This option passes the provided parameter to the linker as command line
+   options.
+
+   If you want to specify more than one option, or if the option you want
+   to specify contains a blank, surround the entire option string with
+   double quotes (").
+
+   Any options specified in the options string are passed to the linker
+   after any compiler options that are identified as valid only if you
+   specify @{" LINK " Link "LINK"}.  Therefore, the LINKEROPTIONS values override the
+   values passed by the SC options.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "LIST"
+LIST/S					Default: nolist
+
+Description
+
+   This option tells the compiler or assembler to produce a listing file.
+
+   The compiler writes the output to the filename you specify with the
+   @{" ListFILE " Link "ListFILE"} option.  If you do not specify an output filename, the
+   compiler uses the name of the first source file you specify but with
+   the extension .lst.
+
+See Also
+
+   @{" ListFILE " Link "ListFILE"} , @{" ListHEADers " Link "ListHEADers"} , @{" ListINCludes " Link "ListINCludes"} ,
+   @{" ListMACros " Link "ListMACros"} , @{" ListNARRow " Link "ListNARRow"} , @{" ListSYStem " Link "ListSYStem"}
+@EndNode
+
+@Node "ListFILE"
+LFILE=ListFILE/K			Default: <first filename>.lst
+
+Description
+
+   This option names the listing and/or cross reference file.
+
+   This option is ignored if you do not specify the @{" LIST " Link "LIST"} or @{" XREFerence " Link "XREF"}
+   options.
+
+See Also
+
+   @{" LIST " Link "LIST"} , @{" XREFerence " Link "XREF"}
+@EndNode
+
+@Node "ListHEADers"
+LHEAD=ListHEADers/S			Default: lhead
+
+Description
+
+   This option tells the compiler or assembler to include user header
+   files in the listing.
+
+   This option is ignored if you do not specify the @{" LIST " Link "LIST"} option.
+
+See Also
+
+   @{" LIST " Link "LIST"}
+@EndNode
+
+@Node "ListINCludes"
+LINC=ListINCludes/S			Default: linc
+
+Description
+
+   This option lists the names of all included .h files in the listing
+   file.
+
+   This option is useful for determining:
+
+	� .h file dependencies for SMAKE
+	� the exact path of each .h file used
+	� exactly which .h files are included by other .h files.
+
+   The hierarchy of files is indicated by indention levels; a file
+   included by another file is indented one level deeper than the parent
+   file.
+
+   This option is ignored if you do not specify the @{" LIST " Link "LIST"} option.
+
+See Also
+
+   @{" LIST " Link "LIST"}
+@EndNode
+
+@Node "ListMACros"
+LMAC=ListMACros/S			Default: nolmac
+
+Description
+
+   This option tells the compiler or assembler to expand macros in the
+   listing.
+
+   This option is ignored if you do not specify the @{" LIST " Link "LIST"} option.
+
+See Also
+
+   @{" LIST " Link "LIST"}
+@EndNode
+
+@Node "ListNARRow"
+LNARR=ListNARRow/S			Default: lnarr
+
+Description
+
+   This option tells the compiler or assembler to produce a narrow listing
+   (less than 80 columns wide).
+
+   This option is ignored if you do not specify the @{" LIST " Link "LIST"} option.
+
+See Also
+
+   @{" LIST " Link "LIST"}
+@EndNode
+
+@Node "ListSYStem"
+LSYS=ListSYStem/S			Default: nolsys
+
+Description
+
+   This option tells the compiler to include system header files in the
+   listing.
+
+   This option is ignored if you do not specify the @{" LIST " Link "LIST"} option.
+
+See Also
+
+   @{" LIST " Link "LIST"}
+@EndNode
+
+@Node "MakeGST"
+@Title "MakeGlobalSymbolTable"
+MGST=MakeGlobalSymbolTable/K
+
+Description
+
+   This option creates a GST (Global Symbol Table).
+
+   If you specify the @{" GST " Link "GST"} and MAKEGST options, the @{" GST " Link "GST"} option is ignored.
+
+   This option automatically enables the @{" NOMULTIPLEINCLUDES " Link "MultipleINCludes"} and
+   @{" NOEXTERNALDEFS " Link "EXTernalDEFs"} options.
+
+See Also
+
+   @{" EXTernalDEFs " Link "EXTernalDEFs"} , @{" MultipleINCludes " Link "MultipleINCludes"}
+@EndNode
+
+@Node "MAP"
+MAP/S					Default: nomap
+
+Description
+
+   This option produces a map of the executable module.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MapFILE " Link "MapFILE"} , @{" MapHUNK " Link "MapHUNK"} , @{" MapLIB " Link "MapLIBraries"} ,
+   @{" MapOVerLaY " Link "MapOVerLaY"} , @{" MapSYMbols " Link "MapSYMbols"} , @{" MapXREFerence " Link "MapXREF"}
+@EndNode
+
+@Node "MapFILE"
+MFILE=MapFILE/K 			Default: <executable name>.map
+
+Description
+
+   This option names the map file.
+
+   This option is ignored if you do not specify both the @{" LINK " Link "LINK"} and @{" MAP " Link "MAP"}
+   options.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MAP " Link "MAP"}
+@EndNode
+
+@Node "MapHUNK"
+MHUNK=MapHUNK/S 			Default: nomhunk
+
+Description
+
+   This option maps all output hunks by size and originating function.
+
+   This option is ignored if you do not specify both the @{" LINK " Link "LINK"} and @{" MAP " Link "MAP"}
+   options.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MAP " Link "MAP"}
+@EndNode
+
+@Node "MapLIBraries"
+@Title "MapLIB"
+MLIB=MapLIB/S				Default: nomlib
+
+Description
+
+   This option generates a list of hunks by library symbol in the map.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} and @{" MAP " Link "MAP"}
+   options.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MAP " Link "MAP"}
+@EndNode
+
+@Node "MapOVerLaY"
+MOVLY=MapOVerLaY/S			Default: nomovly
+
+Description
+
+   This option includes a list of hunks in each overlay in the map.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} and @{" MAP " Link "MAP"}
+   options.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MAP " Link "MAP"}
+@EndNode
+
+@Node "MapSYMbols"
+MSYM=MapSYMbols/S			Default: nomsym
+
+Description
+
+   This option includes a list of defined symbols and the location at
+   which they are defined.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} and @{" MAP " Link "MAP"}
+   options.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MAP " Link "MAP"}
+@EndNode
+
+@Node "MapXREF"
+@Title "MapXREFerence"
+MXREF=MapXREFerence/S			Default: nomxref
+
+Description
+
+   This option writes a symbol cross-reference to the map file that lists
+   each symbol definition and the places each symbol is used.
+
+   This option can generate a lot of output, but it is useful when you are
+   trying to track down where an unresolved symbol is referenced.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} and @{" MAP " Link "MAP"}
+   options.
+
+See Also
+
+   @{" LINK " Link "LINK"} , @{" MAP " Link "MAP"}
+@EndNode
+
+@Node "MATH"
+MATH/K					Default: nomath
+
+Description
+
+   This option chooses a format for floating-point math and, if you also
+   specify the @{" LINK " Link "LINK"} option, links with the appropriate math library.
+
+   You can specify one of the following as the type:
+
+	STANDARD or S links with the library scm.lib (or with scms.lib if
+	you specify the SHORTINT option).  The math format is IEEE.
+
+	FFP or F generates code to call the FFP shared library provided by
+	Commodore.  The math format is FFP.
+
+	68881, 68882, or 8 generates inline code for the 68881 and 68882
+	coprocessors.  If you specify one of these coprocessor options,
+	your program will not run if a coprocessor is not available.
+	COPROCESSOR is a synonym for these options.  The math format is
+	IEEE.
+
+	IEEE or I generates code to call the IEEE shared library provided
+	by Commodore.  The math format is IEEE.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "MAXERRor"
+@Title "MAXimumERRors"
+MAXERR=MAXimumERRors/K/N		Default: 50
+
+Description
+
+   This option sets the limit on the number of errors for a single
+   compilation.
+
+   If a single compilation generates more than MAXERR errors, the compiler
+   aborts the compilation.  NOMAXERR removes any limits.
+
+See Also
+
+   @{" MAXimumWaRNings " Link "MAXWaRN"}
+@EndNode
+
+@Node "MAXWaRN"
+@Title "MAXimumWaRNings"
+MAXWRN=MAXimumWaRNings/K/N		Default: nomaxwrn
+
+Description
+
+   This option sets the limit on the number of warnings for a single
+   compilation.
+
+   If a single compilation generates more than MAXWRN warnings, the
+   compiler aborts the compilation.  NOMAXWRN removes any limits.
+
+See Also
+
+   @{" MAXimumERRors " Link "MAXERRor"}
+@EndNode
+
+@Node "MEMSIZE"
+@Title "MEMorySIZE"
+MEMSIZE=MEMorySIZE/K			Default: large
+
+Description
+
+   This option tells the compiler approximately how much memory you have
+   on your system.  You can specify one of the following:
+
+	TINY   or T
+	SMALL  or S
+	MEDIUM or M
+	LARGE  or L
+	HUGE   or H
+
+   This option does not have a negative form.
+
+   Larger sizes allow SC to compile more complex programs and to compile
+   faster.  Smaller sizes allow SC to continue to work under low-memory
+   conditions.	If the compiler runs out of memory during a compilation,
+   it displays the message "***Freeing Resources", attempts to free up
+   memory, and automatically drops to a lower MEMORYSIZE value.
+
+   MEMORYSIZE affects how and where the compiler stores any debugging
+   information.  If the compiler begins to run out of memory, it starts
+   writing debugging information to a disk file.  This file is referred to
+   as a "debug side file".
+
+   MEMORYSIZE also affects the disposition and buffering of the compiler
+   intermediate file.  This option tells the compiler how much initial
+   memory space to reserve for the intermediate information.  For LARGE
+   and HUGE, the intermediate file is kept totally in memory, which is
+   much faster than writing it to disk when the memory is available.  At
+   smaller values, the intermediate file is written to disk, but the
+   MEMORYSIZE value affects the amount that is buffered.
+
+   In addition, if you do not specify the @{" PreProcessorBUFfer " Link "PreProcessorBUFfer"} and/or
+   @{" ARGumentSIZe " Link "ARGumentSIZe"} options, the MEMSIZE option sets these values for you.
+   If you specify the @{" PreProcessorBUFfer " Link "PreProcessorBUFfer"} and/or @{" ARGumentSIZe " Link "ARGumentSIZe"} options, the
+   values you specify override the values set by MEMORYSIZE.
+
+   The following table lists the default values for @{" ARGumentSIZe " Link "ARGumentSIZe"} and
+   @{" PreProcessorBUFfer " Link "PreProcessorBUFfer"} set by MEMORYSIZE.  It also lists the buffer size
+   and location of the compiler intermediate file.
+
+				Intermediate	Debug Side
+	memsize argsize ppbuf	File Buffer	File Buffer
+
+	TINY	  127	 1024	    1024	     2K
+	SMALL	  255	 2048	    4096	     8K
+	MEDIUM	  511	 4096	    8192	    32K
+	LARGE	 1023	 8192	  no limit	    64K
+	HUGE	 4800	16384	  no limit	   128K
+
+See Also
+
+   @{" ARGumentSIZe " Link "ARGumentSIZe"} , @{" PreProcessorBUFfer " Link "PreProcessorBUFfer"}
+@EndNode
+
+@Node "MODified"
+MOD=MODified/S				Default: nomod
+
+Description
+
+   This option tells the SC command to process only files that are out of
+   date with respect to their output files.
+
+   This option is useful if you are compiling several files with a single
+   SC command and only some of the files need to be recompiled.
+
+   This option also works when you are generating prototypes or
+   preprocessor output.
+
+   If you also specify the @{" LINK " Link "LINK"} option, all object files are included in
+   the link, even if their source files were not recompiled.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "MultipleCharacterCONStants"
+MCCONS=MultipleCharacterCONStants/K	Default: nomccons
+
+Description
+
+   This option allows up to four bytes to appear within single quotes as a
+   character constant.
+
+   This option is included only for compatibility with previous releases
+   of the compiler, and its use is not recommended.
+
+   If you specify MCCONS, a single constant of type int is generated.  If
+   fewer than four bytes are provided, they are padded on the left with
+   zeroes.
+@EndNode
+
+@Node "MultipleINCludes"
+MINC=MultipleINCludes/S 		Default: minc
+
+Description
+
+   This option tells the compiler to include header files that are
+   included more than once.
+
+   This behavior is required by the @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"} Standard.  However, many projects
+   do not need this behavior, and specifying NOMINC can save compilation
+   time.
+
+See Also
+
+   @{" ANSI Definition " Link "sc:help/sc_lib.guide/Glossary - ANSI"}
+@EndNode
+
+@Node "OBJects"
+@Title "OBJect"
+OBJ=OBJect/K
+
+Description
+
+   This option lists the object files that are to be linked into the
+   program.
+
+   This option does not have a negative form.
+
+   The object files must have been created during a previous compilation.
+
+   Do not specify object files that will be created by the same SC command
+   in which you specify the OBJECT option.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" ASseMbler " Link "ASseMbler"} , @{" CSouRCe " Link "CSouRCe"} , @{" LIBrary " Link "LIBraries"}
+@EndNode
+
+@Node "OBJectLIB"
+@Title "OBJectLIBrary"
+OBJLIB=OBJectLIBrary/K
+
+Description
+
+   This option specifies that any resulting object files are to be placed
+   in the named link library.
+
+   Do not specify this option if you also specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "OBJectNAME"
+OBJNAME=OBJectNAME/K
+
+Description
+
+   This option specifies the name of the file or directory to hold
+   compiler and assembler output.
+
+   If you are compiling or assembling only one C source file or
+   assembly-language file, you can use this option to specify the file
+   where you want the compiler or assembler output.
+
+   If you are compiling or assembling more than one file, you can use this
+   option to specify a directory where you want the output, and SC uses
+   the same filename as the source file but replaces the extension with
+   ".o".
+
+   The directory name must end with a forward slash (/) or a colon (:).
+
+   If you do not use the OBJECTNAME option, SC uses the same filename with
+   the extension of ".o", and it places the files in the same directory as
+   the source file.
+@EndNode
+
+@Node "OLDPreProcessor"
+OLDPP=OLDPreProcessor/S 		Default: nooldpp
+
+Description
+
+   This option is provided for compatibility with pre-@{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"} style
+   preprocessors.
+
+   The OLDPP option does the following:
+
+	� allows old-style token pasting using comments
+	� substitutes values for parameters specified as quoted strings in
+	  macro definitions.
+
+See Also
+
+   @{" ANSI Definition " Link "sc:help/sc_lib.guide/Glossary - ANSI"}
+@EndNode
+
+@Node "ONERRor"
+ONERR=ONERRor/K 			Default: stop
+
+Description
+
+   This option tells SC what action to take if a C or assembly language
+   source file generates an error.
+
+   This option does not have a negative form.
+
+   You can specify one of the following:
+
+	STOP or S tells SC not to process any more source files.
+
+	CONTINUE or C tells SC to process the next source file.
+
+   If you specify the LINK option, but your program generates errors, your
+   program is not linked even if you specify ONERR=CONTINUE.
+@EndNode
+
+@Node "OPTimize"
+OPT=OPTimize/S				Default: noopt
+
+Description
+
+   This option enables the global optimizer (unless you specify
+   NOOPTGLOBAL) and peephole optimizer (unless you specify NOOPTPEEP).
+
+See Also
+
+   @{" OPTimizerALIAS " Link "OPTALIAS"} , @{" OPTimizerCOMPlexity " Link "OPTCOMP"} , @{" OPTimizerDEPth " Link "OPTDEPth"} ,
+   @{" OPTimizerGlObal " Link "OPTimizeGlObal"} , @{" OPTimizeSCHEDule " Link "OPTimizeSCHEDule"} @{" OPTimizerINLine " Link "OPTINLine"} , @{" OPTimizerINLOCAL " Link "OPTINLOCAL"} ,
+   @{" OPTimizerLOOP " Link "OPTLOOP"} , @{" OPTimizerPEEPhole " Link "OPTimizePEEP"} , @{" OPTimizerRecurDEPth " Link "OPTRDEPth"} ,
+   @{" OPTimizerSIZE " Link "OPTSIZE"} , @{" OPTimizerTIME " Link "OPTTIME"}
+@EndNode
+
+@Node "OPTALIAS"
+@Title "OPTimizerALIAS"
+OPTALIAS=OPTimizerALIAS/S		Default: nooptalias
+
+Description
+
+   This option disables type-based aliasing assumptions in the optimizer.
+
+   If you specify OPTIMIZERALIAS, the global optimizer uses worst-case
+   aliasing.  Specifying OPTIMIZERALIAS can significantly reduce the
+   amount of optimization that can be performed.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} option, or
+   you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"}
+@EndNode
+
+@Node "OPTCOMP"
+@Title "OPTimizerCOMPlexity"
+OPTCOMP=OPTimizerCOMPlexity/K/N 	Default: 3
+
+Description
+
+   This option defines the maximum complexity level of functions to be
+   automatically inlined.
+
+   The parameter represents the relative complexity of the function to be
+   inlined and is a count of the number of discrete operations in the
+   function.
+
+   Try different values for this number until you get the results you
+   want.
+
+   Specify a value of 3 or higher.
+
+   The higher the number, the more functions you can inline, but the size
+   of your code will grow significantly as well.
+
+   If you specify NOOPTCOMP, no complexity-based inlining occurs.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} and
+   @{" OPTimizerINLine " Link "OPTINLine"} options, or you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerINLine " Link "OPTINLine"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"}
+@EndNode
+
+@Node "OPTDEPth"
+@Title "OPTimizerDEPth"
+OPTDEP=OPTimizerDEPth/K/N		Default: 3
+
+Description
+
+   This option defines the maximum nesting depth of automatically inlined
+   functions.
+
+   Specify a value of 3 or higher.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} and
+   @{" OPTimizerINLine " Link "OPTINLine"} options, or you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerINLine " Link "OPTINLine"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"}
+@EndNode
+
+@Node "OPTimizeGlObal"
+@Title "OPTimizerGlObal"
+OPTGO=OPTimizerGlObal/S 		Default: optgo
+
+Description
+
+   This option enables the global optimizer.
+
+   This option is ignored if you do not specify the OPTimize option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"}
+@EndNode
+
+@Node "OPTimizeSCHEDule"
+@Title "OPTimizeSCHEDule"
+OPTSCHED=OPTimizeSCHEDule/S 		Default: nooptsched
+
+Description
+
+   This option enables the instruction scheduler.
+
+   This option is ignored if you do not specify the OPTimize option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"}
+@EndNode
+
+@Node "OPTINLine"
+@Title "OPTimizerINLine"
+OPTINL=OPTimizerINLine/S		Default: optinl
+
+Description
+
+   This option allows inlining of functions, including functions defined
+   with the __inline keyword.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} option, or
+   you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+   If you do not specify this option, the @{" OPTINLOCAL " Link "OPTINLOCAL"}, @{" OPTDEPth " Link "OPTDEPth"},
+   @{" OPTCOMPlexity, " Link "OPTCOMP"} and @{" OPTRDEPth " Link "OPTRDEPth"} options are ignored.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerCOMPlexity " Link "OPTCOMP"} , @{" OPTimizerDEPth " Link "OPTDEPth"} ,
+   @{" OPTimizerGlObal " Link "OPTimizeGlObal"} , @{" OPTimizerINLOCAL " Link "OPTINLOCAL"} , @{" OPTimizerRecurDEPth " Link "OPTRDEPth"}
+@EndNode
+
+@Node "OPTINLOCAL"
+@Title "OPTimizerINLOCAL"
+OPTINLOCAL=OPTimizerINLOCAL/S		Default: nooptinlocal
+
+Description
+
+   This option inlines single-use static functions.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} and
+   @{" OPTimizerINLine " Link "OPTINLine"} options or if you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerINLine " Link "OPTINLine"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"}
+@EndNode
+
+@Node "OPTLOOP"
+@Title "OPTimizerLOOP"
+OPTLOOP=OPTimizerLOOP/S 		Default: optloop
+
+Description
+
+   This option enables loop optimizations.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} option, or
+   you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"}
+@EndNode
+
+@Node "OPTimizePEEP"
+@Title "OPTimizerPEEPhole"
+OPTPEEP=OPTimizerPEEPhole/S		Default: optpeep
+
+Description
+
+   This option enables the peephole optimizer.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"}
+@EndNode
+
+@Node "OPTRDEPth"
+@Title "OPTimizerRecurDEPth"
+OPTRDEP=OPTimizerRecurDEPth/K/N 	Default: 3
+
+Description
+
+   This option defines the maximum depth of recursion of automatically
+   inlined functions.
+
+   Specify a value of 3 or higher.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} and
+   @{" OPTimizerINLine " Link "OPTINLine"} options, or you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerINLine " Link "OPTINLine"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"}
+@EndNode
+
+@Node "OPTSIZE"
+@Title "OPTimizerSIZE"
+OPTSIZE=OPTimizerSIZE/S 		Default: nooptsize
+
+Description
+
+   This option disables optimizations that may sacrifice code size to save
+   time.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} option, or
+   you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+   Do not specify both the OPTimizerSIZE and @{" OPTimizerTIME " Link "OPTTIME"} options.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"} , @{" OPTimizerTIME " Link "OPTTIME"}
+@EndNode
+
+@Node "OPTTIME"
+@Title "OPTimizerTIME"
+OPTTIME=OPTimizerTIME/S 		Default: noopttime
+
+Description
+
+   This option disables optimizations that may sacrifice time to save
+   space.
+
+   This option is ignored if you do not specify the @{" OPTimize " Link "OPTimize"} option, or
+   you specify the @{" NOOPTGlObal " Link "OPTimizeGlObal"} option.
+
+   Do not specify both the @{" OPTimizerSIZE " Link "OPTSIZE"} and OPTimizerTIME options.
+
+See Also
+
+   @{" OPTimize " Link "OPTimize"} , @{" OPTimizerGlObal " Link "OPTimizeGlObal"} , @{" OPTimizerSIZE " Link "OPTSIZE"}
+@EndNode
+
+@Node "PARMs"
+@Title "PARaMeters"
+PARM=PARaMeters/K			Default: stack
+
+Description
+
+   This option indicates how parameters should be passed.
+
+   This option does not have a negative form.
+
+   You can specify one of the following:
+
+	STACK or S indicates parameters should be passed on the stack.
+
+	REGISTER or R indicates parameters should be passed in registers.
+
+	BOTH or B generates a combination prolog that allows parameters to
+	be passed on the stack or in registers.
+
+   If your program has prototypes for all routines, you should use
+   PARAMETERS=REGISTER for increased efficiency.
+
+   If you are placing code into a link library, specify PARMS=BOTH so that
+   your library functions accept registerized parameters and parameters
+   that are passed on the stack.
+
+   If you write a function that has the same name as a library function,
+   you need to add the __regargs keyword to your function or compile with
+   the PARMS=BOTH or PARMS=REGISTER option.
+@EndNode
+
+@Node "PRECision"
+PREC=PRECision/K			Default: mixed
+
+Description
+
+   This option specifies the size of floating-point variables.	You can
+   specify DOUBLE or MIXED.
+
+   This option does not have a negative form.
+
+   If you specify DOUBLE, data declared as FLOAT are treated as if they
+   were declared as DOUBLE.  If you specify MIXED, data declared as
+   FLOAT and data declared as DOUBLE are different sizes.
+@EndNode
+
+@Node "PreProcessorBUFfer"
+PPBUF=PreProcessorBUFfer/K/N		Default: 8192
+
+Description
+
+   This option sets the maximum number of bytes to which a macro can be
+   expanded by the preprocessor.
+
+   The default value can be set differently by the @{" MEMorySIZE " Link "MEMSIZE"} option.
+
+   This option does not have a negative form.
+
+   If a macro expands to greater than PPBUF bytes, the compiler issues an
+   error message and aborts the compilation.
+
+See Also
+
+   @{" MEMorySIZE " Link "MEMSIZE"}
+@EndNode
+
+@Node "PreProcessONLY"
+@Title "PreProcessorONLY"
+PPONLY=PreProcessorONLY/S		Default: nopponly
+
+Description
+
+   This option tells the compiler to run only the preprocessor on the C
+   source files.
+
+   If you specify a filename with the @{" OBJectNAME " Link "OBJectNAME"} option, the compiler
+   writes the output to the file you specify.
+
+   If you do not specify an output filename, the compiler writes the
+   output to the same filename as the source file but with the extension
+   ".p".
+
+See Also
+
+   @{" OBJectNAME " Link "OBJectNAME"}
+@EndNode
+
+@Node "ProgramNAME"
+PNAME=ProgramNAME/K			Default: <root of first file>
+
+Description
+
+   This option specifies the name of the executable module.
+
+   The default value is the root name of the first source file specified
+   in the SC command.
+
+   This option does not have a negative form.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "RESetOPTions"
+RESOPT=RESetOPTions/S
+
+Description
+
+   This option resets all options to their default values.
+
+   This option does not have a negative form.
+
+   If you specify this option as the first option in the SC command, it
+   resets any option specified in the SCOPTIONS file.  If you specify this
+   option after other options or filenames in the SC command, it resets
+   the options preceding it, including the filenames.
+@EndNode
+
+@Node "SAVEDS"
+SAVEDS/S				Default: nosaveds
+
+Description
+
+   This option generates code as if you had defined all functions in the
+   source files with the __saveds keyword.
+
+   The __saveds keyword restores the near data pointer in register A4 at
+   each function entry point.  You should specify this option if you are
+   compiling code that is used as an interrupt routine, called with the
+   AddTask() function, used in a shared library, or called from another
+   process.
+
+   This option does not work if your code is linked with the cres.o or
+   catchres.o startup modules.
+@EndNode
+
+@Node "ShortINTegers"
+SINT=ShortINTegers/S			Default: nosint
+
+Description
+
+   This option enables 16-bit integers.
+
+   If you specify SHORTINTEGERS, types int and short are the same size.
+
+   If you specify NOSHORTINTEGERS, types int and long are the same size.
+
+   If you are running the assembler, this option defines the symbol
+   shortint.
+@EndNode
+
+@Node "SmallCODE"
+SCODE=SmallCODE/S			Default: noscode
+
+Description
+
+   This option tells the linker to merge all CODE hunks into a single
+   hunk.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "SmallDATA"
+SDATA=SmallDATA/S			Default: nosdata
+
+Description
+
+   This option tells the linker to merge all DATA and BSS sections into a
+   single hunk.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "SouRCeIS"
+SRCIS=SouRCeIS/K
+
+Description
+
+   This option sets the name of the C source file in the object file and
+   in debugging information to the specified value instead of the actual
+   name of the C source file.
+
+   You can use this option if you plan to rename or move the source file
+   before using the debugger to debug your program.
+
+   If you are compiling or assembling exactly one source file, SOURCEIS
+   can specify the name of the file to be placed into the debug
+   information.
+
+   If you are compiling or assembling multiple files, SOURCEIS should
+   specify a directory name (ending with a forward slash or colon).
+@EndNode
+
+@Node "STacKCHecK"
+STKCHK=STacKCHecK/S			Default: stkchk
+
+Description
+
+   This option generates stack overflow checking code at each function
+   entry.
+
+   When a program is about to run out of stack space, the program displays
+   a requestor and terminates gracefully.
+
+See Also
+
+   @{" STacKEXtend " Link "STacKEXTend"}
+@EndNode
+
+@Node "STacKEXTend"
+STKEXT=STacKEXTend/S			Default: nostkext
+
+Description
+
+   This option generates stack extension code at each function entry.
+
+   When a program runs out of space in the current stack, a new stack is
+   allocated, and your program continues to run.
+
+See Also
+
+   @{" STacKCHecK " Link "STacKCHecK"}
+@EndNode
+
+@Node "STDIO"
+@Title "STanDardIO"
+STDIO=STanDardIO/S			Default: stdio
+
+Description
+
+   This option specifies the use of __main instead of __tinymain.
+
+   To use __tinymain, specify NOSTDIO.
+
+   Using __tinymain makes your program require less space, but you cannot
+   read from or send output to stdin, stdout, or stderr.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "STaRTup"
+STRT=STaRTup/K				Default: c (for c.o)
+
+Description
+
+   This option specifies which startup module to use.
+
+   If the module name that you specify does not contain a colon (:),
+   forward slash (/), or period (.), the compiler adds "lib:" to the
+   beginning and ".o" to the end of the name you specify.
+
+   If you do not want to compile with a startup module, specify
+   NOSTARTUP.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "STRICT"
+STRICT/S				Default: nostrict
+
+Description
+
+   This option enables a large number of diagnostics dealing with
+   portability and questionable situations in your code.
+
+   Specifying STRICT may produce warning messages for situations that are
+   not a problem.
+@EndNode
+
+@Node "STRingMERge"
+STRMER=STRingMERge/S			Default: nostrmer
+
+Description
+
+   This option merges all identical string constants in the C source file
+   and places all strings, all data declared "static const", and all auto
+   initializers in the CODE section instead of the DATA section.
+
+   If you specify STRINGMERGE, the compiler examines each string constant
+   defined in the code and checks for duplicates.  If the compiler finds a
+   duplicate string constant, it forces both references to refer to the
+   same memory location.
+
+   If you specify STRINGMERGE and you modify a string constant, the
+   constant is modified in all locations.
+
+   The STRINGMERGE option has two useful side effects, because some data
+   are placed in the code section:
+
+	� Less data needs to be placed into the near data section.  If you
+	  have more than 64k of data, you can use the STRINGMERGE option
+	  to try to reduce the amount of data and allow your code to
+	  continue to use the near data model.
+
+	� The string constants are addressed relative to the PC (program
+	  counter) instead of the beginning of the near data section.
+	  Therefore, it is possible to generate programs with no near or
+	  far data.
+@EndNode
+
+@Node "STRingsCONSt"
+STRCONS=STRingsCONSt/S			Default: nostrcons
+
+Description
+
+   This option tells the compiler to consider all string constants to be
+   of type "const char *".
+
+   If you do not specify STRINGSCONST, the compiler considers string
+   constants to be of type "char *".
+
+   If you specify STRINGSCONST, passing a string constant to a function
+   that expects the type "char *" generates a warning message indicating
+   that the function may modify the string constant.
+@EndNode
+
+@Node "STRIPDeBuG"
+STRIPDBG=STRIPDeBuG/S			Default: nostripdbg
+
+Description
+
+   This option strips all debugging information from the final executable.
+
+   This option is ignored if you do not specify the @{" LINK " Link "LINK"} option.
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "STRuctEQuivalence"
+@Title "STRuctureEQuivalence"
+STREQ=STRuctureEQuivalence/S		Default: nostreq
+
+Description
+
+   This option tells the compiler not to issue messages if a pointer to
+   one structure type is passed to a function when the function expects a
+   pointer to a different type, if the type passed is equivalent to the
+   type expected.
+@EndNode
+
+@Node "TO"
+TO
+
+Description
+
+   This option is included only for compatibility with the SLINK command.
+   TO is a synonym for the @{" ProgramNAME " Link "ProgramNAME"} option.
+
+   This option does not have a negative form.
+
+See Also
+
+   @{" ProgramNAME " Link "ProgramNAME"}
+@EndNode
+
+@Node "TRIGraph"
+TRIG=TRIGraph/S 			Default: notrig
+
+Description
+
+   This option specifies whether to use @{" ANSI " Link "sc:help/sc_lib.guide/Glossary - ANSI"} trigraphs.
+
+   Specifying TRIGRAPH slows down the compiler.
+
+See Also
+
+   @{" ANSI Definition " Link "sc:help/sc_lib.guide/Glossary - ANSI"}
+@EndNode
+
+@Node "UnderSCORE"
+USCORE=UnderSCORE/S			Default: nouscore
+
+Description
+
+   This option adds underscores to the beginning of all external names
+   defined in any assembler source files assembled.
+
+   The underscores allow you to refer to these names in assembly language
+   in the same way you do in C source files.
+
+   This option is ignored if you do not specify any assembly-language
+   files in the SC command.
+@EndNode
+
+@Node "UnsignedCHAR"
+UCHAR=UnsignedCHAR/S			Default: nouchar
+
+Description
+
+   This option makes the default type of "char" variables unsigned
+   instead of signed.
+@EndNode
+
+@Node "UTILLIB"
+@Title "UTILityLIBrary"
+UTILLIB=UTILityLIBrary/S		Default: noutillib
+
+Description
+
+   This option generates inline calls to the AmigaDOS 2.0 ROM-resident
+   library utility.library to do integer multiplication and division
+   instead of calling SAS/C library functions to do these operations.
+
+   Specifying UTILITYLIBRARY makes your executable smaller and faster by
+   taking advantage of 68020 instructions if they are available, but your
+   program runs only under AmigaDOS 2.0.
+
+   If you link using the SC command and the UTILITYLIBRARY and @{" LINK " Link "LINK"}
+   options, SC defines all the SAS/C library integer conversion stub
+   routines to stubs that call utility.library.
+
+   This action prevents the SAS/C library routines that use integer
+   conversion routines from using the SAS/C versions of the routines.
+
+   If you link using the SLINK command, you need to specify the following
+   DEFINE linker options:
+
+   define __CXM33=__UCXM33
+   define __CXD33=__UCXD33
+   define __CXM22=__UCXM22
+   define __CXD22=__UCXD22
+
+   These define options are in the file "LIB:utillib.with", so you can
+   link with the following command:
+
+	slink with LIB:utillib.with <options>
+
+See Also
+
+   @{" LINK " Link "LINK"}
+@EndNode
+
+@Node "VERBOSE"
+VERBOSE 				Default: noverbose
+
+Description
+
+   This option displays messages about each stage of compiling and
+   linking.
+@EndNode
+
+@Node "VERsion"
+VER=VERsion/S				Default: ver
+
+Description
+
+   This option prints a banner containing the compiler version number and
+   a copyright message.
+@EndNode
+
+@Node "WaRN"
+WRN=WaRN/K/N
+
+Description
+
+   This option enables the specified compiler warning message.
+
+   This option does not have a negative form.
+
+   You can specify ALL or A to enable all warning messages, or you can
+   specify one or more message numbers to enable only those messages.
+
+See Also
+
+   @{" ERRor " Link "ERRor"} , @{" IGNore " Link "IGNore"}
+@EndNode
+
+@Node "WarnVoidRETurn"
+WVRET=WarnVoidRETurn/S			Default: wvret
+
+Description
+
+   This option issues a warning message if a function declared as
+   returning an integer actually returns no value.
+
+   The NOWARNVOIDRETURN option suppresses the "return value mismatch"
+   warning message for functions declared as returning an integer, but
+   that do not contain a return statement or that do not include an
+   expression in the return statement.
+@EndNode
+
+@Node "WITH"
+WITH/K
+
+Description
+
+   This option specifies the name of a file containing additional options.
+
+   The additional options are read immediately, as if they were specified
+   in the SC command at the position occupied by the WITH option.
+
+   Options specified after the WITH option may override options specified
+   in the with file.
+
+   This option does not have a negative form.
+
+   Do not confuse this option with the WITH linker option.
+@EndNode
+
+@Node "XREF"
+@Title "XREFerence"
+XREF=XREFerence/S			Default: noxref
+
+Description
+
+   This option produces a cross-reference.
+
+   The compiler writes the output to the filename you specify with the
+   @{" ListFILE " Link "ListFILE"} option.
+
+   If you do not specify an output filename, the compiler uses the name of
+   the first source file you specify but with the extension ".lst".
+
+See Also
+
+   @{" ListFILE " Link "ListFILE"} , @{" XreferenceHEADers " Link "XrefHEADers"} , @{" XreferenceSYStem " Link "XrefSYStem"}
+@EndNode
+
+@Node "PUBSCREEN"
+@Title "PUBSCREEN"
+SCREEN=PUBlicSCREEN/S			Default: nopubscreen
+
+Description
+
+   public screen option
+
+See Also
+
+   @{" ListFILE " Link "ListFILE"} , @{" XreferenceHEADers " Link "XrefHEADers"} , @{" XreferenceSYStem " Link "XrefSYStem"}
+@EndNode
+
+@Node "XrefHEADers"
+@Title "XreferenceHEADers"
+XHEAD=XreferenceHEADers/S		Default: xhead
+
+Description
+
+   This option generates a cross-reference of user header files.
+
+   This option is ignored if you do not specify the @{" XREFerence " Link "XREF"} option.
+
+See Also
+
+   @{" XREFerence " Link "XREF"}
+@EndNode
+
+@Node "XrefSYStem"
+@Title "XreferenceSYStem"
+XSYS=XreferenceSYStem/S 		Default: xsys
+
+Description
+
+   This option includes symbols defined in system header files in the
+   cross-reference.
+
+   This option is ignored if you do not specify the @{" XREFerence " Link "XREF"} option.
+
+See Also
+
+   @{" XREFerence " Link "XREF"}
+@EndNode
+@node HELP "HELP"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or
+click on the close gadget.  You may also hit escape.
+
+Most help screens will display one or more buttons as part of the text.
+Clicking on these buttons will provide further information on the topic
+listed on the button.  You can also reach these help topics through the
+main Contents screen or one of its sub-screens.
+
+In addition, double-clicking in the help window will bring up a help
+screen for the word under the mouse cursor, if such a help screen
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help
+screens.  The help screens are usually arranged alphabetically by
+command or topic.
+@endnode

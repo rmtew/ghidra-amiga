@@ -1,0 +1,7 @@
+FROM LIB:c.o first.o
+LIBRARY LIB:sc.lib LIB:amiga.lib
+OVLYMGR ovs.o
+OVERLAY
+second.o
+#
+TO test-candidate

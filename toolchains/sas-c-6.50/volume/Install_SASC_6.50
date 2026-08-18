@@ -1,0 +1,952 @@
+; script to install 6.50 Compiler
+; Should be run from WorkBench by double-clicking on the icon
+; Requires a stack of 16000 bytes or more
+
+(complete 0)
+
+(set @default-dest "Work:")
+
+(set answer1
+        (askchoice
+                (prompt "Choose where to install 6.50 Compiler")
+                (choices "Hard Disk" "Floppy Disks")
+         (help "Selecting Hard Disk will install the 6.50 compiler on the "
+            "hard disk.  You will be asked what directory or partition you "
+            "would like to install it on.  The default is Work:.  A directory "
+            "called 'SC' will be placed in the directory you choose. Note that "
+            "Disk 6 will not be used in this proceedure.\n\n"
+            "Selecting Floppy Disk will install the 6.50 compiler on "
+            "a set of 3 floppy disks. The floppy install proceedure as well "
+            "as use of the installed floppy disks requires at least two floppy "
+            "disk drives.\n"
+         )
+                (default 0)
+        )
+)
+
+(if (= answer1 0)
+  (
+     ; install on hard disk
+     (copyfiles (source "c:join")
+                (dest   "ram:")
+     )
+     (askdisk (dest "SASC_6.50_Disk_1")
+              (prompt "Please Insert Disk 1 of the SAS/C Development System")
+              (help "Insert Disk 1 in any drive.")
+              (assigns)
+     ) 
+     (copyfiles (source "SASC_6.50_Disk_1:decompress")
+                (dest   "ram:")
+     )
+
+     (if (set dest1 (getassign "sc" "a"))
+        (
+           (if (not (askbool (prompt ("SC: is currently set to \n%s\n\n" dest1)
+                                 "Do you want to use the same directory "
+                                 "for version 6.50?"
+                        )
+                        (help "If you choose YES, SAS/C 6.50 will be "
+                              "installed in the same drawer as the previous "
+                              "version. If you select NO, you will be prompted "
+                              "where to install SAS/C 6.50"
+                        )
+                    )
+               )
+              (set dest1 "")
+           )
+        )
+     )
+
+     (if (= dest1 "")
+         ( 
+           (set dest2 (askdir  (prompt "Select the location to install the SC directory")
+                               (default @default-dest)
+                               (help "Choose a destination partition or directory " 
+                                      "to contain the 6.50 compiler.  The install "
+                                      "program will create a directory called 'SC' "
+                                      "in the location you choose and copy the "
+                                      "compiler files to it."
+                               )
+                       )
+           )
+           (set dest1 (tackon dest2 "sc"))
+         )
+     )
+
+     (set @default-dest dest1)
+     (message "Package will be installed in " 
+               dest1
+     )
+
+     (if dest2
+       (makedir dest2 (infos))
+     )
+     (makedir dest1 (infos))
+
+     (set parts
+          (askoptions 
+             (prompt "Choose the items you would like installed")
+             (choices "C Compiler and Header Files    (approx. 3.1Meg)"
+                      "C++ Compiler and Header Files  (approx. 2.2Meg)"
+                      "Optimizers                     (approx. 0.2Meg)"
+                      "Assembler and Header Files     (approx. 0.9Meg)"
+                      "Debugger                       (approx. 0.4Meg)"
+                      "Cross Debugger                 (approx. 0.3Meg)"
+                      "Extra Utilities                (approx. 0.6Meg)"
+             )
+             (help "You may choose to install only part of the development system.  "
+                   "If you do not install all parts, you will not be able to use "
+                   "certain features.  You can choose to install those parts later "
+                   "by rerunning this install program and selecting the new "
+                   "parts at this point.  The parts you can choose to install "
+                   "are:\n\n"
+
+                   "C Compiler - \nSelecting this item installs the pieces of the "
+                   "system that must be present to compile any file.  You should "
+                   "always select this item the first time you install the "
+                   "product.\n\n"
+
+                   "C++ Translator and C++ Header Files -\nSeleting this installs "
+                   "the pieces that must be present to compile a C++ file. Note, "
+                   "the C compiler must also be present.\n\n"
+                   
+                   "Optimizers - \nSelecting this item installs the Global Optimizer, "
+                   "Peephole Optimizer, and Scheduler.  The optimizers are not required for "
+                   "compiling, but do produce significantly smaller and faster code.\n\n"
+
+                   "Assembler and Assembler Header Files - \nSelecting this item "
+                   "installs the SAS/C Assembler and Assembler-language header "
+                   "files.  The assembler is not required for compiling pure C "
+                   "language code.\n\n"
+
+                   "Debugger -\nSelecting this item installs the CPR debugger.\n\n"
+
+                   "Cross Debugger -\nSelecting this item installs the "
+                   "Amiga-to-Amiga cross version of the CPR debugger.  If you "
+                   "have two or more Amigas and want to debug programs using the "
+                   "serial port or a network, select this option.\n\n"
+
+                   "Extra Utilities -\nSelecting this item installs the helpful "
+                   "but nonessential utilities that come with the SAS/C Development "
+                   "System.  These utilities include scompact, scsetup, cover, gst, "
+                   "omd, dumpobj, hypergst, diff, grep, lstat, lprof, fd2pragma, "
+                   "oml, splat, tb and sc5.\n\n"
+
+                   "On-Line Help System -\nSelecting this item installs the "
+                   "Commodore shared library 'AmigaGuide.library' in your "
+                   "LIBS: drawer, installs the 'AmigaGuide' hypertext "
+                   "browser, and installs several AmigaGuide documents that "
+                   "are used as online help for the various utilities.\n\n"
+                   
+                   "Extras -\nSelectin this item install some extra items "
+                   "including source code to a couple of the utilites, ARexx "
+                   "macros for editors other than SE, etc."
+             )
+          )
+      )
+
+      (set parts2
+          (askoptions 
+             (prompt "Choose the items you would like installed")
+             (choices "Examples and Source            (approx. 0.5Meg)"
+                      "On-Line Help System            (approx. 1.5Meg)"
+                      "Extras                         (approx. 0.5Meg)"
+             )
+             (help "You may choose to install only part of the development system.  "
+                   "If you do not install all parts, you will not be able to use "
+                   "certain features.  You can choose to install those parts later "
+                   "by rerunning this install program and selecting the new "
+                   "parts at this point.  The parts you can choose to install "
+                   "are:\n\n"
+
+                   "Extra Utilities -\nSelecting this item installs the helpful "
+                   "but nonessential utilities that come with the SAS/C Development "
+                   "System.  These utilities include scompact, scsetup, cover, gst, "
+                   "omd, dumpobj, hypergst, diff, grep, lstat, lprof, fd2pragma, "
+                   "oml, splat, tb and sc5.\n\n"
+
+                   "On-Line Help System -\nSelecting this item installs the "
+                   "Commodore shared library 'AmigaGuide.library' in your "
+                   "LIBS: drawer, installs the 'AmigaGuide' hypertext "
+                   "browser, and installs several AmigaGuide documents that "
+                   "are used as online help for the various utilities.\n\n"
+                   
+                   "Extras -\nSelecting this item install some extra items "
+                   "including source code to a couple of the utilites, ARexx "
+                   "macros for editors other than SE, etc."
+             )
+          )
+      )
+
+      (if (OR (IN parts 0) (IN parts 1))
+           (set libraries
+                (askoptions 
+                     (prompt "Choose the libraries you would like installed.\n") 
+                     (choices "Standard Libraries"
+                              "Short Integer Libraries (not C++ compatible)"
+                              "No Base Register Libraries"
+                              "Short Integer, No Base Reg. (not C++ compat.)"
+                              "IEEE Math Libraries"
+                              "68881 Math Libraries"
+                              "Fast Floating Point Libraries (not C++ compat.)"
+                     )
+                     (help  "You may choose to install only some of the "
+                            "link libraries.  If you do not install a "
+                            "particular library, you will not be able to "
+                            "use the set of compiler options that require "
+                            "that library.  You can choose to install a "
+                            "set of libraries later by rerunning this "
+                            "install program and selecting the new libraries.  "
+                            "The libraries available are:\n\n"
+
+                            "Standard Libraries -\nThese are used by the compiler's "
+                            "default options.  You should always select this item "
+                            "the first time you run the install program.\n\n"
+
+                            "Short Integer Libraries -\nThese libraries are required "
+                            "if you use the SHORTINT compiler option to make the "
+                            "length of an 'int' variable two bytes instead of four. "
+                            "These cannot be used with C++.\n\n"
+
+                            "No Base Register Libraries -\nThese libraries are "
+                            "required if you use the DATA=FAR or DATA=FARONLY "
+                            "compiler options to access data using 32-bit "
+                            "references.\n\n"
+
+                            "Short Integer, No Base Register Libraries -\nThese "
+                            "libraries are required if you use both the SHORTINT and "
+                            "DATA=FAR or DATA=FARONLY options. These libraries can't "
+                            "be used with C++.\n\n"
+
+                            "IEEE Math Libraries -\nThese libraries are required if "
+                            "you use the MATH=IEEE compiler option.  They use "
+                            "the Commodore-supplied shared libararies "
+                            "to perform mathematical functions using IEEE-format "
+                            "floating point numbers.\n\n"
+
+                            "68881 math libraries -\nThese libraries are required if "
+                            "you ue the MATH=68881 compiler option.  MATH=68881 tells "
+                            "the compiler to generate in-line code for the 68881 "
+                            "math coprocessor chip.  Code compiled with MATH=68881 "
+                            "will only run on an Amiga with a coprocessor installed.\n\n"
+
+                            "Fast Floating Point Libraries -\nThese libraries are "
+                            "required if you use the MATH=FFP compiler option.  They "
+                            "use the Commodore-supplied shared "
+                            "library to perform mathematical functions using "
+                            "Motorola Fast Floating Point format floating point "
+                            "numbers. This library cannot be used with C++.\n\n"
+                     )
+                 )
+           )
+      )         
+
+; Disk 1
+
+      (if (IN parts 0)
+        (
+           (working "Installing Compiler")
+           (run ("ram:decompress \"SASC_6.50_Disk_1:Compiler_files\" \"%s\"" dest1 ))
+           (makedir ("%s/c" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_1:Compiler/c_files\" \"%s/c\"" dest1 ))
+           (makedir ("%s/libs" dest1) )
+           (complete 10)
+           (run ("ram:decompress \"SASC_6.50_Disk_1:Compiler/libs_files\" \"%s/libs\"" dest1 ))
+           (makedir ("%s/env" dest1) )
+           (makedir "env:sc" )
+           (makedir "envarc:sc")
+           (run ("ram:decompress \"SASC_6.50_Disk_1:Compiler/env_files\" \"%s/env\"" dest1 ))
+           (makedir ("%s/icons" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_1:Compiler/icons_files\" \"%s/icons\"" dest1 ))
+           (makedir ("%s/starter_project" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_1:Compiler/starter_project_files\" \"%s/starter_project\"" dest1 ))
+           (makedir ("%s/include" dest1) )
+           (working "Installing C Header Files")
+           (complete 20)
+           (askdisk (dest "SASC_6.50_Disk_2")
+                    (prompt "Please Insert Disk 2 of the SAS/C Development System")
+                    (help "Insert Disk 2 in any drive. You may "
+                          "remove Disk 1, it will not be needed again.")
+                    (assigns)
+           ) 
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include_files\" \"%s/include\"" dest1 ))
+           (makedir ("%s/include/clib" dest1) )
+           (working "Installing C Header Files\n\nclib")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/clib_files\" \"%s/include/clib\"" dest1 ))
+           (makedir ("%s/include/datatypes" dest1) )
+           (working "Installing C Header Files\n\ndatatypes")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/datatypes_files\" \"%s/include/datatypes\"" dest1 ))
+           (makedir ("%s/include/devices" dest1) )
+           (working "Installing C Header Files\n\ndevices")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/devices_files\" \"%s/include/devices\"" dest1 ))
+           (makedir ("%s/include/diskfont" dest1) )
+           (working "Installing C Header Files\n\ndiskfont")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/diskfont_files\" \"%s/include/diskfont\"" dest1 ))
+           (makedir ("%s/include/dos" dest1) )
+           (working "Installing C Header Files\n\ndos")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/dos_files\" \"%s/include/dos\"" dest1 ))
+           (makedir ("%s/include/exec" dest1) )
+           (working "Installing C Header Files\n\nexec")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/exec_files\" \"%s/include/exec\"" dest1 ))
+           (makedir ("%s/include/gadgets" dest1) )
+           (working "Installing C Header Files\n\ngadgets")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/gadgets_files\" \"%s/include/gadgets\"" dest1 ))
+           (makedir ("%s/include/graphics" dest1) )
+           (working "Installing C Header Files\n\ngraphics")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/graphics_files\" \"%s/include/graphics\"" dest1 ))
+           (makedir ("%s/include/hardware" dest1) )
+           (working "Installing C Header Files\n\nhardware")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/hardware_files\" \"%s/include/hardware\"" dest1 ))
+           (makedir ("%s/include/intuition" dest1) )
+           (working "Installing C Header Files\n\nintuition")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/intuition_files\" \"%s/include/intuition\"" dest1 ))
+           (makedir ("%s/include/libraries" dest1) )
+           (working "Installing C Header Files\n\nlibraries")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/libraries_files\" \"%s/include/libraries\"" dest1 ))
+           (makedir ("%s/include/pragmas" dest1) )
+           (working "Installing C Header Files\n\npragmas")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/pragmas_files\" \"%s/include/pragmas\"" dest1 ))
+           (makedir ("%s/include/prefs" dest1) )
+           (working "Installing C Header Files\n\nprefs")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/prefs_files\" \"%s/include/prefs\"" dest1 ))
+           (makedir ("%s/include/proto" dest1) )
+           (working "Installing C Header Files\n\nproto")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/proto_files\" \"%s/include/proto\"" dest1 ))
+           (makedir ("%s/include/resources" dest1) )
+           (working "Installing C Header Files\n\nresources")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/resources_files\" \"%s/include/resources\"" dest1 ))
+           (makedir ("%s/include/rexx" dest1) )
+           (working "Installing C Header Files\n\nrexx")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/rexx_files\" \"%s/include/rexx\"" dest1 ))
+           (makedir ("%s/include/sys" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/sys_files\" \"%s/include/sys\"" dest1 ))
+           (makedir ("%s/include/utility" dest1) )
+           (working "Installing C Header Files\n\nutility")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/utility_files\" \"%s/include/utility\"" dest1 ))
+           (makedir ("%s/include/workbench" dest1) )
+           (working "Installing C Header Files\n\nworkbench")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/include/workbench_files\" \"%s/include/workbench\"" dest1 ))
+           (makedir ("%s/lib" dest1) )
+           (complete 30)
+           (working "Installing C Libraries")
+           (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib_files\" \"%s/lib\"" dest1 ))
+           (if (IN libraries 0)
+             ( 
+              (run ("ram:decompress \"SASC_6.50_Disk_2:Compiler/lib/sc.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_2:Compiler/lib/scm.lib_files\" \"%s/lib\"" dest1 ))
+             )
+           )
+           (if (IN libraries 1)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_2:Compiler/lib/scs.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_2:Compiler/lib/scms.lib_files\" \"%s/lib\"" dest1 ))
+             )
+           )
+           (if (IN libraries 2)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scmnb.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scnb.lib_files\" \"%s/lib\"" dest1 ))
+             )
+           )
+           (if (IN libraries 3)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scmsnb.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scsnb.lib_files\" \"%s/lib\"" dest1 ))
+             )
+           )
+           (if (IN libraries 4)
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scmieee.lib_files\" \"%s/lib\"" dest1 ))
+           )
+           (if (IN libraries 5)
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scm881.lib_files\" \"%s/lib\"" dest1 ))
+           )
+           (if (IN libraries 6)
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scmffp.lib_files\" \"%s/lib\"" dest1 ))
+           )
+        )
+      )
+
+      (complete 40)
+      
+      (if (AND (IN parts 1) (NOT (IN parts 0))) ; if C++ and not C, install libs 
+                                                  ; anyway so Join will work.
+        (
+           (askdisk (dest "SASC_6.50_Disk_2")
+                    (prompt "Please Insert Disk 2 of the SAS/C Development System")
+                    (help "Insert Disk 2 in any drive. You may "
+                          "remove Disk 1, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing C Libraries")
+           (makedir ("%s/lib" dest1) )
+           (if (IN libraries 0)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_2:Compiler/lib/scm.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_2:Compiler/lib/scm.lib_files\" \"%s/lib\"" dest1 ))
+             )
+           )
+           (if (IN libraries 2)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scmnb.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scnb.lib_files\" \"%s/lib\"" dest1 ))
+             )
+           )
+           (if (IN libraries 4)
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scmieee.lib_files\" \"%s/lib\"" dest1 ))
+           )
+           (if (IN libraries 5)
+              (run ("ram:decompress \"SASC_6.50_Disk_2:compiler/lib/scm881.lib_files\" \"%s/lib\"" dest1 ))
+           )
+        )
+      )
+      
+      
+      (if (IN parts 0)
+        (
+           (askdisk (dest "SASC_6.50_Disk_3")
+                    (prompt "Please Insert Disk 3 of the SAS/C Development System")
+                    (help "Insert Disk 3 in any drive. You may "
+                          "remove Disk 2, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing C Libraries")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Compiler/lib_files\" \"%s/lib\"" dest1 ))
+        )
+      )
+
+      (if (IN parts 3)
+        (
+           (askdisk (dest "SASC_6.50_Disk_3")
+                    (prompt "Please Insert Disk 3 of the SAS/C Development System")
+                    (help "Insert Disk 3 in any drive. You may "
+                          "remove Disk 2, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Assembler")
+           (makedir ("%s/c" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/c_files\" \"%s/c\"" dest1 ))
+           (makedir ("%s/include" dest1) )
+           (makedir ("%s/include/datatypes" dest1) )
+           (working "Installing Assembler Headers\n\ndatatypes")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/datatypes_files\" \"%s/include/datatypes\"" dest1 ))
+           (makedir ("%s/include/devices" dest1) )
+           (working "Installing Assembler Headers\n\ndevices")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/devices_files\" \"%s/include/devices\"" dest1 ))
+           (makedir ("%s/include/diskfont" dest1) )
+           (working "Installing Assembler Headers\n\ndiskfont")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/diskfont_files\" \"%s/include/diskfont\"" dest1 ))
+           (makedir ("%s/include/dos" dest1) )
+           (working "Installing Assembler Headers\n\ndos")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/dos_files\" \"%s/include/dos\"" dest1 ))
+           (makedir ("%s/include/exec" dest1) )
+           (working "Installing Assembler Headers\n\nexec")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/exec_files\" \"%s/include/exec\"" dest1 ))
+           (makedir ("%s/include/gadgets" dest1) )
+           (working "Installing Assembler Headers\n\ngadgets")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/gadgets_files\" \"%s/include/gadgets\"" dest1 ))
+           (makedir ("%s/include/graphics" dest1) )
+           (working "Installing Assembler Headers\n\ngraphics")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/graphics_files\" \"%s/include/graphics\"" dest1 ))
+           (makedir ("%s/include/hardware" dest1) )
+           (working "Installing Assembler Headers\n\nhardware")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/hardware_files\" \"%s/include/hardware\"" dest1 ))
+           (makedir ("%s/include/intuition" dest1) )
+           (working "Installing Assembler Headers\n\nintuition")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/intuition_files\" \"%s/include/intuition\"" dest1 ))
+           (makedir ("%s/include/libraries" dest1) )
+           (working "Installing Assembler Headers\n\nlibraries")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/libraries_files\" \"%s/include/libraries\"" dest1 ))
+           (makedir ("%s/include/prefs" dest1) )
+           (working "Installing Assembler Headers\n\nprefs")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/prefs_files\" \"%s/include/prefs\"" dest1 ))
+           (makedir ("%s/include/resources" dest1) )
+           (working "Installing Assembler Headers\n\nresources")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/resources_files\" \"%s/include/resources\"" dest1 ))
+           (makedir ("%s/include/rexx" dest1) )
+           (working "Installing Assembler Headers\n\nrexx")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/rexx_files\" \"%s/include/rexx\"" dest1 ))
+           (makedir ("%s/include/utility" dest1) )
+           (working "Installing Assembler Headers\n\nutilities")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/utility_files\" \"%s/include/utility\"" dest1 ))
+           (makedir ("%s/include/workbench" dest1) )
+           (working "Installing Assembler Headers\n\nworkbench")
+           (run ("ram:decompress \"SASC_6.50_Disk_3:Assembler/include/workbench_files\" \"%s/include/workbench\"" dest1 ))
+        )
+      )
+      
+      (complete 50)
+      
+      (if (IN parts 1)
+        (
+           (askdisk (dest "SASC_6.50_Disk_3")
+                    (prompt "Please Insert Disk 3 of the SAS/C Development System")
+                    (help "Insert Disk 3 in any drive. You may "
+                          "remove Disk 2, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing C++")
+           (makedir ("%s/cxxinclude" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/cxxinclude_files\" \"%s/cxxinclude\"" dest1 ))
+           (makedir ("%s/libs" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/libs_files\" \"%s/libs\"" dest1 ))
+           (makedir ("%s/lib" dest1) )
+           (if (IN libraries 0)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/lib/sccxx.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/lib/sccxxm.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:join %s/lib/sc.lib %s/lib/sccxx.lib as ram:sc.lib" dest1 dest1 ))
+              (if (exists "ram:sc.lib")
+                (
+                   (copyfiles (source "ram:sc.lib") (dest ("%s/lib" dest1)))
+                   (delete "ram:sc.lib")
+                   (delete ("%s/lib/sccxx.lib" dest1))
+                )
+              )
+              (run ("ram:join %s/lib/scm.lib %s/lib/sccxxm.lib as ram:scm.lib" dest1 dest1 ))
+              (if (exists "ram:scm.lib")
+                (
+                   (copyfiles (source "ram:scm.lib") (dest ("%s/lib" dest1)))
+                   (delete "ram:scm.lib")
+                   (delete ("%s/lib/sccxxm.lib" dest1))
+                )
+              )
+             )
+           )
+           (if (IN libraries 2)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/lib/sccxxmnb.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/lib/sccxxnb.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:join %s/lib/scmnb.lib %s/lib/sccxxmnb.lib as ram:scmnb.lib" dest1 dest1 ))
+              (if (exists "ram:scmnb.lib")
+                (
+                   (copyfiles (source "ram:scmnb.lib") (dest ("%s/lib" dest1)))
+                   (delete "ram:scmnb.lib")
+                   (delete ("%s/lib/sccxxmnb.lib" dest1))
+                )
+              )
+              (run ("ram:join %s/lib/scnb.lib %s/lib/sccxxnb.lib as ram:scnb.lib" dest1 dest1 ))
+              (if (exists "ram:scnb.lib")
+                (
+                   (copyfiles (source "ram:scnb.lib") (dest ("%s/lib" dest1)))
+                   (delete "ram:scnb.lib")
+                   (delete ("%s/lib/sccxxnb.lib" dest1))
+                )
+              )
+             )
+           )
+           (if (IN libraries 4)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/lib/sccxxmieee.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:join %s/lib/scmieee.lib %s/lib/sccxxmieee.lib as ram:scmieee.lib" dest1 dest1 ))
+              (if (exists "ram:scmieee.lib")
+                (
+                   (copyfiles (source "ram:scmieee.lib") (dest ("%s/lib" dest1)))
+                   (delete "ram:scmieee.lib")
+                   (delete ("%s/lib/sccxxmieee.lib" dest1))
+                )
+              )
+             )
+           ) 
+           (if (IN libraries 5)
+             (
+              (run ("ram:decompress \"SASC_6.50_Disk_3:C_Plus_Plus/lib/sccxxm881.lib_files\" \"%s/lib\"" dest1 ))
+              (run ("ram:join %s/lib/scm881.lib %s/lib/sccxxm881.lib as ram:scm881.lib" dest1 dest1 ))
+              (if (exists "ram:scm881.lib")
+                (
+                   (copyfiles (source "ram:scm881.lib") (dest ("%s/lib" dest1)))
+                   (delete "ram:scm881.lib")
+                   (delete ("%s/lib/sccxxm881.lib" dest1))
+                )
+              )
+             )
+           )
+        )
+      )
+     
+      (complete 60)
+      (if (IN parts 4)
+        (
+           (askdisk (dest "SASC_6.50_Disk_4")
+                    (prompt "Please Insert Disk 4 of the SAS/C Development System")
+                    (help "Insert Disk 4 in any drive. You may "
+                          "remove Disk 3, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Debugger")
+           (makedir ("%s/libs" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Debugger/libs_files\" \"%s/libs\"" dest1 ))
+           (makedir ("%s/c" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Debugger/c_files\" \"%s/c\"" dest1 ))
+        )
+      )
+
+      (if (IN parts 5)
+        (
+           (askdisk (dest "SASC_6.50_Disk_4")
+                    (prompt "Please Insert Disk 4 of the SAS/C Development System")
+                    (help "Insert Disk 4 in any drive. You may "
+                          "remove Disk 3, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Cross Debugger")
+           (makedir ("%s/c" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Cross_Debugger/c_files\" \"%s/c\"" dest1 ))
+        )
+      )
+      
+      (complete 70)
+      (if (IN parts 2)
+        (
+           (askdisk (dest "SASC_6.50_Disk_4")
+                    (prompt "Please Insert Disk 4 of the SAS/C Development System")
+                    (help "Insert Disk 4 in any drive. You may "
+                          "remove Disk 3, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Optimizers")
+           (makedir ("%s/libs" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:optimizers/libs_files\" \"%s/libs\"" dest1 ))
+        )
+      )
+
+      (complete 80)
+      
+      (if (IN parts2 0)
+        (
+           (askdisk (dest "SASC_6.50_Disk_4")
+                    (prompt "Please Insert Disk 4 of the SAS/C Development System")
+                    (help "Insert Disk 4 in any drive. You may "
+                          "remove Disk 3, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Source and Examples")
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples_files\" \"%s\"" dest1 ))
+           (makedir ("%s/examples" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples_files\" \"%s/examples\"" dest1 ))
+           (makedir ("%s/examples/avg" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/avg_files\" \"%s/examples/avg\"" dest1 ))
+           (makedir ("%s/examples/cback" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/cback_files\" \"%s/examples/cback\"" dest1 ))
+           (makedir ("%s/examples/cover" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/cover_files\" \"%s/examples/cover\"" dest1 ))
+           (makedir ("%s/examples/cres" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/cres_files\" \"%s/examples/cres\"" dest1 ))
+           (makedir ("%s/examples/cxxsharedlib" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/cxxsharedlib_files\" \"%s/examples/cxxsharedlib\"" dest1 ))
+           (makedir ("%s/examples/example_device" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/example_device_files\" \"%s/examples/example_device\"" dest1 ))
+           (makedir ("%s/examples/multitask" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/multitask_files\" \"%s/examples/multitask\"" dest1 ))
+           (makedir ("%s/examples/catching_tasks" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/catching_tasks_files\" \"%s/examples/catching_tasks\"" dest1 ))
+           (makedir ("%s/examples/nostartup" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/nostartup_files\" \"%s/examples/nostartup\"" dest1 ))
+           (makedir ("%s/examples/nostartup/Example_1" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/nostartup/Example_1_files\" \"%s/examples/nostartup/Example_1\"" dest1 ))
+           (makedir ("%s/examples/nostartup/Example_2" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/nostartup/Example_2_files\" \"%s/examples/nostartup/Example_2\"" dest1 ))
+           (makedir ("%s/examples/nostartup/Example_3" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/nostartup/Example_3_files\" \"%s/examples/nostartup/Example_3\"" dest1 ))
+           (makedir ("%s/examples/reslib" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/reslib_files\" \"%s/examples/reslib\"" dest1 ))
+           (makedir ("%s/examples/samplelib" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/examples/samplelib_files\" \"%s/examples/samplelib\"" dest1 ))
+           (makedir ("%s/source" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Source_and_Examples/source_files\" \"%s/source\"" dest1 ))
+         )
+       )
+
+      (if (IN parts2 2)
+        (
+           (askdisk (dest "SASC_6.50_Disk_4")
+                    (prompt "Please Insert Disk 4 of the SAS/C Development System")
+                    (help "Insert Disk 4 in any drive. You may "
+                          "remove Disk 3, it will not be needed again.")
+                    (assigns)
+           ) 
+           (makedir ("%s/extras" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Extras/extras_files\" \"%s/extras\"" dest1 ))
+           (makedir ("%s/extras/MemLib" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Extras/extras/Memlib_files\" \"%s/extras/Memlib\"" dest1 ))
+           (makedir ("%s/extras/MKMK" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Extras/extras/MKMK_files\" \"%s/extras/MKMK\"" dest1 ))
+           (makedir ("%s/extras/SMFind" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Extras/extras/SMFind_files\" \"%s/extras/SMFind\"" dest1 ))
+           (makedir ("%s/extras/sprof" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_4:Extras/extras/sprof_files\" \"%s/extras/sprof\"" dest1 ))
+        )
+      )
+
+
+      (complete 85)
+      (if (IN parts2 2)
+        (
+           (askdisk (dest "SASC_6.50_Disk_5")
+                    (prompt "Please Insert Disk 5 of the SAS/C Development System")
+                    (help "Insert Disk 5 in any drive. You may "
+                          "remove Disk 4, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Extras")
+           (makedir ("%s/extras" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras_files\" \"%s/extras\"" dest1 ))
+           (makedir ("%s/extras/CED" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/CED_files\" \"%s/extras/CED\"" dest1 ))
+           (makedir ("%s/extras/CED/env" dest1) )
+           (makedir ("%s/extras/CED/env/sc" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/CED/env_files\" \"%s/extras/CED/env\"" dest1 ))
+           (makedir ("%s/extras/CED/rexx" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/CED/rexx_files\" \"%s/extras/CED/rexx\"" dest1 ))
+           (makedir ("%s/extras/CED/rexx/ced" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/CED/rexx/ced_files\" \"%s/extras/CED/rexx/ced\"" dest1 ))
+           (makedir ("%s/extras/Enforcer" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/Enforcer_files\" \"%s/extras/Enforcer\"" dest1 ))
+           (makedir ("%s/extras/MungWall" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/MungWall_files\" \"%s/extras/MungWall\"" dest1 ))
+           (makedir ("%s/extras/TTX" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/TTX_files\" \"%s/extras/TTX\"" dest1 ))
+           (makedir ("%s/extras/TTX/env" dest1) )
+           (makedir ("%s/extras/TTX/env/sc" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/TTX/env/sc_files\" \"%s/extras/TTX/env/sc\"" dest1 ))
+           (makedir ("%s/extras/TTX/Support" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/TTX/Support_files\" \"%s/extras/TTX/Support\"" dest1 ))
+           (makedir ("%s/extras/TTX/TTX_SASC" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extras/extras/TTX/TTX_SASC_files\" \"%s/extras/TTX/TTX_SASC\"" dest1 ))
+         )
+       )
+
+      (complete 90)
+      (if (IN parts 6)
+        (
+           (askdisk (dest "SASC_6.50_Disk_5")
+                    (prompt "Please Insert Disk 5 of the SAS/C Development System")
+                    (help "Insert Disk 5 in any drive. You may "
+                          "remove Disk 4, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Extra Utilities")
+           (makedir ("%s/c" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extra_Utilities/c_files\" \"%s/c\"" dest1 ))
+           (makedir ("%s/rexx" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Extra_Utilities/rexx_files\" \"%s/rexx\"" dest1 ))
+         )
+       )
+       
+      (complete 95)
+      (if (IN parts2 1)
+        (
+           (askdisk (dest "SASC_6.50_Disk_5")
+                    (prompt "Please Insert Disk 5 of the SAS/C Development System")
+                    (help "Insert Disk 5 in any drive. You may "
+                          "remove Disk 4, it will not be needed again.")
+                    (assigns)
+           ) 
+           (working "Installing Online Help")
+           (makedir ("%s/help" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Online_help_files\" \"%s\"" dest1 ))
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Online_help/help_files\" \"%s/help\"" dest1 ))
+           (makedir ("%s/rexx" dest1) )
+           (run ("ram:decompress \"SASC_6.50_Disk_5:Online_help/rexx_files\" \"%s/rexx\"" dest1 ))
+        )
+      )
+ 
+      (complete 99)
+      (set string1 ("assign sc: %s" dest1))
+      (makeassign "sc" dest1)
+      (makeassign "lib" "sc:lib")
+      (makeassign "include" "sc:include")
+
+      (if dest2
+         (set error 1)
+         (set error 0) ; don't modify startup if they already have it installed
+      )
+
+      (until (= error 0)
+        (
+           (set error (trap 4
+              (startup "SAS/C"
+                 (prompt ("%s\n%s\n\n%s\n%s\n%s\n%s\n\n%s"
+                          "The following assigns have been created."
+                          "Do you want the them and the path statement added to your startup?"
+                           string1
+                          "assign lib: sc:lib"
+                          "assign include: sc:include"
+                          "path sc:c add"
+                          "NOTE: The path will not be updated until you reboot."
+                          )
+                 )
+                 (command 
+                         ("assign sc: %s\n" dest1)
+                         "assign lib: sc:lib\n"
+                         "assign include: sc:include\n"
+                         "path sc:c add"
+                 )
+                 (help "The SAS/C Development System requires the listed logical ASSIGN "
+                       "values in order to find its files.  If you request it, the "
+                       "installer will add the necessary assigns to your user-startup "
+                       "script, which is run when your machine boots.  If you decide not "
+                       "to allow the installer to make these changes, you will need to "
+                       "make them yourself."
+                 )
+              )
+           ))
+           (if (> error 0)
+              (if (or (= @ioerr 222) (or (= @ioerr 223) (= @ioerr 224)))
+                 (message "Startup file is write protected. Use protect "
+                         "to write enable the file, and select Proceed" )
+                 ;else other type of error
+                 (
+                   (message "Non-Standard startup sequence detected. You must add "
+                          "the following lines by hand.\n\n"
+                          "    assign sc: " dest1 "\n"
+                          "    assign lib: sc:lib\n"
+                          "    assign include: sc:include\n"
+                          "    path sc:c add"
+                   )
+                   (set error 0)
+                 )                
+              )         
+           )   
+         )
+      )
+      
+      (complete 100)
+      (if (exists "ram:join")
+        (
+           (delete "ram:join")
+           (delete "ram:decompress")
+        )
+      )
+  )
+  ; else floppy install
+  (
+
+     (set @default-dest "")
+     (copyfiles (source "sys:system/format")
+                (dest "ram:")
+     )
+     (copyfiles (source "sys:system/diskcopy")
+                (dest "ram:")
+     )
+     (copyfiles (source "c:relabel")
+                (dest "ram:")
+     )
+     (copyfiles (source "SASC_6.50_Disk_1:nl_file")
+                (dest   "ram:")
+     )
+     (copyfiles (source "SASC_6.50_Disk_1:decompress")
+                (dest   "ram:")
+     )
+
+
+; create Disk 1
+
+     (set answer5
+        (askchoice
+           (prompt "Select a drive that is to be used as the destination.")
+           (choices "df0:" "df1:" "df2:" "df3:")
+           (default 0)
+           (help "You need to choose which floppy drive to use for the target "
+                 "disks.  The disk that you insert will be formatted and all their "
+                 "data destroyed."
+           )
+        )
+     )
+     (if (= answer5 0) (set newdisk "df0:"))
+     (if (= answer5 1) (set newdisk "df1:"))
+     (if (= answer5 2) (set newdisk "df2:"))
+     (if (= answer5 3) (set newdisk "df3:"))
+     (message ("%s%s%s%s%s%s%s%s"
+               "Insert a new disk in DRIVE "
+               newdisk
+               ", wait for the disk light to go off, then click Proceed\n\n"
+               "For the fewest number of disk swaps, leave "
+               "the destination disk in drive "
+               newdisk
+               " and use the other drive(s) for the SAS/C disks "
+               "and Workbench disk."
+               )
+     )
+
+     (working "Formatting disk in " newdisk )
+     (run ("ram:format <ram:nl_file drive %s name SAS_1 noicons" newdisk))
+
+     (complete 5)
+     (working "Installing Compiler")
+     (run "ram:decompress SASC_6.50_Disk_1:floppy/setup_files SAS_1:" )
+     (complete 8)
+     (makedir "SAS_1:sc")
+     (makedir "SAS_1:sc/c")
+     (run "ram:decompress SASC_6.50_Disk_1:Compiler/c_files SAS_1:sc/c" )
+     (complete 15)
+     (run "ram:decompress SASC_6.50_Disk_1:floppy/c_files SAS_1:sc/c" )
+     (complete 20)
+     (makedir "SAS_1:sc/env")
+     (run "ram:decompress SASC_6.50_Disk_1:Compiler/env_files SAS_1:sc/env")
+     (complete 22)
+     (makedir "SAS_1:sc/icons")
+     (complete 25)
+     (run "ram:decompress SASC_6.50_Disk_1:Compiler/icons_files SAS_1:sc/icons")
+     (makedir "SAS_1:sc/libs")
+     (run "ram:decompress SASC_6.50_Disk_1:Compiler/libs_files SAS_1:sc/libs")
+     (complete 33)
+
+; create Disk 2
+     (message ("%s%s%s%s%s%s%s%s"
+               "Insert a new disk in DRIVE "
+               newdisk
+               ", wait for the disk light to go off, then click Proceed\n\n"
+               "For the fewest number of disk swaps, leave "
+               "the destination disk in drive "
+               newdisk
+               " and use the other drive(s) for the SAS/C disks "
+               "and Workbench disk."
+               )
+     )
+     (working "Copying Header files and Libraries")
+     (run ("ram:diskcopy <ram:nl_file %s: %s" (getdevice "SASC_6.50_Disk_6:") newdisk))
+     (run ("ram:relabel %s SAS_2" newdisk))
+     
+; create Disk 3
+     (message ("%s%s%s%s%s%s%s%s"
+               "Insert a new disk in DRIVE "
+               newdisk
+               ", wait for the disk light to go off, then click Proceed\n\n"
+               "For the fewest number of disk swaps, leave "
+               "the destination disk in drive "
+               newdisk
+               " and use the other drive(s) for the SAS/C disks "
+               "and Workbench disk."
+               )
+     )
+
+     (complete 66)
+     (working "Formatting disk in " newdisk )
+     (run ("ram:format <ram:nl_file drive %s name SAS_3 noicons" newdisk))
+
+     (makedir "SAS_3:sc/c")
+     (makedir "SAS_3:sc/")
+     (working "Installing Utilities")
+     (run "ram:decompress SASC_6.50_Disk_5:Extra_Utilities/c_files SAS_3:sc/c")
+     (delete "SAS_3:sc/c/oml")
+     (delete "SAS_3:sc/c/omd")
+     (delete "SAS_3:sc/c/hypergst")
+     (delete "SAS_3:sc/c/amigaguide")
+     (delete "SAS_3:sc/c/enforcer")
+     (delete "SAS_3:sc/c/enforcer_1.3")
+     (delete "SAS_3:sc/c/segtracker")
+     (delete "SAS_3:sc/c/demangle")
+     (complete 77)
+     (run "ram:decompress SASC_6.50_Disk_4:Debugger/c_files SAS_3:sc/c")
+     (working "Installing Optimizers")
+     (makedir "SAS_3:sc")
+     (makedir "SAS_3:sc/libs")
+     (complete 85)
+     (run "ram:decompress SASC_6.50_Disk_4:optimizers/libs_files SAS_3:sc/libs")
+     (working "Installing Debugger")
+     (complete 90)
+     (run "ram:decompress SASC_6.50_Disk_4:Debugger/libs_files SAS_3:sc/libs")
+     (complete 100)
+  )
+
+)

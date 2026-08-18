@@ -1,0 +1,233 @@
+Usenet Repost - SAS/C v6.50Usenet Repost - SAS/C v6.50
+
+
+/// Usenet Repost:  Features List for SAS/C v6.50
+    ---------------------------------------------
+
+
+ * Forwarded by Adam Sjoegren on 2:230/149@fidonet
+ * Subj : SAS/C V6.50 Features
+ * To   : , 
+ * From : Doug Walker, walker@twix.unx.sas.com
+ * Area : comp.sys.amiga.programmer
+
+
+Many people have asked for a feature list for 
+Version 6.50 of the SAS/C Development System with C++.
+Here it is!
+
+==============
+
+SAS/C(R) Development System with C++, Version 6.50
+
+==============
+C++
+
+Due to popular demand, Version 6.50 offers support for translating C++ files.
+We've also added extensive support in our CodeProbe debugger to allow you to
+debug C++ source code directly.  When debugging C++ source code with CPR, you
+can
+
+   * display C++ auto, static and extern variables
+   * display members of C++ classes
+   * set breakpoints on overloaded C++ functions, member functions,
+     operators, constructors, and destructors
+   * display the proper C++ source code at all times, in both
+     regular and mixed mode.
+
+Version 6.50 also provides a C++ name demangler that lets you write AREXX
+scripts that work with CPR to help debug your C++ programs.
+
+==============
+68040/68882 Instruction Scheduler
+
+The new 68040/68882 Instruction Scheduler helps your code make the most of
+running on higher processors. The Instruction Scheduler changes the order of
+instructions to create code that runs faster on the 68040 CPU and 68882 math
+coprocessor.  These processors can execute some instructions in parallel to
+run your code faster.
+
+==============
+SPROF Profiler
+
+Version 6.50 includes SPROF, a brand new profiler designed to provide specific
+statistics on a function-by-function basis, including
+
+   * number of times each function is called
+   * amount of time spent in each function, including subroutines
+   * amount of time spent in each function, excluding subroutines
+   * percentage of total time spent in each function.
+
+SPROF can be used on shared libraries, devices, dynamically created tasks, and
+virtually any other type of AmigaDOS task that has access to global data.
+
+==============
+SMFIND Utility
+
+How many times have you tried to remember which file a particular variable is
+defined in and couldn't?  SMFIND is a new utility that was designed with such
+a situation in mind.  From the Workbench, you can double click on the SMFIND
+icon, enter the string to search for, and sit back and watch as SMFIND lists
+in the message browser window all the instances where that string was found.
+Double click on an instance, and the relevant file is automatically opened and
+positioned to the exact location where the string is found.  This new tool
+makes managing your projects easier than ever.
+
+==============
+New Support for Writing Devices
+
+We have added several new features, including an example device to get you
+started, that make writing and debugging devices easier than ever before. 
+SAS/C now provides new startup modules for creating devices so that now you
+will not have to write your own startup code.  And most helpful of all, CPR
+now allows you to set breakpoints in devices so that you can easily load them
+to be debugged.
+
+
+==============
+User Interface
+
+New system font support in SCOPTS, SE, SCMSG, and CPR.  These utilities now
+use the default screen font as selected in Preferences under
+AmigaDOS 2.0 and higher.
+
+GO, ASM, SC2, and the C++ translator now send any messages to SCMSG if
+requested instead of just to the console.
+
+New support for public screens in SC, SCOPTS and SCMSG.
+
+SMFind utility lets you search for strings in your C source
+files, and lets you use the SCMSG utility to go to the
+locations found.
+
+==============
+CPR
+
+SegTracker support added to CPR, enabling CPR to locate debugging information
+automatically for most multitasking programs, shared
+libraries, and devices.  Now easier than ever to debug multitasking programs,
+shared libraries, and devices!
+
+Improvements in CPR's multitasking debugging capabilities.
+
+Support of #line statements enhanced.  Now you can debug functions in header
+files and inline functions.
+
+Support for user-selectable fonts under AmigaDOS 2.0 and above.  All menus and
+title bars are displayed in the proportional Screen font selected in the
+Preferences font editor.  All other text is displayed in the fixed System
+Default font selected in the font editor.
+
+The number of spaces taken by a TAB character is now a user-selectable option.
+
+==============
+Compiler and Optimizers
+
+Enhanced compiler and optimizers help you generate better, faster code.
+Compiler now automatically detects the use of standard I/O functions and
+generates code accordingly, making your program smaller and faster. (This
+makes the NOSTDIO option obsolete.)
+
+More efficient code for passing and returning structures and classes.
+
+More efficient code when stack extension is used.
+
+New optimizations added to the peephole optimizer.
+
+Version 6.50 comes with the AmigaDOS 3.1 include files and link
+libraries.
+
+==============
+Better Support for Shared Libraries and Devices
+
+You can build your shared libraries in C++!  You can use C++ member functions
+as library entry points, including constructor and destructor functions. 
+Encapsulate your entire C++ class as an AmigaDOS shared library.
+
+Includes autoinit/autoterm support for shared libraries and devices and
+support for virtually all SAS/C library functions in shared libraries. The
+only exceptions are exit(), abort(), and other functions which terminate the
+program, since this isn't possible from a shared library.
+
+Special startup code included for building devices.
+
+Support for building shared libraries and devices directly from the SC
+command.  No need to invoke SLINK seperately!
+
+==============
+Documentation
+
+Over 300 new pages of documentation, bringing the total number of pages to
+over 1500.  90% of the documentation has been rewritten for version 6.50. 
+Documentation includes a quick reference guide, library reference manual, and
+a two-volume user's guide.
+
+Online documentation is even more complete - now over 1.3 megabytes of online
+help, compared to 800k in Version 6!  More detail is provided on library
+functions, and information on C++ messages has been added. Online
+documentation for new utilities and options has been added.
+
+==============
+Enhanced Conversion Process
+
+New utilities CCTOSC and LNTOSLINK convert Aztec C options
+to their SAS/C equivalents.
+
+New utilities MCC and MLN accept Aztec C options and invoke the
+Version 6.50 compiler.
+
+Compiler now implements #pragma amicall and #pragma regcall to
+ease the transition for Aztec C customers.
+
+<functions.h> and <scrcntl.h> are now provided, along with
+Aztec C or UNIX compatibility library functions dos_packet,
+scdir, mktemp, mkstemp, and many screen control functions.
+
+lmktosmake script (in SC:EXTRAS) converts Lattice C or SAS/C Version 5.10
+makefiles into Version 6-compatible makefiles.
+
+All C compiler and library components are fully ANSI/ISO compliant for maximum
+portability to other platforms.  All C++ compiler and library components are
+compliant with the ANSI C++ committee draft working paper as of January 1993. 
+SAS Institute is committed to
+supporting both the C and C++ language standards in the future.
+
+==============
+Are you currently using another commercial C compiler? Conversion is easy!
+We've added several new features to our "Upgrade to SAS/C"
+program to make the conversion process even easier. For more
+information, call 919-677-8000, extension 7001.
+
+==============
+SAS and SAS/C are registered trademarks or trademarks of SAS Institute Inc. in
+the USA and other countries.
+
+SAS Institute Inc.
+Book Sales Department
+SAS Campus Drive
+Cary, NC 27513
+
+Phone (919)677-8000
+Fax   (919)677-8166
+Email sasdsb@vm.sas.com    NO ORDERS!  Sales information only!
+
+Ms. Gerlinde Schuster
+SAS Institute GmbH
+PO Box 10 53 40
+69043 Heidelberg
+
+Telephone (49)6221-4160
+Fax       (49)6221-474850
+Email     eurdoc2@vm.sas.com  NO ORDERS!  Sales information only!r
+
+For contact information in other countries, please
+contact the US office (via email or any other method.)
+
+
+
+
+
+
+[Contents] 
+
+HTML Conversion by AG2HTML.pl V2.950424, perl 5.001 & witbrock@cs.cmu.edu 

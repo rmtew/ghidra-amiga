@@ -1,0 +1,1 @@
+€…†RexxSysBase CreateArgstring 7e 0802…†RexxSysBase DeleteArgstring 84‘…†RexxSysBase LengthArgstring 8a‘…†RexxSysBase CreateRexxMsg 90 09803…†RexxSysBase DeleteRexxMsg 96‘…†RexxSysBase ClearRexxMsg 9c 0802…†RexxSysBase FillRexxMsg a2 10803…†RexxSysBase IsRexxMsg a8‘…†RexxSysBase LockRexxBase 1c2 001…†RexxSysBase UnlockRexxBase 1c8 001

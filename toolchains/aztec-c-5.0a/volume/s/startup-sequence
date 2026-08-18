@@ -1,0 +1,82 @@
+BindDrivers
+addbuffers df0: 10
+echo ""
+echo "                           Aztec C for the Amiga"
+echo "                               Version 5.0a"
+echo "                                  1/9/89"
+echo ""
+path df0:system
+stack 8000
+FAILAT 25
+echo ""
+echo "Aztec C for the Amiga - Installation Script"
+echo "Version 5.0a"
+echo ""
+ask "Install to hard disk?"
+IF WARN
+	echo "    You should not boot with the Aztec distribution"
+	echo "    diskette if you wish to install the package to"
+	echo "    a hard drive.  Please boot your system as you"
+	echo "    normally do, enter the CLI (if not already there),"
+	echo "    and type:"
+	echo ""
+	echo "        execute df0:install"
+	echo ""
+	echo "    Then follow the prompts to install your Aztec C"
+	echo "    package to your hard disk."
+	skip DONE
+ENDIF
+ask "Do you wish to read the 'read.me' file?"
+IF WARN
+	df0:c/more df0:read.me
+ENDIF
+echo ""
+echo "NOTE: Two blank floppy disks are required for this"
+echo "installation (these disks need not be formatted)."
+echo ""
+ask "Is your second floppy drive called df1:?"
+IF WARN
+	echo "Insert a blank disk in drive df1:"
+	echo "then press <enter> to continue"
+	echo "WARNING - the contents of this disk WILL BE DESTROYED!"
+	diskcopy >NIL: FROM df0: to df1:
+	copy df1:s/floppy_start df1:s/startup-sequence
+	echo "Please insert the second blank disk in drive df1:"
+	echo "then press <enter> to continue"
+	echo "WARNING - the contents of this disk WILL BE DESTROYED!"
+	format >NIL: DRIVE df1: NAME az2
+	MakeDir df1:bin
+	MakeDir df1:lib
+ELSE
+	echo "Insert a blank disk in drive df2:"
+	echo "then press <enter> to continue"
+	echo "WARNING - the contents of this disk WILL BE DESTROYED!"
+	diskcopy >NIL: FROM df0: to df2:
+	copy df2:s/floppy_start df2:s/startup-sequence
+	echo "Please insert the second blank disk in drive df2:"
+	echo "then press <enter> to continue"
+	echo "WARNING - the contents of this disk WILL BE DESTROYED!"
+	format >NIL: DRIVE df2: NAME az2
+	MakeDir df2:bin
+	MakeDir df2:lib
+ENDIF
+echo ""
+df0:floppyinst
+if ERROR
+	echo "Floppy drive installation aborted!"
+else
+	echo "Installation complete!"
+	echo ""
+	echo "You should now re-boot your machine with the new"
+	echo "disk 1 in your first floppy drive, and the new disk 2"
+	echo "in your second drive.  When the system has completed"
+	echo "booting, type:"
+	echo ""
+	echo "    cd az2:"
+	echo ""
+	echo "and you'll be ready to go!"
+	echo ""
+	echo "Thanks for choosing Aztec C!!"
+
+LAB DONE
+

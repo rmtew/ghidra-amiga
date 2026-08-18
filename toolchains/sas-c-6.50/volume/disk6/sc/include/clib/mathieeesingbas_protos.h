@@ -1,0 +1,13 @@
+ÄàCLIB_MATHIEEESINGBAS_PROTOS_HÄCLIB_MATHIEEESINGBAS_PROTOS_HàEXEC_TYPES_Hå<exec/types.h>á
+íIEEESPFix(§parm);
+§IEEESPFlt(çinteger);
+íIEEESPCmp(§leftParm,§rightParm);
+íIEEESPTst(§parm);
+§IEEESPAbs(§parm);
+§IEEESPNeg(§parm);
+§IEEESPAdd(§leftParm,§rightParm);
+§IEEESPSub(§leftParm,§rightParm);
+§IEEESPMul(§leftParm,§rightParm);
+§IEEESPDiv(§dividend,§divisor);
+§IEEESPFloor(§parm);
+§IEEESPCeil(§parm);á

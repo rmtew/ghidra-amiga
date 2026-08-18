@@ -1,0 +1,11 @@
+€ˆUTILITY_DATE_H€UTILITY_DATE_HˆEXEC_TYPES_HŒ<exec/types.h>‡
+ƒClockData
+{
+‰sec;
+‰min;
+‰hour;
+‰mday;
+‰month;
+‰year;
+‰wday;
+};‡

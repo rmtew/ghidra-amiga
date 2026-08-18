@@ -1,0 +1,3689 @@
+@database "scmsg.guide"
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@master "scmsg.guide"
+@node main "SAS/C Error/Warning Messages"
+
+        Effect of Specific Compiler Flags on Compiler Error Messages
+                    @{" STRICT " link strict}                @{" ANSI " link ansi}
+
+
+                 @{" Compiler Error and Warning Messages " link compiler}
+
+                        @{" Linker Error Messages " link linker}
+
+                      @{" Common Problems Compiling " link sc:help/sc_prob.guide/compile}
+
+                       @{" Common Problems Linking " link sc:help/sc_prob.guide/link}
+
+                     @{" Changes to the Documentation " link sc:help/sc_change.guide/sc}
+@endnode
+
+@node compiler "SC Error Messages"
+@{"     ***     " link scmxx1}  Can't delete old GST:  object is in use
+               Continuing with no GST file
+@{"     ***     " link scmxx2}  Can't open GST file:  <gst-filename>
+@{"     ***     " link scmxx3}  Can't open sc:libs/<lib-name>.library
+@{"     ***     " link scmxx4}  Can't open <type> file "<name>" for <mode>
+@{"     ***     " link scmxx5}  Combined output filename too long
+@{"     ***     " link scmxx6}  CXERR:  <num>
+@{"     ***     " link scmxx7}  CXWRN:  <text>
+@{"     ***     " link scmxx8}  Floating point overflow optimizing constants
+@{"     ***     " link scmxx9}  Freeing Resources
+@{"     ***     " link scmx10}  Invalid symbol definition:  <symbol-name>
+@{"     ***     " link scmx11}  I/O error code on file "<name>"
+@{"     ***     " link scmx12}  Seek error on object file
+
+@{" Warning   1 " link scm001}  invalid preprocessor command
+@{" Error     2 " link scm002}  unexpected end of file
+@{" Error     3 " link scm003}  file not found "<filename>"
+@{" Error     4 " link scm004}  invalid lexical token
+@{" Error     5 " link scm005}  invalid macro usage
+@{" Error     6 " link scm006}  line buffer overflow
+@{" Warning   7 " link scm007}  register parameters require a prototype
+               Stack parameters used
+@{" Error     8 " link scm008}  invalid conversion
+@{" Error     9 " link scm009}  undefined identifier "<name>"
+@{" Error    10 " link scm010}  invalid subscript expression
+@{" Error    11 " link scm011}  string not terminated
+@{" Error    12 " link scm012}  invalid structure reference
+@{" Error    13 " link scm013}  member name missing
+@{" Error    14 " link scm014}  undefined member "<name>"
+@{" Error    15 " link scm015}  invalid function call
+@{" Error    16 " link scm016}  invalid function argument
+@{" Error    17 " link scm017}  too many operands
+@{" Warning  18 " link scm018}  non-ANSI use of operator in preprocessor condition
+@{" Error    19 " link scm019}  unbalanced parentheses
+@{" Error    20 " link scm020}  invalid constant expression
+@{" Error    21 " link scm021}  illegal use of struct, union, or array type
+@{" Warning  22 " link scm022}  structure used as function argument
+@{" Error    23 " link scm023}  invalid use of conditional operator
+@{" Error    24 " link scm024}  pointer operand required
+@{" Error    25 " link scm025}  modifiable lvalue required
+@{" Error    26 " link scm026}  arithmetic operand required
+@{" Error    27 " link scm027}  arithmetic or pointer operand required
+@{" Error    28 " link scm028}  missing operand
+@{" Error    29 " link scm029}  operation cannot be performed on a pointer
+@{" Warning  30 " link scm030}  pointers do not point to same type of object
+@{" Error    31 " link scm031}  integral operand required
+@{" Error    32 " link scm032}  cannot convert to required type
+@{" Warning  33 " link scm033}  non-portable operation on structure or union
+@{" Error    34 " link scm034}  invalid initializer expression
+@{" Error    35 " link scm035}  closing brace expected
+@{" Warning  36 " link scm036}  control cannot reach this statement
+@{" Error    37 " link scm037}  duplicate statement label "<name>"
+               See line <number> in file "<filename>"
+@{" Error    38 " link scm038}  unbalanced braces
+@{" Error    39 " link scm039}  invalid use of keyword "<keyword>"
+@{" Error    40 " link scm040}  break not inside loop or switch
+@{" Error    41 " link scm041}  case not inside switch
+@{" Warning  42 " link scm042}  case expression not integral
+@{" Error    43 " link scm043}  duplicate of case value
+               See line <number> in file "<filename>"
+@{" Error    44 " link scm044}  continue not inside loop
+@{" Error    45 " link scm045}  default not inside switch
+@{" Error    46 " link scm046}  duplicate default
+               See line <number> in file "<filename>"
+@{" Error    47 " link scm047}  while missing from do statement
+@{" Error    48 " link scm048}  invalid while expression
+@{" Error    49 " link scm049}  else not associated with if
+@{" Error    50 " link scm050}  label missing from goto
+@{" Warning  51 " link scm051}  C++ comment detected
+@{" Error    52 " link scm052}  invalid if expression
+@{" Error    53 " link scm053}  invalid return expression
+@{" Warning  54 " link scm054}  switch expression not integral
+@{" Warning  55 " link scm055}  no case values for switch statement
+@{" Error    56 " link scm056}  colon expected
+@{" Error    57 " link scm057}  semi-colon expected
+@{" Error    58 " link scm058}  missing parenthesis
+@{" Error    59 " link scm059}  invalid storage class
+@{" Error    60 " link scm060}  incompatible struct, union or array types
+@{" Error    61 " link scm061}  undefined struct/union tag "<tag-name>"
+@{" Warning  62 " link scm062}  constant <number> out of range for type "type"
+               Valid range is <low> to <high>
+@{" Warning  63 " link scm063}  item "<name>" already declared
+               See line <number> file "<filename>"
+@{" Error    64 " link scm064}  structure contains no members
+@{" Error    65 " link scm065}  invalid function definition
+@{" Warning  66 " link scm066}  invalid array limit expression
+@{" Error    67 " link scm067}  illegal object
+@{" Error    68 " link scm068}  illegal object for structure
+@{" Error    69 " link scm069}  struct <name> includes instance of self
+@{" Warning  70 " link scm070}  unrecognized escape sequence
+@{" Error    71 " link scm071}  formal declaration error "<name>"
+@{" Error    72 " link scm072}  conflict with previous declaration
+               See line <number> file "<filename>"
+@{" Warning  73 " link scm073}  declaration expected
+@{" Warning  74 " link scm074}  initializer data truncated
+@{" Error    75 " link scm075}  invalid sizeof expression
+@{" Error    76 " link scm076}  left brace expected
+@{" Error    77 " link scm077}  identifier expected
+@{" Error    78 " link scm078}  undefined statement label "<name>"
+@{" Warning  79 " link scm079}  duplicate of enumeration value
+               See line <line> file "<filename>"
+@{" Warning  80 " link scm080}  invalid bit field or misplaced ':'
+@{" Error    81 " link scm081}  preprocessor symbol loop; macro expansion too long or
+               circular
+@{" Error    82 " link scm082}  maximum object/storage size exceeded
+               Size limit for this class is <number>
+@{" Warning  83 " link scm083}  reference beyond object size
+@{" Warning  84 " link scm084}  redefinition of pragma or preprocessor symbol "<name>"
+               See line <number> file "<filename>"
+@{" Warning  85 " link scm085}  return value mismatch for function "<name>"
+               Expecting "<type1>", found "<type2>"
+@{" Warning  86 " link scm086}  formal parameters conflict with prototype
+               See line <number> file "<filename>"
+@{" Warning  87 " link scm087}  argument count incorrect, expecting <number> arguments
+               See line <number> file "<filename>"
+@{" Warning  88 " link scm088}  argument type incorrect
+               Expecting "<type1>", found "<type2>"
+@{" Warning  89 " link scm089}  constant converted from "<type1>" to "<type2>"
+@{" Error    90 " link scm090}  invalid argument type specifier
+@{" Error    91 " link scm091}  illegal void operand
+@{" Warning  92 " link scm092}  statement has no effect
+@{" Warning  93 " link scm093}  no reference to identifier "<name>"
+@{" Warning  94 " link scm094}  uninitialized auto variable "<name>"
+@{" Warning  95 " link scm095}  unrecognized #pragma operand
+@{" Error    96 " link scm096}  missing name for #pragma
+@{" Error    97 " link scm097}  bad library base for #pragma
+@{" Error    98 " link scm098}  invalid data for #pragma
+@{" Error    99 " link scm099}  attempt to change a const lvalue
+@{" Warning 100 " link scm100}  no prototype declared for function "<name>"
+@{" Error   101 " link scm101}  redundant keywords in declaration
+@{" Error   102 " link scm102}  conflicting keywords in declaration
+@{" Warning 103 " link scm103}  uninitialized constant "[name]"
+@{" Warning 104 " link scm104}  conversion from pointer to const/volatile to pointer to
+               non-const/volatile
+@{" Warning 105 " link scm105}  module does not define any externally-known symbols
+@{" Error   106 " link scm106}  postfix expression not allowed on a constant
+@{" Error   107 " link scm107}  too many initializers
+@{" Warning 108 " link scm108}  zero-length arrays are not an ANSI feature
+@{" Error   109 " link scm109}  invalid use of type name or keyword
+@{" Warning 110 " link scm110}  enum constant expression is wrong type
+               Expecting "<type1>", found "<type2>"
+@{" Warning 111 " link scm111}  non-portable enum type specified
+@{" Warning 114 " link scm114}  negative shift or shift too big for type shifts for type
+               "type" must be between 0 and <number> bits
+@{" Error   115 " link scm115}  enum constant value "<number>" out of range for enum type
+@{" Warning 116 " link scm116}  undefined enum tag "<name>"
+@{" Error   117 " link scm117}  enum contains no members
+@{" Error   118 " link scm118}  conflicting use of enum/struct/union tag "<name>"
+@{" Error   119 " link scm119}  identifiers missing from definition of function "<name>"
+@{" Warning 120 " link scm120}  Integral type mismatch:  possible portability problem
+               Expecting "<type1>", found "<type2>"
+@{" Warning 121 " link scm121}  hex/octal constant "<constant>" too large for char
+               High bits may be lost
+@{" Warning 122 " link scm122}  missing ellipsis
+@{" Warning 123 " link scm123}  no tag defined for enumeration
+               Cannot construct prototype
+@{" Error   125 " link scm125}  invalid number
+@{" Warning 126 " link scm126}  #endif, #else, or #elif out of order
+@{" Error   127 " link scm127}  operand to # operator must be a macro argument
+@{" Error   128 " link scm128}  text-from-#error
+@{" Error   129 " link scm129}  ambiguous struct or union member "<name>"
+@{" Error   131 " link scm131}  maximum temporary or formal storage exceeded
+@{" Warning 132 " link scm132}  extra tokens after valid preprocessor directive
+@{" Error   133 " link scm133}  cannot redefine macro "<name>"
+@{" Warning 134 " link scm134}  too many arguments
+@{" Error   135 " link scm135}  argument count incorrect for macro "<name>", expecting
+               <number> arguments
+               See line <number> file "<filename>"
+@{" Error   136 " link scm136}  invalid use of register keyword
+@{" Warning 137 " link scm137}  ANSI limits #line numbers to between 1 and 32767
+@{" Error   138 " link scm138}  operation invalid for pointer to void
+@{" Warning 139 " link scm139}  missing #endif
+               See line <number> file "<filename>"
+@{" Warning 140 " link scm140}  sizeof operator used on array that has been converted to
+               pointer
+@{" Error   142 " link scm142}  array size never given for "<name>"
+@{" Error   143 " link scm143}  object has no address
+@{" Error   145 " link scm145}  attempt to define item "<name>" in a GST file
+@{" Warning 146 " link scm146}  case value out of range for switch type
+@{" Warning 147 " link scm147}  conversion between function and data pointers
+@{" Warning 148 " link scm148}  use of incomplete struct/union/enum tag "<name>"
+               See line <number> file "<filename>"
+@{" Warning 149 " link scm149}  incomplete struct/union/enum tag in prototype scope "<name>"
+@{" Warning 150 " link scm150}  the keyword "<name>" is meaningless for <itemtype>
+@{" Error   152 " link scm152}  cannot define function via typedef name
+@{" Warning 154 " link scm154}  no prototype declared for function pointer
+@{" Warning 155 " link scm155}  no statement after label
+@{" Warning 156 " link scm156}  operation/comparison of pointer to "int" and pointer to
+               "type"
+@{" Error   158 " link scm158}  invalid type name
+@{" Warning 159 " link scm159}  use of unary minus on unsigned value
+@{" Warning 161 " link scm161}  no prototype declared at definition for function "<name>"
+@{" Warning 162 " link scm162}  non-ANSI use of ellipsis punctuator
+@{" Warning 163 " link scm163}  initialization of auto struct, union, or array
+@{" Warning 164 " link scm164}  & applied to array
+@{" Warning 165 " link scm165}  use of narrow type in prototype
+@{" Error   166 " link scm166}  unrecoverable error or too many errors
+               Terminating compilation
+@{" Warning 169 " link scm169}  incompatible operands of conditional operator (?:)
+               "<type1>" conflicts with "<type2>"
+@{" Warning 170 " link scm170}  overflow during operation on constants
+@{" Warning 176 " link scm176}  implicitly promoted formal "<name>" conflicts with prototype
+               See line <number> file "<filename>"
+@{" Warning 178 " link scm178}  indirect call without indirection operator
+@{" Warning 179 " link scm179}  narrow type used in old-style definition
+@{" Warning 180 " link scm180}  no space between macro name and its replacement list
+@{" Warning 181 " link scm181}  "<name>" was declared both static and external
+               See line <number> file "<filename>"
+@{" Warning 182 " link scm182}  static function "<name>" declared but not defined
+               See line <number> file "<filename>"
+@{" Warning 183 " link scm183}  inline function declared but not defined
+               See line <number> file "<filename>"
+@{" Warning 184 " link scm184}  unterminated character constant
+@{" Error   185 " link scm185}  comma expected
+@{" Warning 186 " link scm186}  implicit conversion between pointer and scalar
+@{" Warning 187 " link scm187}  negative value assigned to unsigned type
+@{" Warning 190 " link scm190}  #include ignored because header already included
+               See line <number> file "<filename>"
+@{" Warning 192 " link scm192}  wrong size for enum
+@{" Warning 193 " link scm193}  implicit reference to struct/union member
+               Reference assumed to be "<reference>"
+@{" Warning 194 " link scm194}  too much local data for NEAR reference, some changed to
+               FAR
+@{" Warning 195 " link scm195}  nested comment detected
+@{" Warning 196 " link scm196}  specified include directory not found:  "<name>"
+@{" Warning 198 " link scm198}  __regargs and __asm cannot be used on a varargs function
+@{" Error   199 " link scm199}  unbalanced comment
+               See line <number> file "<filename>"
+@{" Error   200 " link scm200}  no register specified for parameter to __asm function
+@{" Warning 204 " link scm204}  macro invocation not terminated
+@{" Warning 209 " link scm209}  macro invocation may have multiple side effects
+@{" Warning 212 " link scm212}  item "<name>" already declared
+               See line <number> file "<filename>"
+@{" Warning 213 " link scm213}  empty argument to preprocessor macro
+@{" Warning 216 " link scm216}  symbol "<name>" found
+@{" Warning 217 " link scm217}  macro invocation may call function multiple times
+@{" Error   218 " link scm218}  declaration found in statement block
+@{" Warning 220 " link scm220}  old-fashioned assignment operator taken as "<operators>"
+@{" Error   223 " link scm223}  "<filename>" is not a valid GST file
+@{" Warning 224 " link scm224}  item "<name>" already defined
+               See line <number> file "<filename>"
+@{" Warning 225 " link scm225}  pointer type mismatch 
+               "<type1>" does not match "<type2>"
+@{" Warning 301 " link scm301}  Indirect reference through NULL pointer.
+@{" Warning 302 " link scm302}  Type punning involves representation change <symbol>
+@{" Warning 303 " link scm303}  Reference has overlapped definition <symbol>
+@{" Warning 304 " link scm304}  Dead assignment eliminated <symbol>
+@{" Warning 305 " link scm305}  Uninitialized variable <symbol>
+@{" Note 306    " link scm306}  <reason> function inlined:  <function name> {from 
+               line <u>}
+@endnode
+
+@node linker "Slink Error Messages"
+@{" Error 103 " link slm103}  Out of memory!!
+@{" Error 425 " link slm425}  Cannot find library <library-name>
+@{" Error 426 " link slm426}  Cannot find object name
+@{" Error 443 " link slm443}  <filename> is an invalid file name
+@{" Error 444 " link slm444}  Hunk_Symbol has bad <symbol-type> symbol <symbol-name>
+@{" Error 445 " link slm445}  Invalid HUNK_SYMBOL <symbol-name>
+@{" Error 446 " link slm446}  Invalid symbol type <symbol-type> for <symbol-name>
+@{" Error 447 " link slm447}  <filename> is a load file
+@{" Error 448 " link slm448}  <filename> is not a valid object file
+@{" Error 449 " link slm449}  No hunk_end seen for <filename>
+@{" Error 450 " link slm450}  Object file <filename> is an extended library
+@{" Error 501 " link slm501}  Invalid Reloc 8 or 16 reference
+@{" Error 502 " link slm502}  <function-name> symbol - Distance for Reloc 16 greater than
+             32768
+@{" Error 503 " link slm503}  <function-name> symbol - Distance for Reloc 8 greater than 128
+@{" Error 504 " link slm504}  <variable-name> symbol - Distance for Data Reloc 16 greater
+             than 32768
+@{" Error 505 " link slm505}  <variable-name> symbol - Distance for Data Reloc 8 greater than
+             128
+@{" Error 506 " link slm506}  Can't locate resolved symbol <symbol-name>
+@{" Error 507 " link slm507}  Unknown Symbol type <symbol-type>, for symbol <symbol-name>
+@{" Error 508 " link slm508}  Symbol type <symbol-type> unimplemented
+@{" Error 509 " link slm509}  Unknown hunk type <symbol-type> in Pass2
+@{" Error 510 " link slm510}  <symbol-name> symbol - Near reference to a data item not in
+             near data section
+@{" Error 512 " link slm512}  Invalid branch to <function-name> in overlay node <module-name>
+@{" Error 513 " link slm513}  Multiple NTRYHUNK segments not permitted
+@{" Error 514 " link slm514}  Overlay manager _ovlyMgr is undefined
+@{" Error 515 " link slm515}  An ALV was generated pointing to data <variable-name> symbol
+@{" Error 516 " link slm516}  Attempt to merge BSS with CODE or CODE/DATA
+@{" Error 600 " link slm600}  Invalid command <command>
+@{" Error 601 " link slm601}  <option> option specified more than once
+@{" Error 602 " link slm602}  Unable to open output file <filename>
+@{" Error 603 " link slm603}  <string> is not a valid number
+@{" Error 604 " link slm604}  with file is not readable
+@{" Error 605 " link slm605}  Cannot open with file <filename>
+@{" Error 607 " link slm607}  No FROM/ROOT files specified
+@{" Error 608 " link slm608}  Premature EOF encountered
+@{" Error 609 " link slm609}  Error seeking in file <filename>
+@{" Error 610 " link slm610}  <module-name> has no parent in overlay tree
+@{" Error 611 " link slm611}  Reloc found with odd address for symbol <symbol-name>, file
+             <filename>
+@{" Error 612 " link slm612}  MERGED Data relocation to non-code section in Overlay Node
+             Reference at offset <hex-address> in <module-name>,
+             To Unit <module-name>
+@{" Error 613 " link slm613}  MERGED Data relocation to static function is not resolvable
+             by Overlay Manager.  
+             Reference at <offset> hex-address in <filename>, To 
+             Unit <filename>
+@{" Error 614 " link slm614}  More than one MERGED data section found
+@{" Error 615 " link slm615}  Code hunk named __MERGED
+@{" Error 616 " link slm616}  ALVs were generated
+@{" Error 617 " link slm617}  MERGED data greater than 64K
+@{" Error 618 " link slm618}  Multiple OVERLAY usage--previous occurrences were ignored
+@{" Error 619 " link slm619}  Ignoring null OVERLAY list
+@{" Error 620 " link slm620}  Missing '#' at end of OVERLAY list
+@{" Error 621 " link slm621}  Conflicting integer sizes found
+@{" Error 622 " link slm622}  Conflicting math types found
+@{" Error 623 " link slm623}  Regargs function <function> called through overlay manager.
+             Parameters passed in registers to this function will be 
+             destroyed.
+@{" Error 624 " link slm624}  Absolute reference to <symbol> module:  file <filename>
+@{" Error 625 " link slm625}  Proper math library has not been included
+@{" Error 626 " link slm626}  Libcode used on module <module>
+@{" Error 627 " link slm627}  Near references found in executable that has a module
+             compiled with FARONLY option
+@endnode
+
+@node strict "STRICT COMPILER FLAG"
+@{" Using the STRICT compiler flag " link sc:help/sc.guide/strict} automatically turns on the ANSI flag
+as well as 9 additional warnings.  When the STRICT flag is used, the
+following warning messages are turned on:
+
+@{" Warning  18 " link scm018}  non-ANSI use of operator in preprocessor condition
+@{" Warning  51 " link scm051}  C++ comment detected
+@{" Warning  70 " link scm070}  unrecognized escape sequence
+@{" Warning 108 " link scm108}  zero-length arrays are not an ANSI feature
+@{" Warning 111 " link scm111}  non-portable enum type specified
+@{" Warning 120 " link scm120}  Integral type mismatch:  possible portability problem
+                Expecting "<type1>", found "<type2>"
+@{" Warning 137 " link scm137}  ANSI limits #line numbers to between 1 and 32767
+@{" Warning 149 " link scm149}  incomplete struct/union/enum tag in prototype scope "<name>"
+@{" Warning 159 " link scm159}  use of unary minus on unsigned value
+@{" Warning 162 " link scm162}  non-ANSI use of ellipsis punctuator
+@{" Warning 163 " link scm163}  initialization of auto struct, union, or array
+@{" Warning 164 " link scm164}  & applied to array
+@{" Warning 176 " link scm176}  implicitly promoted formal "<name>" conflicts with prototype
+                See line <number> file "<filename>"
+@{" Warning 178 " link scm178}  indirect call without indirection operator
+@{" Warning 179 " link scm179}  narrow type used in old-style definition
+@{" Warning 180 " link scm180}  no space between macro name and its replacement list
+@{" Warning 187 " link scm187}  negative value assigned to unsigned type
+@{" Warning 213 " link scm213}  empty argument to preprocessor macro
+@{" Warning 220 " link scm220}  old-fashioned assignment operator taken as "<operators>"
+@endnode
+
+@node ansi "ANSI COMPILER FLAG"
+@{" Using the ANSI compiler flag " link sc:help/sc.guide/ansi} turns on a subset of the messages turned
+on by the STRICT flag.  The ANSI flag turns on the following warning
+messages:
+
+@{" Warning  18 " link scm018}  non-ANSI use of operator in preprocessor condition
+@{" Warning  51 " link scm051}  C++ comment detected
+@{" Warning  70 " link scm070}  unrecognized escape sequence
+@{" Warning 108 " link scm108}  zero-length arrays are not an ANSI feature
+@{" Warning 111 " link scm111}  non-portable enum type specified
+@{" Warning 137 " link scm137}  ANSI limits #line numbers to between 1 and 32767
+@{" Warning 162 " link scm162}  non-ANSI use of ellipsis punctuator
+@{" Warning 176 " link scm176}  implicitly promoted formal "<name>" conflicts with prototype
+                See line <number> file "<filename>"
+@{" Warning 180 " link scm180}  no space between macro name and its replacement list
+@{" Warning 213 " link scm213}  empty argument to preprocessor macro
+@endnode
+
+@node scmxx1 "Unnumbered Message"
+*** Can't delete old GST:  object is in use
+    Continuing with no GST file
+
+You specified the @{" makegst " link sc:help/sc.guide/makegst} option, but an existing copy of the same GST
+was in use by another program.  Check for other compilations that are
+using the GST.  You may also be browsing the GST with the @{" hypergst " link sc:help/sc_util.guide/hypergst}
+utility.
+@endnode
+
+@node scmxx2 "Unnumbered Message"
+*** Can't open GST file:  <gst-filename>
+
+The specified GST file could not be loaded.  Either the file is an
+invalid GST file, or the file does not exist.
+@endnode
+
+@node scmxx3 "Unnumbered Message"
+*** Can't open sc:libs/<lib-name>.library
+
+The specified shared library could not be found.  Make sure the library
+is available in sc:libs.
+@endnode
+
+@node scmxx4 "Unnumbered Message"
+*** Can't open <type> file "<name>" for <mode>
+
+The compiler could not open the specified file.  The mode is either read
+or write.
+@endnode
+
+@node scmxx5 "Unnumbered Message"
+*** Combined output filename too long
+
+The filename produced by the compiler, with the path, overflowed the
+compiler's internal buffer (255 bytes).
+@endnode
+
+@node scmxx6 "Unnumbered Message"
+*** CXERR:  <num>
+
+An internal error prevented the compiler from continuing.  Please
+contact the @{" Technical Support Division " link sc:help/sc_help.guide/tech}.
+@endnode
+
+@node scmxx7 "Unnumbered Message"
+*** CXWRN:  <text>
+
+An internal error occurred.  With CXWRN errors, the compiler attempts to
+continue the compilation, but may not be able to do so.  Please contact
+the @{" Technical Support Division " link sc:help/sc_help.guide/tech}.
+@endnode
+
+@node scmxx8 "Unnumbered Message"
+*** Floating point overflow optimizing constants
+
+The global optimizer was attempting to perform compile-time constant
+calculations, but the calculations caused a floating-point error.  Your
+code is causing floating-point numbers to overflow.
+@endnode
+
+@node scmxx9 "Unnumbered Message"
+***  Freeing Resources
+
+If you compile your program and your machine runs low on memory, the
+compiler displays this message and frees memory to enable it to continue
+the compilation.  You can force the compiler to free memory at any time
+by pressing Control-F in the window to which the compiler is sending
+output.
+@endnode
+
+@node scmx10 "Unnumbered Message"
+*** Invalid symbol definition:  <symbol-name>
+
+You attempted to define the specified symbol on the command line with
+the @{" define " link sc:help/sc.guide/define} compiler option, but the symbol did not adhere to the normal
+rules for C preprocessor symbol syntax.
+@endnode
+
+@node scmx11 "Unnumbered Message"
+*** I/O error code on file "<name>"
+
+The compiler received the specified I/O error code from the operating
+system while attempting to read the named file.  Refer to The AmigaDOS
+Manual, 3rd Edition (Commodore-Amiga, Inc.  1991) or see the header file
+dos/dos.h for details on the numeric error codes.
+@endnode
+
+@node scmx12 "Unnumbered Message"
+*** Seek error on object file
+
+The compiler attempted to perform a seek operation on the output object
+file but encountered an I/O error.
+@endnode
+
+
+@node scm001 "Compiler Message 1"
+Warning 1:  invalid preprocessor command
+
+This warning is generated by invalid use of preprocessor commands.  For
+example, you could specify an unrecognized command, fail to include a
+space between command elements, or use an illegal preprocessor symbol.
+The command is ignored and compilation continues.
+@endnode
+
+@node scm002 "Compiler Message 2"
+Error 2:  unexpected end of file
+
+This error is generated when the compiler expects more data, but it
+encounters the end of an input file.  This error may occur in a #include
+file or in the original source file.  A missing #endif or unbalanced
+curly brace or parentheses in the source file or in one of the
+previously included files may produce this message.  In many cases,
+correcting a previous error eliminates this error.
+@endnode
+
+@node scm003 "Compiler Message 3"
+Error 3:  file not found "<filename>"
+
+The filename specified in a #include command was not found or could not
+be opened.
+@endnode
+
+@node scm004 "Compiler Message 4"
+Error 4:  invalid lexical token
+
+A character was found in the file that is not a standard character in
+the C character set or is in an inappropriate place.  For example,
+entering a pound sign (#) in the middle of non-preprocessor C code or
+entering nonprintable control characters anywhere except in a comment
+produces this error.
+@endnode
+
+@node scm005 "Compiler Message 5"
+Error 5:  invalid macro usage
+
+Your code invoked a macro incorrectly.  Check for unbalanced parentheses
+and other syntax errors.  The problem may be in a macro used by the
+macro that you invoked in your program.
+@endnode
+
+@node scm006 "Compiler Message 6"
+Error 6:  line buffer overflow
+
+A line of preprocessed input was longer than the line buffer size.  The
+size of the line buffer is controlled by the @{" ppbuf " link sc:help/sc.guide/PreProcessorBUFfer} and @{" memsize " link sc:help/sc.guide/memsize} options.
+If you do not specify ppbuf or memsize, the size of the line buffer is
+8192 bytes.
+@endnode
+
+@node scm007 "Compiler Message 7"
+Warning 7:  register parameters require a prototype
+            Stack parameters used
+
+You specified PARMS=REG or used the __regargs keyword on a function, but
+you did not provide the prototype for the function.  The compiler cannot
+generate registerized calls to functions unless you provide a prototype.
+
+You can use the @{" GENPROTO " link "sc:help/sc.guide/GenPROTO"} option to generate prototypes.
+
+@endnode
+
+@node scm008 "Compiler Message 8"
+Error 8:  invalid conversion
+
+You attempted to cast a type to an incompatible type.  This error
+usually occurs when you attempt to convert something into an array, a
+structure, or a function.  Check for missing indirection (*) and/or
+address (&) operators.  For example, the following program tries to
+assign a whole structure to a pointer.
+
+   void main(void)
+   {
+      struct FOO
+      {
+         int a, b;
+      } f;
+      struct FOO *p;
+      p = f;  /* Error 8 */
+      p = &f; /* Correct */
+   }
+
+@endnode
+
+@node scm009 "Compiler Message 9"
+Error 9:  undefined identifier "<name>"
+
+The specified identifier has not been declared.  You may not have
+included the proper header files to declare an extern, or you may have
+misspelled the name of a variable.  This message is produced only once
+for each undeclared identifier.  Subsequent uses of the identifier do
+not produce a message.  Subsequent declarations of the identifier may
+produce messages about redeclaring the variable.  Fix the error that is
+causing the first error 9 message and recompile your program before
+trying to fix additional messages involving the same variable.
+@endnode
+
+@node scm010 "Compiler Message 10"
+Error 10:  invalid subscript expression
+
+An error was detected in an expression used inside square brackets ([]).
+This error may occur if:
+
+   - the expression is missing
+   - the expression is a preprocessor macro that evaluates to nothing
+   - the result of the expression is void
+   - the result of the expression is a pointer, a structure, or a union.
+
+@endnode
+
+@node scm011 "Compiler Message 11"
+Error 11:  string not terminated
+
+The closing double quote (") was not provided when defining a string.
+@endnode
+
+@node scm012 "Compiler Message 12"
+Error 12:  invalid structure reference
+
+The operand preceding the structure member (.) or structure pointer (->)
+operator is not a structure or a pointer to a structure, respectively.
+Make sure you are not trying to reference a structure member with the
+structure pointer operator or a structure pointer with the structure
+member operator.  In many cases, correcting a previous error eliminates
+this message.
+@endnode
+
+@node scm013 "Compiler Message 13"
+Error 13:  member name missing
+
+The name of the desired structure or union member did not follow the
+structure member operator (.) or the structure pointer operator (->).
+Check for preprocessor macros that may be defined to the same name as
+the member.
+@endnode
+
+@node scm014 "Compiler Message 14"
+Error 14:  undefined member "<name>"
+
+The indicated identifier is not a member of the structure or union to
+which the structure member operator (.) or the structure pointer
+operator (->) referred.
+@endnode
+
+@node scm015 "Compiler Message 15"
+Error 15:  invalid function call
+
+An identifier or constant is used where a function or function pointer
+identifier is required.  This message can occur if you attempt to use a
+variable not declared as a function or function pointer but give the
+variable a parameter list.  The compiler sees the parenthesized
+expression and thinks you are calling a function.  Check for
+typographical errors such as leaving out an operator in an expression,
+which produces a variable and a parenthesized expression.  Such
+typographical errors may also occur in preprocessor macros.  For
+example:
+
+  /* The incorrect expression below generates an */
+  /* "invalid function call" error.  */
+
+  int i, j;
+  void function(void)
+  {
+     i = i + (j*2);   /* Intended expression */
+     i = i   (j*2);     /* INCORRECT - deleted "+" operator */
+  }
+
+@endnode
+
+@node scm016 "Compiler Message 16"
+Error 16:  invalid function argument
+
+A function argument expression following the left parenthesis of a
+function call is invalid.  You may see this message if you omit:
+
+   - an argument expression
+   - a right parenthesis from a function call
+   - a comma separator between two function arguments.
+
+
+For example:
+
+   func(.);
+   func(;
+   func(,1);
+
+@endnode
+
+@node scm017 "Compiler Message 17"
+Error 17:  too many operands
+
+During expression evaluation, the end of an expression was encountered,
+but more than one operand was still awaiting evaluation.  This message
+may occur if an expression contained an incorrectly specified operation.
+@endnode
+
+@node scm018 "Compiler Message 18"
+Warning 18:  non-ANSI use of operator in preprocessor condition
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=18 options.  The ANSI Standard states that the
+sizeof and comma (,) operators should not be used in preprocessor
+conditions.  The SAS/C Compiler supports their use in preprocessor
+conditions, but programs that require strict adherence to the ANSI
+Standard should not use them.
+@endnode
+
+@node scm019 "Compiler Message 19"
+Error 19:  unbalanced parentheses
+
+The number of opening parentheses in an expression did not equal the
+number of closing parentheses.  If the expression appears correct in the
+C source file, check any preprocessor macros to make sure they generate
+balanced parentheses.
+@endnode
+
+@node scm020 "Compiler Message 20"
+Error 20:  invalid constant expression
+
+An expression that did not evaluate to a constant was encountered in a
+context that required a constant result.  The compiler must be able to
+evaluate any constant expression (for example, expressions used to
+initialize static or external data) when the program is compiled.  The
+expression in question did not meet this criterion.  You may have used
+an illegal operator for a constant expression (such as ++, +=, function
+calls, and so on), or you may have used a variable whose value is
+available only at run time.
+@endnode
+
+@node scm021 "Compiler Message 21"
+Error 21:  illegal use of struct, union, or array type
+
+An identifier declared as a structure, union, or array was encountered
+in an expression where such types are not permitted.  For example, you
+cannot use the ++ postincrement operator with a structure:
+
+   struct FOO
+   {
+      int a, b, c;
+   } f;
+
+    f++;      /* Error 21 */
+
+@endnode
+
+@node scm022 "Compiler Message 22"
+Warning 22:  structure used as function argument
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=22 option.  A structure or union was passed as an argument to a
+function.  Although passing structures and unions is legal according to
+the ANSI Standard, some compilers do not allow you to pass structures or
+unions.  Other compilers pass a pointer to the structure instead of the
+entire structure.  Turn on this warning if your code comes from or must
+be ported to such a compiler.
+@endnode
+
+@node scm023 "Compiler Message 23"
+Error 23:  invalid use of conditional operator
+
+The conditional expression operator (?:) was used incorrectly.  You may
+have included the question mark (?) but left out the colon (:).  Also,
+check for an invalid expression after the operator.
+@endnode
+
+@node scm024 "Compiler Message 24"
+Error 24:  pointer operand required
+
+An expression required a pointer at a specific place, but a non-pointer
+operand was provided.  The compiler may generate this message if an
+expression after the indirection operator (*) was not a pointer or array
+expression or if the expression before the array indexing operators ([])
+was not a pointer or array expression.
+@endnode
+
+@node scm025 "Compiler Message 25"
+Error 25:  modifiable lvalue required
+
+You have attempted to assign a value to an expression that cannot be
+modified.  An lvalue is any expression that can appear on the left side
+of an assignment operation.  For example, the ANSI Standard states that
+the result of a cast is not an lvalue; therefore, the following
+statement is invalid:
+
+   long x;
+   (short)x = 2;  /* Error 25 */
+
+The following examples also generate this error message:
+
+   #define ADDONE(x) (x)++
+   ADDONE(12);         /* Error 25: Cannot increment a constant */
+   ADDONE(&g);         /* Error 25: Cannot assign to an address */
+
+   if(func(10)=j-2);   /* Error 25: "==" was intended, not "=" */
+
+   &x = &y;            /* Error 25: Cannot assign to an address */
+
+
+You may have defined a variable with the const keyword and then tried to
+modify the value of that variable.  The SAS/C Development System Library
+Reference, Version 6.0 contains many variables defined with the const
+keyword, especially pointers to strings.  This keyword is required by
+the ANSI Standard and indicates that these variables will not be
+modified in the library function to which they are passed.  The const
+keyword is present in the parameter list of the prototype that is found
+in the associated header file.  This prototype, not the declaration you
+should include in your program, is what is described in the synopsis for
+each function in the SAS/C Development System Library Reference.  Use
+the synopsis as a guideline for your declarations, but do not include
+the const keyword.
+@endnode
+
+@node scm026 "Compiler Message 26"
+Error 26:  arithmetic operand required
+
+An expression required an arithmetic operand but the provided operand
+was not arithmetic.  An operand is arithmetic if it declared as char,
+short, int, long, float, or double or the signed and unsigned variants
+of these types.
+
+Pointers, structures, unions, and functions are not arithmetic operands.
+@endnode
+
+@node scm027 "Compiler Message 27"
+Error 27:  arithmetic or pointer operand required
+
+An expression required an arithmetic or pointer operand, but a structure
+or union was provided.  An operand is arithmetic if it declared as char,
+short, int, long, float, or double or the signed and unsigned variants
+of these types.
+
+A pointer operand can be a pointer to any other data type, or it can be
+the address of a variable or function.
+@endnode
+
+@node scm028 "Compiler Message 28"
+Error 28:  missing operand
+
+During expression evaluation, the end of an expression was encountered
+but not enough operands were available for evaluation.  The compiler may
+generate this message if you specified a binary operator (such as the
+addition, subtraction, multiplication, or division operator) with only
+one operand.  Also, check for invalid preprocessor macro expansions.
+For example:
+
+   int i;
+   int ary[10];
+
+   i = i + ;     /* Error 28 */
+   i = ary[i*]4; /* Error 28 (Among others) */
+@endnode
+
+@node scm029 "Compiler Message 29"
+Error 29:  operation cannot be performed on a pointer
+
+An operation was specified that was invalid for pointer operands, such
+as one of the arithmetic operations other than addition or subtraction.
+@endnode
+
+@node scm030 "Compiler Message 30"
+Warning 30:  pointers do not point to same type of object
+
+In an assignment statement defining a value for a pointer variable, the
+expression on the right side of the assignment (=) operator did not
+evaluate to NULL or to a pointer of the same type as the pointer
+variable on the left side of the assignment operator.  The warning is
+also produced when a pointer of any type is assigned to an arithmetic
+object.
+@endnode
+
+@node scm031 "Compiler Message 31"
+Error 31:  integral operand required
+
+An expression required a given operand to be an integral type, but the
+actual operand was not an integral type.  An operand is integral if it
+is declared as char, short, int, or long or the signed and unsigned
+variants of these types.
+
+For example, the following code generates error 31:
+
+   double d;
+   int ary[10];
+
+   ary[d] = 10;  /* Error 31 */
+
+@endnode
+
+@node scm032 "Compiler Message 32"
+Error 32:  cannot convert to required type
+
+The compiler was unable to convert a data item from its base type to the
+type required by the operation.  The compiler may generate this message
+if you attempt to cast any data type to a structure, instead of casting
+the type to a pointer to a structure, or if you attempt to cast a
+structure to any other type.  This message can also be produced for
+implied conversions, such as passing a structure as a parameter to a
+function expecting some other type.  For example, the following code
+generates error 32:
+
+   struct FOO f;
+   int j;
+
+   j = (int)f;  /* Error 32 */
+
+@endnode
+
+@node scm033 "Compiler Message 33"
+Warning 33:  non-portable operation on structure or union
+
+Your code has attempted to use an operator on a structure or union that
+is illegal for that type.  For example, you may have used the equality
+== operator on two structures.  The ANSI Standard does not permit the
+use of relational operators on structures or unions.
+
+The SAS/C Compiler generates the equivalent of a @{" memcmp " link sc:help/sc_lib.guide/memcmp()} call for this
+construct, but it may not perform as expected.  Because structures may
+contain padding bytes, two structures of the same type with all
+identical members may compare false.  If you intend to use direct
+structure comparison, make sure you declare the structure static or
+extern, or initialize the structure to zeroes using a call to @{" memset " link sc:help/sc_lib.guide/memset()}.
+
+For example, the following code generates warning 33:
+
+   #include <proto/dos.h>
+   struct FileInfoBlock fib1, fib2;
+
+   if(fib1 == fib2)  /* Warning 33 */
+
+@endnode
+
+@node scm034 "Compiler Message 34"
+Error 34:  invalid initializer expression
+
+The expression used to initialize an object was invalid.  The compiler
+may generate this message if you fail to separate elements in an
+initializer list with commas or if you attempt to initialize an array to
+a single object, as shown in the following examples:
+
+   int a[3] = 0;            /* Error 34 */
+   int b[3] = { 1 2 3 };    /* Error 34 */
+@endnode
+
+@node scm035 "Compiler Message 35"
+Error 35:  closing brace expected
+
+The compiler expected a closing brace (}) to terminate the definition of
+a function, structure, or nested block scope, but the brace is missing.
+The compiler may generate this message if:
+
+   - too many elements occur in an initializer expression list
+   - a structure member was improperly declared
+   - the end of the source file is reached before a definition is
+     complete
+   - a previous error occurred in a control statement.
+@endnode
+
+@node scm036 "Compiler Message 36"
+Warning 36:  control cannot reach this statement
+
+A statement with no label followed a goto, return, break, or continue
+statement.  The statement is therefore unreachable.  This warning can
+sometimes be produced incorrectly if the compiler reported a previous
+error while in a control flow statement.  Fix all previous errors and
+recompile your program before trying to fix the error that is generating
+this message.
+@endnode
+
+@node scm037 "Compiler Message 37"
+Error 37:  duplicate statement label "<name>"
+           See line <number> in file "<filename>"
+
+The specified statement label has already been defined in the current
+function.  You cannot define the same label more than once in the same
+function.
+@endnode
+
+@node scm038 "Compiler Message 38"
+Error 38:  unbalanced braces
+
+In a set of compound statements, the number of opening left braces ({)
+did not equal the number of closing right braces (}).  This warning may
+be produced incorrectly if the compiler reported a previous error in a
+control flow statement.  Fix any previous errors and recompile your
+program before trying to fix the error that is generating this message.
+@endnode
+
+@node scm039 "Compiler Message 39"
+Error 39:  invalid use of keyword "<keyword>"
+
+One of the C language reserved words appeared in an invalid context (for
+example, as a variable name).
+@endnode
+
+@node scm040 "Compiler Message 40"
+Error 40:  break not inside loop or switch
+
+A break statement was detected that was not within the scope of a while,
+do, for, or switch statement.  This error may be produced incorrectly
+because of errors in previous statements.
+@endnode
+
+@node scm041 "Compiler Message 41"
+Error 41:  case not inside switch
+
+A case prefix was encountered outside the scope of a switch statement.
+This error may be produced incorrectly because of errors in previous
+statements.
+@endnode
+
+@node scm042 "Compiler Message 42"
+Warning 42:  case expression not integral
+
+The expression defining a case value did not evaluate to an integral
+constant.  This message is generated as an error message if the
+expression could not be converted into an integral constant and as a
+warning if the expression could be converted into an integral constant.
+For example, if you use a variable as a case value, the compiler
+generates an error message.  If you use a floating-point constant as a
+case value, the compiler converts the constant to an integer (thereby
+truncating its value) and generates a warning message.  For example, in
+the following code, the case value 1.6 is truncated to 1, and the value
+-1.6 is truncated to -1.
+
+   switch(i)
+   {
+      case 1.6:  /* Warning 42 */
+         break;
+
+      case -1.6:  /* Warning 42 */
+         break;
+   }
+
+@endnode
+
+@node scm043 "Compiler Message 43"
+Error 43:  duplicate of case value
+           See line <number> in file "<filename>"
+
+You have used the same case value more than once within the same switch
+statement.  Check for possible preprocessor macro definitions that
+expand to the same value.  For example, both of the following case
+statements evaluate to zero:
+
+   #define FOO 0
+   #define BAR 2
+
+   switch(i)
+   {
+      case FOO:
+         break;
+      case (FOO*BAR):  /* Error 43 */
+         break;
+   }
+
+@endnode
+
+@node scm044 "Compiler Message 44"
+Error 44:  continue not inside loop
+
+A continue statement was detected that was not within the scope of a
+while, do, or for loop.  This error may be produced incorrectly because
+of errors in previous statements.
+@endnode
+
+@node scm045 "Compiler Message 45"
+Error 45:  default not inside switch
+
+A default label was encountered outside the scope of a switch statement.
+This message may be produced incorrectly because of errors in previous
+statements.
+@endnode
+
+@node scm046 "Compiler Message 46"
+Error 46:  duplicate default
+           See line <number> in file "<filename>"
+
+A default label was encountered within the scope of a switch statement
+in which a default label had already been encountered.
+@endnode
+
+@node scm047 "Compiler Message 47"
+Error 47:  while missing from do statement
+
+A while clause did not follow the body of a do statement.  This message
+may be produced incorrectly because of errors in previous statements.
+@endnode
+
+@node scm048 "Compiler Message 48"
+Error 48:  invalid while expression
+
+The expression defining the looping condition in a while or do loop was
+void or was missing.  If you intend for a loop to be infinite, you must
+supply a constant (such as 1) for the while condition.  The error may be
+produced because of a preprocessor macro that expands to invalid code.
+In many cases, fixing a previous error eliminates this message.
+@endnode
+
+@node scm049 "Compiler Message 49"
+Error 49:  else not associated with if
+
+An else keyword was detected that was not in the scope of a preceding if
+statement.  This message may be caused by an error in a preceding
+statement, especially if the previous error occurred while processing
+the if statement with which the else statement is associated.
+@endnode
+
+@node scm050 "Compiler Message 50"
+Error 50:  label missing from goto
+
+The compiler expected a statement label to follow the goto keyword but
+the label was missing.  This message may be produced incorrectly because
+of errors in previous statements.
+@endnode
+
+@node scm051 "Compiler Message 51"
+Warning 51:  C++ comment detected
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=51 options.  In C++, comments begin with two
+slashes (//) and terminate at the end of the line on which they begin.
+The SAS/C Compiler accepts comments entered in this way for convenience
+and for compatibility with other implementations, but they are not part
+of the ANSI Standard for the C language.
+@endnode
+
+@node scm052 "Compiler Message 52"
+Error 52:  invalid if expression
+
+The expression following the if keyword on an if statement was void,
+invalid, or missing.  This error may be caused by a preprocessor macro
+expanding to inappropriate values or may be the result of an expression
+with an invalid return type (such as a structure type).  In many cases,
+fixing a previous error eliminates this message.
+@endnode
+
+@node scm053 "Compiler Message 53"
+Error 53:  invalid return expression
+
+The expression following the return keyword was void, invalid, or
+missing.  The compiler may generate this message if a preprocessor macro
+expands to inappropriate values.  In many cases, fixing a previous error
+eliminates this message.
+@endnode
+
+@node scm054 "Compiler Message 54"
+Warning 54:  switch expression not integral
+
+The expression defining the test value for a switch statement did not
+define an integral value as required by the ANSI Standard.  The value
+supplied is converted to int before any attempt is made to use it.  If
+the switch value is a floating-point value, this conversion may truncate
+the value.  This warning can also be generated as an error if the value
+could not be converted to int.
+@endnode
+
+@node scm055 "Compiler Message 55"
+Warning 55:  no case values for switch statement
+
+The statement defining the body of a switch statement did not define any
+case statements.  This warning may be produced incorrectly because of
+previous errors.
+@endnode
+
+@node scm056 "Compiler Message 56"
+Error 56:  colon expected
+
+The compiler expected but did not find a colon (:).  This message may be
+generated if a case expression was improperly specified or if the colon
+was omitted following a label to a statement.  Because the compiler
+scans through newlines, blanks, and comments looking for the colon, this
+message is usually produced at the beginning of the line following the
+actual error.
+@endnode
+
+@node scm057 "Compiler Message 57"
+Error 57:  semi-colon expected
+
+The compiler expected but did not find a semi-colon (;).  This error can
+be generated if you use too many right parentheses or right curly braces
+(}).  Because the compiler scans through spaces and tabs looking for the
+semicolon, this message is usually produced at the beginning of the line
+following the actual error.
+@endnode
+
+@node scm058 "Compiler Message 58"
+Error 58:  missing parenthesis
+
+A required parenthesis is missing.  This error is often caused by
+previous errors.
+@endnode
+
+@node scm059 "Compiler Message 59"
+Error 59:  invalid storage class
+
+Possible storage classes are denoted by the keywords __near, __far,
+__chip, register, auto, extern, and static.  Some of these keywords are
+invalid for certain types of data.  For example, you cannot declare an
+external variable with the register keyword, and you cannot declare an
+automatic (local) variable with the __chip, __near, or __far keywords.
+Your code attempted to use a storage class keyword incorrectly.  This
+error often occurs because of previous errors.
+@endnode
+
+@node scm060 "Compiler Message 60"
+Error 60:  incompatible struct, union or array types
+
+Incompatible structure, union, or array types were used in an
+expression.
+
+   struct A {int x;}    a;
+   struct B {double d;} b;
+   a = b;  /* Error 60 */
+@endnode
+
+@node scm061 "Compiler Message 61"
+Error 61:  undefined struct/union tag "<tag-name>"
+
+Your code has used a structure or union tag that has not been declared.
+Check for misspelled structure names.  You may want to compile your
+program with the @{" pponly " link sc:help/sc.guide/PreProcessONLY} option or the @{" list " link sc:help/sc.guide/list} option and look at the output
+produced.
+@endnode
+
+@node scm062 "Compiler Message 62"
+Warning 62:  constant <number> out of range for type "type"
+             Valid range is <low> to <high>
+
+The constant value indicated is not in the range of possible values for
+the type to which the value is being assigned.  This message may occur
+if you are assigning a hexadecimal constant with the uppermost bit set
+to a signed variable.  By definition, a hexadecimal constant is a
+positive value; therefore, the assignment to the variable reinterprets
+the constant as a negative number.  For example, the following lines
+generate warning 62:
+
+   signed char c = 0x80;    /* Warning 62 */
+   short s = 100000;        /* Warning 62 */
+   unsigned short uc = -1;  /* Warning 62 */
+
+
+Unless you use the @{" unsignedchar " link sc:help/sc.guide/unsignedchar} compiler option, variables of type char are
+signed and produce this warning if you assign any constant to them with
+the high bit set (that is, any value between 128 and 255.) You can
+suppress this warning for a specific case by casting the constant to the
+appropriate type.
+
+Out-of-range constants can cause problems in your code that are hard to
+debug.  For example, the following code does not behave as intended:
+
+   int i = 0xff;
+   signed char c = 0xff;  /* Warning 62 */
+
+   if(i == c)
+   {
+      /* Not executed */
+   }
+
+
+The constant initializer 0xff is the decimal number 255.  When assigned
+to the integer variable i, this value is preserved, and i gets the value
+255.  When assigned to the signed character variable c, the value of c
+becomes -1 because a signed character cannot represent numbers higher
+than 127, and the constant 0xff overflows.  Therefore, the comparison in
+the if statement results in the value false.
+@endnode
+
+@node scm063 "Compiler Message 63"
+Warning 63:  item "<name>" already declared
+             See line <number> file "<filename>"
+
+The named item was previously declared at the cited location.  This
+warning is produced when two different members of the same structure,
+union, or enum are given the same name.
+@endnode
+
+@node scm064 "Compiler Message 64"
+Error 64:  structure contains no members
+
+A structure declaration did not contain any members.  This error can be
+produced by errors encountered during the structure's declaration.
+Fixing a previous error may eliminate this message.
+@endnode
+
+@node scm065 "Compiler Message 65"
+Error 65:  invalid function definition
+
+Your code tried to define a function body inside another function body,
+inside a structure declaration, or inside a list of static initializers.
+This message may be produced incorrectly because of errors in previous
+statements.
+@endnode
+
+@node scm066 "Compiler Message 66"
+Warning 66:  invalid array limit expression
+
+The expression defining the size of the subscript in an array
+declaration did not evaluate to a positive integral constant.  For
+example:
+
+   int x[10.7];
+
+@endnode
+
+@node scm067 "Compiler Message 67"
+Error 67:  illegal object
+
+Your code attempted to define an illegal item.  For example, you may be
+declaring an array of functions (instead of an array of function
+pointers) or a function that returns an array (instead of a function
+that returns a pointer).  This message can also be produced if you
+attempt to define a variable with the same name as a keyword.  For
+example, the following code generates error 67:
+
+   int break; /* Error 67 */
+   long while; /* Error 67 */
+@endnode
+
+@node scm068 "Compiler Message 68"
+Error 68:  illegal object for structure
+
+A structure (or union) included a function as a member.  You cannot
+include a function as a member of a structure or union, although you can
+include a function pointer.
+@endnode
+
+@node scm069 "Compiler Message 69"
+Error 69:  struct <name> includes instance of self
+
+The named structure or union contains an instance of itself.  Although
+it is legal for a structure or union to include a pointer to its own
+type, the structure or union cannot contain an instance of itself.  If
+the structure or union does not have a name, the name field is not
+printed in the message.  For example, the following code generates error
+69:
+
+   struct FOO
+   {
+      int a, b, c;
+      struct FOO x;  /* Error 69 */
+   };
+
+@endnode
+
+@node scm070 "Compiler Message 70"
+Warning 70:  unrecognized escape sequence
+
+By default, this message is suppressed, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=70 options.  Escape sequences in string and
+character constants begin with a backslash (\) and contain one or more
+characters after the backslash.  The ANSI Standard defines some escape
+sequences and reserves others for future expansion and for
+implementation-defined extensions.  The SAS/C Compiler ignores the
+backslash on any such undefined escape sequences.  Other compilers may
+take different action.  For example, the following line prints the
+character q followed by a newline (\n) to stdout:
+
+   printf("\q\n");  /* Warning 70 */
+
+Other ANSI-conforming compilers may substitute any other character for
+the \q escape sequence.
+@endnode
+
+@node scm071 "Compiler Message 71"
+Error 71:  formal declaration error "<name>"
+
+A variable was declared before the left curly brace of in an old-style
+function definition, but the variable did not appear in the list of
+identifiers in parentheses following the function name.  For example,
+the declaration of j in the following code generates error 71:
+
+   int func(i)
+   int i;
+   int j;  /* Error 71 */
+   {
+   }
+
+You may have misspelled one of your formal parameters or forgotten to
+add the parameter to the parameter list.
+@endnode
+
+@node scm072 "Compiler Message 72"
+Error 72:  conflict with previous declaration
+           See line <number> file "<filename>"
+
+A variable or function was declared that conflicts with a previous
+declaration for the variable or function in the same scope.  The message
+indicates the filename and line number of the original declaration.  If
+no prototype exists for a function, the first use of that function
+implicitly declares the function as returning an int.  If the actual
+definition of the function follows the first use of the function and
+declares a different return type, the compiler produces this message.
+This message may be produced incorrectly if you forget to declare a
+variable in an earlier location and, therefore, received a previous
+error message about an undefined identifier with the same name.  Fixing
+the previous error may eliminate this message.
+@endnode
+
+@node scm073 "Compiler Message 73"
+Warning 73:  declaration expected
+
+The compiler expected to find the declaration of a data object or
+function but did not.  This message can also occur if you enter too many
+or too few curly braces.  This message may be produced incorrectly
+because of errors in previous statements.  Fixing the previous errors
+may eliminate this message.
+@endnode
+
+@node scm074 "Compiler Message 74"
+Warning 74:  initializer data truncated
+
+A static initializer expression contained more elements than the data
+item being initialized, as in the following example:
+
+   char b[3] = "abcd";    /* Warning 74 */
+
+String constants always have an implied NULL byte at the end.  This byte
+is not counted when producing this warning.  If you have a character
+array with three elements, you may initialize it as follows:
+
+   char b[3] = "abc";
+
+The three elements receive the values a, b, and c.  If there is room,
+the NULL terminator byte is also copied:
+
+   char c[4] = "abc";
+
+The elements of the above array are assigned the values a, b, c, and \0.
+@endnode
+
+@node scm075 "Compiler Message 75"
+Error 75:  invalid sizeof expression
+
+The expression passed to the sizeof operator was invalid.  This message
+may be produced if an attempt is made to take the size of a function,
+bitfield, or incomplete type, or if the result of the expression used is
+of type void.  For example, in the following code, a is an incomplete
+type because its size is not specified when it is declared:
+
+   extern int a[];
+   int i;
+
+   i = sizeof(a);  /* Error 75 */
+@endnode
+
+@node scm076 "Compiler Message 76"
+Error 76:  left brace expected
+
+The compiler expected but did not find an opening left brace.  For
+example, you may have omitted the opening brace on a list of initializer
+expressions for an aggregate.
+@endnode
+
+@node scm077 "Compiler Message 77"
+Error 77:  identifier expected
+
+The compiler expected to find the name of an identifier to be declared.
+The compiler may generate this message if the prefixes to an identifier
+in a declaration (parentheses and asterisks) are incorrectly specified
+or if a sequence of declarations is listed incorrectly, as in the
+following example:
+
+   int ;  /* Error 77 */
+@endnode
+
+@node scm078 "Compiler Message 78"
+Error 78:  undefined statement label "<name>"
+
+A goto statement referred to the named label, but the label does not
+exist in the function that referred to it.  Check the spelling of your
+label and the goto reference.  Make sure the label is in the same
+function as the goto statement.
+@endnode
+
+@node scm079 "Compiler Message 79"
+Warning 79:  duplicate of enumeration value
+             See line <line> file "file"
+
+When declaring an enumeration type, more than one enumeration constant
+was assigned the same value, as in the following example:
+
+  enum COLORS
+  {RED=1, BLUE=2, GREEN=1};  /* RED and GREEN are identical */
+
+Any enumeration constants that are not assigned an explicit value are
+assigned values one higher than the previous constant in that
+enumeration.  If the constant is the first constant in that enumeration,
+it is assigned the value zero.  Therefore, the following enum generates
+warning 79:
+
+  enum COLORS {RED, BLUE, GREEN=1};  /* Warning 79 */
+
+RED is the first constant, so it is assigned a value of 0.  BLUE is
+assigned a value of 1.  GREEN is explicitly assigned a value of 1, which
+conflicts with BLUE.
+@endnode
+
+@node scm080 "Compiler Message 80"
+Warning 80:  invalid bit field or misplaced ':'
+
+This warning is commonly produced if you type a colon (:) when a
+semicolon (;) was expected.  This warning can also be produced if you
+are actually declaring a bitfield and give an improper expression for
+the number of bits in the bitfield.
+@endnode
+
+@node scm081 "Compiler Message 81"
+Error 81:  preprocessor symbol loop; macro expansion too long or
+           circular
+
+When using the @{" oldpp " link sc:help/sc.guide/OLDPreProcessor} compiler option, a preprocessor symbol expanded to
+a value that contains a circular reference back to the symbol itself,
+thereby creating an infinite loop in the preprocessor.  Check the
+definition of the macro being expanded on the line in question.  This
+message cannot occur if the oldpp compiler option is not used because
+the ANSI Standard prohibits the expansion of preprocessor macros that
+occur as a result of expanding a previous instance of the same macro.
+@endnode
+
+@node scm082 "Compiler Message 82"
+Error 82:  maximum object/storage size exceeded
+           Size limit for this class is <number>
+
+Your code attempted to declare a data item that exceeded the maximum
+size of objects in its storage class, or the last object declared caused
+the total size of declared objects in that storage class to exceed the
+maximum, as in the following example:
+
+   char __near a[30000];
+   char __near b[30000];
+   char __near c[30000];
+
+Because there is a limit of 32767 bytes on the amount of near data
+allowed in a single module, the above request for 90000 bytes of near 
+data will not work.  If you are compiling with data=near (the default), 
+the __near keyword is implied on all data items.  Fix this warning by 
+declaring some large data items with the __far keyword or by compiling 
+with the @{" data " link sc:help/sc.guide/data}=far option.
+@endnode
+
+@node scm083 "Compiler Message 83"
+Warning 83:  reference beyond object size
+
+Your code used an address beyond the size of the object used as the base
+for the address calculation.  This warning usually occurs when you refer
+to an element beyond the end of an array, as follows:
+
+   char c[10];
+   void myfunc(void)
+   {
+      c[11] = 0;  /* Warning 83 */
+   }
+
+This message can be produced only when the compiler can determine the
+value of the subscript at compile time, that is, the subscript is a
+constant.
+@endnode
+
+@node scm084 "Compiler Message 84"
+Warning 84:  redefinition of pragma or preprocessor symbol "<name>"
+             See line <number> file "<filename>"
+
+Your code is redefining the preprocessor symbol or #pragma originally
+defined at the indicated file and line number.
+@endnode
+
+@node scm085 "Compiler Message 85"
+Warning 85:  return value mismatch for function "<name>"
+             Expecting "<type1>", found "<type2>"
+
+The expression specifying the value to be returned from a function was
+not the same type as the function itself.  If possible, the value
+specified is converted to the appropriate type.  You can suppress this
+warning by casting the return expression to the appropriate type.
+
+Some pre-ANSI C code produces many of these warnings when functions
+declared as int (either explicitly or implicitly) do not return a value.
+Before the ANSI committee approved the void keyword, declaring functions
+as returning an int was the correct way to handle functions that
+returned nothing.  You can compile with the @{" nowarnvoidreturn " link sc:help/sc.guide/warnvoidreturn} option to
+suppress these warnings when a function that is declared as returning an
+int actually returns nothing.
+
+For example, the following two functions generate warning 85:
+
+   function1(x)
+   int x;
+   {
+   }  /* Warning 85 */
+
+   int function2(x)
+   int x;
+
+   {
+      char *p = NULL;
+      return(p);  /* Warning 85 */
+   }
+
+You can suppress the warning 85 for function1 by compiling with the
+@{" nowvret " link sc:help/sc.guide/warnvoidreturn} option.  The nowvret option does not affect function2, which is
+attempting to return a pointer from a function declared as returning
+int.
+@endnode
+
+@node scm086 "Compiler Message 86"
+Warning 86:  formal parameters conflict with prototype
+             See line <number> file "<filename>"
+
+The types of the parameters to the function do not match the types given
+in the prototype for the function.  Check the prototype at the file and
+line indicated against your definition.
+@endnode
+
+@node scm087 "Compiler Message 87"
+Warning 87:  argument count incorrect, expecting <number> arguments
+             See line <number> file "<filename>"
+
+Your code invoked a function with an incorrect number of arguments,
+according to that function's prototype.  Check the prototype at the
+indicated file and line number against your usage of the function and
+the actual function definition.
+@endnode
+
+@node scm088 "Compiler Message 88"
+Warning 88:  argument type incorrect
+             Expecting "<type1>", found "<type2>"
+
+Your code invoked a function with an argument whose type conflicts with
+the corresponding parameter as declared in the function's prototype.
+The type of the argument expected is given as type1, and the type of the
+argument actually provided is type2.  If possible, the argument is
+converted to the appropriate type as if it were cast to that type.  If
+the argument cannot be converted, an error message is produced.
+@endnode
+
+@node scm089 "Compiler Message 89"
+Warning 89:  constant converted from "<type1>" to "<type2>"
+
+Your code supplied a constant that conflicted with the expected type.
+The constant was converted, but the conversion may have caused a loss of
+precision or lost values.  For example, in the following code, the
+prototype for the function foo specifies an int, but the function is
+passed a double constant:
+
+   void foo(int);
+
+   void myfunc(void)
+   {
+      foo(10.67);  /* Warning 89 */
+   }
+
+The double constant is converted to an integer, resulting in an integer
+argument of 10, and the compiler generates warning 89 to inform you of
+the conversion.
+@endnode
+
+@node scm090 "Compiler Message 90"
+Error 90:  invalid argument type specifier
+
+An error was made in declaring an argument in a function or prototype
+declaration.  For example, the following declaration does not specify a
+type for the parameter y.  For example:
+
+   void foo(int x, y)  /* Error 90 */
+   {
+   }
+
+@endnode
+
+@node scm091 "Compiler Message 91"
+Error 91:  illegal void operand
+
+One of the operands in an expression was of type void.  The void type
+represents no value and is, therefore, illegal in most expressions.
+@endnode
+
+@node scm092 "Compiler Message 92"
+Warning 92:  statement has no effect
+
+An expression statement did not produce an assignment, function call, or
+other action.  Such a statement serves no useful purpose and can be
+eliminated.  This warning is often generated when a typographical error
+has been made in coding the statement.  For example, you might enter the
+equality (==) operator when you intended to enter the assignment (=)
+operator:
+
+   int i;
+   i == 5;  /* Warning 92 */
+
+In this example, the user intended to assign the value 5 to the integer
+variable i, but because of the extra equals sign, the statement does
+nothing.
+@endnode
+
+@node scm093 "Compiler Message 93"
+Warning 93:  no reference to identifier "<name>"
+
+Your code declared an automatic (local) variable but never used the
+variable.  However, the variable might be used by code that has been
+excluded from the object module with #if or #ifdef statements.
+@endnode
+
+@node scm094 "Compiler Message 94"
+Warning 94:  uninitialized auto variable "<name>"
+
+An automatic (local) variable was used in an expression before it was
+given a value.  Automatic variables are not guaranteed to have any
+specific value when a function is entered, so an uninitialized automatic
+variable can create seemingly random bugs.  It is possible for this
+warning to not be produced when appropriate or to be produced
+incorrectly because the compiler does not check all possible execution
+paths.  In rare cases, the message is produced incorrectly if the
+variable is used in a loop construct and initialized later in the same
+loop construct, as shown:
+
+   void myfunc(void)
+   {
+      int i, j;
+      for(i=0; i<10; i++)
+      {
+         if(i > 0) printf("%d\n", j);  /* Warning 94 */
+         j = i;
+      }
+   }
+
+
+Without doing detailed loop analysis, the compiler cannot tell that j is
+not referenced by the call to printf until after it is initialized.
+
+Some cases that use uninitialized variables may not produce the warning.
+For example, no warning is produced for the following code even though j
+is not initialized if x is greater than 5:
+
+   void myfunc(int x)
+   {
+      int j;
+
+      if(x<5) j = x;
+
+      if(j < 5)  /* j might be uninitialized */
+      {
+         ...
+      }
+   }
+@endnode
+
+@node scm095 "Compiler Message 95"
+Warning 95:  unrecognized #pragma operand
+
+The keyword following a #pragma statement was not recognized as a SAS/C
+pragma keyword.  Version 6 of the SAS/C Compiler supports the libcall,
+flibcall, syscall, tagcall, and msg #pragmas.
+@endnode
+
+@node scm096 "Compiler Message 96"
+Error 96:  missing name for #pragma
+
+In a libcall, flibcall, syscall, or tagcall #pragma statement, the name
+of the routine to be called was omitted or incorrect.
+@endnode
+
+@node scm097 "Compiler Message 97"
+Error 97:  bad library base for #pragma
+
+In a libcall, flibcall, or tagcall #pragma statement, the library base
+was omitted or incorrect.
+@endnode
+
+@node scm098 "Compiler Message 98"
+Error 98:  invalid data for #pragma
+
+In a libcall, flibcall, syscall, or tagcall #pragma statement, the
+offset or magic number fields were invalid.  In a #pragma msg statement,
+a syntax error was made specifying the message number or the action to
+be taken.
+@endnode
+
+@node scm099 "Compiler Message 99"
+Error 99:  attempt to change a const lvalue
+
+Your code attempted to modify a variable declared with the const
+keyword.  Variables declared with the const keyword are read-only and
+cannot be modified.
+@endnode
+
+@node scm100 "Compiler Message 100"
+Warning 100:  no prototype declared for function "<name>"
+
+Your code called the named function, but the compiler did not find a
+prototype for that function.  Without a prototype, the compiler cannot
+perform parameter type checking.  Remember, a function that takes no
+parameters still needs a prototype with void as its parameter list:
+
+   int func(void);  /* "func" returns "int" and takes no parms */
+
+If the function is a SAS/C function, the SAS/C Development System
+Library Reference tells you which header file to #include to get the
+correct definition for the function.  If the function is an AmigaDOS
+function, its prototype is in the include:clib directory in the file for
+its library.  For more information, you can refer to the Amiga ROM
+Kernel Reference Manual:  Libraries, 3rd Edition (Commodore-Amiga, Inc.
+1992) or use the grep command to search the header file in the
+include:clib directory for the prototype.
+@endnode
+
+@node scm101 "Compiler Message 101"
+Error 101:  redundant keywords in declaration
+
+The same storage class keyword was specified multiple times when
+declaring a variable, function, or prototype.  For example, you may have
+specified the const or __chip keyword twice.
+
+However, you can specify a typedef with a storage class keyword.  Any
+variables declared with this typedef are automatically assigned to that
+specified storage class.  Therefore, you may get an error 101 for
+specifying the keyword explicitly on a variable declared with the
+typedef, as in the following example:
+
+   typedef int __far farint;
+
+   farint x;  /* Declares a far integer called "x" */
+
+   farint __far y;  /* Error 101 */
+
+@endnode
+
+@node scm102 "Compiler Message 102"
+Error 102:  conflicting keywords in declaration
+
+You have specified two mutually incompatible storage class keywords when
+declaring a variable, function, or prototype.  For example, you may have
+specified the __near and __far keywords on a variable definition.
+
+However, you can specify a typedef with a storage class keyword.  Any
+variables declared with this typedef are automatically assigned to that
+specified storage class.  Therefore, you may get an error 102 for
+specifying a keyword explicitly on a variable which conflicts with the
+keyword declared with the typedef, as in the following example:
+
+   typedef int __far farint;
+
+   farint x;  /* Declares a far integer called "x" */
+
+   farint __near y;  /* Error 102 */
+@endnode
+
+@node scm103 "Compiler Message 103"
+Warning 103:  uninitialized constant "[name]"
+
+The named variable was declared const, indicating that the variable is
+read-only, but you have not initialized the variable.  If the variable
+is declared static or extern, it is initialized to zero for you but is
+probably not useful unless explicitly initialized.
+@endnode
+
+@node scm104 "Compiler Message 104"
+Warning 104:  conversion from pointer to const/volatile to pointer to
+              non-const/volatile
+
+A pointer to a const or volatile object is being converted to a pointer
+to a normal object.  For example, you may be passing the address of a
+const variable to a function that takes a normal pointer.  After the
+pointer has been converted, the const or volatile attribute is lost.
+Therefore, your const data might get modified, or your volatile data
+might be kept in a register.
+
+In the following example, warning 104 is produced when the function foo
+is called with the const array data as an argument.
+
+   void foo(char *);
+
+   void myfunc(void)
+   {
+      const char data[] = "Hello, World!\n";
+      foo(data);  /* Warning 104 */
+      printf("%s\n", data);
+   }
+
+   void foo(char *p)
+   {
+      p[1] = 'a';
+   }
+
+The function foo actually modifies its data by writing to it.
+Therefore, printf prints the value Hallo, World!  instead of Hello,
+World!  because the constant array has been modified.
+@endnode
+
+@node scm105 "Compiler Message 105"
+Warning 105:  module does not define any externally-known symbols
+
+The C source file and all of its included headers were compiled, but no
+externally-visible functions or data items were defined.  In this case,
+a valid object file is produced, but it contains nothing that can be
+accessed, and the file can removed from your link step if you desire.
+@endnode
+
+@node scm106 "Compiler Message 106"
+Error 106:  postfix expression not allowed on a constant
+
+Your code attempted to apply a postfix ++ or -- operator to a constant.
+This message may be generated because of an incorrect macro expansion.
+You can use the @{" pponly " link sc:help/sc.guide/PreProcessONLY} option to generate a preprocessed file and check
+the macro expansion.
+@endnode
+
+@node scm107 "Compiler Message 107"
+Error 107:  too many initializers
+
+A data item was being initialized, but too many initializer elements
+were provided, as in the following example:
+
+   struct FOO
+   {
+      int i, j;
+   };
+
+   struct FOO foo = {10, 20, 30};  /* Error 107 */
+
+@endnode
+
+@node scm108 "Compiler Message 108"
+Warning 108:  zero-length arrays are not an ANSI feature
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=108 options.  You have declared an array of size
+zero, probably as a member of a structure to allow variable-sized
+structures.  While using zero-length arrays is a common extension to the
+ANSI Standard and is supported by the SAS/C Compiler, the ANSI Standard
+does not allow the use of zero-length arrays.
+@endnode
+
+@node scm109 "Compiler Message 109"
+Error 109:  invalid use of type name or keyword
+
+A type name (possibly a typedef) has been encountered where it was not
+expected.  You may have attempted to declare a variable with the same
+name as a keyword.
+@endnode
+
+@node scm110 "Compiler Message 110"
+Warning 110:  enum constant expression is wrong type 
+              Expecting "<type1>",found "<type2>"
+
+An enumeration constant value was explicitly assigned that did not match
+the type of the enum being declared.  For example, specifying a double
+constant when defining an enum or specifying a long constant when the
+@{" shortint " link sc:help/sc.guide/ShortINTegers} option is active will generate this message.  Example:
+
+   enum COLORS { RED=1.0 }; /* Warning 110 */
+@endnode
+
+@node scm111 "Compiler Message 111"
+Warning 111:  non-portable enum type specified
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=111 options.  As an extension to the ANSI
+Standard, the SAS/C Compiler supports short, char, and long enum types
+with the syntax short enum, char enum, and long enum.  To improve the
+portability of your code, enable this warning.
+@endnode
+
+@node scm114 "Compiler Message 114"
+Warning 114:  negative shift or shift too big for type shifts for type
+              "<type>" must be between 0 and <number> bits
+
+Your code attempted to shift an integral value by a constant number of
+bits, but the constant was either negative or higher than the number of
+bits in the value being shifted, as shown in the following examples:
+
+   int i = 1;
+   i = i >> 33;  /* Warning 114 */
+   i = i << -1;  /* Warning 114 */
+
+In the first example, i is 32 bits (an int) but is being shifted 33
+bits.  Shifting a value by a number of bits higher than the number of
+bits in the value generates a zero for the result.  In the second
+example, i is being shifted by a negative number of bits.  Attempting to
+shift a value by a negative number of bits usually generates a zero for
+the result (although this result is undefined by the ANSI Standard).
+@endnode
+
+@node scm115 "Compiler Message 115"
+Error 115:  enum constant value "<number>" out of range for enum type
+
+Your code specified a value for an enum constant while defining an
+enumerated type which is out of range for the type of enum being
+declared.  Remember that enum constants that are not explicitly assigned
+a numerical value are given the value of the previous constant defined
+in the same enum incremented by one.  This increment might place the
+constant's value out of the acceptable range, as in the following
+example:
+
+   char enum COLORS
+   {
+      RED=254,   /* Numeric value is 254         */
+      GREEN,     /* Numeric value is 255 (254+1) */
+      BLUE       /* Numeric value is 256 - too big for char */
+   };            /* Error 115 is issued */
+
+The enum constant RED is assigned a value of 254.  GREEN does not have
+an explicit value, so it is assigned 254+1, or 255.  BLUE does not have
+an explicit value, so its value would normally be 255+1, or 256.
+However, the enum is declared as being a char enum, so 256 is too big
+and error 115 is issued.
+@endnode
+
+@node scm116 "Compiler Message 116"
+Warning 116:  undefined enum tag "<name>"
+
+A reference was made to an enum that has not yet been declared.  The
+compiler may generate this message as a warning if only a pointer to the
+enum is used, but the compiler generates this message as an error if any
+other use is made of the enum.
+@endnode
+
+@node scm117 "Compiler Message 117"
+Error 117:  enum contains no members
+
+An attempt was made to define an enumerated type, but no member names
+were specified.  Use the @{" pponly " link sc:help/sc.guide/PreProcessONLY} option to generate a preprocessed file
+if you have problems eliminating this message.
+@endnode
+
+@node scm118 "Compiler Message 118"
+Error 118:  conflicting use of enum/struct/union tag "<name>"
+
+An attempt was made to define an enum, struct, or union that has the
+same name as a previously defined enum, struct, or union in the same
+scope.  You cannot define an enum with the same name as a struct, union,
+or another enum.
+@endnode
+
+@node scm119 "Compiler Message 119"
+Error 119:  identifiers missing from definition of function "<name>"
+
+A prototype-style function definition was encountered, but the names of
+the parameters were missing.  You can omit the parameter names from a
+prototype, but the names must be present in the actual function
+definition.  For example the following code generates error 119:
+
+   void func(int, int, double);  /* Legal prototype */
+
+   void func(int, int, double)   /* Illegal function definition */
+   {                             /* Error 119 */
+   }
+@endnode
+
+@node scm120 "Compiler Message 120"
+Warning 120:  Integral type mismatch:  possible portability problem
+              Expecting "<type1>", found "<type2>"
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=120 options.  The wrong integral type was passed as a
+parameter.  This error may be a problem on another compiler or another
+type of computer if the size of an int is different from the size of an
+int on the Amiga computer.  This warning is not a problem if your code
+needs to run with the SAS/C Compiler only.
+
+In the following example, the SAS/C Compiler promotes the short integer
+to a long integer even if you compile with the @{" shortint " link sc:help/sc.guide/shortintegers} option:
+
+   #pragma msg 120 warn
+   void func(long);
+
+   void main(void)
+   {
+      short s = 10;
+      func(s);      /* Warning 120 */
+   }
+
+However, pre-ANSI compilers on machines that define the int type to be
+the same as short may not perform the conversion or may perform the
+conversion and issue a warning message.  In addition, if you remove the
+prototype, this code will not work on any machine where int is the same
+as short.
+@endnode
+
+@node scm121 "Compiler Message 121"
+Warning 121:  hex/octal constant "<constant>" too large for char
+              High bits may be lost
+
+Warning 121 is generated if a hexadecimal or octal constant specifies
+more digits than will fit into a single char.
+
+According to the ANSI Standard, hexadecimal bytes may be specified in a
+quoted string using the \xhh escape sequence.  The ANSI Standard also
+states that the escape sequence consumes all valid hexadecimal
+characters in the string following the \x, even if all the characters
+consumed will not fit into a single byte, which may not be what you
+want.  For example, in the case of \xabcdefgh, you may want the
+character 0xab first, followed by the string cdefgh.  According to the
+ANSI Standard, this escape sequence evaluates to the character 0xef
+followed by the string gh, because the \x consumes all valid hexadecimal
+characters.  A single byte cannot hold the hexadecimal number 0xabcdef,
+so the top bits are lost and 0xef is the result.  The best way to get
+the character 0xab followed by the string cdefgh is to use ANSI string
+concatenation to terminate the escape sequence:  \xab cdefgh.  The two
+strings are concatenated to form the desired sequence.
+@endnode
+
+@node scm122 "Compiler Message 122"
+Warning 122:  missing ellipsis
+
+A function or function prototype was encountered that attempted to
+specify variable arguments with a trailing comma in the argument list.
+According to the ANSI Standard, variable arguments must be specified by
+a trailing comma followed by an ellipsis (...).  The SAS/C Compiler
+accepts the form without the ellipsis as if the ellipsis had been
+specified, but other ANSI-conforming compilers may require the ellipsis,
+as in the following example:
+
+  void foo(int x, ...  ); /* Right */
+  void bar(int x, );      /* Wrong */
+@endnode
+
+@node scm123 "Compiler Message 123"
+Warning 123:  no tag defined for enumeration
+              Cannot construct prototype
+
+The @{" genproto " link sc:help/sc.guide/genproto} option was active, but a prototype could not be generated
+for a function because an enum was used as a parameter to the function
+and that enum had no tag, as shown in the following example.
+
+   void myfunc(colors)
+   enum {RED, GREEN, BLUE} colors;
+   {
+   }
+
+The tag is the name normally appearing immediately after the keyword
+enum in the enum declaration.  This message is produced only if the
+genproto compiler option is used to produce prototypes.
+@endnode
+
+@node scm125 "Compiler Message 125"
+Error 125:  invalid number
+
+The numerical constant specified cannot be represented on the Amiga
+computer.  The constant is probably an integer that is too large or too
+small (negative) to be represented in four bytes.  This error can also
+be produced if a floating-point number is specified incorrectly or if
+invalid digits are provided to an octal constant.
+
+The following lines all produce error 125:
+
+   double d = 10.3.2;          /* Error 125 */
+   int i = 123456789123456789; /* Error 125 */
+   int j = 099;                /* Error 125 */
+
+In the first line, the value assigned to the floating-point variable has
+been incorrectly specified.  In the second line, the value contains too
+many digits to fit into an int.  In the third line, the value begins
+with a zero, which makes the value an octal constant, but it contains
+the digit 9, which is invalid for octal constants.
+@endnode
+
+@node scm126 "Compiler Message 126"
+Warning 126:  #endif, #else, or #elif out of order
+
+A #endif, #else, or #elif was encountered but no #if or #ifdef was
+active.
+@endnode
+
+@node scm127 "Compiler Message 127"
+Error 127:  operand to # operator must be a macro argument
+
+If a preprocessor macro parameter is preceded with the # operator, that
+parameter is replaced with the literal string consisting of the
+corresponding argument to the macro.  For example, if you pass the
+argument FOO to a macro, and that argument in the macro definition is
+preceded by the # operator, that argument expands to the string "FOO".
+The # operator can be applied only to macro arguments.
+@endnode
+
+@node scm128 "Compiler Message 128"
+Error 128:  <text-from-#error>
+
+This message is the result of a #error preprocessor directive in the
+source code being compiled.  The text of the message is taken from the
+#error line.
+@endnode
+
+@node scm129 "Compiler Message 129"
+Error 129:  ambiguous struct or union member "<name>"
+
+Your code referred to a structure or union member that did not exist.
+In an attempt to resolve the name, the compiler examined the names of
+all members of substructures or subunions.  Two or more members of
+subaggregates matched the name you provided, so the compiler was unable
+to determine which member you intended to specify.
+
+Suppose you have the following code:
+
+void main(void)
+{
+   struct FOO
+   {
+      int x, y, z;
+   };
+
+   struct BAR
+   {
+      int a, b, x;
+   };
+
+   struct COMBO
+   {
+      struct FOO foo;
+      struct BAR bar;
+   } combo;
+
+   combo.a = 10;  /* Warning 193 */
+   combo.x = 10;  /* Error 129 */
+}
+
+The reference to combo.a succeeds, although it generates a warning 193
+(implicit reference to structure member), because the full reference
+should be combo.bar.a.  The reference to combo.x generates error 129,
+because both substructures of combo contain a member called x.  The
+compiler cannot tell whether you mean combo.foo.x or combo.bar.x, so it
+issues the error message 129.
+
+See Chapter 11, "Using Amiga Specific Features of the SAS/C Language,"
+for more information on implicit structure references.
+@endnode
+
+@node scm131 "Compiler Message 131"
+Error 131:  maximum temporary or formal storage exceeded
+
+The compiler must allocate stack storage to allow you to pass and
+receive structures or other parameters to and from functions.
+Parameters are copied onto the stack for each function call, so if you
+are passing large structures, your code will run very slowly.  Consider
+passing a pointer to your structure instead of the entire structure.
+@endnode
+
+@node scm132 "Compiler Message 132"
+Warning 132:  extra tokens after valid preprocessor directive
+
+The ANSI Standard does not allow extra text on a preprocessor line, but
+this extra text may be allowed by some C compilers.  For example, many
+programmers put a descriptive word after a #endif directive indicating
+the #if to which the #endif belongs.  To make your code ANSI-compatible,
+you should place such descriptive words in comments, as shown in the
+following example:
+
+   #ifdef SOMETHING
+   #endif SOMETHING /* Warning 132 */
+
+   #ifdef SOMETHING
+   #endif /* SOMETHING */  /* No warning */
+@endnode
+
+@node scm133 "Compiler Message 133"
+Error 133:  cannot redefine macro "<name>"
+
+An attempt was made to redefine a built-in preprocessor macro, like
+__FILE__ or __LINE__.  You cannot redefine built-in preprocessor macros.
+@endnode
+
+@node scm134 "Compiler Message 134"
+Warning 134:  too many arguments
+
+A macro definition was encountered with more than the allowable number
+of arguments.  The current ANSI limit for macro arguments is 31, and the
+SAS/C Compiler does not allow more than 31 arguments.  If message 134 is
+issued, the macro is not successfully defined.  Any use of the macro in
+your code produces a warning for a function with no prototype and
+possibly a linker error when the name of the macro cannot be resolved by
+the linker.
+@endnode
+
+@node scm135 "Compiler Message 135"
+Error 135:  argument count incorrect for macro "<name>", expecting <number>
+            arguments
+            See line <number> file "<filename>"
+
+Your code invoked a macro with too few or too many arguments.  The macro
+is defined at the specified file and line number.
+@endnode
+
+@node scm136 "Compiler Message 136"
+Error 136:  invalid use of register keyword
+
+Your code used one of the register keywords inappropriately.  The
+register keywords are register, __a0, __d0, __a1, __d1, and so on.
+@endnode
+
+@node scm137 "Compiler Message 137"
+Warning 137:  ANSI limits #line numbers to between 1 and 32767
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=137 options.  The ANSI Standard states that line
+numbers specified with a #line directive should be between 1 and 32767.
+However, the SAS/C Compiler accepts any number that will fit into a
+signed four-byte integer.
+@endnode
+
+@node scm138 "Compiler Message 138"
+Error 138:  operation invalid for pointer to void
+
+Your code attempted to perform an operation on a void * pointer that is
+not valid for void *.  Such operations include addition, subtraction,
+array indexing, and dereferencing (unary * operator).  For example, the
+following code attempts to perform addition on a void * pointer:
+
+   void *p = NULL;
+
+   p = p + 1;  /* Error 138 */
+@endnode
+
+@node scm139 "Compiler Message 139"
+Warning 139:  missing #endif
+              See line <number> file "<filename>"
+
+The compiler encountered an #if, #ifdef, or #elif statement for which
+there is no matching #endif.  The file and line number of the unmatched
+directive is specified in the message.  This message occurs only at the
+end of the source file, so large portions of your program may have been
+ignored because of a stray #if or #ifndef with no matching #endif.
+@endnode
+
+@node scm140 "Compiler Message 140"
+Warning 140:  sizeof operator used on array that has been converted to
+              pointer
+
+Use of the sizeof operator on an array name gives the size of the array.
+However, if the array name has been converted (cast) to a pointer, the
+resulting size is the size of the pointer (4 bytes), not the size of the
+array.  Almost any use of an array name in an expression implicitly
+casts the array name to pointer.  To determine the actual size of the
+array, pass only the array name to the sizeof operator.
+
+In the following example, in the first assignment statement, i gets the
+value 4 (the size of a pointer to a character).  In the second
+assignment statement, i gets the value 10.
+
+   char ary[10];
+   int i;
+
+   i = sizeof(ary+1);  /* Warning 140 */
+   i = sizeof(ary);
+@endnode
+
+@node scm142 "Compiler Message 142"
+Error 142:  array size never given for "<name>"
+
+You can declare an array as extern and not specify the first subscript.
+However, when you define the array, you must specify the subscript.
+Storage is allocated when you define an array, not when you declare an
+array as extern.  For example:
+
+   extern char ary1[][10];  /* Legal */
+
+   char ary2[][10];         /* Error 142 */
+@endnode
+
+@node scm143 "Compiler Message 143"
+Error 143:  object has no address
+
+An attempt was made to take the address of something that has no
+address.  You may be attempting to take the address of a register
+variable or an expression.
+@endnode
+
+@node scm145 "Compiler Message 145"
+Error 145:  attempt to define item "<name>" in a GST file
+
+You have attempted to define a data item or function in a GST file.  This is
+not allowed.
+
+There is a distinction between a definition and a declaration.  A definition
+actually reserves memory or generates code;  a declaration does not.  Examples
+of definitions are:
+
+   static int x;    /* Reserves memory for variable "x" */
+
+   static int func(void)  /* Generates code for function */
+   {
+      return(10);
+   }
+
+   static int __inline func2(void)   /* This is still a definition! */
+   {
+      return(10);
+   }
+
+Examples of declarations are:
+
+   extern int x;    /* Doesn't reserve memory, just gives the type */
+   
+   int func(void);  /* Doesn't generate code, just gives the type */
+
+Note that the MAKEGST option implies the NOEXTDEF option, which forces all
+external data definitions to become definitions.  Thus you will not get this
+error if you declare externally-visible data.  You will get it if you
+declare static data, static functions, or non-static functions.  If you 
+attempt to define externally-visible data in your GST file, you will get
+an unresolved reference at link time.
+
+@endnode
+
+@node scm146 "Compiler Message 146"
+Warning 146:  case value out of range for switch type
+
+A case value was specified in a switch statement that can never be
+taken.  For example, if you compile with the @{" shortint " link sc:help/sc.guide/shortintegers} option and a
+switch statement is switching on a short or int value, case values too
+big to be stored in 16 bits will generate this warning:
+
+      /* The SHORTINT compiler option is on. */
+   int i = 10;
+
+   switch(i)  /* i is a 16-bit integer */
+   {
+      case 0x08000000:   /* Warning 146 */
+         break;
+
+      case 65000:        /* Warning 146 */
+         break;
+   }
+@endnode
+
+@node scm147 "Compiler Message 147"
+Warning 147:  conversion between function and data pointers
+
+Your code has cast or otherwise converted a pointer that points to a
+function to a pointer that points to data.  The ANSI Standard states
+that this conversion is not legal.  This conversion works with the SAS/C
+Compiler in most circumstances, but you should use the @{" absfuncpointer " link sc:help/sc.guide/absfuncpointer}
+compiler option if your code is larger than 32K.
+@endnode
+
+@node scm148 "Compiler Message 148"
+Warning 148:  use of incomplete struct/union/enum tag "<name>"
+              See line <number> file <filename>
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=148 option.  An incomplete tag is one for which no definition has
+been seen.  The ANSI Standard allows use of an incomplete tag (for
+declaring pointers, for example).  If you want to know when an
+incomplete tag is being used, enable this warning.  You may also want to
+enable warning 149.
+@endnode
+
+@node scm149 "Compiler Message 149"
+Warning 149:  incomplete struct/union/enum tag in prototype scope "<name>"
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=149 options.  An incomplete tag was discovered in a
+prototype.  An incomplete tag is one for which no definition has been
+seen.  The ANSI Standard requires the incomplete tag's scope to end at
+the end of the prototype.  Therefore, any definition of the function
+later, even if the tag in question has been defined, may generate an
+error message and terminate the compilation.  You may want to turn on
+warning 148 for the most information about incomplete tags.  If you do
+not want to see all the incomplete tag information, you identify most
+problem cases by enabling only warning 149.
+
+The following function definition produces an error on many
+ANSI-conforming compilers because the structure FOO referred to in the
+definition is considered to be a different structure FOO than the one
+referred to in the prototype.
+
+   void func(struct FOO *);  /* Warning 149 */
+
+   struct FOO
+   {
+      int x, y, z;
+   };
+
+      /* Many compilers issue an error here. */
+   void func(struct FOO *foo)
+   {
+   }
+
+This error could be fixed by moving the definition for the structure FOO
+before the prototype.
+@endnode
+
+@node scm150 "Compiler Message 150"
+Warning 150:  the keyword "<name>" is meaningless for <itemtype>
+
+When declaring a function or data item, you have used a keyword that is
+meaningless for that type of item.  For example, you cannot specify the
+following:
+
+   void __chip foo(int);  /* Warning 150 */
+
+It is meaningless to say that a function is to be allocated in __chip
+memory.
+
+The __near and __far storage class keywords are valid on both functions
+and data items, but have slightly different meanings.  See the
+descriptions of the @{" data " link sc:help/sc.guide/data}=near and @{" code " link sc:help/sc.guide/code}=near options in Chapter 8,
+"Compiling and Linking Your Program," for more information.
+
+Some keywords that are valid on functions are also valid on data items
+because the data items may be pointers to functions of the designated
+type.  For example, you may have a function that returns a pointer to a
+__regargs function.  Keywords in this category include __stdargs,
+__regargs, __asm, and __interrupt.
+
+Other keywords need to be present only on the function definition.  You
+do not need to add them to function pointers and function prototypes.
+Keywords in this category include __stackext and __saveds.  If these
+keywords appear on a data item, warning 150 is generated and the extra
+keyword is ignored.
+
+For more information on specifying keywords, see Chapter 11, "Using
+Amiga Specific Features of the SAS/C Language."
+@endnode
+
+@node scm152 "Compiler Message 152"
+Error 152:  cannot define function via typedef name
+
+Your code attempted to define a function using a typedef, as shown
+below:
+
+   typedef int foo(int);
+
+   foo bar  /* Error 152 */
+   {
+   }
+
+According to the ANSI Standard, you cannot define a function using a
+typedef.  The SAS/C Compiler does not accept such a definition.
+@endnode
+
+@node scm154 "Compiler Message 154"
+Warning 154:  no prototype declared for function pointer
+
+Function pointers require prototypes just like functions.  To declare a
+prototype for a function pointer, enter the parameter list instead of
+the empty parentheses in the definition, as shown in the following
+example:
+
+   void (*func1)();  /* Warning 154 */
+
+   void (*func2)(int, double, long);  /* No warning */
+
+Remember that a pointer to a function that takes no parameters still
+requires a prototype:
+
+   void (*func3)(void);  /* Function pointer takes no parms */
+@endnode
+
+@node scm155 "Compiler Message 155"
+Warning 155:  no statement after label
+
+The C language does not allow a label immediately before the curly brace
+ending a block (}).  If you enter a label in this position, the SAS/C
+Compiler generates this warning.  Enter a semicolon (representing a NULL
+statement) after the label to suppress the warning, as shown in the
+following example:
+
+   void func1(void)
+   {
+      goto foobar;
+         /* more code */
+      foobar:    /* Warning 155 */
+   }
+
+   void func2(void)
+   {
+      goto foobar;
+          /* more code */
+      foobar: ;   /* No warning */
+   }
+@endnode
+
+@node scm156 "Compiler Message 156"
+Warning 156:  operation/comparison of pointer to "int" and pointer to
+              "<type>"
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=156 options.  If you compiled with the @{" shortint " link sc:help/sc.guide/shortintegers} option, your
+program has used a pointer to int and a pointer to short in an
+operation.  If you did not compile with the shortint option, your
+program has used a pointer to int and a pointer to long in an operation.
+
+For example, the following code will work if int and long are the same
+length, but the same code will not compile if ints and longs are
+different lengths:
+
+     /* Assume SHORTINT is not active */
+    int *ip = NULL;
+    long *lp = NULL;
+    int diff;
+
+    diff = ip - lp;
+@endnode
+
+@node scm158 "Compiler Message 158"
+Error 158:  invalid type name
+
+The compiler expected a type name for a cast or offsetof operation, but
+the provided name was not recognized as a valid type name.  Check the
+preprocessed output to make sure you are providing the correct
+information.
+@endnode
+
+@node scm159 "Compiler Message 159"
+Warning 159:  use of unary minus on unsigned value
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=159 options.  Your code has used the unary minus operator
+(-) on an unsigned variable.  Using this operator on an unsigned
+variable may not produce the expected result because the result is still
+a non-negative number.
+@endnode
+
+@node scm161 "Compiler Message 161"
+Warning 161:  no prototype declared at definition for function "<name>"
+
+An old-style function definition was encountered, and no prototype was
+in scope.  The prototype must appear in the C file or a header file
+before the definition of the function, or the function definition itself
+must be a prototype-style definition.
+@endnode
+
+@node scm162 "Compiler Message 162"
+Warning 162:  non-ANSI use of ellipsis punctuator
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=162 options.  You have declared a function with
+the ellipsis punctuator (...) but the function has no arguments.  The
+ANSI Standard requires functions that take a variable number of
+arguments to take at least one fixed argument.
+@endnode
+
+@node scm163 "Compiler Message 163"
+Warning 163:  initialization of auto struct, union, or array
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=163 options.  Your code has initialized an automatic
+structure, union, or array.  The ANSI Standard allows you to initialize
+automatic structures, union, and arrays, but many pre-ANSI compilers do
+not.
+@endnode
+
+@node scm164 "Compiler Message 164"
+Warning 164:  & applied to array
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=164 options.  Your code has used the address (&) operator
+on an array name.  You should instead take the address of the first
+element in the array, or use the array name without the address
+operator.  For example:
+
+   int ary[10];
+   int *iptr;
+
+   iptr = &ary;       /* warning 165 */
+   iptr = ary;        /* OK          */
+   iptr = &ary[0];    /* OK          */
+
+@endnode
+
+@node scm165 "Compiler Message 165"
+Warning 165:  use of narrow type in prototype
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=165 option.  This warning is provided for detecting situations that
+may cause problems on other compilers if your code mixes function
+prototypes and old-style function definitions.  See Chapter 13, "Writing
+Portable Code," for information on using narrow types in function
+declarations.  See also the descriptions of messages 176 and 179.
+@endnode
+
+@node scm166 "Compiler Message 166"
+Error 166:  unrecoverable error or too many errors 
+            Terminating compilation
+
+Your program has exceeded the default or specified maxerr or maxwarn
+values, or an error has occurred that prevents the compiler from
+producing meaningful results.
+
+The default maximum number of errors is 50.  By default, any number of
+warnings may be generated.
+@endnode
+
+@node scm169 "Compiler Message 169"
+Warning 169:  incompatible operands of conditional operator (?:) "<type1>"
+              conflicts with "<type2>"
+
+The operands of the ?:  conditional operator must be of compatible
+types.  Your code supplied types to the ?:  operator that were not
+compatible.  For example, the following code generates warning 169:
+
+   int func(void)
+   {
+      int i = 0;
+      struct FOO *foo = NULL;
+
+      return (int)(i > 0 ? foo : i);  /* Warning 169 */
+   }
+
+
+The expression following the question mark (?) is of type struct FOO *.
+The expression following the colon (:) is of type int.
+
+This message can be an error if it is not possible to convert the types
+in question.  This can occur if one of the types is a structure or
+union.
+@endnode
+
+@node scm170 "Compiler Message 170"
+Warning 170:  overflow during operation on constants
+
+A constant expression overflowed the limits of the type in which it was
+being calculated.  Perhaps you have added or multiplied two large
+integers, thereby resulting in a number too large to represent in a
+four-byte integer.
+@endnode
+
+@node scm176 "Compiler Message 176"
+Warning 176:  implicitly promoted formal "<name>" conflicts with prototype
+              See line <number> file "<filename>"
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=176 options.  You are defining a function using an
+old-style definition, which means that any narrow types (char, short,
+and float) in your definition are implicitly widened to their non-narrow
+equivalents (int, int, and double, respectively).  However, a prototype
+is in scope that gives the narrow version of the type.
+
+Functions that call your function will not know that your function is
+using an old-style definition and, with some compilers, may pass an
+incorrect value.  An incorrect value is never passed using the SAS/C
+Compiler on the Amiga hardware.  See Chapter 13, "Writing Portable
+Code," for information on using narrow types in function declarations.
+See also the descriptions of messages 165 and 179.
+@endnode
+
+@node scm178 "Compiler Message 178"
+Warning 178:  indirect call without indirection operator
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=178 options.  You called a function using a function
+pointer, but did not use the indirection (*) operator to dereference the
+pointer first.  The SAS/C Compiler generated correct code, but on
+pre-ANSI compilers this code may not work.  Example:
+
+   void (*funcptr)(int);
+
+   funcptr(10);  /* Warning 178 */
+   (*funcptr)(10);  /* No warning */
+@endnode
+
+@node scm179 "Compiler Message 179"
+Warning 179:  narrow type used in old-style definition
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=179 options.  Your code has used a narrow type (char,
+short, or float) in an old-style definition.  See Chapter 13, "Writing
+Portable Code," for information on using narrow types in function
+declarations.  See also the descriptions of messages 165 and 176.
+@endnode
+
+@node scm180 "Compiler Message 180"
+Warning 180:  no space between macro name and its replacement list
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=180 options.  Your code is defining a preprocessor
+macro that takes arguments but does not have at least one blank after
+the closing parentheses of the argument list.  The ANSI Standard
+requires white space after the closing parentheses.  For example:
+
+   #pragma msg 180 warn
+   #define ADD(a,b)(a+b)  /* Warning 180 */
+@endnode
+
+@node scm181 "Compiler Message 181"
+Warning 181:  "<name>" was declared both static and external
+              See line <number> file "<filename>"
+
+Your code has declared a function as both static and external at
+different places.  Both the function and its prototype must agree on
+whether the function is static.
+@endnode
+
+@node scm182 "Compiler Message 182"
+Warning 182:  static function "<name>" declared but not defined
+              See line <number> file "<filename>"
+
+Your code had a prototype for a function declared static but never
+defined the function.  The function definition may be hidden with #if or
+#ifdef statements.
+@endnode
+
+@node scm183 "Compiler Message 183"
+Warning 183:  inline function declared but not defined
+              See line <number> file "<filename>"
+
+Your code had a prototype for a function declared __inline but never
+defined the function.  The function definition may be hidden with #if or
+#ifdef statements.
+@endnode
+
+@node scm184 "Compiler Message 184"
+Warning 184:  unterminated character constant
+
+If you compiled with the @{" MCCONS " link sc:help/sc.guide/MultipleCharacterCONStants} option, you specified a multibyte character
+constant bigger than four bytes.  Examples:
+
+   int c = 'abcde';
+   int d = 'a;  /* Notice the unbalanced single quote */
+
+If you did not specify MCCONS, you specified a character constant bigger than one
+byte.  Example:
+
+   int c = 'ab';
+   int d = 'a;  /* Notice the unabalanced single quote */
+
+@endnode
+
+@node scm185 "Compiler Message 185"
+Error 185:  comma expected
+
+The compiler expected a comma but did not find one.  This error may be
+produced because of errors in previous statements.  Fix all previous
+errors before fixing this one.
+@endnode
+
+@node scm186 "Compiler Message 186"
+Warning 186:  implicit conversion between pointer and scalar
+
+Your code has converted a pointer to an integer while doing static
+initialization.  You can suppress this warning by casting the pointer to
+the appropriate type.
+@endnode
+
+@node scm187 "Compiler Message 187"
+Warning 187:  negative value assigned to unsigned type
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=187 options.  Your code has assigned a negative constant
+to an unsigned variable.  In doing so, your code is in effect assigning
+a very large positive number to the variable, which may or may not be
+the action you intended.
+@endnode
+
+@node scm190 "Compiler Message 190"
+Warning 190:  #include ignored because header already included
+              See line <number> file "<filename>"
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=190 option.  The @{" nomultipleincludes " link sc:help/sc.guide/multipleincludes} compiler option is active, and
+your code included the same header file more than once.  The compiler
+ignores the additional #include statement.  You can use this message to
+locate all such multiple includes if you want to modify your header
+files to not include the same file more than once.
+
+You can get even more information about which header files were included
+by using the @{" listincludes " link sc:help/sc.guide/listincludes} compiler option.
+@endnode
+
+@node scm192 "Compiler Message 192"
+Warning 192:  wrong size for enum
+
+An enum variable was declared to be of a different type than the base
+enum was when it was defined.  Suppose you have the following code:
+
+   char enum COLORS = {RED, GREEN, BLUE};
+   enum COLORS color;  /* Warning 192 */
+   char enum COLORS color2;      /* correct */
+
+The enum variable color should be declared the same size as the base
+enum type, which is char enum.  The base enum type overrides the enum
+variable's type definition.
+@endnode
+
+@node scm193 "Compiler Message 193"
+Warning 193:  implicit reference to struct/union member
+              Reference assumed to be "<reference>"
+
+Your code has referred to a struct or union member name that is actually
+a member of a substructure or subunion of the original.  The compiler
+has searched all substructures and subunions and determined that exactly
+one member matches the name you specified, so it is using that member.
+The reference printed in the message text is the fully expanded name of
+the member that it is using.  If you intend to take advantage of this
+feature of the SAS/C Compiler, you may disable this warning with the
+@{" ignore " link sc:help/sc.guide/ignore}=193 option.  If you choose to disable this warning, your code may
+not work on other compilers.
+
+For more information on using implicit structure references, see Chapter
+11, "Using Amiga Specific Features of the SAS/C Language."
+@endnode
+
+@node scm194 "Compiler Message 194"
+Warning 194:  too much local data for NEAR reference, some changed to
+              FAR
+
+You have declared more than 32K of static data.  The compiler can
+address up to this amount using 16-bit offsets.  Amounts greater than
+32K must be addressed using 32-bit offsets.  You may have compiled with
+the @{" data " link sc:help/sc.guide/data}=faronly option and declared some data with the __near keyword.
+If your entire project is in one source file or is compiled with
+data=faronly, you can ignore this warning unless you get an error later
+in the compilation or link.  Otherwise, you must eliminate some near
+data in one of three ways:
+   - Compile your program with the @{" strmerge " link sc:help/sc.guide/stringmerge} compiler option.  This
+     option moves all string constants to the code section, thereby
+     moving them out of the near data section.
+
+   - Declare read-only data as static const.  When you compile with the
+     @{" stringmerge " link sc:help/sc.guide/stringmerge} option, this data will also be moved to the code
+     section.
+
+   - Add the __far keyword to some of your larger external or static
+     data items to move those items from the near section to the far
+     section.
+
+   - Specify the @{" data " link sc:help/sc.guide/data}=far compiler option to move all data items except
+     those declared with the __near keyword to the far section.
+
+NOTE:  The second line of message 194 is not printed unless you compiled
+with the @{" data " link sc:help/sc.guide/data}=auto option, or you compiled with the @{" data " link sc:help/sc.guide/data}=faronly option
+and declared data with the __near keyword.
+@endnode
+
+@node scm195 "Compiler Message 195"
+Warning 195:  nested comment detected
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=195 option.  The compiler found the start of a comment (/*) inside
+of a comment.  Some compilers allow comment nesting and others ignore
+the start of the second comment.  The ANSI Standard does not allow
+nested comments.  If you choose to use nested comments, you should
+specify the @{" comnest " link sc:help/sc.guide/commentnest} compiler option.  However, using the comnest option
+prevents your code from running on most ANSI-compliant compilers.
+@endnode
+
+@node scm196 "Compiler Message 196"
+Warning 196:  specified include directory not found:  "<name>"
+
+The named directory does not exist or could not be accessed.
+@endnode
+
+@node scm198 "Compiler Message 198"
+Warning 198:  __regargs and __asm cannot be used on a varargs function
+
+Functions that take variable numbers of parameters always pass their
+parameters on the stack.  The __regargs and __asm keywords are invalid 
+for these functions.
+
+@endnode
+
+@node scm199 "Compiler Message 199"
+Error 199:  unbalanced comment
+            See line <number> file <filename>
+
+Your code has a comment open (/*) with no corresponding comment close
+(*/).  This condition is not detected until the end of the C source
+file.
+@endnode
+
+@node scm200 "Compiler Message 200"
+Error 200:  no register specified for parameter to __asm function
+
+You declared a function with the __asm keyword, but you did not pick a
+register for one or more of the parameters.  You must include a register
+when declaring the function prototype.  Example:
+
+   void __asm func(register __d0 int x, 
+                   register __a0 char *y,
+                   register __fp0 double d);
+
+Note that the use of floating point registers is only valid if the
+@{" MATH=68881 " link "sc:help/sc.guide/MATH"} option is used.
+
+@endnode
+
+@node scm204 "Compiler Message 204"
+Warning 204:  macro invocation not terminated
+
+Your code invoked a macro but did not supply enough closing parentheses
+to terminate the invocation.  Also, check any of the macros that are
+invoked by the macro that you invoked directly in your code.
+@endnode
+
+@node scm209 "Compiler Message 209"
+Warning 209:  macro invocation may have multiple side effects
+
+You have passed an expression with a side effect as an argument to a
+macro, and that macro has evaluated the argument more than once.
+Operators with side effects are ++, --, +=, /=, *=, -=, >>=, <<=, |=,
+&=, and =.
+
+For example, the max and min macros evaluate each argument twice.  If
+you invoke the max macro as MAX(i++, j), the first argument is evaluated
+twice, and two post-increments take place.  You could define the max
+macro as follows:
+
+   #define MAX(x,y) ((x) > (y) ? x : y)
+
+   int i = 0;
+   i = MAX(i++, 0);   /* Warning 209 */
+
+The macro expands to:
+
+   i = ((i++) > (0) ? i++ : 0);
+
+The expansion contains the expression i++ twice, so if that branch of
+the ?:  operator is executed, the variable i is incremented twice.
+
+This warning may sometimes be produced incorrectly, but you should
+examine each case to determine whether there is an error.
+
+Function calls are also considered side effects, but function calls
+produce @{" Warning 217 " link scm217} instead of Warning 209.
+@endnode
+
+@node scm212 "Compiler Message 212"
+Warning 212:  item "<name>" already declared
+              See line <number> file "<filename>"
+
+This message is suppressed by default, but you can enable it with the
+@{" warn " link sc:help/sc.guide/warn}=212 option.  You have declared an item twice.  For example, you may
+have specified the prototype for a function twice, or you may have
+declared an extern twice.  The declarations do not conflict, or the
+compiler would generate error 72, but code is harder to maintain if it
+defines the same item in more than one place.  You may want to use the
+@{" nomultipleincludes " link sc:help/sc.guide/multipleincludes} option to suppress multiple #includes of the same
+file if you enable warning 212.
+@endnode
+
+@node scm213 "Compiler Message 213"
+Warning 213:  empty argument to preprocessor macro
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict}, @{" ansi " link sc:help/sc.guide/ansi}, or @{" warn " link sc:help/sc.guide/warn}=213 options.  Your code calls a preprocessor macro
+with no argument text.  This action is accepted by the SAS/C Compiler
+but is not permitted by the ANSI Standard.  For example:
+
+   #define FOO(a,b)   a
+
+   FOO(10,)
+
+@endnode
+
+@node scm216 "Compiler Message 216"
+Warning 216:  symbol "<name>" found
+
+You have compiled with the @{" fsym " link sc:help/sc.guide/FindSYMbol} compiler option, and the compiler has
+found a definition of one of the symbols that you specified as the
+parameter to the fsym option.
+@endnode
+
+@node scm217 "Compiler Message 217"
+Warning 217:  macro invocation may call function multiple times
+
+You have passed a function call as an argument to a macro that evaluates
+its arguments more than once.  This action may cause incorrect results.
+See also the description of message 209.
+@endnode
+
+@node scm218 "Compiler Message 218"
+Error 218:  declaration found in statement block
+
+The compiler found a declaration where it expected a statement.  You may
+have a statement in the middle of your declaration block, or vice-versa.
+Any declarations found after this error are added as external variables,
+which suppresses warnings about undefined variables but may create
+additional errors later if your code declares a variable of the same
+name.  In the following example, the variable y is declared after the
+first statement of the function:
+
+   void func(void)
+   {
+      int x;
+      x = 10;
+      int y;   /* Error 218 */
+   }
+
+@endnode
+
+@node scm220 "Compiler Message 220"
+Warning 220:  old-fashioned assignment operator taken as "<operators>"
+
+This message is suppressed by default, but you can enable it with the
+@{" strict " link sc:help/sc.guide/strict} or @{" warn " link sc:help/sc.guide/warn}=220 options.  Older compilers allowed the operators =-,
+=+, and so on.  In ANSI C, these operators are specified as -=, +=, and
+so on.  The older specification is ambiguous when assigning certain
+expressions (for example, x=-5; and x= -5;).  To resolve this ambiguity,
+newer compilers use =-, and some pre-ANSI compilers use -=.  Therefore,
+you should enter at least one space between the equals (=) sign and
+whatever operator follows it to ensure portability.
+@endnode
+
+@node scm223 "Compiler Message 223"
+Error 223:  "<filename>" is not a valid GST file
+
+The specified filename was supplied using the @{" gst " link sc:help/sc.guide/gst} compiler option as a
+Global Symbol Table file, but it is not a valid GST file.  Delete the
+bad file and try re-creating it.
+@endnode
+
+@node scm224 "Compiler Message 224"
+Warning 224:  item "<name>" already defined
+              See line <number> file "<filename>"
+
+This message indicates that a variable, function, or typedef is being
+defined for the second time in a given scope.  This message is normally
+an error, but if the redefinition is harmless, the compiler allows it
+and issues the message as a warning instead.  As shown in the following
+example, the compiler allows redefinition of typedef names in the same
+scope if the new type is identical to the old type.  The compiler does
+not allow redefinition of functions or variables in the same scope.
+
+   typedef int foo;
+   typedef int foo;  /* Warning 224 */
+
+   void func(void)
+   {
+   }
+
+   void func(void)   /* Error 224  */
+   {
+   }
+@endnode
+
+@node scm225 "Compiler Message 225"
+Warning 225:  pointer type mismatch 
+              "<type1>" does not match "<type2>"
+
+Your code has performed an assignment or some other operation on two
+incompatible different pointer types or on a pointer type and an
+arithmetic type.  For example:
+
+   struct FOO
+   {
+      int x, y, z;
+   } foo;
+   int *ip;
+
+   ip = &foo;  /* Warning 225 */
+
+@endnode
+
+@node scm226 "Compiler Message 226"
+Error 226:  cannot convert "<type1>" to "<type2>"
+
+The compiler was unable to perform a requested or implicit conversion.
+For example, if one of the types is an instance of a structure, the
+structure cannot be cast to another structure type or to an arithmetic
+type.  For example:
+
+   struct FOO
+   {
+      int x, y, z;
+   } foo;
+   int i;
+
+   i = (int) foo;  /* Error 226 */
+
+@endnode
+
+@node scm301 "Compiler Message 301"
+Warning 301:  Indirect reference through NULL pointer.
+
+The program being optimized contained code to dereference a pointer
+with a NULL value.  The results of such a dereference are undefined
+but may well include an addressing exception or a system crash.
+@endnode
+
+@node scm302 "Compiler Message 302:
+Warning 302:  Type punning involves representation change <symbol>
+
+A variable defined with one type was used with a different type.
+This message can occur, for instance, when an assignment is made to a 
+member of a union and then the value is accessed from a different 
+member of the union.
+@endnode
+
+@node scm303 "Compiler Message 303"
+Warning 303:  Reference has overlapped definition <symbol>
+
+The indicated identifier has at least two definitions that partially
+overlap its storage.
+@endnode
+
+@node scm304 "Compiler Message 304"
+Warning 304:  Dead assignment eliminated <symbol>
+
+<symbol> was assigned a value on the indicated line, but the value
+was never used.  The assignment was therefore eliminated.
+@endnode
+
+@node scm305 "Compiler Message 305"
+Warning 305:  Uninitialized variable <symbol>
+
+The named identifier was not initialized before it was used.  The
+value is unpredictable.
+@endnode
+
+@node scm306 "Compiler Message 306"
+NOTE 306:  <reason> function inlined:  <function name> {from 
+           line <u>}
+   
+The named function was expanded in-line at the line associated
+wiht the message.  The reason is either "__inline", 
+"complexity = <c>", or "local", depending on which in-line 
+option caused the inlining to occur.  The <c> represents the 
+complexity of the function (not the value of the complexity option).
+The section {from line <n>} is only included when the location at which
+the call was expanded differed from the location of the call.  This
+message happens when levels of inlining are occurring.  The value <n>
+is the line number of the call.
+@endnode
+
+@node slm103 "Linker Message 103"
+Error 103:  Out of memory!!
+
+slink has run out of memory.  By default, slink attempts to cache the
+object modules in memory between pass 1 and pass 2.  If slink runs out
+of memory, it attempts to free the cached object modules.  In some
+cases, slink cannot find enough continuous memory.  Try adding bufsize
+4096 to the slink command.  This option turns off object module caching.
+@endnode
+
+@node slm425 "Linker Message 425"
+Error 425:  Cannot find library <library-name>
+
+The linker cannot find the specified library.  Usually, SAS/C libraries
+are located in the LIB:  directory.  You may have misspelled the library
+name in your slink command.
+@endnode
+
+@node slm426 "Linker Message 426"
+Error 426:  Cannot find object name
+
+The linker cannot find the specified object.
+@endnode
+
+@node slm443 "Linker Message 443"
+Error 443:  <filename> is an invalid file name
+
+The linker found an invalid character in a filename.
+@endnode
+
+@node slm444 "Linker Message 444"
+Error 444:  Hunk_Symbol has bad <symbol-type> symbol <symbol-name>
+
+The object module is corrupt. Try recompiling the object module.
+@endnode
+
+@node slm445 "Linker Message 445"
+Error 445:  Invalid HUNK_SYMBOL <symbol-name>
+
+The object module is corrupt.  Try recompiling the object module.
+@endnode
+
+@node slm446 "Linker Message 446"
+Error 446:  Invalid symbol type <symbol-type> for <symbol-name>
+
+Either the object module is corrupt, or slink has found a symbol type
+that it does not recognize.  Try recompiling the object module.  For a
+list of valid symbol types, refer to the description of object file
+structure in The AmigaDOS Manual, 3rd Edition.
+@endnode
+
+@node slm447 "Linker Message 447"
+Error 447:  filename is a load file
+
+The file specified is an executable module instead of and object module.
+@endnode
+
+@node slm448 "Linker Message 448"
+Error 448:  <filename> is not a valid object file
+
+The file specified is not an object module.  The file may be a C source
+file or a corrupt object module.
+@endnode
+
+@node slm449 "Linker Message 449"
+Error 449:  No hunk_end seen for filename
+
+The object module is corrupt.  Try recompiling the object module.
+@endnode
+
+@node slm450 "Linker Message 450"
+Error 450:  Object file <filename> is an extended library
+
+A library file was specified as an object module.  Add the library
+keyword in front of the library name.
+@endnode
+
+@node slm501 "Linker Message 501"
+Error 501:  Invalid Reloc 8 or 16 reference
+
+An 8- or 16-bit relocation address cannot reach its destination.  The
+SAS/C Compiler does not generate 8-bit relocation records, but third
+party products may use them.  The object module is probably corrupt.
+Try recompiling your source file.  If recompiling the file does not
+correct the error, contact the @{" Technical Support Division " link sc:help/sc_help.guide/tech}.
+@endnode
+
+@node slm502 "Linker Message 502"
+Error 502:  <function-name> symbol - Distance for Reloc 16 greater than
+            32768
+
+The distance from the point where the function is called to the function
+itself is greater than 32767 bytes.  The function cannot be referenced
+with a 16-bit address field.  Normally, slink tries to insert an ALV
+(Automatic Link Vector) at the end of the calling module, but if the
+module has more than 32K of code, the relocation may not reach the ALV.
+An ALV is the instruction used to reach functions that would otherwise
+be too far away.  Compile the file with -code=far, or declare the
+function with the __far keyword.
+@endnode
+
+@node slm503 "Linker Message 503"
+Error 503:  <function-name> symbol - Distance for Reloc 8 greater than 128
+
+The distance from the point where the function is called to the function
+itself is more than 128 and so the function cannot be referenced with an
+8-bit address field.  The SAS/C Compiler does not generate 8-bit
+relocation records, but third party products may use them.
+@endnode
+
+@node slm504 "Linker Message 504"
+Error 504:  variable-name symbol - Distance for Data Reloc 16 greater
+            than 32768
+
+The distance for the 16-bit relocation is too far.  You may see this
+message if a data item (such as a structure or an array) is larger than
+64K or if the total amount of data in your program is greater than 64K.
+To correct the problem, you can either break the data item down and make
+it smaller than 64K, or you can place the __far keyword on the
+definitions of one or more data items to force all references to those
+items to be 32-bits.  Using the __far keyword reduces the amount of data
+in the near data section to less than 64K.  You can also compile your
+program with the @{" data " link sc:help/sc.guide/data}=far option.  However, using @{" data " link sc:help/sc.guide/data}=far increases
+code size and execution time.
+@endnode
+
+@node slm505 "Linker Message 505"
+Error 505:  variable-name symbol - Distance for Data Reloc 8 greater than
+            128
+
+The distance for the 8-bit relocation is too far.  The SAS/C Compiler
+does not generate 8-bit relocation, but third party products may use
+them.
+@endnode
+
+@node slm506 "Linker Message 506"
+Error 506:  Can't locate resolved symbol <symbol-name>
+
+If this message appears, please contact the @{" Technical Support Division " link sc:help/sc_help.guide/tech}.
+See Chapter 3, "Getting Help," for a complete list of items that you
+need to provide to the Technical Support staff.
+@endnode
+
+@node slm507 "Linker Message 507"
+Error 507:  Unknown Symbol type <symbol-type>, for symbol <symbol-name>
+
+Either the object module is corrupt, or a slink has found a symbol type
+that it does not recognize.  Try recompiling your source file.  For a
+list of valid symbol types, see the description of object file structure
+in The AmigaDOS Manual, 3rd Edition.
+@endnode
+
+@node slm508 "Linker Message 508"
+Error 508:  Symbol type <symbol-type> unimplemented
+
+Either the object module is corrupt, or a slink has found a symbol type
+that it does not recognize.  Try recompiling your source file.  For a
+list of valid symbol types, see the description of object file structure
+in The AmigaDOS Manual, 3rd Edition.
+@endnode
+
+@node slm509 "Linker Message 509"
+Error 509:  Unknown hunk type <symbol-type> in Pass2
+
+If this message appears, please contact the @{" Technical Support Division " link sc:help/sc_help.guide/tech}.
+See Chapter 3, "Getting Help," for a complete list of items that you
+need to provide to the Technical Support staff.
+@endnode
+
+@node slm510 "Linker Message 510"
+Error 510:  <symbol-name> symbol - Near reference to a data item not in
+            near data section
+
+The linker expected the specified symbol to be in the near data section,
+but the symbol is located in either the far data section, chip memory,
+or the code section.
+
+You may have defined a variable as __far with the __far keyword in one
+module and externally declared the same variable in another module
+without the __far keyword.  If so, the module with the external
+declaration attempted to reference the data as near.  To correct the
+problem, the definition and all declarations of the data item must be
+specified with the same keywords.
+
+If you compiled your file with the data=auto option, the compiler can
+place variables into the far data section if necessary.  The compiler
+may have placed a variable in one module in the far section and a
+variable in another module in the near section.  To correct this
+situation, either stop using the @{" data " link sc:help/sc.guide/data}=auto option, and use the __far
+keyword (if necessary) on the definition and all declarations of the
+variable that causes the error.
+@endnode
+
+@node slm512 "Linker Message 512"
+Error 512:  Invalid branch to <function-name> in overlay node <module-name>
+
+The linker detected a branch in an overlay node that calls another
+overlay node at the same level.  This type of branch is not supported by
+the overlay manager.
+@endnode
+
+@node slm513 "Linker Message 513"
+Error 513:  Multiple NTRYHUNK segments not permitted
+
+The NTRYHUNK is the root overlay node.  No other hunks should have this
+name.
+@endnode
+
+@node slm514 "Linker Message 514"
+Error 514:  Overlay manager _ovlyMgr is undefined
+
+This _ovlyMgr function is located in SAS/C libraries.  To use the SAS/C
+overlay manager, link with sc.lib or scs.lib.  You can also write your
+own overlay manager.  See Chapter 8, "Compiling and Linking Your
+Program," for information on creating your own overlay manager.
+@endnode
+
+@node slm515 "Linker Message 515"
+Error 515:  An ALV was generated pointing to data <variable-name> symbol
+
+A 16-bit relocation could not reach its destination, so slink inserted
+an ALV (Automatic Link Vector) instruction, and then determined that the
+destination is not in a code hunk.  To correct the problem, make the
+reference a 32-bit reference.  This error may be generated for object
+code produced by third-party assemblers and compilers
+@endnode
+
+@node slm516 "Linker Message 516"
+Error 516:  Attempt to merge BSS with CODE or CODE/DATA
+
+Either you have attempted to merge the far BSS section with the far data
+section, or you have attempted to merge the near or far BSS section with
+the code section.  You can merge a BSS section with the __MERGED section
+only.  You will see this message if you have assigned the same name to
+either the far BSS section and the far data section or the far BSS
+section and the code section.
+
+If you get this error in another situation, please call the
+@{" Technical Support Division " link sc:help/sc_help.guide/tech}.
+
+Note:  Do not name the code section __MERGED.
+@endnode
+
+@node slm600 "Linker Message 600"
+Error 600:  Invalid command <command>
+
+The option listed is not a valid slink option.
+@endnode
+
+@node slm601 "Linker Message 601"
+Error 601:  <option> option specified more than once
+
+The option has been specified twice.
+@endnode
+
+@node slm602 "Linker Message 602"
+Error 602:  Unable to open output file <filename>
+
+slink cannot open the output file for write access.  Another program
+such as CodeProbe may have left a lock on the file.  Alternatively, the
+protection bits may prohibit write access to the file, or that the name
+specified may be a directory.
+@endnode
+
+@node slm603 "Linker Message 603"
+Error 603:  <string> is not a valid number
+
+The linker found a non-numerical character in a field where it expected
+to find a number.
+@endnode
+
+@node slm604 "Linker Message 604"
+Error 604:  with file is not readable
+
+The with file may contain binary characters or may be locked.
+@endnode
+
+@node slm605 "Linker Message 605"
+Error 605:  Cannot open with file <filename>
+
+The with file does not exist or may be locked.
+@endnode
+
+@node slm607 "Linker Message 607"
+Error 607:  No FROM/ROOT files specified
+
+You did not specify an object module, or if you are using overlays, the
+root node did not contain any objects.
+@endnode
+
+@node slm608 "Linker Message 608"
+Error 608:  Premature EOF encountered
+
+The object module is corrupt.  Try recompiling the source file.
+@endnode
+
+@node slm609 "Linker Message 609"
+Error 609:  Error seeking in file <filename>
+
+The object module is corrupt.  Try recompiling the source file.
+@endnode
+
+@node slm610 "Linker Message 610"
+Error 610:  <module-name> has no parent in overlay tree
+
+The with file specifies an overlay with no parent node.
+@endnode
+
+@node slm611 "Linker Message 611"
+Error 611:  Reloc found with odd address for symbol <symbol-name>, file
+            <filename>
+
+The linker has found a relocation record with an odd address.  This
+message can only be generated if your program is written in assembler
+and is usually caused by placing an odd length character string in the
+code section.
+@endnode
+
+@node slm612 "Linker Message 612"
+Error 612:  MERGED Data relocation to non-code section in Overlay Node
+            Reference at offset <hex-address> in <module-name>, To 
+            Unit <module-name>
+
+The linker found a relocation from the near data section, which is
+placed in the root node, to the data section of an overlay node.
+
+This type of relocation is illegal.
+@endnode
+
+@node slm613 "Linker Message 613"
+Error 613:  MERGED Data relocation to static function is not resolvable
+            by Overlay Manager.  
+            Reference at offset <hex-address> in <filename>, To
+            Unit <filename>
+
+The overlay manager cannot resolve an indirect function call from the
+root node to a static function in a overlay node.  To correct the
+problem, remove the static keyword from the function declaration.
+@endnode
+
+@node slm614 "Linker Message 614"
+Error 614:  More than one MERGED data section found
+
+Only one near data section is allowed.  This error occurs only when
+using slink to strip debug information from an executable generated by a
+third party linker.  If you get this message, do not use slink to strip
+debug information from this executable.
+@endnode
+
+@node slm615 "Linker Message 615"
+Error 615:  Code hunk named __MERGED
+
+slink merges all hunks with the name __MERGED and performs relocations
+to this hunk relative to register A4.  Do not name the code hunk
+__MERGED .
+@endnode
+
+@node slm616 "Linker Message 616"
+Error 616:  ALVs were generated
+
+You have linked with the @{" noalvs " link "sc:help/sc_util.guide/slink options"} linker option, but the linker could not
+resolve all relocations without generating ALV instructions.  Either the
+total  code  size is greater than 32K, or there are multiple code hunks.
+The   executable   will  run,  but  the  code  section  is  not  totally
+PC-relative. 
+@endnode
+
+@node slm617 "Linker Message 617"
+Error 617:  MERGED data greater than 64K
+
+If your program does not generate any additional messages, then the
+program will still run.  However, a 16-bit data relocation record may
+not be able to reach its target, and if this happens, slink will
+generate an error.
+@endnode
+
+@node slm618 "Linker Message 618"
+Error 618:  Multiple OVERLAY usage--previous occurrences were ignored
+
+You can only specify one overlay manager.
+@endnode
+
+@node slm619 "Linker Message 619"
+Error 619:  Ignoring null OVERLAY list
+
+You did not specify any files in the overlay list.
+@endnode
+
+@node slm620 "Linker Message 620"
+Error 620:  Missing '#' at end of OVERLAY list
+
+Enter a pound sign (#) at the end of the overlay tree.
+
+For more information on creating overlay trees, see Chapter 8,
+"Compiling and Linking Your Program."
+@endnode
+
+@node slm621 "Linker Message 621"
+Error 621:  Conflicting integer sizes found
+
+Some modules were compiled using short integers and some were compiled
+using long integers.  You cannot mix integer sizes in an executable.
+Alternatively, you may have linked in the wrong version of the library.
+@endnode
+
+@node slm622 "Linker Message 622"
+Error 622:  Conflicting math types found
+
+You may have compiled the various object modules with conflicting @{" math " link sc:help/sc.guide/math}
+options.  All object modules must be compiled with the same math
+library.  Alternatively, you may have linked in the wrong math library.
+@endnode
+
+@node slm623 "Linker Message 623"
+Error 623:  Regargs function <function> called through overlay manager.
+            Parameters passed in registers to this function will be 
+            destroyed.
+
+The regargs function passes parameters in scratch registers, but the
+overlay manager does not preserve scratch registers.  You cannot call a
+regargs function across an overlay node.
+@endnode
+
+@node slm624 "Linker Message 624"
+Error 624:  Absolute reference to <symbol< module: file <filename>
+
+If you reference far data in a module linked with cres.o or when you are
+generating a shared library, your program may function improperly unless
+the data are read-only.  slink cannot determine if the reference is
+read-only, so it generates this warning.
+@endnode
+
+@node slm625 "Linker Message 625"
+Error 625:  Proper math library has not been included
+
+You have not linked in the math library that is needed for the options
+you have selected.  You need to specify a math library to link with using
+the @{" math " link sc:help/sc.guide/math} option.  
+@endnode
+
+@node slm626 "Linker Message 626"
+Error 626:  Libcode used on module <module>
+
+You have compiled the module with the @{" libcode " link sc:help/sc.guide/libcode} compiler option that was
+used on the module, but the module is being linked into an executable.
+Use the libcode option for generating shared libraries only.
+@endnode
+
+@node slm627 "Linker Message 627"
+Error 627:  Near references found in executable that has a module
+            compiled with FARONLY option
+
+You cannot mix modules compiled with @{" data " link sc:help/sc.guide/data}=faronly and modules that refer
+to near data.
+@endnode
+
+@node HELP "HELP"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or
+click on the close gadget.  You may also hit escape.
+
+Most help screens will display one or more buttons as part of the text.
+Clicking on these buttons will provide further information on the topic
+listed on the button.  You can also reach these help topics through the
+main Contents screen or one of its sub-screens.
+
+In addition, double-clicking in the help window will bring up a help
+screen for the word under the mouse cursor, if such a help screen
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help
+screens.  The help screens are usually arranged alphabetically by
+command or topic.
+@endnode

@@ -1,0 +1,2 @@
+ÄàPROTO_MATHIEEEDOUBBAS_HÄPROTO_MATHIEEEDOUBBAS_Hå<exec/types.h>
+ÅÉLibrary*MathIeeeDoubBasBase;å<clib/mathieeedoubbas_protos.h>å<pragmas/mathieeedoubbas_pragmas.h>á

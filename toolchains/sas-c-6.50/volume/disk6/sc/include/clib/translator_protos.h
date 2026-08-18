@@ -1,0 +1,3 @@
+ÄàCLIB_TRANSLATOR_PROTOS_HÄCLIB_TRANSLATOR_PROTOS_HàEXEC_TYPES_Hå<exec/types.h>á
+íTranslate(STRPTR inputString,çinputLength,STRPTR outputBuffer,
+çbufferSize);á

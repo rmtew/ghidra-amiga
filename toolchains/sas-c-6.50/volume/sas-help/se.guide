@@ -1,0 +1,392 @@
+@database se.hyper
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@node main "SAS/C Screen Editor Help"
+@{" Getting Around    " link "getting around"} @{" Build Project " link build} .. Rt-Amga-B  @{" Block Functions " link block}
+@{" Opening Windows   " link openw} @{" Compile File  " link compile} .. F4          Beg of Block .. Ctrl-[
+@{" Macro Definitions " link macro}  Set Options ..... Ctrl-F4     End of Block .. Ctrl-]
+@{" Menus             " link menu}  Next Error ...... F5          Copy Block .... Rt-Amga c
+@{" Miscellaneous     " link misc} @{" Look Up Symbol " link look} . Keypad (    Delete Block .. Rt-Amga d
+
+ Beginning of File ........... Ctrl-Home   @{" Search " link search} ............... Ctrl-S
+ End of File ................. Ctrl-End    @{" Search and Replace " link replace} ... Ctrl-R
+@{" Go to Line Number " link gotoline} .......... Ctrl-L       Search Again .......... Alt-S
+
+ Exit SE ..................... F3         @{" Delete/Insert " link delete}
+@{" Undo Last Change " link undo} ........... Ctrl-U      Delete Line ............ Ctrl-Y
+@{" Open New Shell   " link fork} ........... Ctrl-F      Delete to End of Line .. Ctrl-E
+ Start/End Macro Definition .. Alt n       Restore Deleted Line ... Alt-Y
+ Replay macro number n ....... Alt Fn     @{" Configuration Screen " link config} .. Ctrl-M
+
+                        @{" Common Problems with SE " link sc:help/sc_prob.guide/se} 
+@endnode
+
+@node "Getting Around"
+  Beginning of File ...... Ctrl-Home      @{" Opening Windows   " link openw}
+  End of File ............ Ctrl-End        Open Window ............ Ctrl-O
+  Next Line .............. Down Arrow      Change Window .......... Ctrl-F6
+  Previous Line .......... Up Arrow        Cycle through Windows .. F6
+  Beginning of Line ...... Home            Window Front to Back ... F10
+  End of Line ............ End
+  Next Character ......... Right Arrow    @{" Go to Line Number " link gotoline} ..... Ctrl-L
+  Previous Character ..... Left Arrow
+  Next Word .............. Ctrl-(NUM 6)
+  Previous Word .......... Ctrl-(NUM 4)
+  Next Page .............. Pg Dn
+  Previous Page .......... Pg Up
+  Scroll Up .............. Ctrl-(NUM 8)
+  Scroll Down ............ Ctrl-(NUM 2)
+  Go to Line Number ...... Ctrl-L
+@endnode
+
+@node OpenW "Opening New Windows"
+When the open a new window command is executed by typing in a Ctrl-o or
+by selecting Open Window from the Windows pull-down menu, a file
+requestor is displayed to give you an opportunity to specify a new file
+to edit.  The screen area of the current window is split in half and the
+window is reframed to insure that the current character position of the
+active window is displayed.  The new window is opened and the cursor is
+placed at the first character position of the new text.
+
+You may have 9 windows open at one time.
+@endnode
+
+@node Macro "Macro Definitions"
+A macro is a series of keystrokes that may be defined to a single key.
+
+You may have up to 10 macros assigned to function keys at any one time.
+The macros are assigned to keys F1-F10.  The macros are assigned by
+hitting ALT-<macro #> at the beginning and the end of the assignment,
+and are invoked by hitting ALT-F<macro #>.
+
+For example, to assign a macro to F1, hit ALT-1.  Then you are prompted
+to enter the key sequence.  Hit the keys that you want to be in your
+macro.  When you are finished, hit ALT-1 again to end capturing the
+macro.  To invoke the macro, hit ALT-F1.  All of the stored key
+sequences will then be invoked.
+
+If you need more than 10 macros, you may re-assign macros key sequences
+other than ALT-Fx.  This feature essentially gives you the ability
+to assign as many macros as you like.
+
+Macros may be @{" saved " link savem} to a file, and then later @{" read " link loadm} back in.
+@endnode
+
+@node SaveM "Save Macros"
+The Save Macro command lets you specify a file in which to save your
+current set of macros.  The default name is SE.MAC which is
+automatically loaded when SE is started up.
+
+There may be 10 macros active at any one time.  The default filename
+extension for a macro is ".MAC".  SE will search your current directory
+for a macro file so that different default macro files may be kept in
+different directories, if desired.
+
+To invoke a keyboard macro, press Alt and the funtion key with the
+number of the macro (ie Alt-F1 invoke macro 1).  To define a macro,
+press ALT and the number of the macro.
+@endnode
+
+@node LoadM "Load Macros"
+The load macro command asks you to specify a file that contains a set of
+macros.  The file SE.MAC from the current directory is loaded when SE
+starts executing.
+
+There may be 10 macros active at any one time.  The default filename
+extension for a macro is ".MAC".  SE will search your current directory
+for a macro file so that different default macro files may be kept in
+different directories, if desired.
+
+To invoke a keyboard macro, press Alt and the funtion key with the
+number of the macro (ie Alt-F1 invoke macro 1).  To define a macro,
+press ALT and the number of the macro.
+@endnode
+
+@node menu "Menus"
+The SAS/C editor provides several ways to accomplish many common tasks.
+The first way is through the pull-down menus located at the top of the
+se screen.  The second way is through "shortcuts", quick-key sequences
+listed beside the functions in the pull down menus.  These shortcuts
+make it easy to quickly accomplish tasks once a user is familiar with
+the editor.
+
+The final way is through menus appearing at the bottom of the screen of
+the editor.  These menus are made up of single characters representing a
+function.  A description of each function is shown below the menu when a
+menu item is highlighted by the cursor.  These menus are intended for
+novice users who need extra assistance.  The menu items may be selected
+either by moving the cursor to highlight the item and pressing return,
+or by typing in the first letter of the menu item.  The following is a
+list of all of the command line menus:
+
+                  @{" Main Menu    " link "Main Menu"} ............. F2
+                  @{" Project Menu " link project} ............. Ctrl-p
+                  @{" Block Menu   " link block} ............. Ctrl-b
+@endnode
+
+@node "Main Menu"
+The main menu is invoked with F2.
+
+ Menu Selection                    Action                 Alternate
+-----------------      ------------------------------  ---------------
+  B     "Block"        Invoke Block Menu               (Ctrl-b)
+  C     "Compile"      Compile the current file        (F4)
+  F     "Fork"         Fork a new shell                (Ctrl-f)
+  M     "Mode"         Invoke Configuration Screen     (Ctrl-l)
+  L     "Line"         Go to line number               (Right Amiga-l)
+  O     "Open"         Open a second window            (Ctrl-o)
+  P     "Project"      Invoke Project Menu             (Ctrl-p)
+  R     "Replace"      Search and Replace              (Ctrl-r)
+  S     "String"       Search                          (Ctrl-s)
+  Q     "Quit"         Exit SE and don't save changes  (Right Amiga-q)
+  U     "Undo"         Undo last action                (Right Amiga-u)
+@endnode
+
+@node Project "Project Menu"
+ Menu Selection                  Action                     Alternate
+----------------- ---------------------------------------  ------------
+     Quit         Close the current window. If Only one     Rt-Amiga q
+                  window is present, exit SE.
+     Save         Save the file in the current window and   Rt-Amiga s
+                  close that window.  If only one window
+                  is present, exit SE.
+   Continue       Save the file in the current window and   Rt-Amiga w
+                  continue editing
+     Next         Save the current file and prompts for     Rt-Amiga n
+                  a new file. If no new file is specified,
+                  SE will close that window.
+     Open         Abandon the current file and prompt for   Rt-Amiga o
+                  a new file
+    Rename        Prompt for a new name for the current file.
+    Insert        Insert a file at the cursor
+    Display       Display the filenames of all files in memory
+    Macros        Go to the Macro menu (Save and Load)
+@endnode
+
+@node Block "Block Menu"
+The Block Menu is invoked with Ctrl-b.
+
+Before using any block command, the block must be first be marked.
+Blocks may be marked either with the Ctrl-[ (begin block) and Ctrl-]
+(end block) commands or by holding down the left mouse button and
+dragging.  The following table describes the functions available in the
+Block Menu, and it also lists shortcuts where they exist.
+
+ Menu Selection                  Action                     Alternate
+----------------- ---------------------------------------  ------------
+     Copy         Copy marked block at the cursor          Rt-Amiga c
+     Delete       Delete marked block                      Rt-Amiga d
+     Move         Insert marked block at the cursor and    Rt-Amiga m
+                  delete it from its previous position
+     Print        Send the marked block to the PRN: device
+    @{" Read  " link bread}       Read a file at the cursor
+    @{" Write " link bwrite}       Write the marked block to a file
+     Beginning    Move the cursor to the beginning of the
+                  block
+     End          Move the cursor to the end of the block
+@endnode
+
+@node BWrite "Block Write"
+Write requests the name of a file.  It then writes the previously marked
+block of text to that file.  No change is made to the text.
+@endnode
+
+@node BRead "Insert File"
+Unlike the other block commands, the insert file command, also called the
+block read command, does not act on a previously marked block.  Read
+requests a filename and then inserts the text of that file into the
+current text at the cursor position.  If the file does not exist, an
+error message is displayed.
+@endnode
+
+@node MISC "Miscellaneous Functions"
+ Context Sensitive Help ... F1           @{" Open Window " link openw}............. Ctrl-O
+ Toggle Insert Mode ....... NUM 0         Change Window ............ Ctrl-F6
+ Interlace Toggle ......... NUM-ENTER     Cycle through Windows .... F6
+ Escape Character ......... Ctrl-\        Window Front to Back ..... F10
+ Change Foreground Color .. F7            Toggle Display Size ...... F9
+ Change Background Color .. F8
+
+ Match [], {}, or () ..................... Ctrl-5
+
+ Save Current File and Continue .......... Rt-Amiga-w
+ Save Current File and Close Window ...... Rt-Amiga-s
+ Save Current File and Open New file ..... Rt-Amiga-n
+ Abandon Current File and Open New file .. Rt-Amiga-o
+@endnode
+
+@node Build "Build Project"
+Hitting Right-Amiga B to invoking Build is the same as clicking on the
+Build icon in a SAS/C Project directory under Workbench. The project
+in the current directory will be rebuilt.  For more information about
+building a project, see Volume 1 of the SAS/C Documentation.
+@endnode
+
+@node Compile "Compile File"
+This command will compile the file that is in the active SE window.
+It will use the options in the SCOPTIONS file.  For more information
+about compiling, see Volume 1 of the SAS/C Documentation.
+@endnode
+
+@node look "Look Up Symbol"
+The open parenthesis key on the numeric keypad is assigned to the
+AREXX macro "sc:rexx/findsym.se".  This AREXX macro takes the symbol under
+the cursor and looks it up in the @{" GST " link sc:help/sc_util.guide/gst} that is currently in memory. If the
+symbol is found, the cursor will be placed on the line where symbol is
+defined in the file in which it is define.  If the symbol is defined in
+another file, the new file will be opened in the same se session.
+
+The key to invoke this utility is the open parenthesis key on the
+numeric keypad, located on the right side of your keyboard.  The key
+is located in the upper left hand corner of the keypad.
+@endnode
+
+@node GOTOLine "Go To a Line Number"
+When a file is loaded into a window, each line is ordered numerically.
+The line number your cursor is on is displayed in SE in the bar near the
+bottom of your screen.  If you know the number of a line that you want
+to reach, you can type in the Ctrl-L command, and then enter the line
+number at the prompt.  SE will jump the screen to display that line.
+If the number you enter is greater than the number of lines in the file,
+the cursor is moved to the last line of the file and an error message is
+generated.
+@endnode
+
+@node Search "Search"
+Searching for strings is accomplished in SE by either selecting the
+String Search menu item from the Search menu, or by typing Rt-Amiga f.
+
+After initiating the search, you will be prompted for the string or
+pattern to search for.  To repeat a previous search, hit Rt-Amiga A or
+select Search Again from the Search menu.
+
+To search backwards, hit Rt-Amiga F, then hit F2.  SE will then prompt
+you for the string or pattern to search for.  You may search again with
+the Rt-Amiga A key.
+@endnode
+
+@node Replace "Search and Replace"
+Searching for and replacing strings is accomplished in SE by either
+selecting the Search and Replace menu item from the Search menu, or by
+typing Rt-Amiga R.
+
+After issuing the command, you will be prompted for the string or
+pattern to search for.  After you enter the search string, you will be
+prompted to enter the replacement string.
+
+After entering the relevant strings, a menu will be displayed giving you
+the opportunity to either be prompted for each replacement (PROMPT), or
+not to be (NO PROMPT).  If you select NO PROMPT, all matching strings in
+that file will be immediatly replaced with the replacement string.  If
+you select prompt, a menu will be displayed each time a matching string
+is found.  You may either make your selection by highlighting it with
+the cursor and hitting return, or you may hit a "P" for PROMPT or an "N"
+for NO PROMPT.
+
+If you ask to be prompted before replacing, another menu will be
+displayed everytime the search string is encountered.  This menu
+consists of the following:
+
+      Replace:  Yes  No  Quit  Global
+
+The menu items may be selected by either highlighting them with the
+cursor and hitting return, or by typing a Y, N, Q, or G.
+
+Selecting Yes will cause the string to be replaced and the search to
+continue.  Selecting No will cause the string to be ignored and the
+search continued.  Selecting Quit will end the search and replace
+function.  This may also be accomplished by hitting the ESC key.
+Selecting Global will replace all matching strings in the file with the
+replace string without prompting.
+@endnode
+
+@node Undo "Undo Last Change"
+The Undo command will undo up to the last 50 changes. If you make several
+changes to a single line, without moving the cursor off the line, it
+is considered one change.
+
+By default, you will be prompted at each level of the undo. You can turn
+off the prompts in the SE configuration screen.
+@endnode
+
+@node Fork "Open New Shell"
+Ctrl-f will open a new shell.
+
+The Open New Shell (aka Fork Command Processor) function opens up a new
+Shell, or CLI.  This new shell is just like any other new shell you
+might open up from the system.
+@endnode
+
+@node DELETE "Delete/Insert"
+  Delete Character ................ Del
+  Delete Word ..................... Ctrl-W
+  Delete Line ..................... Ctrl-Y
+  Delete Block .................... Rt-Amiga d
+
+  Erase to End of Line ............ Ctrl-E
+  Restore Deleted Line ............ Alt-Y
+
+  Insert Line ..................... Ctrl-N
+ @{" Insert File " link bread} .................... Ctrl-b r
+
+  Copy Block ...................... Rt-Amiga c
+  Move Block ...................... Rt-Amiga m
+@endnode
+
+@node Config "Configuration Screen"
+This option allows you to customize SE.  You can use the displayed
+keyboard on the configuration screen to assign commands to any key
+sequence.  The commands that you may assign to key sequences include
+AREXX Macros.
+
+You may also modify other se settings from the configuration screen
+menus.  For a complete description of using the SE configuration screen,
+see Volume 1 of the SAS/C Documentation.
+@endnode
+
+
+
+
+
+@node help "Using the SE Help Document"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or
+click on the close gadget.  You may also hit escape.
+
+This help document contains help screens for most functions available
+in SE.  The most commonly used functions are listed on the main Contents
+screen that you first see.  This screen also contains a list of further
+topics in the upper left hand corner.  These topics lead to screens
+containg more information about the functionality of SE.
+
+Other buttons are also present on the Contents screen.  The buttons
+that are associated with commands lead to a further explanation of that
+command.  The buttons that are not associated with commands, such as
+Insert/Delete, lead to screen containing more information and lists of
+commands.
+
+Most of the helps screens available in this document may also be reached
+with the context-sensitive help facility in SE.
+
+In addition, double-clicking in the help window will bring up a help
+screen for the word under the mouse cursor, if such a help screen
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help
+screens.  The help screens are usually arranged alphabetically by
+command or topic.
+@endnode

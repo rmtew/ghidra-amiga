@@ -1,0 +1,2 @@
+€ˆ_COMMCHAR_H€_COMMCHAR_H 1ˆ_WCHAR_T€_WCHAR_T 1
+¥„wchar_t;‡‡

@@ -1,0 +1,9 @@
+€ˆDOS_DATETIME_H€DOS_DATETIME_HˆDOS_DOS_HŒ"dos/dos.h"‡
+ƒDateTime{
+ƒDateStamp dat_Stamp;
+Šdat_Format;
+Šdat_Flags;
+Š*dat_StrDay;
+Š*dat_StrDate;
+Š*dat_StrTime;
+};€LEN_DATSTRING 16€DTB_SUBST 0€DTF_SUBST 1€DTB_FUTURE 1€DTF_FUTURE 2€FORMAT_DOS 0€FORMAT_INT 1€FORMAT_USA 2€FORMAT_CDN 3€FORMAT_MAX FORMAT_CDN‡

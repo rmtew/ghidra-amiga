@@ -1,0 +1,19 @@
+Volume 1 and 2 of SAS C 6.0 docs.  Not much changed in 6.51.
+Docs are slightly >80 columns, so disable 'wrap' when viewing.
+
+This is the neccessary assigns for the SAS/C distribution
+to function correctly... I attached it to the original
+READ.ME file in the root dir of the installation but have
+pasted it for your convienence since some of you might not
+have read the thread which inspired this upload ,)
+
+enjoy - slayer
+
+;BEGIN SAS/C
+assign sc: { change this to where you put it i.e progs:sc }
+assign lib: sc:lib
+assign include: sc:include
+assign cxxinclude: sc:cxxinclude
+path sc:c add
+;END SAS/C
+

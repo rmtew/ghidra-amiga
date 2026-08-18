@@ -1,0 +1,46 @@
+€ˆIFF_IFFPARSE_H€IFF_IFFPARSE_HˆEXEC_TYPES_HŒ<exec/types.h>‡ˆ·Œ<exec/lists.h>‡ˆ¸Œ<exec/ports.h>‡ˆDEVICES_CLIPBOARD_HŒ<devices/clipboard.h>‡
+ƒIFFHandle
+{
+—iff_Stream;
+—iff_Flags;
+’iff_Depth;
+};€IFFF_READ 0L€IFFF_WRITE 1L€IFFF_RWBITS (IFFF_READ|IFFF_WRITE)€IFFF_FSEEK (1L<<1)€IFFF_RSEEK (1L<<2)€IFFF_RESERVED 0xFFFF0000L
+ƒIFFStreamCmd
+{
+’sc_Command;
+”sc_Buf;
+’sc_NBytes;
+};
+ƒContextNode
+{
+ƒMinNode cn_Node;
+’cn_ID;
+’cn_Type;
+’cn_Size;
+’cn_Scan;
+};
+ƒLocalContextItem
+{
+ƒMinNode lci_Node;
+—lci_ID;
+—lci_Type;
+—lci_Ident;
+};
+ƒStoredProperty
+{
+’sp_Size;
+”sp_Data;
+};
+ƒCollectionItem
+{
+ƒCollectionItem*ci_Next;
+’ci_Size;
+”ci_Data;
+};
+ƒClipboardHandle
+{
+ƒIOClipReq cbh_Req;
+ƒ©cbh_CBport;
+ƒ©cbh_SatisfyPort;
+};€IFFERR_EOF -1L€IFFERR_EOC -2L€IFFERR_NOSCOPE -3L€IFFERR_NOMEM -4L€IFFERR_READ -5L€IFFERR_WRITE -6L€IFFERR_SEEK -7L€IFFERR_MANGLED -8L€IFFERR_SYNTAX -9L€IFFERR_NOTIFF -10L€IFFERR_NOHOOK -11L€IFF_RETURN2CLIENT -12L€MAKE_ID(a,b,c,d) \
+((—)(a)<<24|(—)(b)<<16|(—)(c)<<8|(—)(d))€ID_FORM MAKE_ID('F','O','R','M')€ID_LIST MAKE_ID('L','I','S','T')€ID_CAT MAKE_ID('C','A','T',' ')€ID_PROP MAKE_ID('P','R','O','P')€ID_NULL MAKE_ID(' ',' ',' ',' ')€IFFLCI_PROP MAKE_ID('p','r','o','p')€IFFLCI_COLLECTION MAKE_ID('c','o','l','l')€IFFLCI_ENTRYHANDLER MAKE_ID('e','n','h','d')€IFFLCI_EXITHANDLER MAKE_ID('e','x','h','d')€IFFPARSE_SCAN 0L€IFFPARSE_STEP 1L€IFFPARSE_RAWSTEP 2L€IFFSLI_ROOT 1L€IFFSLI_TOP 2L€IFFSLI_PROP 3L€IFFSIZE_UNKNOWN -1L€IFFCMD_INIT 0€IFFCMD_CLEANUP 1€IFFCMD_READ 2€IFFCMD_WRITE 3€IFFCMD_SEEK 4€IFFCMD_ENTRY 5€IFFCMD_EXIT 6€IFFCMD_PURGELCI 7ˆIFFPARSE_V37_NAMES_ONLY€IFFSCC_INIT IFFCMD_INIT€IFFSCC_CLEANUP IFFCMD_CLEANUP€IFFSCC_READ IFFCMD_READ€IFFSCC_WRITE IFFCMD_WRITE€IFFSCC_SEEK IFFCMD_SEEK‡‡

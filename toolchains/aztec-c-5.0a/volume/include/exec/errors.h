@@ -1,0 +1,7 @@
+#ifndef	EXEC_ERRORS_H
+#define	EXEC_ERRORS_H
+#define	IOERR_OPENFAIL	-1L
+#define	IOERR_ABORTED	-2L
+#define	IOERR_NOCMD	-3L
+#define	IOERR_BADLENGTH	-4L
+#endif

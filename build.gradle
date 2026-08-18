@@ -93,6 +93,7 @@ buildExtension {
 	exclude 'site'
 	exclude 'src'
 	exclude 'test'
+	exclude 'toolchains'
 	exclude 'tmp'
 	exclude 'work'
 }

@@ -1,0 +1,2 @@
+€ˆPROTO_EXEC_H€PROTO_EXEC_HŒ<exec/types.h>Œ<clib/exec_protos.h>£defined(_USEOLDEXEC_)||!defined(__USE_SYSBASE)Œ<pragmas/exec_pragmas.h>
+ƒExecBase*SysBase;Œ<pragmas/exec_sysbase_pragmas.h>‡Œ<clib/alib_protos.h>‡

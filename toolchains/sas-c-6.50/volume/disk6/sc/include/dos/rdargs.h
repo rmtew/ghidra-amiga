@@ -1,0 +1,14 @@
+€ˆDOS_RDARGS_H€DOS_RDARGS_HˆEXEC_TYPES_HŒ"exec/types.h"‡ˆµŒ"exec/nodes.h"‡
+ƒCSource{
+Š*CS_Buffer;
+’CS_Length;
+’CS_CurChr;
+};
+ƒRDArgs{
+ƒCSource RDA_Source;
+’RDA_DAList;
+Š*RDA_Buffer;
+’RDA_BufSiz;
+Š*RDA_ExtHelp;
+’RDA_Flags;
+};€RDAB_STDIN 0€RDAF_STDIN 1€RDAB_NOALLOC 1€RDAF_NOALLOC 2€RDAB_NOPROMPT 2€RDAF_NOPROMPT 4€MAX_TEMPLATE_ITEMS 100€MAX_MULTIARGS 128‡

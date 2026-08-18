@@ -1,0 +1,3128 @@
+@database "cpr.guide"
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@master "cpr.guide"
+@node Main "CPR Help"
+CPR Commands and Builtin-Functions
+@{" Activate   " link Activate} @{" DETach    " link DETach} @{" HUnks   " link HUnks} @{" Register " link Register} @{" STRLEN     " link STRLEN} @{" WDisable " link WDisable}
+@{" ALias      " link ALias} @{" Display   " link Display} @{" Jump    " link Jump} @{" REStart  " link REStart} @{" SYMBol     " link SYMBol} @{" WEnable  " link WEnable}
+@{" ARgs       " link ARgs} @{" DUmp      " link DUmp} @{" List    " link List} @{" RETurn   " link RETurn} @{" SYMload    " link SYMload} @{" WHAtis   " link WHAtis}
+@{" BClear     " link BClear} @{" DZero     " link DZero} @{" LOg     " link LOg} @{" RFlag    " link RFlag} @{" TAsks      " link TAsks} @{" WHEre    " link WHEre}
+@{" BDisable   " link BDisable} @{" ECho      " link ECho} @{" MEMCMP  " link MEMCMP} @{" SEArch   " link SEArch} @{" Trace      " link Trace} @{" WIndow   " link WIndow}
+@{" BEnable    " link BEnable} @{" ENV       " link ENV} @{" MEMCPY  " link MEMCPY} @{" SEt      " link SEt} @{" TS         " link TS} @{" WList    " link WList}
+@{" BList      " link BList} @{" EXecute   " link EXecute} @{" MEMMOVE " link MEMMOVE} @{" SLEep    " link SLEep} @{" UNAlias    " link UNAlias} @{" WMSG     " link WMSG}
+@{" Break      " link Break} @{" EXPAND    " link EXPAND} @{" MEMSET  " link MEMSET} @{" SOurce   " link SOurce} @{" Unassemble " link Unassemble}
+@{" Call       " link Call} @{" FINish    " link FINish} @{" OPt     " link OPt} @{" STArt    " link STArt} @{" UNDefine   " link UNDefine}
+@{" CAtch      " link CAtch} @{" FRegister " link FRegister} @{" Proceed " link Proceed} @{" STRCAT   " link STRCAT} @{" Watch      " link Watch}
+@{" DEActivate " link DEActivate} @{" Go        " link Go} @{" PS      " link PS} @{" STRCMP   " link STRCMP} @{" WBreak     " link WBreak}
+@{" DEFine     " link DEFine} @{" Help      " link "Help Command"} @{" Quit    " link Quit} @{" STRCPY   " link STRCPY} @{" WClear     " link WClear}
+
+@{" Parameter Types " link "Parameter Types"} @{" Common Problems " link sc:help/sc_prob.guide/cpr} @{" Changes to the Documentation " link sc:help/sc_change.guide/cpr}
+@endnode
+@node "Parameter Types"
+@{" Address       " link Address}     @{" Expression  " link Expression}     @{" Line     " link Line}     @{" String       " link String}
+@{" Argument-List " link Argument-List}     @{" Filename    " link Filename}     @{" Location " link Location}     @{" Subrange     " link subrange}
+@{" Array-Slice   " link Array-Slice}     @{" Format      " link Format}     @{" Module   " link Module}     @{" Task-Address " link Task-Address}
+@{" Cmd-List      " link Cmd-List}     @{" Function    " link Function}     @{" Name     " link Name}     @{" Task-Name    " link Task-Name}
+@{" Command       " link Command}     @{" Hex-Address " link Hex-Address}     @{" Number   " link Number}     @{" Text         " link Text}
+@{" Command-Line  " link Command-Line}     @{" Image       " link Image}     @{" Parm     " link Parm}     @{" Type         " link Type}
+@{" Definition    " link Definition}     @{" Integer     " link Integer}     @{" Range    " link Range}     @{" Variable     " link Variable}
+@{" Directory     " link Directory}     @{" Itemsize    " link Itemsize}     @{" Register " link Registers}
+
+@{" Builtin Function Parameters " link "Builtin Function Parameters"}
+@endnode
+@node ADDRESS "ADDRESS"
+ADDRESS is any valid expression that denotes an address.  This
+may be a hexadecimal constant, a C pointer variable, a @{" register " link registers}, the
+result of prefixing & to a C identifier of the proper type, or the
+result of arithmetic calculations on other addresses.  Note that the
+address operator & may not be applied to the identifier of a bitfield or
+a register.
+
+The following are examples of values of expressions that denote an
+address where p is a pointer, and i and x are integers:
+
+   &i
+   (&i + 8)
+   &array[3]
+   &mystruct - x
+   p
+   0x00C85400
+   a0
+   (a0 + 0x22)
+
+There are some cases where a register name may be ambiguous.  For
+example, you may have defined a variable sp in your program.  In the
+following command it is not clear whether you mean to dump data
+beginning at the variable sp, or at the address contained in the
+register SP:
+
+   db sp
+
+In such cases the debugger will assume that you mean to refer to the
+variable sp.  However, you can prefix the register name with a dollar
+sign ($) or use the register command to examine the value of the sp
+register even if you have declared a variable named SP.
+
+In certain commands, it is necessary to specify the type of an object to
+be modified or displayed.  If the object is referred to by means of an
+address constant or register, the value is assumed to be a character
+pointer (char *).
+@endnode
+@node ARGUMENT-LIST "ARGUMENT-LIST "
+ARGUMENT-LIST provides the arguments for the program being debugged.
+These arguments are delimited by white space, just as would appear
+on the command line when invoking the program.  The program will use
+these arguments as if it were invoked from the command line with them.
+@endnode
+@node ARRAY-SLICE "ARRAY-SLICE "
+ARRAY-SLICE is a contiguous section of a unidimensional array of scalar
+variables, an ordered selection of elements from a multidimensional
+array, or an ordered selection of members from an array of complex
+types.  ARRAY-SLICE is specified using the following form:
+
+                  @{" variable " link variable} [[n..m] | [*]]
+
+Note:  The inner brackets in this syntax diagram are not optional and do
+not denote optional parameters.
+
+The advantage of using an array-slice parameter over a @{" range " link range} parameter
+is that the array-slice can be used to select isolated subcomponents,
+such as a particular structure member from an array of structures.  The
+array-slice parameter also can be nested for multidimensional arrays or
+structure members that are arrays themselves.
+
+The @{" subrange " link subrange} parameter is described elsewhere in this document.  If a
+subrange is chosen as the index of an array-slice, those elements within
+the subrange are selected.  The asterisk (*) index specifies that all
+elements of the array are to be contained in the array-slice.
+
+The following are examples of the array-slice parameter:
+
+                    a[3..7]
+                    matrix[i..j][1..3]
+                    b[*]
+                    a[3..6]->b
+@endnode
+@node CMD-LIST "CMD-LIST"
+CMD-LIST can be replaced by one or more valid commands, separated
+by semi-colons (;).  A backslash may be used to continue the line.
+@endnode
+@node COMMAND "COMMAND"
+COMMAND can be replaced with any CPR command or other help topic.
+@endnode
+@node COMMAND-LINE "COMMAND-LINE"
+COMMAND-LINE can be any valid command-line that can be typed in at
+the prompt in the Dialog window.
+@endnode
+@node DEFINITION "DEFINITION"
+DEFINITION can be replaced with any valid string which defines the
+@{" name " link name} specified in the command.
+@endnode
+@node DIRECTORY "DIRECTORY"
+DIRECTORY can be any valid existing AmigaDOS directory name.
+@endnode
+@node EXPRESSION "EXPRESSION"
+An EXPRESSION can be any C expression, except those that use one or
+more of the following operators:
+
+      ++ or --                          <<=
+      ,  (comma)                        +=
+      ?:                                -=
+      =                                 *=
+      &=                                /=
+      |=                                %=
+      >>=                               ^=
+@endnode
+@node FILENAME "FILENAME"
+FILENAME can be replaced by any valid AmigaDOS filename.
+@endnode
+@node FORMAT "FORMAT"
+FORMAT should be replaced by differnt values, depending whether you
+are entering a @{" DUMP " link DUMP} command or a @{" DISPLAY " link DISPLAY} command.
+
+For the @{" DISPLAY " link DISPLAY} command, a default FORMAT specifier is defined.
+The default is determined by what type of variable you are displaying.
+To override the default format, replace FORMAT with a printf() style
+format specifier, such a
+
+                        "1.3%f"
+
+No error checking is done on the format specifier, so strange results
+are possible.
+
+For the @{" DUMP " link DUMP} command, the default format is hex.  All values dumped
+will be displayed with as a hex value, regardless of their type.
+
+The format of the output of the @{" DUMP " link DUMP} command can be controlled by
+specifying any of the following for FORMAT:
+
+          a[scii]        FFP[float]      IEEE[float]
+          b[inary]       f[loat]         o[ctal]
+          d[ecimal]      h[ex]           u[nsigned]
+@endnode
+@node FUNCTION "FUNCTION"
+FUNCTION is the name of a function in the application.
+
+You can put spaces between the value specified for @{" image " link IMAGE} and its colon
+postfix and the value specified for @{" module " link MODULE} and its backslash postfix,
+but they are not necessary.  You must put a space before the @{" line " link line}
+parameter.
+@endnode
+@node HEX-ADDRESS "HEX-ADDRESS"
+HEX-ADDRESS can be replaced by any valid hexadecimal constant.  Care
+should be taken that the HEX-ADDRESS specified is within the valid
+address space allcoated for your program.
+@endnode
+@node IMAGE "IMAGE"
+IMAGE is the name of the executable image (the program, library, or
+device) containing the location.  It is usually specified in lowercase.
+If omitted, the current image is the default.  In a program with only
+one image, it is never necessary to specify a value for IMAGE:  Note
+the required colon (:).
+@endnode
+@node INTEGER "INTEGER"
+INTEGER can be replaced be any valid integer value, 0 to 32768.  All of
+these numbers may not be valid within the context of a particular
+command.  For instance, substituting 4567 where a line number is
+required would be meaningless for a module with 120 lines.
+@endnode
+@node ITEMSIZE "ITEMSIZE"
+ITEMSIZE is an optional parameter that controls the length of each item
+dumped by the @{" DUMP " link DUMP} command.  ITEMSIZE  can have a value of 1, 2, 4,
+or 8.  ITEMSIZE is concatenated onto the end of the @{" format " link format} parameter
+(for example, b4 for a binary format of length 4).  If you do not specify
+ITEMSIZE, CodeProbe uses a default.  As shown in the following table, the
+allowable size and default values depend on the format specified.
+
+ITEMSIZE has the following default values and allowable sizes:
+
+                Format     Default       Allowed Sizes
+                ------     -------       -------------
+                ascii         1            1
+                binary        1            1, 2, 4
+                decimal       4            1, 2, 4
+                FFPfloat      4            4
+                float         8            4, 8
+                hex           4            1, 2, 4
+                IEEEfloat     8            4, 8
+                octal         4            1, 2, 4
+                unsigned      4            1, 2, 4
+@endnode
+@node LINE "LINE"
+The LINE parameter can specify any of the following points in the
+source code:
+
+@{" integer " link integer}
+  a line number, relative to the start of the C source file containing
+    the function
+
+$
+  the current location
+
+e[ntry]
+  the entry to the function (prolog)
+
+r[eturn]
+  the return from the function (epilog).
+
+If the function name is not specified with the LINE parameter, the
+debugger defaults to the current function.  If a function is specified
+without a line, the debugger defaults to the first execution line.
+@endnode
+@node LOCATION "LOCATION"
+LOCATION specifies a place in the code at which a breakpoint is to
+be set, code is to be unassembled, or a similar action is to be
+performed.  When debugging in source mode, you can think of a location
+parameter as a line number in a source file or a function entry point.
+When debugging in assembly mode, you may want to place breakpoints at
+specific addresses.  To do this, specify a hexadecimal address as the
+the location parameter.
+
+The location parameter can be specified in one of two ways:
+
+             @{" hex-address " link "hex-address"}
+
+             [[@{" image " link IMAGE}:][\@{" module " link MODULE}\]@{" function " link function}] @{" line " link line}
+
+In the first form the @{" hex-address " link "hex-address"} variable can be any valid absolute
+address specified as a hexadecimal integer.
+@endnode
+@node MODULE "MODULE"
+MODULE is the name of the C source file compiled to yield the
+specified function.  Note the backslash (\) postfix.
+@endnode
+@node NAME "NAME"
+NAME can be replaced by any valid character string starting with an
+upper or lower case character.
+@endnode
+@node NUMBER "NUMBER"
+NUMBER can be any number in decimal, octal, or hexadecimal
+notation.  An initial 0 digit causes the number to be interpreted as
+octal, an initial 0x (or 0X) causes the number to be interpreted as
+hexadecimal, and an initial 0n (or 0N) causes the number to be
+interpreted as decimal.  The default is decimal.
+
+Examples of acceptable values for the number parameter include the
+following:
+
+                  12345
+                  0455
+                  0x380
+                  0X1849
+                  0n12345
+@endnode
+@node PARM "PARM"
+PARM should be replaced by one or more valid parameters as needed by
+the #define command.  CPR handles parameters for #define statements in
+the same manner that the compiler does.
+@endnode
+@node RANGE "RANGE"
+RANGE is a contiguous area of memory that can be specified in one of
+two ways:
+
+                  @{" address " link address}..@{" address " link address}
+
+                  @{" address " link address} l @{" number " link number}
+                  @{" address " link address} L @{" number " link number}
+
+In both forms, the first @{" address " link address} variable is the start address, and
+the range begins at this address.
+
+In the first form, the second @{" address " link address} value for is the end address,
+and the range includes the area of memory from the start address to the
+end address.
+
+In the second form, the l or L indicates that the value for the variable
+@{" number " link number} is to be interpreted as a length.  In this case, @{" number " link number}
+indicates the number of elements and the range is from the start address
+through @{" address " link address}+@{" number " link number}-1.  When the debugger sees a solitary l or L
+in a command, it is considered part of a range expression.
+
+The following examples fit the definition of RANGE:
+
+                  0x123456..0x123461
+                  0x123456 L 11
+
+                  a1..a2
+                  a7 l 20
+
+                  &p[0]..&p[5]
+                  p[0]..p[5]
+
+                  &p[0] l 6
+                  p[0] l 6
+
+The first pair of examples are equivalent.  The next pair are variants
+of the basic range expression.  The remaining pairs are equivalent
+ranges, given the addressing policy described in @{" ADDRESS  " link ADDRESS }.
+@endnode
+@node REGISTERS "REGISTER"
+REGISTER refers to the name of any of the following 680x0 registers:
+
+A0 - A7
+  are address registers. Register A7 functions as the
+  stack pointer and can be specified as either A7 or SP.
+
+D0 - D7
+  are general-purpose registers.
+
+PC
+  is the program counter.
+
+SP
+  is the stack pointer.
+
+SR
+  is the status register.  It contains the CCR register as well as the
+  current processor status.
+
+CCR
+  is the condition code register.  It resides in the lower byte
+  of the status register, SR.
+
+If a math coprocessor is present, the following registers also can be
+specified as the register parameter:
+
+FP0 - FP7
+  are the floating-point registers.
+
+FCR
+  is the floating-point control register.
+
+FSR
+  is the floating-point status register.  It contains the current
+  floating-point condition codes.
+
+Optionally, registers can be prefixed with a dollar sign ($) to
+distinguish them from variables with the same name.  For example,
+register D1 can be specified as $D1 to distinguish it from a variable
+named D1.
+@endnode
+@node STRING "STRING"
+A string parameter can be any standard C string in double quotes (").
+Standard C escape sequences starting with the backslash character are
+supported as follows:
+
+\n
+  newline (0x0a)
+
+\t
+  horizontal tab (0x09)
+
+\b
+  backspace (0x08)
+
+\r
+  carriage return (0x0d)
+
+\f
+  form feed (0x0c)
+
+\v
+  vertical tab (0x0b)
+
+\NNN
+  octal constant, where NNN is a three-digit octal number
+
+\xNN
+  hex constant, where NN is a two-digit hexadecimal number.
+
+A backslash followed by any character other than those shown previously
+in the escape sequences is interpreted as a plain character.  For
+example, "\\" is a string consisting of a single backslash, and "a\"b"
+is three characters long:  an "a", a double quote, and a "b".
+
+The Dialog window does not recognize any of these escape sequences when
+they are displayed.  You cannot use the "\t" escape sequence to tab in
+the Dialog window.  The escape sequences are useful in line mode and
+when setting a character string.
+
+Like all debugger input, a string can be continued to the next line by
+ending the line with a backslash.  The debugger does not support ANSI
+string concatenation.
+@endnode
+@node SUBRANGE "SUBRANGE"
+A subrange parameter is a series of contiguous integers, inclusive of
+its bounds.  The integers may be either integer constants or variables
+from the application being debugged.  The form of the subrange parameter
+is as follows:
+
+           [@{" integer " link integer} | @{" variable " link variable}] .. [@{" integer " link integer} | @{" variable " link variable}]
+
+The following are examples of the subrange parameter:
+
+                  3..7
+                  i..j
+@endnode
+@node TASK-ADDRESS "TASK-ADDRESS"
+TASK-ADDRESS is the address of the executable for a task.  TASK-ADDRESS
+can be determined from the output of the @{" TASKS  " link TASKS} command.  The
+following example is a partial listing of output from the "tasks all"
+command.  Note that TASK-ADDRESS is listed on the far left.
+
+> tasks all
+Address Type Pri State  SigWait  StackPtr Debug Name
+003D2498 13   0 Running 00000100 003D1D4E       Cpr
+002BED58 13   0 Waiting 80001000 002BFC66       iprefs 37.8 (31.5.91)
+0035E9E0 13   0 Waiting C0003000 00371B66       Background CLI
+00287790  1   5 Waiting F0000000 00287736       console.device
+00295498 13  10 Waiting 40000100 00295E5A       DF2
+0029DA98 13  10 Waiting 40000100 0029E45A       Work
+@endnode
+@node TASK-NAME "TASK-NAME"
+TASK-NAME is the name of a task.  TASK-NAME can be determined from the
+output of the @{" TASKS  " link TASKS} command.  The following example is a
+partial listing of output from the "tasks all" command.  Note that
+TASK-NAME is listed on the far right.
+
+> tasks all
+Address Type Pri State  SigWait  StackPtr Debug Name
+003D2498 13   0 Running 00000100 003D1D4E       Cpr
+002BED58 13   0 Waiting 80001000 002BFC66       iprefs 37.8 (31.5.91)
+0035E9E0 13   0 Waiting C0003000 00371B66       Background CLI
+00287790  1   5 Waiting F0000000 00287736       console.device
+00295498 13  10 Waiting 40000100 00295E5A       DF2
+0029DA98 13  10 Waiting 40000100 0029E45A       Work
+@endnode
+@node TEXT "TEXT"
+TEXT can be replace by any ASCII string.  If TEXT contains semicolons,
+they must be escaped with a backslash (\;).  Defines or aliases are
+not expanded.
+@endnode
+@node TYPE "TYPE"
+TYPE can be any of the data types provided by the C language
+including any of the following:
+
+       char                    unsigned long
+       unsigned char           unsigned
+       short                   float
+       unsigned short          double
+       int                     struct @{" name " link name}
+       unsigned int            union @{" name " link name}
+       long                    enum @{" name " link name}
+
+A type also can be any of the C types previously listed followed by some
+number of asterisks indicating that the type is a pointer to the base
+object.
+
+In addition, the type parameter can take any identifier defined by means
+of a typedef statement if the debugging information for the @{" module " link module}
+supplies typedef information.
+@endnode
+@node VARIABLE "VARIABLE"
+VARIABLE is an expression in your program that designates an
+object.  It can be either a simple identifier or an expression referring
+to an array element, structure member, or object pointed to by a
+pointer.  In addition, it can begin with a specification of the
+following form:
+
+               [[@{" image " link IMAGE}:][\@{" module " link MODULE}\]@{" function " link function}]
+
+See the other parameter descriptions in this document for a description
+of @{" image " link IMAGE}, @{" module " link MODULE}, and @{" function " link function}.
+
+The following are objects which fit the definition of the variable
+parameter:
+
+                  i
+                  max
+                  array[3]
+                  array
+                  io:readfile\length
+                  mystruct->name[2]
+                  mystruct
+                  *cptr
+                  main.c\opnf\count
+                  opnf\i
+                  mylib.library:LIBmyfunc\myvar
+@endnode
+@node "Builtin Function Parameters"
+The parameters to CodeProbe's built-in functions are a little more
+flexible than the parameters to the C versions:
+
+   formal type             actual parameter types allowed
+   -----------             -------------------------------
+     void *                constant, register, any pointer scalar,
+                           array, function, address, string constant
+
+     char *                constant, register, character pointer,
+                           unsigned character pointer, character array,
+                           string constant
+
+      int                  constant, register, any integral scalar,
+                           bitfield, enumerated constant
+
+Floating-point constants and registers are not allowed, and string
+constants can only be specified as the source operand.
+@endnode
+@node Activate "Activate"
+Activate -- Activates a task under debugger control
+
+SYNOPSIS
+  a[ctivate] [@{" task-name " link task-name} | @{" task-address " link task-address} | @{" filename " link filename}]
+
+DESCRIPTION
+The activate command activates a task that has been deactivated by the
+deactivate command.  The task is activated when the next go or proceed
+command is executed.
+
+The @{" task-name " link task-name} and @{" task-address " link task-address} are the name of the task
+and the address of the task as specified by the tasks command.  The
+@{" filename " link filename} parameter can be used to specify the name of the
+executable associated with the task you want to catch.  Only one of
+these parameters can be specified.
+
+
+EXAMPLES
+  activate Child     /* activates the task named Child under debugger
+                        control */
+  activate 0xC08540  /* activates the task with a task block starting at
+                        address 0xC08540  */
+  activate myprog    /* activates the task executing the program
+                        myprog  */
+
+SEE ALSO
+@{" CAtch " link CAtch}, @{" DEActivate " link DEActivate}, @{" DETach " link DETach}, @{" TAsks  " link TAsks }
+@endnode
+@node ALias "ALias"
+ALias -- Define an alias for a debugger command
+
+SYNOPSIS
+  al[ias] [@{" name " link name} [@{" definition " link definition}]]
+
+DESCRIPTION
+When entered with no arguments, the alias command displays the list of
+all currently defined aliases.  If a value for @{" name " link name} is provided as the
+only argument, the definition for that alias will be displayed.  Any
+text following the @{" name " link name} parameter is treated as a definition and is
+used to define the alias.
+
+Alias names are expanded only when they occur at the beginning of a
+Dialog window command line.  An alias definition can be a simple textual
+substitution or it can contain positional parameters to be expanded at
+execution time.  Positional parameters are specified as $1, $2, $3, and
+so on.  $0 represents the alias name itself.  $* represents command line
+parameters $1 through $n.  If no positional parameter is specified in a
+definition, all parameters are placed after the expanded definition
+text.
+
+The alias command will parse a @{" definition " link definition} until it encounters a
+command delimiter character (;) or the end of the line.  To define an
+alias that expands into more than one command, enclose the definition in
+either double quotes or curly braces.  If the command string must
+contain double quotes, curly braces can be used or the quotes can be
+escaped.  As in C and all other debugger commands, a backslash may be
+used to continue the line.
+
+EXAMPLES
+  alias                 /* displays a list of all alias definitions */
+  alias foo             /* displays a definition of foo */
+  alias next proceed    /* defines next to be an alias for proceed */
+  alias pr display foo, bar, $*
+           /* defines pr to be an alias that executes the display
+              command printing the value of foo, bar, and any variables
+               entered after the pr */
+  alias doit {go $1; d foo}
+           /* defines doit to execute the go command using the first
+              parameter, and displays the variable named foo */
+  alias doit {go $1;\
+        d foo}
+           /* uses the backslash command to split a command across
+              two lines */
+  alias doit "go $1; d $2 "
+           /* uses positional parameters with multiple commands. The
+              first parameter, $1, is passed to the go command,
+              and the second parameter, $2, is passed to the display
+              command */
+
+SEE ALSO
+@{" DEFine " link DEFine}, @{" UNALias " link UNALias}, @{" UNDefine " link UNDefine}
+@endnode
+@node ARgs "ARgs"
+ARgs -- Displays the arguments to a function
+
+SYNOPSIS
+  ar[gs] [@{" function " link function}]
+
+DESCRIPTION
+The args command displays all of the argument names and values to the
+current function or the function specified by the @{" function " link function} parameter.
+If a @{" function " link function} parameter is specified it must be in the calling
+sequence, as displayed by the where command.
+
+EXAMPLES
+  args        /* displays the arguments to the current function */
+  args sort   /* displays the arguments to the sort function */
+
+SEE ALSO
+@{" Display " link Display}, @{" ENV " link ENV}, @{" WHEre " link WHEre}
+@endnode
+@node BClear "BClear"
+BClear -- Clears one or more breakpoints
+
+SYNOPSIS
+  bc[lear] @{" integer " link integer} [@{" integer " link integer}...]
+  bc[lear] * | l[ast]
+  bc[lear] @{" integer " link integer}..@{" integer " link integer}
+
+DESCRIPTION
+The bclear command clears one or more breakpoints.  When a breakpoint is
+cleared, it ceases to exist and can be reinstated only by issuing the
+break command again.  You should use the bdisable command to disable
+breakpoints temporarily.
+
+The @{" integer " link integer} parameter specifies the breakpoint number as displayed by
+the blist command.  Any number of values can be specified as @{" integer " link integer}
+parameters.  An asterisk specifies that all breakpoints should be
+cleared and last causes the most recently set breakpoint to be cleared.
+A range of breakpoints can be specified by @{" integer " link integer}..@{" integer " link integer}.
+
+EXAMPLES
+  bclear 2 5 6    /* clears the breakpoints numbered 2, 5, and 6 */
+  bclear last     /* clears the last breakpoint set */
+  bclear *        /* clears all breakpoints */
+  bclear 4 .. 7   /* clears breakpoints 4, 5, 6, and 7 */
+
+SEE ALSO
+@{" BDisable " link BDisable}, @{" BEnable " link BEnable}, @{" BList " link BList}, @{" Break " link Break}, @{" WClear " link WClear}
+@endnode
+@node BDisable "BDisable"
+BDisable -- Disable one or more breakpoints
+
+SYNOPSIS
+  bd[isable] @{" integer " link integer} [@{" integer " link integer} ...]
+  bd[isable] * | l[ast]
+  bd[isable] @{" integer " link integer}..@{" integer " link integer}
+
+DESCRIPTION
+The bdisable command disables the recognition of one or more
+breakpoints.  When a breakpoint is disabled, it is not recognized by
+CodeProbe, but it does remain on the list of current breakpoints.  A
+disabled breakpoint can be re-enabled by the benable command.
+
+The @{" integer " link integer} parameter specifies the breakpoint number as displayed by
+the blist command.  Any number of values can be specified as @{" integer " link integer}
+parameters.  An asterisk specifies that all breakpoints should be
+disabled and last causes the most recently set breakpoint to be
+disabled.  A range of breakpoints can be specified by
+@{" integer " link integer}..@{" integer " link integer}.
+
+EXAMPLES
+  bdisable 2 5 6     /* disables the breakpoints numbered 2, 5, and 6 */
+  bdisable last      /* disables the last breakpoint set */
+  bdisable *         /* disables all breakpoints */
+  bdisable 4 .. 7    /* disables breakpoints 4, 5, 6, and 7 */
+
+SEE ALSO
+@{" BClear " link BClear}, @{" BEnable " link BEnable}, @{" BList " link BList}, @{" Break " link Break}, @{" WDisable " link WDisable}
+@endnode
+@node BEnable "BEnable"
+BEnable -- Enable one or more breakpoints
+
+SYNOPSIS
+  be[nable] @{" integer " link integer} [@{" integer " link integer} ...]
+  be[nable] * | l[ast]
+  be[nable] @{" integer " link integer}..@{" integer " link integer}
+
+DESCRIPTION
+The benable command enables the recognition of one or more breakpoints
+that have been disabled by the bdisable command.
+
+The @{" integer " link integer} parameter specifies the breakpoint number as displayed by
+the blist command.  Any number of values can be specified as @{" integer " link integer}
+parameters.  An asterisk specifies that all breakpoints should be
+enabled and last causes the most recently set breakpoint to be enabled.
+A range of breakpoints can be specified by @{" integer " link integer}..@{" integer " link integer}.
+
+EXAMPLES
+  benable 2 5 6     /* enables the breakpoints numbered 2, 5, and 6 */
+  benable last      /* enables the last breakpoint set  */
+  benable *         /* enables all breakpoints */
+  benable 4 .. 7    /* enables breakpoints 4, 5, 6, and 7 */
+
+SEE ALSO
+@{" BClear " link BClear}, @{" BDisable " link BDisable}, @{" BList " link BList}, @{" Break " link Break}, @{" WEnable " link WEnable}
+@endnode
+@node BList "BList"
+BList -- Lists all breakpoints
+
+SYNOPSIS
+  bl[ist]
+
+DESCRIPTION
+The blist command displays a list of all breakpoints.  Each entry has a
+form similar to the following example:
+
+   5  0x40054 loop:\loop.c\main 8 (2 hits)
+      after(4) when(i == 3) quiet {echo Hi}
+
+The number 5 in this example is the number used to refer to this
+breakpoint in bclear, bdisable, and benable commands.  If an asterisk
+appears next to the number, that breakpoint has been disabled and will
+not be triggered.  Following the breakpoint number is the hexadecimal
+address at which the breakpoint resides.  If sufficient debug
+information is available, the address is followed by the location that
+it represents.  The hit count, which represents a running count of the
+number of times the breakpoint has been triggered, is displayed after
+the location of the breakpoint.  A breakpoint is triggered when all of
+the following conditions are true:
+
+       -  execution has reached the address shown
+       -  the when and after conditions are true,
+          if specified
+       -  the breakpoint is enabled.
+
+Breakpoints are triggered when the user steps to the address provided
+the last two conditions are met.  The second line of output displayed by
+the blist command shows the options given when the break command was
+issued.
+
+SEE ALSO
+@{" BClear " link BClear}, @{" BDisable " link BDisable}, @{" BEnable " link BEnable}, @{" Break " link Break}, @{" WList " link WList}
+@endnode
+@node Break "Break"
+Break -- Sets a breakpoint
+
+SYNOPSIS
+  b[reak] @{" location " link location} [after(@{" integer " link integer})] [when(@{" expression " link expression})]
+          [tr[ace]] [q[uiet]] [te[mp]] [{@{" cmd-list " link cmd-list}}]
+
+DESCRIPTION
+The break command is used to set a breakpoint at a location specified by
+the @{" location " link location} parameter.  You can use a dollar sign to specify the
+current location.
+
+The after option specifies the minimum number of times the specified
+line must be executed before the breakpoint is triggered.  This is also
+known as specifying a pass count.  For break commands that do not
+contain an after clause, the pass count is set to 1.
+
+Each time the breakpoint is hit, the pass count is tested.  If the pass
+count equals 1, the breakpoint is triggered and execution stops.  If the
+pass count is greater than 1, the pass count is decremented by 1, and
+execution continues.  The blist command shows the current pass count for
+each breakpoint.
+
+If the when option is present, the breakpoint is triggered only if the
+specified @{" expression " link expression} evaluates to true (nonzero).  The after and when
+options can be specified in any order.  If both options are specified,
+the pass count is tested and decremented only when the when condition is
+true.
+
+The trace option continues execution automatically after the breakpoint
+is triggered, unless you reach the breakpoint by single-stepping, then
+the the trace option has no effect.
+
+The quiet option suppresses the default message showing the location
+when the breakpoint is triggered.
+
+The temp option causes the breakpoint to be deleted after it has been
+triggered.
+
+If the @{" cmd-list " link cmd-list} parameter is present, the commands listed are
+performed each time the breakpoint is triggered.  As in C commands and
+all other debugger commands, a backslash may be used to continue the
+line.
+
+Note:  To avoid confusion, the break command does not use the default
+radix setting.  You must specify Ox for an address; otherwise, you will
+be specifying a line number.  For example, even if the radix is set to
+hex, the following command specifies a break command for line 20 and not
+address 0x20:
+
+                  b 20
+
+EXAMPLES
+  break $     /* sets a breakpoint at the current line */
+  b 14        /* sets a breakpoint at line 14 of the current @{" module " link module} */
+  b sort      /* sets a breakpoint at the first line of the sort
+                 function */
+  break sort return    /* sets a breakpoint at the return from the
+                          sort function */
+  break \myfile.c\sort 14    /* sets a breakpoint at line 14 of sort
+                                in the @{" module " link module} named myfile.c */
+  break mylib.library:myfunc
+              /* sets a breakpoint at the first line of the myfunc
+                 function in the shared library mylib.library */
+  b $ after(5)     /* breaks the fifth time the current line is
+                      executed */
+  break 0x804A     /* sets a breakpoint at the absolute address
+                      0x804A */
+  break 14 when (i > 5) {di p L 16; b sort 26
+        when (i == 8); bl; go}
+              /* sets a breakpoint on line 14 that performs the
+                 commands given inside the curly braces if i > 5
+                 evaluates true */
+  b 8 trace quiet {d "i = ", i}
+              /* prints a message of the form "i = value "
+                 every time line 8 is executed */
+  break 100 temp {d foo}
+              /* stops at line 100, prints foo, and deletes
+                 this breakpoint */
+
+SEE ALSO
+@{" BClear " link BClear}, @{" BDisable " link BDisable}, @{" BEnable " link BEnable}, @{" BList " link BList}, @{" Go " link Go}
+@endnode
+@node Call "Call"
+Call -- Evaluates an expression and discards the result
+
+SYNOPSIS
+  c[all] @{" expression " link expression}
+
+DESCRIPTION
+The call command is used to evaluate an expression when you do not care
+about the value returned.  It is equivalent to the following statement
+in C language:
+
+                  @{" expression " link expression};
+
+The most common use of the call command is to call a function in the
+application program, though function calls also may appear in arbitrary
+expressions in other commands.  If you want to see the value returned by
+the expression, use the display command.
+
+The debugger looks at the types of the parameters specified and not at
+the definition of the function or any prototype.  Thus, the debugger
+does not flag an error if the wrong number of parameters are specified,
+nor does it perform automatic casting of types or allow passing of char,
+short, or float types.  For example, the following command passes two
+parameters, an int and a double, regardless of how the function is
+declared:
+
+                  call f(2, 1.5)
+
+CodeProbe supports standard C syntax for function calls.  Either a
+function name or an expression evaluating to a function type may be
+specified before the opening parenthesis.  Thus, the call command can be
+used only to call functions or evaluate expressions that point to a
+function.  For example, if pf is a function pointer, and func is a
+function, the following commands are allowed:
+
+                  call func()
+                  call (*pf)()
+
+However, the following commands are not allowed:
+
+                  call pf()
+                  call 0x134()
+                  call register()
+
+You cannot use the call command to execute a function after a program
+has ended.
+
+If a breakpoint is hit, a signal is caught, or the program terminates in
+the middle of a function call, the debugger aborts the expression and
+leaves you at that location.  A warning is printed if any parameters are
+not cleaned off the stack.  This may cause a return to an invalid
+location later if execution is allowed to continue.
+
+EXAMPLES
+  call status()              /* calls the status function */
+  call print("Test ", 300)    /* calls the print function passing in a
+                                string and an @{" integer " link integer} parameter */
+  call (*fp)(&arr[5], j+10, 3.0)    /* arbitrary expressions  */
+
+SEE ALSO
+@{" Display " link Display}, @{" ENV " link ENV}, @{" WHEre " link WHEre}
+@endnode
+@node CAtch "CAtch"
+CAtch -- Catches a task not currently under debugger control
+
+SYNOPSIS
+  ca[tch] [@{" task-name " link task-name} | @{" address " link address} | @{" filename " link filename}]
+
+DESCRIPTION
+The catch command enables the debugger to gain control of tasks that
+were not started under the control of CPR.  The @{" task-name " link task-name} and
+@{" address " link address} parameters can be found by issuing a tasks all command.
+
+The @{" filename " link filename} parameter can be used to specify the name of the
+executable associated with the task you want to catch.
+
+EXAMPLES
+  catch Child     /* catches the task named Child */
+  ca 0xC08540     /* catches the task with a task block starting
+                     address 0xC08540 */
+  catch myprog    /* catches the task running the program myprog */
+
+SEE ALSO
+@{" Activate " link Activate}, @{" DEActivate " link DEActivate}, @{" DETach " link DETach}, @{" SYMload " link SYMload}, @{" TAsks " link TAsks}
+@endnode
+@node DEActivate "DEActivate"
+DEActivate -- Deactivate a task under debugger control
+
+SYNOPSIS
+  dea[ctivate] [@{" task-name " link task-name} | @{" address " link address} | @{" filename " link filename} ]
+
+DESCRIPTION
+Normally all tasks under CPR's control are started when a go or proceed
+command is issued.  The deactivate command can be used to deactivate a
+task.  A task that is deactivated by this command is not started when
+the debugger allows the application to run unless it is the current
+task.  The task can be reactivated with the activate command.
+
+The @{" task-name " link task-name} and @{" address " link address} parameters can be found by issuing a tasks
+command.  The @{" filename " link filename} parameter can be used to specify the name of
+the executable associated with the task you want to catch.
+
+EXAMPLES
+  dea Child          /* deactivates the task named Child under CPR */
+  deactivate 0xC08540     /* deactivates the task with a task block
+                             starting at address 0xC08540 */
+  deactivate myprog       /* deactivates the task running the program
+                             named myprog */
+
+SEE ALSO
+@{" Activate " link Activate}, @{" CAtch " link CAtch}, @{" DETach " link DETach}, @{" TAsks " link TAsks}
+@endnode
+@node DEFine "DEFine"
+DEFine -- Defines a macro
+
+SYNOPSIS
+  [#]def[ine] @{" name " link name} [@{" definition " link definition}]
+  [#]def[ine] @{" name " link name}(@{" parm " link parm} [, @{" parm " link parm} ... ]) [@{" definition " link definition}]
+
+DESCRIPTION
+The define command provides a general macro substitution facility that
+is nearly identical to the mechanism provided in C syntax.  Macros
+defined in the debugger are expanded anywhere within a line of text
+except inside quotes or filenames.  The debugger also will not expand
+macro definitions that are prefixed with a backtick character (`).  The
+ANSI # and ## operators are not supported.
+
+EXAMPLES
+  define          /* displays all the macro definitions */
+  define foo      /* defines foo as a null definition */
+  def foo bar     /* defines foo to be bar */
+  define func(a,b) (a+b)    /* defines func with parameters */
+
+SEE ALSO
+@{" ALias " link ALias}, @{" UNALias " link UNALias}, @{" UNDefine " link UNDefine}
+@endnode
+@node DETach "DETach"
+DETach -- Detaches a task from debugger control
+
+SYNOPSIS
+  det[ach] [@{" task-name " link task-name} | @{" address " link address} | @{" filename " link filename} ]
+
+DESCRIPTION
+The detach command detaches a task from debugger control.  The task can
+be brought under CodeProbe's control with the catch command.
+
+The @{" task-name " link task-name} and @{" address " link address} parameters can be found by issuing a tasks
+command.  The @{" filename " link filename}> parameter can be used to specify the name of
+the executable associated with the task you want to catch.
+
+When using the detach command make sure that no breakpoints are placed
+inside code that is executable from a detached task.  Also, do not
+specify the detach command to the original program if any of its child
+processes continue to run in the same code segment.
+
+EXAMPLES
+  detach Child    /* detaches the task named Child from debugger
+                     control  */
+  det 0xC08540    /* detaches the task with a task block starting at
+                     address 0xC08540 */
+  det myprog      /* detaches the task executing the program myprog */
+
+SEE ALSO
+@{" Activate " link Activate}, @{" CAtch " link CAtch}, @{" DEActivate " link DEActivate}, @{" TAsks " link TAsks}
+@endnode
+@node Display "Display"
+Display -- Displays the value of an expression
+
+SYNOPSIS
+  d[isplay] (@{" expression " link expression} ["@{" format " link format} "] | @{" string " link string}) [, ...]
+
+DESCRIPTION
+The display command evaluates the value of the @{" expression " link expression} parameter
+and displays the result.  The @{" expression " link expression} parameter can be any C
+expression containing constants, variables, and function calls from the
+program being debugged.  Any number of expressions and strings can be
+specified, separated by commas.  All expressions are displayed on the
+same line.
+
+The display command chooses the default format based on the type of the
+expression.  Values of type char are displayed as characters as well as
+in decimal and hexadecimal format.  If the character is unprintable it
+is displayed as an escape sequence, for example, \n or \xAC.  Values of
+type int and long are displayed in decimal and hexadecimal format, and
+floats and doubles are displayed in floating point best format.
+
+To override the default format, a printf style format can be specified
+optionally after each expression.  No error checking is done on the
+@{" format " link format} parameter, so strange results are possible.  It may contain up
+to two conversion operators for short and long types but only one for
+all other types.
+
+All members of structures, unions, and arrays are displayed using the
+default formats.  Partial arrays may be displayed using two integers to
+indicate the first and last elements to display.  For example, the
+following command displays array elements 3, 4, and 5:
+
+                  display a[3..5]
+
+An asterisk may be used instead to indicate that all elements should be
+displayed.
+
+The @{" string " link string} parameter can be any standard C string in double quotes as
+described elsewhere in this document in the Parameters Types section.
+
+To display a null-terminated string, use the dzero command.  Use the
+dump command to dump an area of memory.
+
+EXAMPLES
+  display i           /* displays the variable i */
+  d a "a=%10.5e"      /* displays a using a printf style format
+                         specifier */
+  d p->d[5] + f(3)    /* displays the value of an expression containing
+                          a function call */
+  display "X is", x, "J is", j
+         /* displays the value of several arguments including strings */
+  d x "X is %d", j "J is %d"
+         /* displays the value of several arguments using printf style
+            format specifiers */
+  d a[3]              /* displays the value of an element of an array */
+  display a[3..5]     /* displays the value of elements 3 through 5 in
+                         an array named a */
+  d a[*]     /* displays the value of every element of an array */
+
+SEE ALSO
+@{" Call " link Call}, @{" DUmp " link DUmp}, @{" DZero " link DZero}
+@endnode
+@node DUmp "DUmp"
+DUmp -- Dumps memory contents
+
+SYNOPSIS
+  du[mp] [@{" variable " link variable} | @{" address " link address} | @{" range " link range}] [$]
+         [@{" format " link format} [@{" itemsize " link itemsize}] | text]
+
+DESCRIPTION
+The dump command is used to examine an area of memory.  You select the
+format of the dump, the length of each item being dumped, and whether or
+not you want text to appear on the right side of the dump.  A dump
+command with no parameters continues where the previous dump command
+ended using the same dump specifications.
+
+The @{" variable " link variable}, @{" address " link address}, or @{" range " link range} parameter specifies the location
+to be dumped.  The $ parameter can be used to specify the last dump
+address when the @{" format " link format} or text parameters are used.  The $ is
+ignored if a @{" variable " link variable}, @{" address " link address}, or @{" range " link range} parameter has already
+been specified making it useful for aliases where the dump address may
+be omitted.
+
+The @{" format " link format} parameter controls the format of the dump and its value can
+be any of the following:
+
+          a[scii]        FFP[float]      IEEE[float]
+          b[inary]       f[loat]         o[ctal]
+          d[ecimal]      h[ex]           u[nsigned]
+
+The default format is hex.
+
+If you specify a @{" format " link format} parameter, you also can specify an @{" itemsize " link itemsize}
+parameter to control the length of each item dumped.  The @{" itemsize " link itemsize}
+parameter can have a value of 1, 2, 4, or 8.  The @{" itemsize " link itemsize} parameter
+is concatenated onto the end of the @{" format " link format} parameter (for example, b4
+for a binary format of length 4).  If you do not specify @{" itemsize " link itemsize},
+CodeProbe uses a default.  As shown in the following table, the
+allowable size and default values depend on the format specified.
+
+The text parameter is used to specify that an ASCII representation of
+the memory dump should be displayed.
+
+The @{" itemsize " link itemsize} parameter has the following default values and allowable
+sizes:
+
+    Format     Default       Allowed Sizes
+    ------     -------       -------------
+    ascii         1            1
+    binary        1            1, 2, 4
+    decimal       4            1, 2, 4
+    FFPfloat      4            4
+    float         8            4, 8
+    hex           4            1, 2, 4
+    IEEEfloat     8            4, 8
+    octal         4            1, 2, 4
+    unsigned      4            1, 2, 4
+
+Compatibility Aliases
+---------------------
+To provide backward compatibility with previous releases of CodeProbe,
+the following aliases for the dump command are supported:
+
+  da
+dumps a range of memory as ASCII characters
+
+  db
+dumps a range of memory in both hexadecimal and ASCII format
+
+  dc
+dumps a range of memory in decimal format
+
+  dd
+dumps a range of memory as 8-byte floating-point numbers in
+IEEE format
+
+  df
+dumps a range of memory as 4-byte floating-point numbers in IEEE
+format
+
+  dffp
+dumps a range of memory as 4-byte floating-point numbers
+in FFP format
+
+  di or dl
+dumps a range of memory in integer format using
+decimal representations of the integers
+
+  dw
+dumps a range of memory in short integer (16-bit) format using
+hexadecimal representations of the integers
+
+  dp
+dumps a range of memory in 4-byte hexadecimal format
+
+  ds
+dumps a range of memory in short integer (16-bit) format, using
+decimal representations of the integers.
+
+
+EXAMPLES
+  dump var      /* dumps memory contents of variable var */
+  dump var L 13 hex1       /* dumps memory contents for 13 bytes using
+                              1-byte hexadecimal format */
+  dump var1 .. var2 ascii  /* dumps memory contents between var1..var2
+                              in ASCII format */
+  dump 0xAF8100 L 8      /* dumps memory contents for 8 longs
+                            (32 bytes) starting at absolute address
+                            0xAF8100 */
+
+SEE ALSO
+@{" Display " link Display}, @{" DZero " link DZero}
+@endnode
+@node DZero "DZero"
+DZero -- Display memory as a null-terminated ASCII string
+
+SYNOPSIS
+  dz[ero] @{" variable " link variable} | @{" address " link address} | @{" array-slice " link array-slice}
+
+DESCRIPTION
+The dzero command displays the contents of memory as a null terminated
+(\0) string.  If the location is the name of a nonpointer variable in
+the program being debugged, dzero displays the memory contents starting
+at the address of the variable and continuing until the null character
+is found.  If the location is the name of a pointer variable, dzero uses
+the contents of the pointer and displays bytes starting at that address
+until a null character is encountered.  If the @{" address " link address} parameter is
+used to specify an absolute address, dzero displays the contents of that
+address until a null character is encountered.  If the location is an
+array slice, the address of each element in the array slice will be
+displayed until the null character is found.
+
+EXAMPLES
+  dzero string        /* displays characters until the null character is
+                         reached */
+  dzero ptr           /* displays data pointed to by ptr as a string */
+  dzero ptr[3 .. 7]   /* displays each element in the array slice
+                         ptr[3..7] until the null character is
+                         reached */
+
+SEE ALSO
+@{" Display " link Display}, @{" DUmp " link DUmp}
+@endnode
+@node ECho "ECho"
+ECho -- Displays a string
+
+SYNOPSIS
+  ec[ho] [@{" text " link text}]
+
+DESCRIPTION
+The echo command writes the value specified for the @{" text " link text} parameter in
+the Dialog window.  This is useful for documenting the actions being
+taken in a debugger command file, the cprinit file, or AREXX macros.  If
+the @{" text " link text} parameter contains semicolons, they must be escaped with a
+backslash (\;).  Defines or aliases are not expanded.
+
+EXAMPLES
+  echo Starting program\; loading defines.
+        /* displays the message following the echo command in the
+           Display window */
+
+SEE ALSO
+@{" Display " link Display}, @{" EXecute " link EXecute}
+@endnode
+@node ENV "ENV"
+ENV -- Sets the environment
+
+SYNOPSIS
+  env [@{" function " link function} | @{" integer " link integer}]
+  env [-c[aller] | -s[ubroutine] | -u[p] | -d[own] |
+      -@{" integer " link integer} | +@{" integer " link integer}]
+
+DESCRIPTION
+The env command changes the environment for subsequent debugger
+commands.  Environmentis the state of the machine at a particular point
+in the calling sequence (that is, the contents of the stack and the
+contents of variables).  Setting the environment to a previous point in
+the calling sequence, such as the point where the current function was
+called, returns the machine to the state it was in at that time.
+However, only the information that can be retrieved from the stack will
+have been restored.  Scratch registers and other components, such as the
+values of externs, that are not dependent on the stack remain relative
+to the current execution point in the application and will not be
+changed.  Nonscratch registers are restored to the correct values for
+the new environment.
+
+The environment can be set to an absolute or relative position in the
+call chain.  To set it to an absolute position, specify the function
+name using the @{" function " link function} parameter, or a level number using the
+@{" integer " link integer} parameter.  The where command or Calls window can be used to
+display the level number.  The other forms to the env command set the
+environment relative to the current function.
+
+To move the environment up one level to the caller of the current
+function, use the -caller, -up, or -1 flags.  To move in the opposite
+direction, use the -subroutine, -down, or +1 flags.  Use the +@{" integer " link integer}
+or -@{" integer " link integer} forms to move more than one level at a time.
+
+Level 1 is defined to be the function in which you are currently
+stopped.  The caller's level is 2, its caller is level 3, and so on.
+These level number designations change as the program steps into and
+returns from functions.
+
+If you attempt to move the environment up or down more levels than there
+are in the call frame, a warning is displayed and the environment is
+moved as far as possible.
+
+After using the env command, commands that refer to line numbers and
+variables act as if the function specified by the @{" function " link function} parameter
+is the current function.  Any command that causes the program being
+debugged to resume execution, such as the go or trace commands,
+automatically resets the user environment to the last point of
+execution.  Issuing the env command is the same as double-clicking on a
+function call entry in the Calls window.
+
+EXAMPLES
+  env     /* sets the user environment to the last point of execution */
+  env main; d i    /* sets the user environment to main and display i */
+  env -subroutine  /* sets the environment to the called function
+                      (down 1 level) */
+  env -caller      /* sets the environment to the caller function
+                      (up 1 level) */
+  env +5  /* moves the environment down 5 levels */
+  env 7   /* moves the environment to the level 7 */
+
+SEE ALSO
+@{" WHEre " link WHEre}
+@endnode
+@node EXecute "EXecute"
+EXecute -- Executes a debugger command file
+
+SYNOPSIS
+ ex[ecute] @{" filename " link filename}
+
+DESCRIPTION
+The execute command reads and executes CodeProbe commands from the file
+specified by the @{" filename " link filename} parameter.  If the file cannot be found,
+CodeProbe appends a .cpr extension to it and tries again.  Thus, you can
+place a set of debugger commands in a file with a .cpr extension and
+simply use the root filename, minus the extension, in the execute
+command.  CodeProbe searches for the specified file in your normal Shell
+path as defined with the AmigaDOS PATH command.
+
+If the file cmds.cpr consists of the commands
+
+                  break sort
+                  blist
+                  trace
+                  trace
+
+then the execute command applied to this file would yield the following
+display:
+
+   > execute cmds.cpr
+   executing commands from cmds.cpr
+   1  0xC32D3E sort:\sort.c\sort 22
+   sort:\sort.c\init 5
+   sort:\sort.c\init 9
+
+The debugger commands themselves are not echoed as part of the display
+unless echo mode is turned on.
+
+If you are debugging a program frequently and want to set a number of
+breakpoints at the same places, you can place all of your breakpoint
+commands in a file and then use the execute command on this file.  This
+way you can avoid re-entering the same commands each time you want to
+use the debugger.
+
+If the execute command is used in a command list, it must be the last
+command in the list.
+
+EXAMPLES
+  execute setvars   /* executes the file named setvars or setvars.cpr */
+  execute test/cmds.cpr     /* executes the file named cmds.cpr located
+                               in the test directory */
+@endnode
+@node EXPAND "EXPAND"
+EXPAND -- Expands and displays a command line
+
+SYNOPSIS
+  expand [alias] @{" command-line " link command-line}
+
+DESCRIPTION
+The expand command displays its arguments with all aliases or defines
+expanded.  The @{" command-line " link command-line} parameter specifies any valid command-line
+entry that includes aliases or defines.  This command can be useful in
+trying to create more complex aliases and defines.
+
+If the alias keyword is not specified, aliases are not expanded, but
+defines will be expanded.
+
+EXAMPLES
+  expand alias dp
+      /* expands the alias for named dp to display the following:
+                    dump                  $ hex4
+      */
+  expand ISEQUAL(1,5)
+      /* expands the macro ISEQUAL using the arguments 1 and 5.
+         For example, if ISEQUAL has been defined as (a == b),
+         then it would be expanded to (1 ==5) */
+
+SEE ALSO
+@{" ALias " link ALias}, @{" DEFine " link DEFine}
+@endnode
+@node FINish "FINish"
+FINish -- Terminates CPRK and CPRX
+
+SYNOPSIS
+  fin[ish]
+
+DESCRIPTION
+The finish command is used in cross-development mode to terminate the
+session.  The cross debugger (CPRX) on the host machine instructs the
+kernel (CPRK) on the target machine to terminate after cleaning up and
+closing the communications link.  The finish command must be entered on
+the host machine.  The host machine is the one that is being used to
+display the CodeProbe user interface.  The finish command does not work
+from the native version of CodeProbe.
+
+EXAMPLE
+  finish    /* causes CPRK to terminate after disconnecting from CPRX */
+
+SEE ALSO
+@{" Quit " link Quit}
+@endnode
+@node FRegister "FRegister"
+FRegister -- Displayes or modifies floating-point registers
+
+SYNOPSIS
+  fr[egister] [@{" register " link registers} [[=] @{" expression " link expression}]]
+
+DESCRIPTION
+On machines that have a math coprocessor chip installed, the fregister
+command displays or modifies the contents of the floating-point
+registers.  If no parameters are specified, the fregister command
+displays the current contents of all the machine's floating-point
+registers in hexadecimal and as floating-point numbers.  If only a
+register name is supplied, the contents of the register are displayed;
+otherwise, the value of the @{" expression " link expression} parameter is stored in the
+register specified.
+
+The display and set commands also can be used to display and modify the
+registers.
+
+EXAMPLES
+  fr    /* displays all floating-point registers and flags */
+  fregister fp0 30.14    /* sets floating-point register fp0 to 30.14 */
+  fr fp2 = sales     /* sets floating-point register fp2 equal to the
+                        value of sales */
+  fregister fp1      /* displays the value of floating point register
+                        fp1 */
+
+SEE ALSO
+@{" Display " link Display}, @{" Register " link Register}, @{" RFlag " link RFlag}, @{" SEt " link SEt}
+@endnode
+@node Go "Go"
+Go -- Continues execution until a breakpoint is encountered or the
+      program exits
+
+SYNOPSIS
+  g[o] [@{" location " link location} [after(@{" integer " link integer})] [when(@{" expression " link expression})]]
+
+DESCRIPTION
+The go command begins execution of the program at the current location,
+which is identified by the address stored in the program counter (pc)
+register.  Execution continues until a breakpoint is reached or until
+the program terminates, either normally or with an error.
+
+The @{" location " link location} parameter specifies an optional location for a temporary
+breakpoint.  The breakpoint specified in the go command exists only for
+the duration of the go command.  The next time program execution stops,
+the breakpoint is cleared, even if the temporary breakpoint was not
+reached.
+
+The after option specifies the minimum number of times the specified
+location must be reached before the temporary breakpoint is triggered.
+This is also known as specifying a pass count.  For go commands that do
+not contain an after clause, the pass count is set to 1.
+
+Each time the temporary breakpoint is hit, the pass count is tested.  If
+the pass count equals 1, the temporary breakpoint is triggered and
+execution stops.  If the pass count is greater than 1, the pass count is
+decremented by 1 and execution continues.
+
+If the when option is present, the breakpoint is triggered only if the
+specified @{" expression " link expression} evaluates to true (nonzero).  The after and when
+options can be specified in any order.  If both are used, the pass count
+is only tested and decremented when the condition is true.
+
+Note:  To avoid confusion, the go command does not use the default radix
+setting.  You must specify 0x for an address; otherwise, you will be
+specifying a line number.  For example, even if the radix is set to hex,
+the following command specifies a go command for line 20 and not address
+0x20:
+                  g 20
+
+EXAMPLES
+  go
+        /* continues program execution to the next breakpoint or the
+           end of the program */
+  go 14
+       /* continues program execution to line 14 of the current
+          @{" module " link module}. Note that line numbers are relative to a @{" module " link module } and
+          not a function. This example assumes that code was generated at
+          line 14. You cannot use the go command to go to a line
+          with no code generated.   */
+  go sort
+       /* continues program execution to the first line of the
+          sort function */
+  go \myfile.c\sort 14
+       /* continues program execution to line 14 of the sort
+          function in @{" module " link module } myfile.c. This example also
+          assumes that code was generated at line 14 */
+  go mylib.library:myfunc
+       /* continues program execution to the myfunc
+          function in the shared library mylib.library */
+  go $ after(5)
+       /* continues program execution until the fifth time the
+          current line is executed */
+  go 0x804A
+       /* continues program execution until absolute address
+          0x804A is reached */
+
+SEE ALSO
+@{" Break " link Break}, @{" Proceed " link Proceed}, @{" PS " link PS}, @{" Trace " link Trace}, @{" TS " link TS}
+@endnode
+@node "Help Command" "HELP"
+Help -- Displays help information
+
+SYNOPSIS
+  h[elp] [@{" command " link command}]
+  ? [@{" command " link command}]
+
+DESCRIPTION
+The help command displays information about commands and operands.  If
+the @{" command " link command} parameter is omitted, the Help window opens and a list of
+commands and topics is displayed.  Entering one of the items on this
+list as the value for the @{" command " link command} parameter displays information about
+that item.
+
+An alternate method of selecting an item is to double-click on the
+command or topic in the Help window.  This method of selection can also
+be used from the help screens themselves.  For example, at the bottom of
+the screen for the dump command there is a section that directs you to
+the display and dzero commands for additional information.  You can
+access the help screen for either of these commands by double-clicking
+on the name of the command.
+
+EXAMPLES
+  help       /* displays a list of commands and topics */
+  h break    /* displays information about the break command */
+  ? break    /* displays information about the break command */
+@endnode
+@node HUnks "HUnks"
+HUnks -- Lists the addresses and sizes of all hunks
+
+SYNOPSIS
+  hu[nks]
+
+DESCRIPTION
+The hunks command displays the list of loaded hunks, their addresses,
+and their sizes for the current executable file.
+
+The following example shows the output from the hunks command:
+
+  >hunks
+  Hunk  Address       Size
+   0    00C32AE8    0xB54 (2900)
+   1    00C28570    0x27C (636)
+
+The size is displayed first in hexadecimal format followed by decimal
+format in parentheses.
+
+EXAMPLE
+  hunks    /* lists all hunks for the current executable file */
+@endnode
+@node Jump "Jump"
+Jump -- Changes the current execution point
+
+SYNOPSIS
+  j[ump] @{" location " link location}
+
+DESCRIPTION
+The jump command updates the program counter to point to a new location.
+The effect of using this command is that the code between the previous
+execution point and the new location is not executed.  Any value for the
+@{" location " link location} parameter that is valid for the break or go commands can be
+used.  It is important to note that the stack is not modified in any
+way.
+
+You should be very careful when using the jump command because certain
+registers may not be set up the way the code that is jumped to expects.
+Using the jump command is more likely to be safe if you always jump from
+one C source file line to another in the same function (not from
+assembly lines), and you have compiled with the debug=symbolflush or
+debug=fullflush options to make sure that registers are flushed to
+memory at C source line boundaries.  If the jump command is used on
+optimized code, the registers are not likely to be set correctly.
+
+Note:  To avoid confusion, the jump command does not use the default
+radix setting.  You must specify 0x for an address; otherwise, you will
+be specifying a line number.  For example, even if the radix is set to
+hex, the following command specifies a jump command for line 20 and not
+address 0x20:
+
+                  j 20
+
+EXAMPLES
+  jump 12          /* jumps to line 12 in the current function */
+  jump 0x804E      /* jumps to the address 0x804E */
+
+SEE ALSO
+@{" ENV " link ENV}, @{" Go " link Go}, @{" RETurn " link RETurn}
+@endnode
+@node List "List"
+List -- Lists the lines in a source file
+
+SYNOPSIS
+  l[ist]
+  l[ist] $
+  l[ist] + | - @{" integer " link integer} [L length]
+  l[ist] <line-range>
+  l[ist] [@{" image " link IMAGE}:] \@{" module " link MODULE} [<line-range>]
+  l[ist] [[@{" image " link IMAGE}:]\@{" module " link MODULE}\@{" function " link function}  [<line-range>]
+
+DESCRIPTION
+The list command is used when debugging in line mode to list the lines
+in a source file.  The current list line is set to the source line at
+which the program being debugged is stopped each time the user regains
+control.
+
+The list command with no arguments displays lines starting with the
+current list line.  The number of lines displayed is controlled by the
+opt list command.
+
+The $ parameter is used to list a number of lines above and below the
+current line at which the program is stopped.  The number of lines above
+and below is controlled by the opt context command.
+
+The @{" module " link MODULE} parameter specifies the name of a module in the program.  A
+range of lines is specified with the <line-range> parameter, which can
+have either of the following forms:
+
+               line-1  [[..] line-2
+               line-1 L length
+
+In the first form the <line-range> parameter specifies a range of lines
+starting at line-1 and ending at line-2.  In the second form a range of
+lines is specified as starting at line-1 and extending for length
+number of lines.  <line-range> and <lenghth> are both @{" integer " link integer}
+values
+
+If the list command is given an environment (@{" module " link module} or function), then
+the source file for that environment is opened, if possible, and the
+desired line range is displayed.  If no line range is given, and no
+function is given, the listing begins at line 1.  If a function name is
+given and no line range is given, lines are listed beginning with the
+function declaration.
+
+Each time the list command is used, the current list line is set to the
+line immediately following the last listed line.  Remember that the
+current list line is also updated each time the client program is
+allowed to execute.
+
+EXAMPLES
+  list    /* lists the next group of lines. The number of lines listed
+             is set by the opt list command. */
+  list $     /* lists lines around the line pointed to by the
+                current program counter  */
+  list @{" module " link module} /* lists first lines of the specified @{" module " link module} */
+  list \@{" module " link module} 20 40    /* lists lines 20 through 40 of the specified
+                            @{" module " link module} */
+  list \@{" module " link module} 20 l 10  /* lists 10 lines of the specified @{" module " link module}
+                           starting at line 20 */
+  list +20     /* starts listing lines 20 lines down from the current
+                  line */
+  list -20     /* starts listing lines 20 lines up from the current
+                  line */
+  list -20 L 10     /* lists 10 lines, staring 20 lines up from the
+                       current line */
+  list foo     /* starts listing at the declaration of the function
+                  named foo */
+  list foo 10 20     /* lists lines 10 through 20 of the function
+                        named foo */
+
+SEE ALSO
+@{" OPt " link OPt}, @{" SOurce " link SOurce}, @{" Unassemble " link Unassemble}
+@endnode
+@node LOg "LOg"
+LOg -- Logs debugger commands to a file
+
+SYNOPSIS
+  lo[g] [<log-command>]
+
+DESCRIPTION
+The log command is used to save to a file a record of all activity in
+the Dialog window including commands and results.  Menu selections are
+not saved by the log command.  This information is stored in a log file.
+The name of the file is set with the log file command.  The default
+filename is cpr.log.
+
+When issued without the <log-command> parameter, the log command can be
+used to display the current log state, either on or off, and the
+filename of the log file.  The <log-command> parameter can be any of the
+following:
+
+  append
+appends log information to the end of the log file
+
+  file @{" filename " link filename}
+specifies the filename of the log file
+
+  off
+closes the log file
+
+  on
+opens a new log file
+
+  snap
+snapshots contents of the Dialog window to the log file.
+
+If a command that enables the logging of your session, such as log on,
+log append, or log snap, is issued when logging is already enabled, the
+results of the command are added to the current log file.  If the log
+filename is changed while logging is enabled, the current log file is
+closed, and a new one is opened.  The log file is automatically closed
+when you exit CodeProbe.
+
+EXAMPLES
+  log snap     /* saves the dialog for the current session into
+                  the log file named cpr.log */
+  log file foo.log     /* sets the log file to the filename foo.log */
+  log on       /* enables the log file */
+  log off      /* disables the log file */
+  log append   /* enables the log file and append new log information
+                  to the end of the log file */
+@endnode
+@node OPt "OPt"
+OPt -- Show option values or change the value of a debugger option
+
+SYNOPSIS
+  op[t]
+  op[t] au[toswap] [on | off]
+  op[t] ar[rdim] @{" integer " link integer}
+  op[t] b[adchar] @{" integer " link integer}
+  op[t] ca[se] [on | off]
+  op[t] cat[ch] [on | off]
+  op[t] co[ntext] @{" integer " link integer}
+  op[t] dev[ices] [on | off]
+  op[t] e[cho] [on | off]
+  op[t] ib[ytes] [on | off]
+  op[t] ig[norepath] [on | off]
+  op[t] l[ist] @{" integer " link integer}
+  op[t] rad[ix] [d[ecimal] | h[ex]]
+  op[t] ran[gelen] @{" integer " link integer}
+  op[t] re[slib] [on | off]
+  op[t] se[arch] [+ | -] @{" directory " link directory} [, @{" directory " link directory} [...]]
+  op[t] so[urce] c | a[sm] | m[ixed] | n[ext]
+  op[t] st[rlen] @{" integer " link integer}
+  op[t] t[ask] [@{" task-name " link task-name} | @{" task-address " link task-address}]
+  op[t] u[nassemble] @{" integer " link integer}
+
+DESCRIPTION
+The opt command is used to show the value of debugger options or to
+change them.  The opt command by itself shows the current settings of
+all options.  The following are the options and their possible values:
+
+  autoswap
+if set to on, pushes the screen containing the applications output to
+the front each time control is given to the application.  If set to off,
+the application screen is not pushed to the front.  The default is off.
+
+  arrdim
+controls the maximum number of array elements that are displayed at one
+time with the display command.  The default is 20.
+
+  badchar
+controls the number of non-ASCII characters that a dzero or display
+command will accept when displaying a string referenced by a character
+pointer.  The default is 3.
+
+  case
+if set to on, causes the search command to perform case-sensitive string
+searches.  The default is off.
+
+  catch
+if set to on, catches any new task generated by a task under debugger
+control.  The default is off.
+
+  context
+controls the number of lines displayed in the Source window preceding
+the current line.  The default is 2.
+
+  devices
+if set to on, attaches to, or catches, any new device process or task
+generated by a task under debugger control.  The default is off.
+
+  echo
+if set to on, causes the debugger to echo all commands to the Dialog
+window.  This is particularly useful when using the execute command to
+execute a file of debugger commands.  The default is off.
+
+  ibytes
+if set to on, causes the debugger to display the instruction bytes being
+disassembled.  This affects the output of the unassemble command.  In
+windowing mode, it also affects the Source window in mixed and asm
+source modes.  The default is off.
+
+  ignorepath
+if set to on, the ignorepath option causes the debugger to ignore the
+pathname for the source file provided by the compiler.  The default is
+off.
+
+  list
+controls the default number of lines displayed by the list command in
+line mode.  The default is 6.
+
+  search
+defines a set of directories to search for the source code.  If no + or
+- is specified, the list of directories replaces the current list.
+Specifying a + at the beginning of the list appends the new list to the
+end of the current list.  Specifying a - at the beginning of the list
+removes the specified directories from the current list.
+
+  source
+controls the display in the Source window in windowing mode.  Repeatedly
+choosing the next values cycles through the possible display types in
+the order C, asm, and mixed.  The source option controls the output when
+you execute a step or go.  The default is C.
+
+  strlen
+controls the maximum number of bytes that are displayed when a character
+string is displayed with the dzero command.  The default is 128.
+
+  task
+changes the current task to the task identified by the @{" task-name " link task-name} or
+the @{" task-address " link task-address} parameter.
+
+  radix
+sets the default input type for constants.  It is used to avoid having
+to type the initial 0x on hexadecimal constants.  The default is
+decimal.
+
+  rangelen
+controls the default size of ranges when no range size information is
+available.  The default is 64.
+
+  reslib
+if set to on, steps into resident libraries while tracing or running an
+application with watch breaks.  The default is off.
+
+  unassemble
+controls the default number of instructions that are disassembled by the
+unassemble command in line mode.  It has no effect in C mode or
+windowing mode.  The default is 4.
+
+EXAMPLES
+  opt                       /* displays the settings of all options */
+  opt unassemble 10         /* sets unassemble count to 10 */
+  opt search /src,/test     /* sets search directories */
+  opt search +test2         /* appends a new search directory */
+
+SEE ALSO
+@{" Display " link Display}, @{" DZero " link DZero}, @{" List " link List}, @{" Unassemble " link Unassemble}
+@endnode
+@node Proceed "Proceed"
+Proceed -- Single-steps over function calls
+
+SYNOPSIS
+  p[roceed] [@{" integer " link integer}]
+
+DESCRIPTION
+In C mode, the proceed command causes the debugger to step through the
+number of source statements specified by the @{" integer " link integer} parameter.  In
+Mixed or Asm modes, it steps through @{" integer " link integer} number of machine
+instructions.  If a function call is encountered, the function is
+executed as if it were a single statement.  If the @{" integer " link integer} parameter
+is omitted, it defaults to 1.
+
+A proceed command is performed when you press the Return key without
+entering any commands in the Dialog window.  The F6 key can also be used
+to enter the proceed command.
+
+EXAMPLES
+  proceed      /* steps 1 source statement in C mode or 1 machine
+                  instruction if in Mixed or Asm modes */
+  proceed 5    /* steps 5 source statements in C mode or 5 machine
+                  instructions if in Mixed or Asm modes */
+
+SEE ALSO
+@{" Go " link Go}, @{" PS " link PS}, @{" Trace " link Trace}, @{" TS " link TS}
+@endnode
+@node PS "PS"
+PS -- Single-steps over function calls by source line
+
+SYNOPSIS
+  ps [@{" integer " link integer}]
+
+DESCRIPTION
+The ps command causes the debugger to single-step through the number of
+C source statements specified by the @{" integer " link integer} parameter even if mode is
+set to Mixed or Asm.  If a function call is encountered during stepping,
+the function is executed as if it were a single statement.  If the
+@{" integer " link integer} parameter is omitted, it defaults to 1.
+
+EXAMPLE
+  ps 2   /* steps through two source lines regardless of the
+            debugger mode */
+
+SEE ALSO
+@{" Go " link Go}, @{" Proceed " link Proceed}, @{" Trace " link Trace}, @{" TS " link TS}
+@endnode
+@node Quit "Quit"
+Quit -- Terminates the debugger
+
+SYNOPSIS
+  q[uit]
+
+DESCRIPTION
+The quit command terminates the debugging session and returns to the
+operating system prompt.
+
+When running in cross-development mode, the quit command only terminates
+the cross debugger (CPRX) on the host machine, leaving the kernel (CPRK)
+waiting for a new debug session.
+
+Normally, CodeProbe forces the application being debugged to call the
+exit function before terminating the application.  The debugger then
+exits.  If CodeProbe was started with the -startup option, the debugger
+exits without forcing the application to call exit.
+
+EXAMPLE
+  quit   /* terminates the debugging session */
+@endnode
+@node Register "Register"
+Register -- Displays or modifies registers
+
+SYNOPSIS
+  r[egister] [@{" register " link registers} [[=] @{" expression " link expression}]]
+
+DESCRIPTION
+If no arguments are given, the register command displays the current
+contents of all the machine integer registers.  If a register name is
+specified by the @{" register " link registers} parameter, the contents of that register are
+displayed.  If an @{" expression " link expression} parameter is specified in addition to the
+@{" register " link registers} parameter, the value of the expression is stored in the
+register.
+
+The display and set commands can also be used to display and modify the
+contents of the registers.
+
+EXAMPLES
+  register          /* displays all registers and flags */
+  register d5 = 30  /* set register D5 to 30 */
+  r d3 = index      /* sets register D3 to the value of index */
+  register a0 &x    /* sets register A0 to the value pointed to by x */
+  r a1              /* displays the value stored in register A1 */
+
+SEE ALSO
+@{" Display " link Display}, @{" FRegister " link FRegister}, @{" RFlag " link RFlag}, @{" SEt " link SEt}
+@endnode
+@node REStart "REStart"
+REStart -- Restarts the program being debugged
+
+SYNOPSIS
+  res[tart] [@{" argument-list " link argument-list}]
+
+DESCRIPTION
+The restart command causes the program you are debugging to be reloaded
+and executed up to the entry point of main, just as when the debugger
+was first invoked.  (If the -startup option was specified when you
+invoked the debugger, execution will stop before the startup code is
+executed and not at the first line of the main function.) Because the
+program is reloaded, all static data is reinitialized.  All breakpoints
+will be retained and watch breaks on static and external variables will
+be retained and disabled.
+
+The @{" argument-list " link argument-list} parameter provides the arguments for the program
+being debugged.  These arguments are delimited by white space, just as
+would appear on the command line when invoking the program.  The program
+will use these arguments as if it were invoked from the command line
+with them.
+
+The restart command cannot be used with the -command CPR command-line
+option or as one of a sequence of commands separated by semicolons.
+When used, the restart command must occur at the end of a command line.
+
+The restart command potentially can cause your machine to crash if used
+improperly.  When you enter the restart command, your application is
+immediately reloaded and re-executed with no cleanup of your currently
+running program other than calling the exit function to close files.
+This can leave the machine in an unacceptable state that can cause
+problems later.  To avoid this problem, be sure to allow your
+application to run to completion if possible and do any necessary
+cleanup before issuing the restart command.
+
+The start and restart commands are the same if the same arguments are
+provided by the @{" argument-list " link argument-list} parameter.  The significant difference
+between the two commands is their behavior when they are specified with
+no arguments.  The start command restarts the program without any
+arguments; however, the restart command with no arguments restarts the
+program with the original arguments used when the debugger was invoked.
+
+EXAMPLES
+  restart       /* restarts the program using the same arguments
+                   with which it was initially invoked with */
+  restart myfile.txt 5    /* restarts the program passing it two
+                             arguments: myfile.txt and 5 */
+  restart "sample string "    /* restarts the program passing in a string
+                                as an argument */
+
+SEE ALSO
+@{" STArt " link STArt}
+@endnode
+@node RETurn "RETurn"
+RETurn -- Returns immediately from the current function
+
+SYNOPSIS
+  ret[urn] [@{" expression " link expression}]
+
+DESCRIPTION
+The return command causes the current function to return to its caller
+without executing the rest of the function.
+
+The value of the @{" expression " link expression} parameter is used as the return value from
+the function.  The value is converted to the appropriate type if
+necessary; however, it must be a scalar quantity (not a structure or
+union).
+
+An attempt to return a value from a function declared void is treated as
+an error, and a suitable message is displayed.  Similarly, an error
+message is displayed if you use a simple return command (without a
+parameter) from within a function declared as having a return value.  In
+all other cases, the return value is cast (if necessary) to the correct
+type and returned to the calling function.
+
+When a return command is given, the current function is returned
+immediately to the calling function.  The return value, if any, is
+returned to the calling function, and execution is suspended as though a
+breakpoint were triggered in the calling function after the call was
+made.  For instance, note the following code fragment:
+
+                  i = 5;
+                  j = func(i);
+                  if (j < 2)
+                      j++;
+
+Assume that the return command is issued during the execution of func in
+the form ret 7.  Execution stops inside the line that did the call, just
+before the assignment to j.  You can then single-step to the next
+statement.
+
+EXAMPLES
+  return stringptr     /* returns the value of stringptr */
+  ret 5                /* returns an integer value of 5 */
+  return               /* returns from a void function */
+@endnode
+@node RFlag "RFlag"
+RFlag -- Displays or modifies flags
+
+SYNOPSIS
+  rf[lag] [<flag> ...]
+
+DESCRIPTION
+The rflag command can be used to display or modify the settings of the
+machine flags.  If no parameters are specified, the current settings of
+the flags are displayed.  With one or more arguments, the indicated
+flags are set or cleared according to the values given.  The flag names
+are specific to the target machine.
+
+A flag setting can be one of the terms in the following table.  The Set
+column comprises the terms used to set flags, while the Clear column
+comprises the terms used to clear flags.
+
+    Flag Name                      Set            Clear
+    -----------------------     ---------       ---------
+    Overflow (yes/no)              OV              NV
+    Sign (negative/positive)       NG              PL
+    Zero (yes/no)                  ZR              NZ
+    Auxiliary Carry (yes/no)       AC              NA
+    Carry (yes/no)                 CY              NC
+
+EXAMPLES
+  rflag      /* displays all registers and flags */
+  rflag cy   /* sets the carry flag to 1 */
+
+SEE ALSO
+@{" FRegister " link FRegister}, @{" Register " link Register}
+@endnode
+@node SEArch "SEArch"
+SEArch -- Searches for a string in the current source file
+
+SYNOPSIS
+  sea[rch] [@{" string " link string}]
+
+DESCRIPTION
+The search command searches the current source file for the specified
+string.  In windowing mode, the search begins from the top line of the
+current Source window.  In line mode, the search begins at the first
+line that would be displayed if a list command is entered with no
+arguments.
+
+In windowing mode, the cursor is positioned at the beginning of the
+matching string.  The Source window is also repositioned so that the
+line containing the match is the number of lines specified by the
+context option from the top of the window.  The context were set by the
+opt command.
+
+In line mode, the line containing the match is displayed.
+
+The search command with no arguments causes the debugger to search for
+the string specified in the last search argument, starting from the new
+current line.  If no matches are found, a message is printed.  If the
+user then enters search again, the search is resumed beginning at the
+top of the file.  The case-sensitivity option, opt case, determines
+whether the search is case sensitive or not.
+
+EXAMPLES
+  search foo       /* finds the string "foo " */
+  search foo;      /* finds the string "foo". The semicolon used in
+                      this command is a command delimiter and is not
+                      considered part of the search string */
+  search foo\;     /* finds the string "foo;". The escape character (\)
+                      causes the semicolon to be part of the search
+                      string */
+  search           /* repeats the last search */
+
+SEE ALSO
+@{" OPt " link OPt}, @{" List " link List}
+@endnode
+@node SEt "SEt"
+SEt -- Modifies the values of variables or memory locations
+
+SYNOPSIS
+  se[t] (@{" variable " link variable} | @{" register " link registers}) = @{" expression " link expression}
+  se[t] @{" address " link address} [=] @{" string " link string}
+
+DESCRIPTION
+The set command is used to modify the values of variables, registers, or
+memory locations in the program being debugged.
+
+You are most likely to use the first form of the set command in
+debugging C programs.  It allows you to change the value of a variable
+in your program by referring to that variable by name.  In this context,
+variable has a rather broad sense that includes references to array
+elements, structure members, and indirect references.
+
+The @{" variable " link variable} parameter cannot refer to an aggregate such as a
+structure, union, or array.
+
+The @{" register " link registers} parameter can be any valid register name, D0 through D7
+and A0 through A7, and if a co-processor is present, FP0 through FP7.  A
+$ prefix optionally may be used to distinguish the register from a
+variable of the same name.
+
+The @{" expression " link expression} parameter is the same as used in the C assignment
+statement.
+
+If necessary, the value for @{" variable " link variable} will be converted to the proper
+type in accordance with the normal C conversion rules; it is then
+entered into memory at the address of the first variable operand.  This
+is similar to a C assignment statement for a scalar variable.
+
+The second form shown in the synopsis is used to store a string into
+memory.  The null terminator is not copied unless it is explicitly
+present in the string.  The equal sign is optional.  Support for this
+form of set command may be removed in future releases.  The built-in
+strcpy and memcpy functions are preferred.
+
+EXAMPLES
+  set i = 5     /* sets the variable i equal to the integer value 5 */
+  set a = 3.1415    /* sets the variable a equal to the floating-point
+                       value 3.1415 */
+  set $d0 = 300     /* sets register D0 equal to 300. The $ is
+                       optional */
+  set time->date = newtime    /* sets the date member of the time
+                                 structure equal to the value of the
+                                 variable newtime */
+  set stringptr "this string has no null byte "
+        /* stores a string that is not null-terminated to the memory
+           location pointed to by stringptr */
+  set stringptr "this string has a null byte\0"
+        /* stores a null-terminated string to the memory location
+           pointed to by stringptr */
+  set stringptr "string one\0string two\0"
+        /* stores two null-terminated strings to the memory location
+           pointed to by stringptr */
+
+SEE ALSO
+@{" FRegister " link FRegister}, @{" MEMCPY " link MEMCPY}, @{" STRCPY " link STRCPY}, @{" Register " link Register}
+@endnode
+@node SLEep "SLEep"
+SLEep -- Pauses for the time specified
+
+SYNOPSIS
+  sle[ep] @{" number " link number}
+
+DESCRIPTION
+The sleep command pauses for the number of seconds specified by the
+@{" number " link number} parameter.
+
+EXAMPLE
+  sleep 10      /* pauses for 10 seconds */
+@endnode
+@node SOurce "SOurce"
+SOurce -- Displays source file
+
+SYNOPSIS
+  so[urce] [@{" filename " link filename}]
+
+DESCRIPTION
+The source command overrides the C source file associated with the
+current @{" module " link module}.  The specified value for @{" filename " link filename} replaces the
+filename associated with the @{" module " link module} for the rest of the current
+debugging session.  The new file is displayed in the Source window
+immediately, and its name is echoed in the Dialog window.
+
+If no @{" filename " link filename} parameter is specified, the name of the current source
+file is echoed in the Dialog window but the current source file is not
+changed.
+
+If the filename you want to change to is the same as the default
+filename but the path is different, you can use the opt search command
+to change the locations that CodeProbe looks for source files.
+
+EXAMPLES
+  source                  /* displays the current filename */
+  source test/test1.c     /* changes the filename for the current
+                             @{" module " link module} to test1.c in the test directory */
+
+SEE ALSO
+@{" OPt " link OPt}
+@endnode
+@node STArt "STArt"
+STArt -- Restarts the program being debugged
+
+SYNOPSIS
+  sta[rt] [@{" argument-list " link argument-list}]
+
+DESCRIPTION
+The start command causes the program you are debugging to be reloaded
+and executed up to the entry point of main, just as when the debugger
+was first invoked.  (If the -startup option was specified when you
+invoked the debugger, execution will stop before the startup code is
+executed and not at the first line of the main function.) Because the
+program is reloaded, all static data are reinitialized.  All breakpoints
+are retained and watch breaks on static and external variables are
+retained and disabled.
+
+The @{" argument-list " link argument-list} parameter provides the arguments for the program
+being debugged.  These arguments are delimited by white space, just as
+would appear on the command line when invoking the program.  The program
+will use these arguments as if it were invoked from the command line
+with them.
+
+The start command cannot be used with the -command CPR command-line
+option or as one of a sequence of commands separated by semicolons.
+When used, the start command must occur at the end of a command line.
+
+The start command potentially can cause your machine to crash if used
+improperly.  When you enter the start command, your application is
+immediately reloaded and re-executed, with no cleanup of your currently
+running program other than calling the exit function to close files.
+This can leave the machine in an unacceptable state that can cause
+problems later.  To avoid this problem, be sure to allow your
+application to run to completion and do any necessary cleanup before
+issuing the start command.
+
+The start and restart commands are the same if the same arguments are
+provided by the @{" argument-list " link argument-list} parameter.  The significant difference
+between the two commands is their behavior when they are specified with
+no arguments.  The start command restarts the program without any
+arguments; however, the restart command with no arguments restarts the
+program with the original arguments used when the debugger was invoked.
+
+EXAMPLES
+  start    /* restarts the program without passing it any arguments */
+  start myfile.txt 5    /* restarts the program passing in an the
+                           argument list */
+
+SEE ALSO
+@{" REStart " link REStart}
+@endnode
+@node SYMBol "SYMBol"
+SYMBol -- Finds the symbol nearest to the specified address
+
+SYNOPSIS
+  symb[ol] @{" address " link address}
+
+DESCRIPTION
+The symbol command causes the debugger to search the symbol information
+and display the name of the symbol whose location is closest to the
+address specified by the @{" address " link address} parameter.
+
+EXAMPLE
+  symbol 0x8040   /* displays the symbol whose address is nearest
+                     to 0x8040 */
+
+SEE ALSO
+@{" SYMload " link SYMload}
+@endnode
+@node SYMload "SYMload"
+SYMload -- Reads symbol information from an executable file
+
+SYNOPSIS
+  sym[load] @{" filename " link filename}
+  sym[load] proc @{" task-name " link task-name} | @{" task-address " link task-address}
+  sym[load] seg @{" address " link address} @{" filename " link filename}
+
+DESCRIPTION
+The symload command associates an executable file and any debugging
+information found in that file with a loaded @{" image " link IMAGE}.
+
+If given the @{" filename  " link filename } an executable file, the symload command
+associates that file with the current hunk list.  The file specified
+must be an executable file.
+
+If the proc keyword is used, followed by the name of a task that is
+identified by the @{" task-name " link task-name} parameter,  or the address of the task
+identified by the @{" task-address " link task-address} parameter, the symload command attempts
+to map the segment list for the task with its executable file.
+
+If the seg keyword is specified along with an address and the filename
+of an executable file, the symload command treats the address as a
+pointer to a BCPL segment list and it maps the list to the executable
+file.
+
+EXAMPLES
+  symload myapp     /* reads the current segment list and symbols
+                       from the file named myapp */
+  sym proc myapp    /* reads the segment list and executable file
+                       for process myapp */
+  symload proc 0xC85428 myapp
+         /* reads the segment list and executable file for the
+            process located at 0xc85428 */
+  symload seg 0xC84200 myapp
+         /* uses the segment list at address 0xC84200 */
+
+SEE ALSO
+@{" HUnks " link HUnks}
+@endnode
+@node TAsks "TAsks"
+TAsks -- Displays system tasks
+
+SYNOPSIS
+  ta[sks] [a[ll]]
+
+DESCRIPTION
+The tasks command displays information about tasks.  By default, it
+displays the tasks currently under debugger control.  If the all option
+is specified, all system tasks are displayed.
+
+The opt task command can be used to change to a new task.
+
+EXAMPLES
+  tasks    /* displays a listing of all tasks under debugger control */
+  ta all   /* displays a listing of all tasks in the system */
+
+SEE ALSO
+@{" Activate " link Activate}, @{" CAtch " link CAtch}, @{" DEActivate " link DEActivate}, @{" DETach " link DETach}, @{" OPt " link OPt}
+@endnode
+@node Trace "Trace"
+Trace -- Single-steps into function calls
+
+SYNOPSIS
+  t[race] [@{" integer " link integer}]
+
+DESCRIPTION
+In C mode, the trace command steps the number of source statements
+specified by the @{" integer " link integer} parameter.  In Mixed or Asm modes, it steps
+the number of machine instructions specified by the @{" integer " link integer} parameter.
+If a function call is encountered, stepping continues into that
+function.  If the @{" integer " link integer} parameter is omitted, trace will step one
+line.
+
+EXAMPLES
+  trace    /* steps one source statement if in C mode, or one machine
+              instruction if in Mixed or Asm mode */
+  t 5      /* steps five source statements or machine instructions */
+
+SEE ALSO
+@{" Go " link Go}, @{" Proceed " link Proceed}, @{" PS " link PS}, @{" TS " link TS}
+@endnode
+@node TS "TS"
+TS -- Single-steps by source line into function calls
+
+SYNOPSIS
+  ts [@{" integer " link integer}]
+
+DESCRIPTION
+The ts command is similar to the trace command in that it will step into
+functions encountered during execution.  It is different in that ts will
+only step by C source line, even if the source mode is set to Asm or
+Mixed.  The @{" integer " link integer} parameter specifies the number of C source lines
+to step.  If no parameter is specified, ts will step one line at a time.
+
+EXAMPLES
+  ts     /* steps one source line regardless of the mode the
+            debugger is in */
+  ts 2   /* steps two source lines */
+
+SEE ALSO
+@{" Proceed " link Proceed}, @{" PS " link PS}, @{" Trace " link Trace}
+@endnode
+@node UNAlias "UNAlias"
+UNAlias -- Deletes an alias
+
+SYNOPSIS
+  una[lias] @{" name " link name}
+  una[lias] *
+
+DESCRIPTION
+The unalias command removes entries from the debugger's list of aliases.
+The @{" name " link name} parameter refers to any alias name.  You can use the *
+parameter as a wildcard character to remove all aliases.
+
+EXAMPLES
+  unalias foo     /* deletes the alias for foo */
+  una *           /* deletes all aliases */
+
+SEE ALSO
+@{" ALias " link ALias}, @{" DEFine " link DEFine}, @{" UNDefine " link UNDefine}
+@endnode
+@node Unassemble "Unassemble"
+Unassemble -- Displays memory as assembler instructions
+
+SYNOPSIS
+  u[nassemble] [@{" location-1 " link location} [@{" location-2 " link location}]]
+
+DESCRIPTION
+The unassemble command displays the range of memory from @{" location-1 " link location} to
+@{" location-2 " link location} in assembler format.
+
+By default, the command begins disassembling at the current program
+counter.  If subsequent unassemble commands are performed before the
+application is given control by a trace, proceed, or go command, it will
+continue disassembling from the point at which it finished the last
+invocation.
+
+If source line number information is available for the range of memory
+being disassembled, unassemble will display the C source line before
+displaying the corresponding instructions.  It will display the number
+of assembler instructions generated for one C source line.
+
+If no source information is available for the range of memory being
+displayed, unassemble will display the default number of instructions as
+specified by the unassemble default item in the Options menu.  By
+default this number is 4 instructions.
+
+The output of the unassemble command is equivalent in format to
+assembler mode output displayed in the Source Window.  It will consist
+of three or four columns depending on the setting of the instruction
+bytes option, which is controlled by the opt ibytes command.  (See
+Chapter 4, "Setting Up the Debugging Environment, " in the Volume II
+of the User's Guide for more information about setting instruction
+bytes.) The following is an example of unassemble output with
+instruction bytes on and source unavailable:
+
+   > unassemble
+   0x25F950 48E70130          MOVEM.L    D7/A2-A3,-(A7)
+   0x25F954 BFEC0004          CMPA.L     0004(A4),A7
+   0x25F958 65001BD6          BCS        00261530
+
+The first field contains the hexadecimal address of the instruction
+being disassembled.  The second field is a hexadecimal dump of the
+actual bytes composing the instruction.  The third field consists of the
+M680X0 mnemonic for the given opcode.  The fourth field consists of the
+operands to the instruction.  If the instruction bytes option is turned
+off, the second field is not displayed.
+
+EXAMPLES
+  unassemble \mod1\func1 10  /* unassembles line 10 of func1 in mod1 */
+  unassemble 13 14           /* unassembles lines 13 to 14 */
+  unassemble func1           /* unassembles the first line of func1 */
+  unassemble func1 func2     /* unassembles from &func1 to &func2 */
+  unassemble                 /* continues unassembling at the last
+                                location */
+
+SEE ALSO
+@{" OPt " link OPt}, @{" List " link List}
+@endnode
+@node UNDefine "UNDefine"
+UNDefine -- Deletes a macro definition
+
+SYNOPSIS
+  [#]und[efine] @{" name " link name}
+  [#]und[efine] *
+
+DESCRIPTION
+The undefine command removes entries from the debugger's list of macro
+definitions.  The @{" name " link name} parameter specifies the name of the macro to
+removed.  You can use the * as a wildcard character to remove all macro
+definitions.  The # sign can be inserted before the undefine command so
+that C header files (.h files) can be read by CodeProbe.
+
+EXAMPLES
+  #undef foo      /* deletes the macro named foo */
+  undefine *      /* deletes all macros */
+
+SEE ALSO
+@{" ALias " link ALias}, @{" DEFine " link DEFine}, @{" EXecute " link EXecute}, @{" UNAlias " link UNAlias}
+@endnode
+@node Watch "Watch"
+Watch -- Sets a watch on a variable or memory
+
+SYNOPSIS
+  w[atch] @{" expression " link expression} | @{" range " link range} [s[tatic] | d[ynamic]]
+
+DESCRIPTION
+The watch command is used to set a watch for the variable or memory
+range specified.  Whenever control is returned to the user, for example
+by stepping or stopping at a breakpoint, the new value of the watched
+object is displayed in the Watch window.  The Watch window can be opened
+with the View menu, the window command, or by pressing F1.
+
+In line mode, the object is not automatically displayed.  You must use
+the wlist command to display it.
+
+The watch command does not cause the debugger to stop execution when the
+value being watched changes; it just displays the changed value.  Use
+the wbreak command to cause the debugger to stop when a value is
+changed.
+
+By default, watches are dynamic; that is, the expression being watched
+is re-evaluated whenever control returns to the debugger.  The static
+option causes the watch expression to be evaluated once, when the watch
+is set.  The result is treated as an address whose contents are
+displayed.
+
+EXAMPLES
+  watch text->len    /* sets a watch for the symbolic scalar
+                        text->len */
+  w \mod\f1\a[0] L 20    /* sets a watch for a length of 20 bytes
+                            starting at the symbolic range specified by
+                            \mod\f1\a[0] */
+  w &a[0] .. &a[5]       /* sets a watch for the range from &a[0] to
+                            &a[5] */
+  watch tmp[i] static    /* if i = 3, watches tmp[3] regardless of
+                            changes to i */
+
+SEE ALSO
+@{" WBreak " link WBreak}, @{" WClear " link WClear}, @{" WDisable " link WDisable}, @{" WEnable " link WEnable}, @{" WList " link WList}
+@endnode
+@node WBreak "WBreak"
+WBreak -- Sets a watch break
+
+SYNOPSIS
+  wb[reak] @{" expression " link expression} | @{" range " link range}  [s[tatic] | d[ynamic]]
+
+DESCRIPTION
+The wbreak command sets a watch break for the expression or memory range
+specified.  Whenever any byte in a specified range is modified, control
+is returned to you.
+
+By default, watch breaks are static; that is, the expression is
+evaluated once when the watch break is set.  The address result of the
+expression is then monitored by the watch break.
+
+The dynamic option indicates that the watch break @{" expression " link expression} or
+@{" range " link range} should be re-evaluated whenever control returns to the debugger.
+
+EXAMPLES
+  wbreak text->len
+        /* sets a watch break for the symbolic scalar text->len */
+  wb \mod\f1\a[0] L 20
+        /* sets a watch break for a length of 20 bytes starting at the
+           symbolic range specified by \mod\f1\a[0] */
+  wbreak &a[0]..&a[5]
+        /* sets a watch break for the range from &a[0] to &a[5] */
+  wb p->q dynamic
+        /* sets a watch break for different locations depending on
+           the value of p */
+
+SEE ALSO
+@{" Watch " link Watch}, @{" WClear " link WClear}, @{" WDisable " link WDisable}, @{" WEnable " link WEnable}, @{" WList " link WList}
+@endnode
+@node WClear "WClear"
+WClear -- Clears one or more watches
+
+SYNOPSIS
+  wc[lear] @{" integer " link integer} [@{" integer " link integer} ...]
+  wc[lear] * | l[ast]
+  wc[lear] @{" integer " link integer}..@{" integer " link integer}
+
+DESCRIPTION
+The wclear command is used to clear one or more watches or watch breaks.
+When a watch is cleared it ceases to exist and can be reinstated only by
+issuing the watch or wbreak command again.  You can use the wdisable
+command to temporarily disable a watch.
+
+The @{" integer " link integer} parameter specifies the number of a watch as displayed by
+the wlist command.  Any number of integer values can be specified as
+parameters to the wclear command.
+
+The * parameter specifies that all watches and watch breaks should be
+cleared.
+
+You can specify that all watches and watch breaks between two watch
+numbers be cleared by using the form @{" integer " link integer}..@{" integer " link integer}.
+
+The last parameter can be specified to clear the last watch or watch
+break that was set.
+
+EXAMPLES
+  wclear 2 5 6    /* clears watches or watch breaks numbered 2, 5,
+                     and 6 */
+  wclear last     /* clears the last watch or watch break set */
+  wc *            /* clears all watches or watch breaks */
+  wc4..7          /* clears watches 4, 5, 6, and 7 */
+
+SEE ALSO
+@{" Watch " link Watch}, @{" WBreak " link WBreak}, @{" WClear " link WClear}, @{" WDisable " link WDisable}, @{" WList " link WList}
+@endnode
+@node WDisable "WDisable"
+WDisable -- Disables one or more watches
+
+SYNOPSIS
+  wd[isable] @{" integer " link integer} [@{" integer " link integer} ...]
+  wd[isable] * | l[ast]
+  wd[isable] @{" integer " link integer}..@{" integer " link integer}
+
+DESCRIPTION
+The wdisable command is used to disable the recognition of one or more
+watches or watch breaks.  When a watch or watch break is disabled, it is
+no longer recognized, but it remains on the current list of watches.  A
+wenable command can be used to re-enable a watch or watch break that has
+been disabled with the wdisable command.
+
+The @{" integer " link integer} parameter specifies the number of a watch, as displayed by
+the wlist command.  Any number of integer values can be specified as
+parameters to the wdisable command.
+
+The * parameter specifies that all watches and watch breaks should be
+disabled.
+
+You can specify that all watches and watch breaks between two watch
+numbers be disabled by using the form @{" integer " link integer}..@{" integer " link integer}.
+
+The last parameter can be specified to disable the last watch or watch
+break that was set.
+
+EXAMPLES
+  wdisable 2 5 6    /* disables watches or watch breaks numbered 2,
+                       5, and 6 */
+  wdisable last     /* disables the last watch or watch break set */
+  wdisable *        /* disables all watches or watch breaks */
+  wdisable 4..7     /* disables watches 4, 5, 6, and 7 */
+
+SEE ALSO
+@{" Watch " link Watch}, @{" WBreak " link WBreak}, @{" WClear " link WClear}, @{" WEnable " link WEnable}, @{" WList " link WList}
+@endnode
+@node WEnable "WEnable"
+WEnable -- Enables one or more watches
+
+SYNOPSIS
+  we[nable] @{" integer " link integer} ...
+  we[nable] [*] | l[ast]
+  we[nable] @{" integer " link integer}..@{" integer " link integer}
+
+DESCRIPTION
+The wenable command is used to enable the recognition of one or more
+watches or watch breaks that have been disabled by the wdisable command.
+
+The @{" integer " link integer} parameter specifies the number of a watch, as displayed by
+the wlist command.  Any number of integer values can be specified as
+parameters to the wenable command.
+
+The * parameter specifies that all watches and watch breaks should be
+enabled.
+
+You can specify that all watches and watch breaks between two watch
+numbers be enabled by using the form @{" integer " link integer}..@{" integer " link integer}.
+
+The last parameter can be specified to enable the last watch or watch
+break that was set.
+
+EXAMPLES
+  we 2 5 6     /* enables watches or watch breaks numbered 2, 5,
+                  and 6 */
+  we last      /* enables the last watch or watch break set */
+  wenable *    /* enables all watches or watch breaks */
+  we 4..7      /* enables watches 4, 5, 6, and 7 */
+
+SEE ALSO
+@{" Watch " link Watch}, @{" WBreak " link WBreak}, @{" WClear " link WClear}, @{" WDisable " link WDisable}, @{" WList " link WList}
+@endnode
+@node WHAtis "WHAtis"
+WHAtis -- Determines the type of an object
+
+SYNOPSIS
+  wha[tis] @{" expression " link expression}
+  wha[tis] (@{" type " link type})
+
+DESCRIPTION
+The whatis command displays the type, location, and storage class of an
+object, or gives additional information about a data type.
+
+If an @{" expression " link expression} is given, whatis displays the C data type of the
+expression.  If the result of the expression is a simple variable or a
+member of an array, whatis displays the address of the object and
+identifies it as either static, extern, or automatic.  If the result of
+the expression is a function, whatis displays the address of the
+function, its return type, and its location.
+
+If a parenthesized @{" type " link type} is given, including types that are defined by
+a typedef statement, whatis displays the full definition for the type.
+For struct, union, and enum types this means all members of the
+aggregate are displayed; for a type that has been defined by a typedef
+statement, this means the base type of the typedef is displayed.  Using
+the whatis command on basic C data types such as int or long is allowed,
+but it is not very useful.
+
+EXAMPLES
+  whatis i      /* determines the type of a variable named i */
+  wha main      /* determines the type, address, and defining @{" module " link module} for
+                   the main function */
+  wha 3.5       /* determines the type of a constant */
+  whatis Red    /* determines the type of an enumeration constant */
+  wha *p->c[3]  /* determines the type of the expression *p->c[3] */
+  whatis (int) (1*3.4)    /* determines the type of an expression with
+                             a type cast */
+  whatis (node)           /* determines the type of a typedef */
+  whatis (struct X)       /* displays the members of struct X */
+@endnode
+@node WHEre "WHEre"
+WHEre-Shows the calling sequence
+
+SYNOPSIS
+  whe[re] [a[rgs]] [@{" integer " link integer}]
+
+DESCRIPTION
+The where command displays a backtrace of the function calls in the call
+sequence.  Calls are listed in reverse order beginning with the most
+deeply nested function.
+
+The args option causes the where command to display the arguments to
+each function in a manner similar to the args command.
+
+The @{" integer " link integer} parameter specifies the number of calls to be displayed.
+By default, only the 20 most recent calls are printed.
+
+Here is an example of the output from the where command:
+
+   > 1  In routine fpreg.o:\fpreg.c\five 48
+   > 2* Called from fpreg.o:\fpreg.c\six 68 (+0xE)
+   > 3  Called from fpreg.o:\fpreg.c\seven 82
+   > 4  Called from fpreg.o:\fpreg.c\main 92
+   > ...
+
+The numbers on the left indicate a level number that can be passed to
+the env command.  Level 1 is defined to be the function in which you are
+currently stopped or the run environment.  The caller's level is 2, its
+caller is 3, and so on.  These level number designations change over
+time as the program steps into and returns from functions.  The asterisk
+indicates the current user environment as set by the env command.
+
+The Calls window also displays this information.
+
+EXAMPLES
+  whe        /* displays a list of the last 20 function calls */
+  where 5    /* displays a list of the last 5 function calls */
+  where a    /* displays the arguments to each function */
+
+SEE ALSO
+@{" ARgs " link ARgs}, @{" ENV " link ENV}
+@endnode
+@node WIndow "WIndow"
+WIndow -- Opens or close a window
+
+SYNOPSIS
+  wi[ndow] <window-name> [on | off]
+
+DESCRIPTION
+The window command is used to open and close a specified window.  Any of
+the following values can be specified as the <window-name> parameter:
+
+    c[alls]            mo[dules]            w[atch]
+    he[lp]             ms[g]                s[ource]
+    me[mory]           r[egister]
+
+If the window command is invoked with only a <window-name> parameter,
+the command acts as a toggle for the specified window; thus, if the
+window is currently opened, the window command will close it, and if it
+is currently closed it will be opened.
+
+If on or off is specified, the window is forced into that state,
+regardless of its current state.  If a window that is already open is
+set to on, it will pop to the top of the window hierarchy.
+
+The window command is ignored in line mode.
+
+EXAMPLES
+  wi register        /* toggles the Register window */
+  window help on     /* opens the Help window or pops it to the top */
+@endnode
+@node WList "WList"
+WList -- Lists all watches
+
+SYNOPSIS
+  wl[ist]
+
+DESCRIPTION
+The wlist command lists all watches and watch breaks.  Disabled watches
+are marked with an asterisk.  Watch breaks are distinguished from
+regular watches by an exclamation mark.  The value associated with the
+watch is displayed if available.
+
+EXAMPLES
+  wlist     /* lists all watches */
+
+SEE ALSO
+@{" Watch " link Watch}, @{" WBreak " link WBreak}, @{" WClear " link WClear}, @{" WDisable " link WDisable}, @{" WEnable " link WEnable}
+@endnode
+@node WMSG "WMSG"
+WMSG -- Writes a message to the Message window
+
+SYNOPSIS
+  wmsg @{" integer " link integer} @{" text " link text}
+
+DESCRIPTION
+The wmsg command is used to write the text specified by the
+<text> parameter in the Message window.  The @{" integer " link integer} parameter
+specifies the location in the window for the text.  Line 0 is the top
+line.  This command is primarily used with debugger or AREXX scripts.
+
+EXAMPLES
+  wmsg 0 --- This is the Message window. ---
+       /* displays the string  " --- This is the Message window. --- "
+          on the top line of the Message window */
+  wmsg 12 This goes on line 12.
+       /* displays the string This goes on line 12. on line 12 of the
+          Message window */
+@endnode
+@node MEMCMP "MEMCMP"
+MEMCMP -- Compares two memory blocks
+
+SYNOPSIS
+   i = memcmp(a, b, n);
+   int i;            /* comparison results    */
+   void *a, *b;      /* blocks being compared */
+   int n;            /* block size in bytes   */
+
+DESCRIPTION
+The memcmp function compares two memory blocks and returns a value whose
+sign indicates the collating sequence of the blocks, as follows:
+
+        Return                   Meaning
+       --------          -----------------------
+       Negative          First block below the second
+         Zero            Blocks are equal
+       Positive          First block above the second
+
+CodeProbe has a built-in #define that causes all references to memcmp to
+be referenced to __builtin_memcmp, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called memcmp in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLES
+  display memcmp(ptr1, ptr2, n)
+      /* displays the result of comparing ptr1 and ptr2
+         for n bytes */
+  b 27 when(memcmp(ptr1, ptr2, 10) < 0)
+      /* breaks at line 27 when the 10 bytes pointed to by
+         ptr1 evaluates to a value less than the value of the
+         10 bytes pointed to by ptr2 */
+
+SEE ALSO
+@{" MEMCPY " link MEMCPY}, @{" MEMMOVE " link MEMMOVE}, @{" MEMSET " link MEMSET}
+@endnode
+@node MEMCPY "MEMCPY"
+MEMCPY -- Copies a memory block (non-overlapping)
+
+SYNOPSIS
+   to = memcpy(to, from, n);
+   void *to;    /* destination pointer */
+   void *from;  /* source pointer      */
+   int  n;      /* block size in bytes */
+
+DESCRIPTION
+The memcpy function copies data from one memory block to another.  The
+destination pointer is returned.
+
+The memcpy function cannot be used to copy overlapping memory blocks.
+You should use the memmove function when copying overlapping blocks.
+Also note that you can crash your machine if there is not enough memory
+to hold the data at the destination memory location.
+
+CodeProbe has a built-in #define that causes all references to memcpy to
+be referenced to __builtin_memcpy, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called memcpy in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLES
+  call memcpy(ptr1, &j, 10)      /* copies 10 bytes from ptr2 to ptr1 */
+  call memcpy(0x804a, myptr, 50)     /* copies 50 bytes from myptr to
+                                        location 0x804a */
+  b 27 {memcpy(a0, a1, 15)}
+        /* sets a breakpoint at line 27 with an action to copy 15 bytes
+           from the memory pointed to by register A1 to the memory
+           pointed to by register A0 */
+
+SEE ALSO
+@{" MEMCMP " link MEMCMP}, @{" MEMMOVE " link MEMMOVE}, @{" MEMSET " link MEMSET}
+@endnode
+@node MEMMOVE "MEMMOVE"
+MEMMOVE -- Copies a memory block (possibly overlapping)
+
+SYNOPSIS
+   to = memmove(to, from, n);
+   void *to;    /* destination pointer */
+   void *from;  /* source pointer      */
+   int  n;      /* block size in bytes */
+
+DESCRIPTION
+The memmove function copies data from one memory block to another.
+Overlapping blocks are handled correctly.  The destination pointer is
+returned.
+
+Note that you can crash your machine if there is not enough memory to
+hold the data at the destination memory location.
+
+CodeProbe has a built-in #define that causes all references to memmove
+to be referenced to __builtin_memmove, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called memmove in your code, you should use the undefine command to
+clear the define or use the backtick character to escape the function's
+name.
+
+EXAMPLES
+  call memmove(ptr1, &j, 10)   /* copies 10 bytes from ptr2 to ptr1 */
+  call memmove(0x804a, myptr, 50)    /* copies 50 bytes from myptr to
+                                        location 0x804a */
+  b 27 {memmove(a0, a1, 15)}
+       /* sets a breakpoint at line 27 with an action to copy 15 bytes
+          from the memory pointed to by register A1 to the memory
+          pointed to by register A0 */
+
+SEE ALSO
+@{" MEMCPY " link MEMCPY}, @{" MEMCMP " link MEMCMP}, @{" MEMSET " link MEMSET}
+@endnode
+@node MEMSET "MEMSET"
+MEMSET -- Sets memory to a specified value
+
+SYNOPSIS
+   to = memset(to, c, n);
+   void *to   /* base of memory to be initialized  */
+   int  c;    /* initialization value              */
+   int  n;    /* number of bytes to be initialized */
+
+DESCRIPTION
+The memset function sets the specified number of bytes of memory to the
+specified value.
+
+Note that you can crash your machine if there is not enough memory to
+hold the data at the destination memory location.
+
+CodeProbe has a built-in #define that causes all references to memset to
+be referenced to __builtin_memset, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called memset in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLES
+  call memset(ptr, 0, 100)    /* sets 100 bytes to 0 starting at the
+                                 address pointed to by ptr */
+  call memset(a0, 'X', 50)    /* sets 50 bytes to the ASCII character X
+                                 starting at the address pointed to by
+                                 register A0 */
+
+SEE ALSO
+@{" MEMCPY " link MEMCPY}, @{" MEMCMP " link MEMCMP}, @{" MEMMOVE " link MEMMOVE}
+@endnode
+@node STRCAT "STRCAT"
+STRCAT -- Concatenates two strings
+
+SYNOPSIS
+   to = strcat(to, from);
+   char *to;     /* destination pointer */
+   char *from;   /* source pointer      */
+
+DESCRIPTION
+The strcat function copies data from one string to the end of another
+string until a null character is found.  Overlapping strings are not
+handled by the strcat function.
+
+Note that you can crash your machine if there is not enough memory to
+hold the string at the destination memory location.
+
+CodeProbe has a built-in #define that causes all references to strcat to
+be referenced to __builtin_strcat, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called strcat in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLES
+  call strcat(myptr, "foo ")
+         /* concatenates the string "foo" after the string
+            pointed to by the variable myptr */
+
+SEE ALSO
+@{" STRLEN " link STRLEN}, @{" STRCMP " link STRCMP}, @{" STRCPY " link STRCPY}
+@endnode
+@node STRCMP "STRCMP"
+STRCMP -- Compares two strings
+
+SYNOPSIS
+   i = strcmp(a, b);
+   int  i;       /* comparison result      */
+   char *a, *b;  /* strings being compared */
+
+DESCRIPTION
+The strcmp function compares two strings and returns a value whose signs
+indicate the collating sequence of the blocks as follows:
+
+        Return                   Meaning
+       --------          -----------------------
+       Negative          First string below the second
+         Zero            Strings are equal
+       Positive          First string above the second
+
+CodeProbe has a built-in #define that causes all references to strcmp to
+be referenced to __builtin_strcmp, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called strcmp in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLES
+  display strcmp("abc ", "def")
+       /* tests the strings "abc" and "def" and displays the return
+          value. The value indicates whether the strings are equal or
+          which string is higher */
+  break myfunc when(strcmp(arg, "foobar") == 0)
+       /* breaks at the function myfunc when the variable
+          arg points to the string "foobar" */
+
+SEE ALSO
+@{" STRLEN " link STRLEN}, @{" STRCPY " link STRCPY}, @{" STRCAT " link STRCAT}
+@endnode
+@node STRCPY "STRCPY"
+STRCPY -- Copies a string
+
+SYNOPSIS
+   to = strcpy(to, from);
+   char *to;       /* destination pointer */
+   char *from;     /* source pointer      */
+
+DESCRIPTION
+The strcpy function copies data from one string to another until a null
+character is found.  Overlapping strings are not handled by the strcpy
+function.
+
+Note that you can crash your machine if there is not enough memory to
+hold the string at the destination memory location.
+
+CodeProbe has a built-in #define that causes all references to strcpy to
+be referenced to __builtin_strcpy, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called strcpy in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLE
+  call strcpy(a, b)    /* copies the string pointed to by b to the
+                          memory location pointed to by a */
+
+SEE ALSO
+@{" STRLEN " link STRLEN}, @{" STRCMP " link STRCMP}, @{" STRCAT " link STRCAT}
+@endnode
+@node STRLEN "STRLEN"
+STRLEN -- Returns the length of a string
+
+SYNOPSIS
+   len = strlen(s);
+   int  len;    /* length of string s        */
+   char *s;     /* string to scan for length */
+
+DESCRIPTION
+The strlen function returns the length of a string, as determined by the
+index of the first null character found.
+
+CodeProbe has a built-in #define that causes all references to strlen to
+be referenced to __builtin_strlen, which is the actual name of the
+CodeProbe function.  If you want to step into or call an actual function
+called strlen in your code, you should use the undefine command to clear
+the define or use the backtick character to escape the function's name.
+
+EXAMPLES
+  display strlen("hello ")     /* displays the length of the string
+                                 "hello", which is 5 */
+  display strlen(0x804a)      /* displays the length of the string
+                                 starting at address 0x804a */
+
+SEE ALSO
+@{" STRCMP " link STRCMP}, @{" STRCPY " link STRCPY}, @{" STRCAT " link STRCAT}
+@endnode
+@node HELP "HELP"
+         @{" Getting Around " link "Getting Around"}
+         @{" Organization " link organization}
+@endnode
+@node "GETTING AROUND"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or
+click on the close gadget.  You may also hit escape.
+
+Most help screens will display one or more buttons as part of the text.
+Clicking on these buttons will provide further information on the topic
+listed on the button.  You can also reach these help topics through the
+main Contents screen or one of its sub-screens.
+
+In addition, double-clicking in the help window will bring up a help
+screen for the word under the mouse cursor, if such a help screen
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help
+screens.  The help screens are usually arranged alphabetically by
+command or topic.
+@endnode
+@node ORGANIZATION "ORGANIZATION"
+The CPR Amigaguide Help Utility is organized into three sections.  The
+sections are:
+
+                  - Commands and Builtin Functions
+                  - Parameter Types
+                  - Common Problems
+
+The first screen (the screen displayed when you select the "Contents"
+button) displays an alphabetized list of all commands and builtin
+functions that you can use in CPR.  Selecting one of these buttons will
+display a window with sections titled "SYNOPSIS", "DESCRIPTION",
+"EXAMPLES", and "SEE ALSO".
+
+The "SYNOPSIS" section describes the syntax of the command, including
+any parameters that it may take.  A parameter is the part of the command
+that is specific to each situation in which you use it.  For example,
+the command "display my_variable" displays the contents of a variable
+called my_variable.  The name of the variable can vary, so this is
+represented in the "SYNOPSIS" section by placing the word "variable" on
+a button in its proper place in the syntax.  Clicking on this button
+will pop up a description of what can replace "variable" in the syntax
+for the command.
+
+The "DESCRIPTION" section describes what the command does.  If present,
+the "EXAMPLES" section gives some common examples that will help explain
+the use of the command.  The "SEE ALSO" section lists other related
+commands that either have a similar function or that can be used in
+conjuction with the command.  The commands listed in the "SEE ALSO"
+section are equipped with links to allow you to quickly reference them.
+
+The first screen also displays two buttons that will lead you to the
+Parameter Types and Common Problems windows.  In the Parameter Types
+window, buttons are displayed for all of the different types of
+parameters that the CodeProbe commands and builtin functions may take.
+Selecting one of these buttons will pop up the same description for each
+that is displayed from the parameter buttons in the "SYNOPSIS" section
+of each command.
+
+The Common Problems section described some problems that you might run
+into while running CPR for which there is a simple solution.  If you
+have questions that aren't answered in this question, please contact
+Technical Support.  Please read the section titled "Contacting Technical
+Support" in the User's Guide volume 1 before doing so.
+@endnode

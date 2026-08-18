@@ -1,0 +1,6 @@
+FROM LIB:c.o first.o second.o
+LIBRARY LIB:sc.lib LIB:amiga.lib
+OVERLAY
+second.o
+#
+TO test

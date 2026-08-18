@@ -1,0 +1,2 @@
+Äà_STDDEFHÄ_STDDEFH 1å<sys/commsize.h>
+•çÇptrdiff_t;å<sys/commchar.h>Äoffsetof(type,memb) (size_t)&(((type*)0L)->memb)å<sys/commnull.h>á

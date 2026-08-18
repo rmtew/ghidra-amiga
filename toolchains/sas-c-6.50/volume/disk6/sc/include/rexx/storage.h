@@ -1,0 +1,61 @@
+€ˆREXX_STORAGE_H€REXX_STORAGE_HˆEXEC_TYPES_HŒ"exec/types.h"‡ˆµŒ"exec/nodes.h"‡ˆ·Œ"exec/lists.h"‡ˆ¸Œ"exec/ports.h"‡ˆEXEC_LIBRARIES_HŒ"exec/libraries.h"‡
+ƒNexxStr{
+’ns_Ivalue;
+‰ns_Length;
+Šns_Flags;
+Šns_Hash;
+šns_Buff[8];
+};€NXADDLEN 9€IVALUE(nsPtr) (nsPtr->ns_Ivalue)€NSB_KEEP 0€NSB_STRING 1€NSB_NOTNUM 2€NSB_NUMBER 3€NSB_BINARY 4€NSB_FLOAT 5€NSB_EXT 6€NSB_SOURCE 7€NSF_KEEP (1<<NSB_KEEP)€NSF_STRING (1<<NSB_STRING)€NSF_NOTNUM (1<<NSB_NOTNUM)€NSF_NUMBER (1<<NSB_NUMBER)€NSF_BINARY (1<<NSB_BINARY)€NSF_FLOAT (1<<NSB_FLOAT)€NSF_EXT (1<<NSB_EXT)€NSF_SOURCE (1<<NSB_SOURCE)€NSF_INTNUM (NSF_NUMBER|NSF_BINARY|NSF_STRING)€NSF_DPNUM (NSF_NUMBER|NSF_FLOAT)€NSF_ALPHA (NSF_NOTNUM|NSF_STRING)€NSF_OWNED (NSF_SOURCE|NSF_EXT|NSF_KEEP)€KEEPSTR (NSF_STRING|NSF_SOURCE|NSF_NOTNUM)€KEEPNUM (NSF_STRING|NSF_SOURCE|NSF_NUMBER|NSF_BINARY)
+ƒRexxArg{
+’ra_Size;
+‰ra_Length;
+Šra_Flags;
+Šra_Hash;
+šra_Buff[8];
+};
+ƒRexxMsg{
+ƒ¯rm_Node;
+”rm_TaskBlock;
+”rm_LibBase;
+’rm_Action;
+’rm_Result1;
+’rm_Result2;
+STRPTR rm_Args[16];
+ƒ©*rm_PassPort;
+STRPTR rm_CommAddr;
+STRPTR rm_FileExt;
+’rm_Stdin;
+’rm_Stdout;
+’rm_avail;
+};€ARG0(rmp) (rmp->rm_Args[0])€ARG1(rmp) (rmp->rm_Args[1])€ARG2(rmp) (rmp->rm_Args[2])€MAXRMARG 15€RXCOMM 0x1000000€RXFUNC 0x2000000€RXCLOSE 0x3000000€RXQUERY 0x4000000€RXADDFH 0x7000000€RXADDLIB 0x8000000€RXREMLIB 0x9000000€RXADDCON 0xA000000€RXREMCON 0xB000000€RXTCOPN 0xC000000€RXTCCLS 0xD000000€RXFB_NOIO 16€RXFB_RESULT 17€RXFB_STRING 18€RXFB_TOKEN 19€RXFB_NONRET 20€RXFF_NOIO (1L<<RXFB_NOIO)€RXFF_RESULT (1L<<RXFB_RESULT)€RXFF_STRING (1L<<RXFB_STRING)€RXFF_TOKEN (1L<<RXFB_TOKEN)€RXFF_NONRET (1L<<RXFB_NONRET)€RXCODEMASK 0xFF000000€RXARGMASK 15
+ƒRexxRsrc{
+ƒ¬rr_Node;
+˜rr_Func;
+”rr_Base;
+’rr_Size;
+’rr_Arg1;
+’rr_Arg2;
+};€RRT_ANY 0€RRT_LIB 1€RRT_PORT 2€RRT_FILE 3€RRT_HOST 4€RRT_CLIP 5€GLOBALSZ 200
+ƒRexxTask{
+šrt_Global[GLOBALSZ];
+ƒ©rt_MsgPort;
+Šrt_Flags;
+šrt_SigBit;
+”rt_ClientID;
+”rt_MsgPkt;
+”rt_TaskID;
+”rt_RexxPort;
+”rt_ErrTrap;
+”rt_StackPtr;
+ƒ®rt_Header1;
+ƒ®rt_Header2;
+ƒ®rt_Header3;
+ƒ®rt_Header4;
+ƒ®rt_Header5;
+};€RTFB_TRACE 0€RTFB_HALT 1€RTFB_SUSP 2€RTFB_TCUSE 3€RTFB_WAIT 6€RTFB_CLOSE 7€MEMQUANT 16L€MEMMASK 0xFFFFFFF0€MEMQUICK (1L<<0)€MEMCLEAR (1L<<16)
+ƒSrcNode{
+ƒSrcNode*sn_Succ;
+ƒSrcNode*sn_Pred;
+”sn_Ptr;
+’sn_Size;
+};‡

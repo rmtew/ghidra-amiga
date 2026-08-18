@@ -1,0 +1,44 @@
+ÄàREXX_RXSLIB_HÄREXX_RXSLIB_HàREXX_STORAGE_Hå"rexx/storage.h"áÄRXSNAME "rexxsyslib.library"ÄRXSDIR "REXX"ÄRXSTNAME "ARexx"
+ÉRxsLib{
+ÉLibrary rl_Node;
+ärl_Flags;
+ärl_Shadow;
+îrl_SysBase;
+îrl_DOSBase;
+îrl_IeeeDPBase;
+írl_SegList;
+írl_NIL;
+írl_Chunk;
+írl_MaxNest;
+ÉNexxStr*rl_NULL;
+ÉNexxStr*rl_FALSE;
+ÉNexxStr*rl_TRUE;
+ÉNexxStr*rl_REXX;
+ÉNexxStr*rl_COMMAND;
+ÉNexxStr*rl_STDIN;
+ÉNexxStr*rl_STDOUT;
+ÉNexxStr*rl_STDERR;
+STRPTR rl_Version;
+STRPTR rl_TaskName;
+írl_TaskPri;
+írl_TaskSeg;
+írl_StackSize;
+STRPTR rl_RexxDir;
+STRPTR rl_CTABLE;
+STRPTR rl_Notice;
+É©rl_RexxPort;
+ârl_ReadLock;
+írl_TraceFH;
+ÉÆrl_TaskList;
+òrl_NumTask;
+ÉÆrl_LibList;
+òrl_NumLib;
+ÉÆrl_ClipList;
+òrl_NumClip;
+ÉÆrl_MsgList;
+òrl_NumMsg;
+ÉÆrl_PgmList;
+òrl_NumPgm;
+ârl_TraceCnt;
+òrl_avail;
+};ÄRLFB_TRACE RTFB_TRACEÄRLFB_HALT RTFB_HALTÄRLFB_SUSP RTFB_SUSPÄRLFB_STOP 6ÄRLFB_CLOSE 7ÄRLFMASK (1<<RLFB_TRACE)|(1<<RLFB_HALT)|(1<<RLFB_SUSP)ÄRXSCHUNK 1024ÄRXSNEST 32ÄRXSTPRI 0ÄRXSSTACK 4096ÄCTB_SPACE 0ÄCTB_DIGIT 1ÄCTB_ALPHA 2ÄCTB_REXXSYM 3ÄCTB_REXXOPR 4ÄCTB_REXXSPC 5ÄCTB_UPPER 6ÄCTB_LOWER 7ÄCTF_SPACE (1<<CTB_SPACE)ÄCTF_DIGIT (1<<CTB_DIGIT)ÄCTF_ALPHA (1<<CTB_ALPHA)ÄCTF_REXXSYM (1<<CTB_REXXSYM)ÄCTF_REXXOPR (1<<CTB_REXXOPR)ÄCTF_REXXSPC (1<<CTB_REXXSPC)ÄCTF_UPPER (1<<CTB_UPPER)ÄCTF_LOWER (1<<CTB_LOWER)á

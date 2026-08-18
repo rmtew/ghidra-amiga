@@ -1,0 +1,23 @@
+
+/* IVS Drive definition
+   QUANTUM  P40S 940-40-94xx 
+
+   This entry is only used in conjunction with the MOUNT command
+   It is not used for AUTO-BOOTING devices. */
+
+DH0:	Device = IVS_SCSI.device
+	Unit = 1
+	Flags = 0
+	Surfaces = 3
+	BlocksPerTrack = 33
+	Reserved = 2
+	Interleave = 0
+	LowCyl = 2  ;  HighCyl = 789 /* of 789 */
+	Mount = 1
+	Buffers = 20
+	Stacksize = 4000		/* Required for FFS */
+	GlobVec = -1			/* Required for FFS */
+	FileSystem = l:FastFileSystem	/* Required for FFS */
+	DosType = 0x444F5301		/* Required for FFS */
+#
+
