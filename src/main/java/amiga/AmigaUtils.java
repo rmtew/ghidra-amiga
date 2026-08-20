@@ -6,12 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import docking.widgets.OptionDialog;
+import docking.widgets.filechooser.GhidraFileChooser;
+import docking.widgets.filechooser.GhidraFileChooserMode;
 import fd.FdFunction;
 import fd.FdFunctionsInLibs;
 import fd.FdLibFunctions;
@@ -42,8 +39,11 @@ import ghidra.program.model.symbol.SourceType;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.program.model.util.CodeUnitInsertionException;
+import ghidra.util.Swing;
+import ghidra.util.SystemUtilities;
 import ghidra.util.exception.DuplicateNameException;
 import ghidra.util.exception.InvalidInputException;
+import ghidra.util.filechooser.ExtensionFileFilter;
 import structs.CopperInst;
 import structs.InitData_Type;
 import structs.InitTable;
@@ -151,18 +151,37 @@ public class AmigaUtils {
 		program.getDataTypeManager().addDataType(CopperInst.dataType, DataTypeConflictHandler.DEFAULT_HANDLER);
 	}
 
-	private static String showSelectFile(String title) {
-		JFileChooser jfc = new JFileChooser(new File("."));
-		jfc.setDialogTitle(title);
-
-		jfc.setFileFilter(new FileNameExtensionFilter("Functions Definition File", "sfd"));
-		jfc.setMultiSelectionEnabled(false);
-
-		if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-			return jfc.getSelectedFile().getAbsolutePath();
+	private static FdLibFunctions askUserForSfd(String residentName, MessageLog log) {
+		if (SystemUtilities.isInHeadlessMode()) {
+			return null;
 		}
-
-		return null;
+		int choice = OptionDialog.showYesNoDialogWithNoAsDefaultButton(null,
+				"Amiga: locate SFD",
+				String.format("No bundled SFD matches resident '%s'. Do you have a .sfd file to use for its jump table?",
+						residentName));
+		if (choice != OptionDialog.YES_OPTION) {
+			return null;
+		}
+		File selected = Swing.runNow(() -> {
+			GhidraFileChooser chooser = new GhidraFileChooser(null);
+			try {
+				chooser.setTitle("Select SFD for " + residentName);
+				chooser.setFileFilter(ExtensionFileFilter.forExtensions("Functions Definition File", "sfd"));
+				chooser.setFileSelectionMode(GhidraFileChooserMode.FILES_ONLY);
+				return chooser.getSelectedFile();
+			}
+			finally {
+				chooser.dispose();
+			}
+		});
+		if (selected == null) {
+			return null;
+		}
+		FdLibFunctions table = FdParser.readSfdFile(selected.getAbsolutePath());
+		if (table == null) {
+			log.appendMsg(String.format("Failed to parse '%s' as SFD for resident '%s'", selected, residentName));
+		}
+		return table;
 	}
 
 	public static void analyzeResident(Memory mem, FlatProgramAPI fpa, FileDataTypeManager fdm, Address startAddr, MessageLog log) {
@@ -271,11 +290,11 @@ public class AmigaUtils {
 							funcTable = funcsList.getFunctionTableByLib(libName);
 
 						if(funcTable == null && !askedForFd && i >= 4) {
-							TimeUnit.SECONDS.sleep(1);
-							if (OptionDialog.YES_OPTION == OptionDialog.showYesNoDialogWithNoAsDefaultButton(null,
-									"Question", String.format("Do you have %s.sfd file for this library?", rt_Name))) {
-								String fdPath = showSelectFile("Select file...");
-								funcTable = FdParser.readSfdFile(fdPath);
+							funcTable = askUserForSfd(rt_Name, log);
+							if (funcTable == null) {
+								log.appendMsg(String.format(
+										"No bundled SFD matches resident '%s' (key '%s'); add data/sfd/<name>.sfd or the jump table will use generic names",
+										rt_Name, libName));
 							}
 							askedForFd = true;
 						}
@@ -333,7 +352,7 @@ public class AmigaUtils {
 					}
 				} // autoinit
 			}
-		} catch (InvalidInputException | MemoryAccessException | AddressOutOfBoundsException | CodeUnitInsertionException | DuplicateNameException | IOException | InterruptedException e) {
+		} catch (InvalidInputException | MemoryAccessException | AddressOutOfBoundsException | CodeUnitInsertionException | DuplicateNameException | IOException e) {
 			log.appendException(e);
 		}
 	}
