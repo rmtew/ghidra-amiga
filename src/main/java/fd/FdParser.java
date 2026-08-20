@@ -76,6 +76,9 @@ public class FdParser {
 
 		for(String line : lines) {
 			line = line.strip();
+			if (line.endsWith(";")) {
+				line = line.substring(0, line.length() - 1).stripTrailing();
+			}
 
 			if(line.length() > 1 && line.charAt(0) != '*') {
 				// command

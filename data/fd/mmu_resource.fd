@@ -1,0 +1,49 @@
+*-----------------------------------------------------------------
+*-- MMU.library                                                 --
+*-- (C) 1998-2016 the mmu.library development group, THOR-Software--
+*--                                                             --
+*-- Resource header file Version 46.1                           --
+*--                                                             --
+*-- created 07 Aug 2018 THOR,   Thomas Richter                  --
+*--     Modifications:                                          --
+*--                                                             --
+*-- 42.6:      First release,   07 Aug 2016, Thomas Richter     --
+*-----------------------------------------------------------------
+##base _MMUResBase
+##bias 30
+##public
+CheckMMUInterface(version,mmubase,mmuresbase)(d0,a0,a6)
+MMUResType(mmuresbase)(a6)
+ReadMMUConfig(config,mmubase)(a0,a6)
+WriteMMUConfig(config,mmubase)(a0,a6)
+DefineMMUContext(config,ctxt,mmubase)(a0,a5,a6)
+ParseTT(ctxt,config,mmubase)(a0,a1,a6)
+AdjustCtxtSettings(ctxt,mmubase)(a5,a6)
+AdjustMMUContext(depth,destctx,srcctx,mmubase)(d0,a0,a1,a6)
+RootStarter(config,atd,type,mmubase)(a1,a0,d0,a6)
+ReadDescriptor(descptr,atd,type,level,ctxt,mmubase)(a1,a0,d0,d1,a5,a6)
+ReadFastDescriptor(descptr,atd,type,level,ctxt,mmubase)(a1,a0,d0,d1,a5,a6)
+CmpDescriptor(descptr1,descptr2,type,delta,mmubase)(a0/a1,d0,d1,a6)
+IncrementDescriptor(atd,index,mmubase)(a0,d0,a6)
+WriteDescriptor(atd,level,ctxt,mmubase)(a0,d1,a5,a6)
+FindDescriptor(addr,ctxt,mmubase)(a0,a5,a6)
+PFlush(addr,mmubase)(a0,a6)
+PFlushA(mmubase)(a6)
+PFlushTwo(addr1,addr2,mmubase)(a2/a3,a6)
+PushLine(addr,mmubase)(a0,a6)
+PushPage(addr,mmubase)(a0,a6)
+PushAll(mmubase)(a6)
+PermitDMACache(addr,ctxt,mmubase)(a0,a5,a6)
+ForbidDMACache(addr,ctxt,mmubase)(a0,a5,a6)
+BuildMMUConfig(uctxt,sctxt,defconfig,destconfig,mmubase)(a0/a1,a2/a3,a6)
+LoadRoot(uroot,sroot,mmubase)(a0/a1,a6)
+PushTwo(addr1,addr2,mmubase)(a2/a3,a6)
+PFlushTwo(addr1,addr2,mmubase)(a2/a3,a6)
+InstallPage(lvl,size,dest,descr,data,addr,ctxt,mmubase)(d2,d1,a2,d0,d4,a0,a5,a6)
+InstallNewPage(lvl,size,dest,descr,data,addr,ctxt,mmubase)(d2,d1,a2,d0,d4,a0,a5,a6)
+ReadUMFlags(descr,lvl,ctxt,mmubase)(a0,d0,a5,a6)
+SetIndirect(where,logical,descr,mmubase)(a0,a1,d0,a6)
+SetIndirectArray(where,descr,num,mmubase)(a0,a1,d0,a6)
+WithoutMMU(userprocptr,mmubase)(a5,a6)
+Exception()()
+##end

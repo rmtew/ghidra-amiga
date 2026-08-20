@@ -99,6 +99,19 @@ public class FdParserTest {
 		}
 	}
 
+	@Test
+	public void loadsImportedPicasso96MmuLibAndOpenPciDefinitions() {
+		assertNotNull(FdParser.readFdFile("data/fd/Picasso96API_lib.fd"));
+		assertNotNull(FdParser.readFdFile("data/fd/mmu_lib.fd"));
+		assertNotNull(FdParser.readFdFile("data/fd/mmu_resource.fd"));
+		var openPci = FdParser.readSfdFile("data/sfd/openpci.sfd");
+		assertNotNull(openPci);
+		assertEquals("openpci_library", openPci.getFunctionByName("FindBoardA").getLib());
+		var picassoCard = FdParser.readSfdFile("data/sfd/Picasso96_card.sfd");
+		assertNotNull(picassoCard);
+		assertEquals("a1", picassoCard.getFunctionByName("FindCard").getArgs().get(1).reg);
+	}
+
 	private static void assertSeparatedPointerTokens(String function, String type) {
 		if (!type.contains("RastPort")) {
 			return;
