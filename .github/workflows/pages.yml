@@ -2,8 +2,7 @@ name: Deploy release notes to GitHub Pages
 
 on:
   push:
-    # Retain the feature branch only until this release page reaches master.
-    branches: [master, feature/amiga-overlay-loader]
+    branches: [master]
     paths:
       - site/**
       - .github/workflows/pages.yml
