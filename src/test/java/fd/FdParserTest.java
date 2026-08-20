@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.Test;
 
@@ -66,6 +68,34 @@ public class FdParserTest {
 					}
 				}
 			}
+		}
+	}
+
+	@Test
+	public void parsesCommentedSfdWithLowercaseLibraryKeyAndAttachedPointerName() throws Exception {
+		Path sfd = Files.createTempFile("Picasso96_card", ".sfd");
+		try {
+			Files.writeString(sfd, String.join("\n",
+					"* fd2sfd comment",
+					"==libname Picasso96_card",
+					"==bias 30",
+					"==public",
+					"BOOL FindCard(struct BoardInfo *bi, APTR *tooltypes) (a0,a1)",
+					"==end"));
+			var table = FdParser.readSfdFile(sfd.toString());
+			assertNotNull(table);
+			var function = table.getFunctionByName("FindCard");
+			assertNotNull(function);
+			assertEquals("picasso96_card", function.getLib());
+			assertEquals("struct BoardInfo *", function.getArgs().get(0).type);
+			assertEquals("bi", function.getArgs().get(0).name);
+			assertEquals("a0", function.getArgs().get(0).reg);
+			assertEquals("APTR *", function.getArgs().get(1).type);
+			assertEquals("tooltypes", function.getArgs().get(1).name);
+			assertEquals("a1", function.getArgs().get(1).reg);
+		}
+		finally {
+			Files.deleteIfExists(sfd);
 		}
 	}
 

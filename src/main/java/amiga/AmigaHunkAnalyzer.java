@@ -351,7 +351,19 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			Program program = fpa.getCurrentProgram();
 			for (var arg : func.getArgs()) {
 				var dataType = getAmigaDataType(arg.type, fdm);
-				params.add(new ParameterImpl(arg.name, dataType, program.getRegister(arg.reg), program));
+				Register register = program.getRegister(arg.reg);
+				if (register == null) {
+					log.appendMsg(String.format("Skipping parameter %s for %s: unknown register '%s'",
+							arg.name, func.getName(true), arg.reg));
+					continue;
+				}
+				try {
+					params.add(new ParameterImpl(arg.name, dataType, register, program));
+				}
+				catch (InvalidInputException exception) {
+					log.appendMsg(String.format("Skipping parameter %s for %s: %s",
+							arg.name, func.getName(true), exception.getMessage()));
+				}
 			}
 
 			var returnType = getAmigaDataType(func.getReturnType(), fdm);

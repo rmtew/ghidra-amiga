@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,7 +154,8 @@ public class FdParser {
 	private static FdLibFunctions readSfd(File f) throws Exception {
 		FdLibFunctions funcTable = null;
 		var libname = f.getName();
-		libname = libname.substring(0, libname.lastIndexOf('.')); // fallback for cia_lib.sfd
+		int dot = libname.lastIndexOf('.');
+		libname = (dot > 0 ? libname.substring(0, dot) : libname).toLowerCase(Locale.ROOT);
 
 		BufferedReader reader;
 		var lines = new ArrayList<String>();
@@ -171,9 +173,13 @@ public class FdParser {
 		int offset = 0;
 		boolean isAlias = false, isVarargs = false;
 		for(var line : lines) {
+			line = line.strip();
+			if (line.isEmpty() || line.charAt(0) == '*') {
+				continue;
+			}
 			if(line.startsWith("==")) {
 				if(line.startsWith("libname", 2))
-					libname = line.substring(2 + "libname".length() + 1).replace('.', '_');
+					libname = line.substring(2 + "libname".length() + 1).replace('.', '_').toLowerCase(Locale.ROOT);
 				if(line.startsWith("bias", 2))
 					offset = -Integer.parseInt(line.substring(2 + "bias".length() + 1));
 				else if(line.startsWith("reserve", 2))

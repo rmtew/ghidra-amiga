@@ -69,6 +69,15 @@ public class FdFunction {
 	}
 	
 	public void addArg(String name, String type, String reg) {
+		if (type != null) {
+			int pointerDepth = 0;
+			while (pointerDepth < name.length() && name.charAt(pointerDepth) == '*') {
+				pointerDepth++;
+			}
+			if (pointerDepth != 0) {
+				type += " " + "*".repeat(pointerDepth);
+			}
+		}
 		name = name.replace(" ", "").replace("*", "");
 		
 		args.add(new Arg(name, type, reg));
