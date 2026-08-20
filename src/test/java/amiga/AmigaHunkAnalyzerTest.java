@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -18,7 +19,10 @@ import ghidra.framework.ApplicationConfiguration;
 import ghidra.program.database.ProgramBuilder;
 import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.listing.Function;
+import ghidra.program.model.listing.Instruction;
 import ghidra.program.model.listing.Program;
+import ghidra.program.model.lang.OperandType;
+import ghidra.program.model.lang.Register;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.RefType;
 import ghidra.program.model.symbol.SourceType;
@@ -168,6 +172,50 @@ public class AmigaHunkAnalyzerTest {
 				resolved |= target != null && "dos_library_Seek".equals(target.getName());
 			}
 			assertTrue("a library return copied from D0 to A6 should resolve its vector", resolved);
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void resolvesAnApiVectorWhenAStoredLibraryBaseIsReloadedThroughD0() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-base-d0-reload", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// OpenLibrary("icon.library") -> D0; store D0; reload it through D0; move D0,A6; call GetDiskObject.
+			builder.setBytes("0x100", "2c78000443fa003870004eaefdd8298000802039000000802c404eaeffb24e75");
+			builder.createString("0x140", "icon.library");
+			builder.disassemble("0x100", 0x20);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x10e", "0x80", RefType.WRITE, SourceType.ANALYSIS, 1);
+			builder.createMemoryReadReference("0x112", "0x80");
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			MessageLog log = new MessageLog();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				try {
+					assertTrue(analyzer.canAnalyze(program));
+					added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY, log);
+				}
+				catch (Exception e) {
+					throw new AssertionError(e);
+				}
+			});
+			assertTrue(log.toString(), added[0]);
+			Instruction moveToA6 = program.getListing().getInstructionAt(builder.addr("0x118"));
+			assertEquals("Ghidra does not mark the source register of MOVEA as READ", 0,
+					moveToA6.getOperandType(0) & OperandType.READ);
+			assertTrue("the existing analyzer obtains that source from input objects",
+					Arrays.stream(moveToA6.getInputObjects()).anyMatch(object -> object instanceof Register register &&
+							"D0".equals(register.getName())));
+			assertVectorTarget(program, builder.addr("0x11a"), "icon_library_GetDiskObject");
 		}
 		finally {
 			builder.dispose();
