@@ -1,0 +1,2327 @@
+@database "sc_util"
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@master "sc_util.guide"
+
+@Remark $VER: sc_util.guide 6.00 (20.7.92)
+@Remark AmigaGuide database for the SAS/C Development System Utilities
+
+@Node Main "sc_util.guide"
+@{" cpr      " Link "cpr"}  CodePRobe - Source level debugger
+@{" cprk     " Link "cprk"}  CodePRobe - Cross-debugger kernel
+@{" cprx     " Link "cprx"}  CodePRobe - Cross-debugger version
+@{" cover    " Link "cover"}  Analyzes coverage data
+@{" diff     " Link "diff"}  Determines the differences between two files
+@{" grep     " Link "grep"}  Searches for and prints regular expressions
+@{" gst      " Link "gst"}  Manages global symbol tables
+@{" hypergst " Link "hypergst"}  Displays the contents of GSTs
+@{" lctosc   " Link "lctosc"}  Converts older V5 options to newer options
+@{" lprof    " Link "lprof"}  Generates run-time statistics
+@{" lstat    " Link "lstat"}  Analyzes and prints run-time statistics
+@{" omd      " Link "omd"}  Disassembles object modules
+@{" oml      " Link "oml"}  Manages libraries
+@{" sc       " Link "sc"}  SAS/C Development System driver
+@{" sc5      " Link "sc5"}  SAS/C Development System V5 compatible driver
+@{" scmsg    " Link "scmsg"}  Searches for and corrects errors and warnings
+@{" scopts   " Link "scopts"}  Sets compiler options
+@{" scsetup  " Link "scsetup"}  Sets up a new project
+@{" slink    " Link "slink"}  SAS/C Development System Linker
+@{" smake    " Link "smake"}  Maintains and updates records of file dependencies
+@{" splat    " Link "splat"}  Searches and replaces patterns matching regular expressions
+@{" tb       " Link "tb"}  Displays traceback information
+@EndNode
+
+@Node "cpr"
+cpr - CodePRobe - Source level debugger
+
+Synopsis
+
+   cpr [@{" options " Link "cpr options"}] program [program parameters]
+
+Description
+
+   CodePRobe is a powerful source-level debugger that enables you to
+   monitor, line-by-line, the behavior of your C program, Assembler
+   program, or both.
+
+See Also
+
+   @{" cpr commands " Link "sc:help/cpr.guide/main"} , @{" cpr options " Link "cpr options"}, @{" Changes to CPR documentation " link sc:help/sc_change.guide/cpr}     
+@EndNode
+
+@Node "cpr options"
+-buffer size
+
+   Specifies the size of the Dialog window buffer.  By default, the Dialog
+   window saves the last 4096 bytes displayed so that you can scroll
+   backwards and review output.  "size" is the new buffer size in bytes.
+
+-cli
+
+   Tells cpr to invoke the application as a CLI (or shell) process.  This
+   option is the default if cpr is invoked from a shell.  It is necessary
+   if you invoke cpr from Workbench, and want your program to run as if
+   invoked from a shell.
+
+-command cmd1 cmd2 ...
+
+   This options allows you to execute debugger commands on startup.  The
+   commands are executed after the "go main" if the -startup option is not
+   specified.
+
+-i
+
+   Forces cpr to open its custom screen in interlace mode.  By default,
+   cpr will open in the same mode as Workbench.
+
+-line
+
+   Cause cpr to start in line mode.  Line mode causes the debugger to run
+   in the current shell window.  The equivalent of the Dialog window is
+   provided, with no other windows available.  Useful for running from a
+   script, or from a remote terminal.
+
+-noprofile
+
+   Suppress execution of the cpr startup file.  When cpr is invoked, it
+   automatically executes a script file named "cprinit", if one exists
+   either in the current directory, or in ENV:sc (if none is found in the
+   current directory).
+
+-screen name
+
+   Tells cpr to open its window on the named public screen.  By default,
+   cpr creates a new public screen when invoked.  If a screen with the
+   given name does not exist, it is created.  To use the Workbench screen,
+   specify "-screen Workbench".
+
+   As public screens are a feature of Intuition V2, this is not a
+   generally useful option for users of older versions of the OS.
+   However, "-screen Workbench" will cause cpr to use the Workbench
+   screen, no matter which version of the OS is in use.
+
+-startup
+
+   This option suppresses the automatic "go main" that is normally
+   executed by the debugger on startup.
+
+-w
+
+   This option forces cpr to open its windows on the Workbench screen,
+   instead of creating its own screen.
+
+-wb
+
+   Use this option to instruct cpr to invoke the application as a
+   Workbench process.  This option is necessary to debug a Workbench
+   application if cpr is invoked from a shell.
+
+-wdialog   left top width height
+-wregister left top width height
+-wsource   left top width height
+-wwatch    left top width height
+
+   These options specify the initial window coordinates for the Dialog,
+   Register, Source, and Watch windows, respectively.  Window coordinates
+   are measured in CHARACTER positions.  A width or height of 0 causes the
+   window to extend to the screen border on the right or bottom,
+   respectively.
+
+-.
+
+   This option suppresses the copyright banner that is normally displayed
+   at startup.
+@EndNode
+
+@Node "cprk"
+cprk - CodePRobe - Cross-debugger kernel
+
+Synopsis
+
+   cprk [option]
+
+Description
+
+   This kernel program is a version of CodePRobe, a powerful source-level
+   debugger that enables you to monitor, line-by-line, the behavior of
+   your C program, Assembler program, or both.
+
+   This version is to be run on a machine which will be debugged remotely,
+   via the @{" cprx " Link "cprx"} program.
+
+   cprk only supports one (optional) parameter:
+
+        -pipe [name]
+
+           specifies that a named pipe is to be used instead of the serial
+           port.  If 'name' is not specified, "pipe:cpr" is used.
+
+See Also
+
+   @{" cprx " Link "cprx"}
+@EndNode
+
+@Node "cprx"
+cprx - CodePRobe - Cross-debugger version
+
+Synopsis
+
+   cprx [@{" options " Link "cprx options"}] program [program parameters]
+
+Description
+
+   This is the Cross-Debugger version of CodePRobe, a powerful
+   source-level debugger that enables you to monitor, line-by-line, the
+   behavior of your C program, Assembler program, or both.
+
+   This version of cpr allows you to control a program running under the
+   @{" cprk " Link "cprk"} kernel program on another machine, via a serial or NetWork link.
+
+See Also
+
+   @{" cprx commands " Link "cprx commands"} , @{" cprk " Link "cprk"} , @{" cprx options " Link "cprx options"}
+@EndNode
+
+@Node "cprx commands"
+   In addition to all regular @{" cpr commands " Link "sc:help/cpr.guide/main"}, cprx also recognises the
+   following:
+
+finish
+
+   This command causes @{" cprk " Link "cprk"} to terminate after disconnecting cprx.
+
+Ctrl-D
+
+   Typing this key sequence in the cprx Dialog window will disconnect cprx
+   from @{" cprk " Link "cprk"}.
+
+   Typing this key sequence in the target machine's (the one running @{" cprk " Link "cprk"})
+   CLI window will disconnect @{" cprk " Link "cprk"}.
+@EndNode
+
+@Node "cprx options"
+   In addition to all regular @{" cpr options " Link "cpr options"}, cprx also recognises the
+   following:
+
+-pipe [filename]
+-pipe [in filename] [out filename]
+
+   Specifies that pipes are to be used for cprx communication.  The pipe
+   device must have been previously mounted.  By default, the input and
+   output pipes are named "pipe:cpr_d" and "pipe:cpr_k" respectively.
+
+-symfile
+
+   Specifies the location of the executable file on the host machine.  Use
+   this option if the location is not the same on the host and target
+   machines.
+
+-nokcheck
+
+   Turns off checksum checking.  By default, cprk and @{" cprx " Link "cprx"} perform a
+   checksum on the executable files on the target and host machines to
+   verify that both sides are using the same executable file.  If the
+   checksum fails, cprk does not load the program.
+
+-x
+
+   Transmits a stripped version of the file to the machine running the
+   kernel.  This allows the kernel to run constantly without changing
+   disks or rebooting (as long as the program doesn't crash).
+@EndNode
+
+@Node "cover"
+cover - Analyzes coverage data
+
+Synopsis
+
+   cover [@{" options " Link "cover options"}] [datafile]. . .
+
+Description
+
+   The cover utility analyzes the coverage data produced when you compile
+   your program with the COVERAGE option, link with the object file
+   covutil.o, and run your program.  Using this data, you can determine
+   which lines of code in your program were executed and which were not.
+   This information can help you design test cases that exercise all paths
+   through your program.
+
+See Also
+
+   @{" cover options " Link "cover options"}, @{" Changes to Cover documentation " link sc:help/sc_change.guide/cover}     
+  
+@EndNode
+
+@Node "cover options"
+dir=directory-pathname
+
+   specifies the directory path or paths to search to locate the C source
+   files.
+
+merge filename
+
+   tells cover to read the specified data files, merge the information
+   contained in them, and write the merged data to filename.
+
+nosource
+
+   tells cover not to read in the C source files.
+@EndNode
+
+@Node "diff"
+diff - Determines the differences between two files
+
+Synopsis
+
+   diff [>destination] [@{" options " Link "diff options"}] file1 file2
+
+Description
+
+   The diff utility determines the differences in contents between two
+   files and describes the lines that you should delete from, add to, or
+   change in file2 to make it look like file1.  To help you find those
+   lines, diff identifies the line numbers and gives the text of the
+   lines.
+
+   If you enter the diff command without specifying filenames, diff
+   displays the version that you are using and describes the options
+   available.
+
+   Output from this utility is sent to the standard output device, unless
+   you redirect it by specifying the -o option or by entering a greater
+   than (>) sign followed by a destination.
+
+   NOTE: Appendix 1, "diff File-Matching Algorithm," discusses the theory
+         of file matching and how it affects diff.
+
+See Also
+
+   @{" diff error messages " Link "diff error messages"} , @{" diff options " Link "diff options"}
+@EndNode
+
+@Node "diff options"
+-bnn
+
+   sets the size of the I/O buffer to the value specified by nn.  The
+   default I/O buffer size is 4K, and the maximum size is limited by the
+   amount of available system memory.
+
+-c
+
+   displays only those lines common to both files.
+
+-Fnn
+
+   sets the column number where you want diff to begin comparing lines.
+   For example, if you set nn to 25, diff ignores the first 25 characters
+   on each line.
+
+-Lnn
+
+   sets the column number where you want diff to stop comparing lines.
+   For example, if you set nn to 75, diff ignores the characters beyond
+   column 75 on each line.
+
+-lnn
+
+   defines the number of lines, nn, per file that can be handled by diff.
+   diff uses two tables (one for each file) to keep track of the lines
+   read in from each file.  The default size of each of these tables is
+   2000; the maximum number is limited by memory availability.
+
+-ofile
+
+   sends the output to the specified file (or device).  You can use this
+   option instead of the AmigaDOS redirection command.  You can send the
+   output to a different device by specifying the device name.  For
+   example, to send output to the printer, specify -oprt:.  To send output
+   to a file on drive df0:, specify -odf0:filename.
+
+-p
+
+   filters out unprintable characters from the input stream.  You can use
+   this option to clean out an AmigaDOS binary file.
+
+-q
+
+   suppresses any messages if there are no differences between the
+   specified files.
+
+-w
+
+   ignores differences related solely to space or tab characters and
+   reduces sequences of these characters to a single space.  This option
+   also removes trailing blanks.  When you specify the -w option, diff
+   uses additional memory to create a third table for each line in its
+   compressed form.
+@EndNode
+
+@Node "diff error messages"
+Can't open file
+
+   indicates that diff cannot open the named file. The file may not exist
+   or it may be protected.
+
+Diff I/O Error
+
+   indicates an I/O problem.
+
+Improper -l specification: nn
+
+   indicates that diff cannot interpret the nn value specified with the -l
+   option as a number.
+
+Internal Error: ...
+
+   indicates an internal error.  Please contact the Technical Support
+   Division at SAS Institute if you see this error message.  The Technical
+   Support representative will need the following information:
+
+        · the version of diff you are using
+
+        · the exact wording of the command line you used
+
+        · the exact wording of the message you received
+
+        · the size of the files you were trying to compare.
+
+Line table overflow
+
+   indicates that one of the two line tables, in which diff stores the
+   lines from each file while they are being compared, is too small to
+   hold the lines in one of the files.  Try increasing the line table size
+   with the -l option.
+
+Not enough memory for nn lines per file
+
+   indicates that you have used the -l option to increase the line table
+   size, but you do not have enough memory to increase it by the amount
+   you specified.
+
+Out of memory
+
+   indicates that diff is out of memory.  Try decreasing the line table
+   size with the -l option if possible.  Do not use the -w option.  You
+   can also try decreasing the size of the I/O buffer by using the -b
+   option; however, this action makes diff run slower because more disk
+   accesses may be required.  If you are using a hard disk, this factor
+   may be negligible.
+
+Too many file names: ...
+
+   indicates that you have made an error on the command line in such a way
+   that diff assumes you are attempting to operate on more than two files.
+
+Unrecognized option
+
+   indicates that you specified an option that diff does not recognize.
+@EndNode
+
+@Node "grep"
+grep - Searches for and prints regular expressions
+
+Synopsis
+
+   grep [>destination] [@{" options " Link "grep options"}] pattern file . . .
+
+Description
+
+   The grep utility searches the files you specify for all the lines that
+   contain the specified pattern.  For each file in which it finds the
+   pattern, grep displays, on the screen, the filename, line number, and
+   contents of the line that contains the matching string.  The patterns
+   that you can specify can be specific or general, and they are sometimes
+   referred to as regular expressions.  In this text, they are referred to
+   as patterns.
+
+   To specify the files that you want grep to search, you can use the
+   AmigaDOS wildcards (eg. #?).
+
+Specifying the Pattern
+
+   The following list describes the special characters that you can use to
+   specify the pattern for which you are looking:
+
+   .
+
+   is the grep wildcard character.  A period will match any single
+   character, including a space, tab, newline, or control character.
+
+   A period followed by an asterisk (*) tells grep that any number of any
+   characters can be present.  The .* sequence is equivalent to the #?
+   sequence for AmigaDOS commands.
+
+   ""
+
+   are used to enclose patterns that include space characters.
+
+   [ ]
+
+   are used to search for any one character from a set of characters by
+   enclosing that set of characters inside square brackets.  A set of
+   characters enclosed in square brackets is called a character class.  A
+   character class will match one single character.  For example, to
+   search for lines that contain vowels, you can enter [aeiou].
+
+   n(--) -
+
+   is used to specify a range.  Inside a character class, you can specify
+   a range of characters by entering the first character in the range and
+   the last character in the range separated by a hyphen.  The first
+   character must occur alphabetically before the second.  For example, to
+   find any one of the lowercase alphabetic characters, you enter [a-z].
+
+   !
+
+   is used as the negation character when included as the first character
+   in a character class.  An exclamation point tells grep to find any
+   character that is not in the character class.  For example, to find any
+   one character that is not a lowercase alphabetic character, enter
+   [!a-z].  To find any one character that is not a lowercase alphabetic
+   character and is not the end-of-line character, enter [!a-z\N].
+
+   *
+
+   tells grep that the preceding character does not have to be present in
+   the pattern but can be present an unlimited number of times.  In other
+   words, an asterisk means "zero or more of."
+
+   A period followed by an asterisk tells grep that any number of any
+   characters can be present.  The .* sequence is equivalent to the #?
+   sequence for AmigaDOS commands.
+
+   +
+
+   tells grep that the preceding character must be present in the pattern
+   at least one time but can be present an unlimited number of times.  In
+   other words, a plus sign means "one or more of."  For example, to find
+   all lines in your file that contain one or more of the lowercase letter
+   t, enter t+.
+
+   ^
+
+   tells grep that the pattern must begin in column 0.  Enter the caret
+   (^) at the beginning of the pattern.  grep will look only for those
+   lines in which the pattern occurs beginning in column 0.  For example,
+   to find all lines that begin with a left parenthesis, enter ^(.
+
+   $
+
+   tells grep that the pattern must occur at the end of a line.  Enter the
+   dollar sign at the end of the pattern.  For example, to find all lines
+   that end with a right parenthesis, enter )$.
+
+   \
+
+   is the escape character.  If you want to search for any of the special
+   characters included in this list, you must enter a backslash before
+   that character.  For example, to find all lines that contain a caret,
+   enter \^.  Similarly, if you want to search for a backslash, enter two
+   backslashes, \\.
+
+   You also need to use the backslash to identify certain additional
+   characters.  These characters are as follows:
+
+        \b      backspace
+        \n      newline
+        \r      carriage return
+        \s      space
+        \t      tab
+        \xij    control character identified by hexadecimal digits ij
+
+
+   For example, to locate all lines containing the Control-g character,
+   enter \x07.
+
+See Also
+
+   @{" grep error messages " Link "grep error messages"}, @{" grep options " Link "grep options"}
+@EndNode
+
+@Node "grep options"
+-c
+
+   prints the total number of matched lines.
+
+-f
+
+   prints only the names of all files in which grep finds a string that
+   matches the pattern.
+
+-n
+
+   tells grep not to display line numbers.
+
+-p
+
+   displays only printable ASCII characters.  Non-printable characters are
+   filtered out.  This option is useful if you are searching a binary file
+   that may contain control characters.
+
+-q
+
+   does not display filenames or line numbers.
+
+-s
+
+   displays the names of all files that grep searches.  Normally, grep
+   displays only those filenames in which it found a match for the
+   pattern.
+
+-v
+
+   prints only the lines in which a match of the pattern is not found.
+
+-V
+
+   prints the version number of grep.
+
+-$
+
+   tells grep not to distinguish between upper- and lowercase.  For
+   example, if you use this option, the pattern int would match int, INT,
+   Int, and INt.
+@EndNode
+
+@Node "grep error messages"
+Bad character class
+
+   indicates that grep is unable to interpret a character class in the
+   pattern you have asked it to find.  Check to see if you have used any
+   special symbols that you did not intend to use.  This message also can
+   be generated if, in specifying a character class and using the minus
+   (-) character to indicate a range of characters, the first character in
+   the range does not alphabetically precede the second (for example,
+   [d-a]).
+
+Bad pattern
+
+   indicates that grep is unable to interpret the pattern you are asking
+   it to find.  You may have used a special character in the pattern that
+   does not make sense in this context.  Check to see if you have
+   forgotten to escape a special character.
+
+Can't find file(s) ...
+
+   indicates that grep is unable to find one or more of the files you have
+   asked it to search.  The files may not exist, or you may have
+   misspelled the filenames.
+
+Can't open ...
+
+   indicates that grep is unable to open the named file.  The file may not
+   exist or may be protected.
+
+Closing ] not found
+
+   indicates that grep believes that you have asked it to search for a
+   pattern that contains a character class, but you have omitted the right
+   bracket (]) that terminates the character class.  If not, you may have
+   included a left bracket ([) in the pattern but forgot to use a
+   backslash (\) before it.
+
+Empty character class
+
+   indicates that a character class you have used in your pattern has no
+   members, for example [ ].
+
+Improper hex specification
+
+   indicates that you have used the x escape sequence but have not
+   followed it with two recognizable hexadecimal digits.
+
+Incompatible combination of options
+
+   indicates that the options with which you have invoked grep are
+   contradictory.
+
+Internal Error: ...
+
+   indicates an internal error.  Please contact the Technical Support
+   Division at SAS Institute if you see this message.  The Technical
+   Support representative will need the following information:
+
+        · the version number of grep you are using
+
+        · the exact wording of the command line you used
+
+        · the exact wording of the resulting error message.
+
+Invalid option
+
+   indicates that you have used a command line option that grep does not
+   recognize.  This message also can be generated if your pattern begins
+   with a minus sign (-) but you have not escaped it or enclosed the
+   pattern in double quote marks (").
+
+No beginning double quote in pattern
+
+   indicates that grep has detected double quote marks (") in a pattern
+   that did not start with a double quote.  You may need a backslash (\)
+   before the double quote.
+
+No file arguments provided
+
+   indicates that grep believes you have specified a pattern but no
+   filenames.  This message also may be generated if you invoke grep with
+   a filename but no pattern.
+
+No pattern or file arguments given
+
+   indicates that grep cannot find either a pattern or filename on its
+   command line.
+
+Out of space
+
+   indicates that grep has run out of space in constructing its pattern
+   representation.  Please contact the Technical Support Division at SAS
+   Institute if you see this message.
+
+Pattern ill-formed:  no terminating double quote
+
+   indicates that you started the pattern with a double quote (") but
+   failed to terminate it with one.
+
+Too few arguments to GREP
+
+   indicates that grep demands at least two arguments on its command line:
+   a pattern and at least one filename.
+@EndNode
+
+@Node "gst"
+gst - Manages global symbol tables
+
+Synopsis
+
+   gst [gst-filename] [@{" options " Link "gst options"}] [symbol-name . . . ]
+
+Description
+
+   A Global Symbol Table (GST) is a collection of all the information
+   defined in a set of header files and stored in a format that the
+   compiler can use easily and quickly.
+
+   For information on creating and using GSTs, refer to Chapter 4, "Using
+   the System Header Files to Access Libraries," in SAS/C Development
+   System Library Reference.
+
+   The gst utility helps you manage GSTs and extract information from a
+   GST.
+
+   To load a GST into memory, specify the GST command as follows:
+
+        gst gst-filename
+
+   The gst utility loads the GST into memory and then exits.
+
+   NOTE: You should do this only if you plan to remove the disk containing
+         the GST from the drive.
+
+   To display information about a symbol contained in a GST, specify the
+   gst command as follows:
+
+        gst gst-filename symbol-name
+
+   Some symbols may occur more than once in the GST.  For example, a
+   symbol may occur once as a structure tag and again as an identifier.
+   The gst utility prints all definitions of the same symbol.
+
+See Also
+
+   @{" gst error messages " Link "gst error messages"}, @{" gst options " Link "gst options"}
+@EndNode
+
+@Node "gst options"
+list
+
+   lists all GSTs currently in memory.  You can use this option to
+   determine which GSTs to unload if you need more memory.
+
+[name=]filename
+
+   specifies a GST file created using the makegst option in the sc
+   command.  You do not need to specify name= unless you want to load a
+   GST that has the same name as a keyword (for example, name=symbol).
+
+[symbol=]symbol-name
+
+   displays the type of symbol name and the filename and line number where
+   symbol-name is defined.  The type may be one of the following:
+   n(Preprocessor) tag struct, union, or enum name identifier variable or
+   function name typedef typedef include #include filename preprocessor
+   preprocessor macro or #define
+
+   You do not need to specify symbol= unless you want information about a
+   symbol that has the same name as a keyword (name, unload, and so on).
+
+unload
+
+   forces a GST to be unloaded from memory.  If you also specify symbol
+   names on the command line, gst prints all definitions for those symbols
+   before it unloads the GST.
+
+verbose
+
+   prints the full definition of symbol-name.
+@EndNode
+
+@Node "gst error messages"
+No GST file specified
+
+   indicates that you did not specify a GST filename.
+
+Can't find GST file "filename"
+
+   indicates that gst cannot find the file specified.
+
+Symbol "symbol-name" not found
+
+   indicates that gst could not find the specified symbol.
+
+Not enough memory to load GST
+
+   indicates that the GST file could not be loaded due to insufficient
+   memory.
+@EndNode
+
+@Node "hypergst"
+hypergst - Displays the contents of GSTs
+
+Synopsis
+
+   hypergst [gst-filename]
+
+Description
+
+   The hypergst utility allows you to browse the definitions of symbols
+   and data structures in GSTs (Global Symbol Tables) that are loaded into
+   memory.
+
+   hypergst works with the AmigaGuide hypertext system.  For information
+   on using AmigaGuide, see Chapter 2, "Getting Help," in SAS/C
+   Development System User's Guide, Volume I: Introduction, Editor,
+   Compiler.
+
+   To browse the definitions in a GST, the GST must be loaded in memory.
+   You can invoke the hypergst utility and load a GST in one of two ways:
+
+      · You can enter the hypergst command followed by the name of the GST
+        file that you want to browse.
+
+      · From the Workbench, you can click on the HyperGST icon, then hold
+        down the Shift key and double-click on the icon for the GST file
+        that you want to browse.
+
+   If the GST that you want to browse is already loaded into memory:
+
+      · You can enter the hypergst command without specifying a GST
+        filename.  hypergst displays a screen listing the names of all
+        GSTs in memory.  To select a specific GST, click on the name of
+        the GST file.
+
+      · You can double-click on the HyperGST icon. hypergst displays a
+        screen listing the names of all GSTs in memory.  To select a
+        specific GST, click on the name of the GST file.
+
+   After the GST is loaded, hypergst displays a screen containing buttons
+   for the various kinds of symbols defined in the GST.  These buttons are
+   as follows:
+
+      · Data Items
+      · Prototypes
+      · Typedefs
+      · Structs/Unions/Enums
+      · Preprocessor Symbols
+
+   If you click on one of these buttons, hypergst displays an alphabetical
+   list of all symbols of that type in the GST.  If you click on the name
+   of a symbol, hypergst displays a symbol information screen for that
+   symbol.  This screen may contain other buttons that reference header
+   files, structure tags, type definitions, and so on.  You can click on
+   any of these buttons to display more information about the highlighted
+   item.
+
+See Also
+
+   @{" hypergst error messages " Link "hypergst error messages"}
+@EndNode
+
+@Node "hypergst error messages"
+No GST files in memory
+
+   indicates that you have not loaded any GST files into memory.  For
+   example, you see this message if you invoke hypergst immediately
+   following a reboot and do not specify any arguments.
+@EndNode
+
+@Node "lctosc"
+lctosc - Converts older V5 options to newer options
+
+Synopsis
+
+   lctosc [>file] [lc options]
+
+Description
+
+   This utility will convert V5 'LC' options to the newer 'SC' option
+   style.  It prints the converted options to stdout.  To keep and use
+   these converted options, you will need to redirect the output of lctosc
+   to a file using the AmigaDOS '>' output redirection operator.  The new
+   driver looks for options in a file named "SCOptions".
+
+   You may either type the options to be converted on the command line, or
+   redirect the input to lctosc from a file using the AmigaDOS '<' input
+   redirection operator.  The old driver, LC, looked for options in a file
+   named "SASCOPTS".
+@EndNode
+
+@Node "lprof"
+lprof - Generates run-time statistics
+
+Synopsis
+
+   lprof [-t=n] [>prog-output-dest] program [program-options]
+
+Description
+
+   The lprof utility generates run-time statistics for a program. lprof
+   records the amount of time spent in each routine that is called as your
+   program runs.
+
+   To use lprof with your program, you must compile your program with the
+   debug option.
+
+   After lprof loads your program, it runs the program and gathers
+   statistics by examining the current program counter at given intervals.
+   lprof writes your program's statistics to the file named prof.out in
+   the current directory.  You can use the lstat utility to produce a
+   report from those statistics.
+
+   lprof only supports one option:
+
+        -t=n
+
+           specify the interval, in milliseconds, between lprof statistics
+           checks on your program.
+
+See Also
+
+   @{" lstat " Link "lstat"}
+@EndNode
+
+@Node "lstat"
+lstat - Analyzes and prints run-time statistics
+
+Synopsis
+
+   lstat [>destination] [@{" options " Link "lstat options"}] program [profile]
+
+Description
+
+   The lstat utility analyzes the profile statistics created by @{" lprof " Link "lprof"}.
+
+   The profile is the name of the output file created by lprof.  lstat
+   first looks in your current directory for the default file produced by
+   lprof, prof.out.  If this file is not in your current directory, or if
+   you have changed its name, you must specify its full pathname as the
+   value for profile.
+
+   You must specify the program name.  lstat uses this name to get
+   debugging and symbol information for its report.
+
+   NOTE: This utility assumes that you have compiled the program with the
+         debug compiler option.  The debug option allows lstat to
+         associate code with a specific line.  If you do not compile with
+         the debug option, lstat reports statistics based on subroutines
+         only.
+
+   If the report produced by lstat shows that a large percentage of time
+   is spent in one program module, you may want to
+
+      · redesign the module
+
+      · incorporate the module into the calling routines, thus eliminating
+        calling overhead
+
+      · rewrite the routine in assembly language
+
+      · restructure your program.
+
+   You also may find that most of the work being done involves the routine
+   in question, and the percentage of time taken is reasonable.
+
+See Also
+
+   @{" options " Link "lstat options"}
+@EndNode
+
+@Node "lstat options"
+-z
+
+   tells lstat to display statistics for all subroutines even if they were
+   not encountered in profiling.  By default, lstat does not report
+   subroutines that it does not encounter.
+
+-f
+
+   tells lstat to display full statistics for each subroutine, indicating
+   the line numbers within a module that it encountered.  By default,
+   lstat displays only summary information about the subroutine.
+
+-t=n
+
+   tells lstat to display only those routines that have at least n hits.
+   By default, lstat prints all subroutines that it encountered even once.
+@EndNode
+
+@Node "omd"
+omd - Disassembles object modules
+
+Synopsis
+
+   omd [>destination] [-x] object [source]
+
+Description
+
+   The omd (Object Module Disassembler) utility program disassembles an
+   object file produced by the SAS/C Compiler and produces a listing
+   consisting of assembly language statements (interspersed with the
+   original C source code if you specified a source filename).
+
+   object is the object filename.  You must specify the complete filename,
+   including the .o extension.
+
+   source is the source filename.  If you specify source, you must specify
+   the complete source filename, and the source file should have been
+   compiled with the debug compiler option.  The debug option allows omd
+   to associate source lines with the object code they generated. If you
+   did not use the debug option, C source lines will not appear in the
+   output produced by omd.
+
+   omd only supports one option:
+
+        -x
+
+           This option sets the size of the buffer used to hold the
+           external symbol section of the object module.  For example,
+           -x250 establishes a buffer that can hold 250 external symbols.
+           The default size is 200.  You should increase the buffer size
+           only if omd reports that there are too many external symbols.
+
+@EndNode
+
+@Node "oml"
+oml - Manages libraries
+
+Synopsis
+
+   oml [<cmdfile] [>listfile] [@{" options " Link "oml options"}] libfile [command [module. . . ]]. .
+
+Description
+
+   You can use the oml (Object Module Librarian) to manage your libraries.
+   oml allows you to:
+
+      · create library files
+      · list the modules in a library file
+      · delete modules from a library file
+      · replace old modules with new modules.
+
+   A link library is a group of object modules, each of which was
+   originally in a separate file and consisted of one or more subroutines.
+   Some advantages of using a link library are as follows:
+
+      · The subroutines in a library can be used by several programs.
+      · When you are linking your program, you specify only the library
+        file instead of several individual object modules.
+      · The linker includes only those modules in the library that are
+        required by your program.
+
+   Each module within the library is identified by a module name, which is
+   placed in the object module by the program (the SAS/C Assembler or
+   Compiler) that generates the module.  The assembler and compiler use
+   the name of the object file. If a module does not contain a module
+   name, oml assigns a module name of the form $nnn, where nnn is a
+   decimal number.
+
+   A module may define one or more public symbols.  A public symbol is
+   something in the module that is available to other modules, such as
+   global variables or functions.  When the linker resolves external
+   references for a program, it examines each module in each library you
+   specify.  It decides which of the modules are required by the program
+   it is linking by looking at the module's list of public symbols.  If
+   any of the program's unresolved external references match any of the
+   module's public symbols, that module will be included in the executable
+   module.
+
+   When writing the modules for your library, be careful to avoid
+   duplicate names for public symbols.  If you create a library that
+   defines a symbol more than once, oml issues a warning message.  If you
+   then link with that library without correcting the problem, the linker
+   may include the wrong module or give a duplicate symbol error.
+
+   To invoke oml, enter the oml command followed by a library name, as
+   follows:
+
+        oml mylib.lib
+
+   oml waits for you to enter commands (and module names, if necessary)
+   from the keyboard.  oml executes the commands as you enter them and
+   displays a list of any duplicate symbol names that it finds.  After you
+   have entered all your commands, enter a Control-backslash (Control-\)
+   to terminate oml.  You also can include the commands and module names
+   on the oml command line.  If you enter commands on the command line,
+   oml executes those commands and terminates.  For example, the following
+   command replaces the module ftoc.o in mylib.lib with the version of the
+   same module in your current directory:
+
+        oml mylib.lib r ftoc.o
+
+   oml replaces the module, lists any duplicate symbol names it finds, and
+   terminates.  You also can enter some commands on the command line
+   followed by some from the keyboard.  If you include an at (@) sign at
+   the end of the command line, oml executes the commands you enter on the
+   command line and then waits for you to enter additional commands from
+   the keyboard.  You must enter a Control-\ to terminate oml.  For
+   example, the following command replaces the module ftoc.o in mylib.lib
+   with the version of the same module in your current directory and then
+   waits for you to enter additional commands from the keyboard:
+
+        oml mylib.lib r ftoc.o @
+
+   You also can enter the commands into a file and tell oml to use that
+   file as input.  You can tell oml to use that file by either of the
+   following methods:
+
+      · entering a less than (<) sign followed by the filename (<cmdfile)
+        as the second item on the oml command line
+      · entering an at (@) sign followed by the filename (@cmdfile) as the
+        last item on the oml command line.
+
+   oml sends its output to the screen unless you redirect it by specifying
+   a greater than (>) sign followed by a filename.
+
+   oml produces warning messages if either of the following are true:
+
+      · A module that you want to delete or extract is not in the library.
+      · Any module in the library includes a second definition for a
+        public symbol.
+
+See Also
+
+   @{" oml commands " Link "oml commands"} , @{" oml options " Link "oml options"}
+@EndNode
+
+@Node "oml commands"
+r file file ...
+
+   replaces the named object files in the library or adds them to the
+   library, if they are not already present.  Each module should be in a
+   separate object file.  To replace modules within a library, make sure
+   that the module contains a module name and that the filename is the
+   same as the module name.
+
+d module module ...
+
+   deletes the named modules from the library.  oml assigns module names
+   to those modules without names; therefore, you may need to get a
+   listing of names in the library (using the l command) to determine the
+   name of the module that you want to delete.
+
+x module module ...
+
+   extracts the named modules from the library and creates separate files
+   using the same names.  You may need to get a listing of names in the
+   library (using the l command) to determine the correct name of the
+   module that you want to extract.  If the module name contains a
+   pathname, oml attempts to create a file with that name.  If the module
+   name does not contain a pathname, oml creates the file in the current
+   directory unless you specify a different pathname with the -o option.
+   You can use an asterisk (*) to specify that you want all modules
+   extracted. oml terminates if it cannot extract a module.  You cannot
+   extract and replace the same module with the same oml command line.
+
+l
+
+   generates a listing of the modules in the library after all other
+   commands have been executed.  If you also specify the -s option, the
+   listing includes the public symbols defined in each module.
+
+@[filename]
+
+   tells oml to execute the commands that you enter from stdin (usually
+   defined as the keyboard) or from the filename, if specified.  If you
+   include this option it should be the last option on the command line.
+@EndNode
+
+@Node "oml options"
+-b
+
+   tells oml not to issue prompts, including prompts for missing
+   information.
+
+-n
+
+   strips debugging information from modules before adding them to the
+   library.
+
+-oprefix
+
+   specifies a prefix for the filenames to be created by the x command. If
+   the prefix includes a directory name, you must include the forward
+   slash (/) at the end of the name.
+
+-s
+
+   includes, in the listing produced by the l command, a list of the
+   public symbols defined in the module.
+
+-tpathname
+
+   specifies a path for the temporary library.
+
+-v
+
+   tells oml to display messages as it adds or deletes modules to and from
+   the library.
+
+-x
+
+   generates a cross reference for variables and functions used in a
+   library.
+@EndNode
+
+@Node "sc"
+sc - SAS/C Development System driver
+
+Synopsis
+
+   sc [@{" options " Link "sc:help/sc.guide/main"}] [source-filename(s)]
+
+Description
+
+   This is the main command used to invoke the SAS/C Compiler.  It manages
+   loading the different parts of the compiler, and generating the output
+   based on the options you specify on the command line, and/or in an
+   SCOptions file.
+
+   The sc command accepts C source files, assembly source files, object
+   files, and link libraries as input files.
+
+See Also
+   @{" sc options " Link "sc:help/sc.guide/main"}, @{" Changes to the SC documentation " link sc:help/sc_change.guide/sc}
+@EndNode
+
+@Node "sc5"
+sc5 - SAS/C Development System V5.10 compatible driver
+
+Synopsis
+
+   sc5 [options] [source-filename(s)]
+
+Description
+
+   This version of the SC driver is provided for compatibility with older
+   versions of the SAS/C Compiler.  It accepts the old-style options (such
+   as -L, -cs, etc.).
+
+   See the documentation for a version of SAS/C prior to V6 for details on
+   the available options.
+
+See Also
+
+   @{" sc " Link "sc"}
+@EndNode
+
+@Node "scmsg"
+scmsg - Searches for and corrects errors and warnings
+
+Synopsis
+
+   scmsg [@{" options " Link "scmsg options"}]
+
+Description
+
+   The scmsg utility helps you find and fix errors and warnings in your
+   code.  It acts as a filter between you and the compiler, allowing you
+   to invoke the editor of your choice and go to the line causing the
+   error or warning quickly and easily.
+
+   You can use scmsg with the editor of your choice, using AREXX as a
+   communication medium.  AREXX is a standard part of AmigaDOS 2.0 and can
+   be purchased as a third-party product for use under AmigaDOS 1.3.  If
+   you do not have AREXX, you still can use scmsg to control the se editor
+   provided as part of the SAS/C Development System, but you will not be
+   able to program the editor keys to control scmsg.
+
+   If you invoke the compiler from the Shell or by using the Build icon on
+   the Workbench, scmsg is automatically invoked for you.
+
+   The current message is always highlighted.  You can move from message
+   to message by clicking on the message or by using the arrow keys.  The
+   scroll bar on the right side of the window allows you to move around in
+   the list. Double-clicking on a message invokes the editor at the file
+   and line number specified in the message.
+
+   Every time a C source file is compiled, all old messages listing that
+   file as the primary file are deleted from the scmsg window.
+
+See Also
+
+   @{" scmsg AREXX commands " Link "scmsg AREXX commands"} , @{" scmsg options " Link "scmsg options"}, @{" Changes to SCMSG documentation " link sc:help/sc_change.guide/scmsg}
+@EndNode
+
+@Node "scmsg AREXX commands"
+Note: The AREXX Port name for scmsg is "SC_SCMSG".
+
+abort
+
+   aborts any builds currently running.
+
+altfile
+
+   returns the alternate filename (if any).  An empty string indicates
+   that there are no messages on the list or that the current message has
+   no alternate file.
+
+altline
+
+   returns the alternate line number (if any).  An empty string indicates
+   that there are no messages on the list or that the current message has
+   no alternate file.
+
+bottom
+
+   goes to the last message in the list.
+
+build [options]
+
+   submits a new build of the last project built with SMAKE.  Any build 
+   that is currently running is aborted before the new build is submitted.
+   If any options are specified, they are passed directly to the 
+   SMAKE command.  Whenever SMAKE is run, it automatically updates the
+   environment variable ENV:SC/PROJDIR to contain the name of the build
+   directory.  The 'build' command changes to this directory and invokes
+   SMAKE for you.
+
+class
+
+   returns either error or warning, depending on the current message.
+
+clear
+
+   deletes all messages.
+
+delcomp [filename]
+
+   deletes all messages with the specified filename as their primary
+   filename.  If no filename is specified, the primary filename of the
+   current message is used.  If the current message is deleted, the next
+   non-deleted message becomes current.
+
+delete
+
+   deletes the current message and goes to the next message in the list.
+
+delfile [filename]
+
+   deletes all messages with the specified filename as their secondary
+   filename.  If no filename is specified, the secondary filename of the
+   current message is used.  If the current message is deleted, the next
+   non-deleted message becomes current.
+
+delnum [msgno]
+
+   deletes all messages with the specified message number.  If no message
+   number is specified, the number of the current message is used.  If the
+   current message is deleted, the next non-deleted message becomes
+   current.
+
+errnum
+
+   returns the error number.  An empty string indicates that there are no
+   messages on the list.
+
+file
+
+   returns the filename for the current message.  An empty string
+   indicates there are no messages on the list.
+
+hide
+
+   closes the scmsg window, but keeps scmsg running.  If you specify 
+   rexxonly, the scmsg window will not reappear unless you issue a 
+   show command from REXX or reinvoke scmsg from the command line.
+
+line
+
+   returns the line number for the current message.  An empty string
+   indicates there are no messages on the list.
+
+newbld <compunit>
+
+   tells scmsg to clear all messages for the specified compilation unit.  Sent
+   by the compiler when a new compile is begun to delete all old messages.  It
+   also forces SCMSG to invoke the editor on the next new message if the AUTOEDIT
+   option is on.
+
+newmsg <compunit> <file> <line> 0 "" 0 <class> <errnum> <text>
+
+   adds a message to SCMSG's list.  <compunit> is the compilation unit
+   the message is associated with (the .c filename), <file> and <line>
+   indicate the filename and line number of the message, <class> is
+   one of "Error", "Warning" or "Info", <errnum> is a positive error
+   number, and <text> is the message text.  The 0 "" 0 in the middle
+   must appear exactly as written.  If the message text contains the
+   words 'See line <number> file "name"', the <number> is taken to be
+   the alternate line number and the <name> is taken to be the 
+   alternate file name.
+
+next
+
+   goes to the next message in the list.  If the current message is the
+   last in the list, scmsg goes to the first message in the list.
+
+number
+
+   a synonym for "errnum".
+
+opts [option]
+
+   where [option] is one of the following:
+
+   load <filename>  - tells SCMSG to load options from the specified file
+   save <filename>  - tells SCMSG to save options to the specified file
+   portname <xxx>   - tells SCMSG to set the name of the editor's AREXX
+                      port to the specified value
+   screen <name>    - tells SCMSG to close its window and reopen it on
+                      the specified public screen.   
+
+prev
+
+   goes to the previous message in the list.  If the current message is
+   the first in the list, scmsg goes to the last message in the list.
+
+quit
+
+   terminates scmsg.
+
+rexxonly
+
+   specifies that scmsg should close the message browser window and not
+   reopen it unless you specify scmsg nohidden at the Shell prompt or send
+   the AREXX show command to the SC_SCMSG AREXX port. Use this command if
+   you intend to query scmsg for the messages from your editor or some
+   other AREXX-supporting program, and you do not want to see the scmsg
+   window.
+
+select
+
+   selects the current message for editing.  Your editor is invoked and
+   moved to the proper file and line number.  This command is equivalent
+   to pressing the Return key on the current message.
+
+show [activate]
+
+   pops the scmsg window to the front or redisplays the window if it is
+   hidden.  If you specify activate, the scmsg window becomes the active
+   window, and you can enter keyboard commands to scmsg.
+
+text
+
+   returns the message text.  An empty string indicates that there are no
+   messages on the list.
+
+top
+
+   goes to the first message in the list.
+@EndNode
+
+@Node "scmsg options"
+autoedit
+
+   specifies that you want scmsg to invoke your editor automatically, open
+   the source file, and display the line producing the message.  The
+   default value is noautoedit.
+
+config=filename
+
+   specifies the name of a configuration file.  Typically, the
+   configuration file contains the command necessary to invoke your
+   editor, open a source file, and display the appropriate line.  For more
+   information about configuration files, see "Using AREXX to Invoke Your
+   Editor," in your manual.
+
+hidden
+
+   specifies that you do not want scmsg to display the message browser
+   window until the compiler returns a message.  The default value is
+   nohidden.
+
+quit
+
+   terminates scmsg.
+
+rexxonly
+
+   specifies that scmsg should not open a window.  Use this option if you
+   intend to query scmsg for the messages from your editor or some other
+   AREXX-supporting program, and you do not want to see the scmsg window.
+@EndNode
+
+@Node "scopts"
+scopts - Sets compiler options
+
+Synopsis
+
+   scopts [@{" options " Link "sc:help/sc.guide/main"}]
+
+Description
+
+   The scopts utility allows you to set compiler options for a project by
+   clicking on the gadget that corresponds to the option.  The options you
+   specify are used by the sc command whenever you compile and link your
+   files.
+
+   To run scopts, you can double-click on the SCoptions icon, or you can
+   enter scopts on the Shell command line.  scopts displays the SAS/C
+   Compiler Options Index screen.  This window contains buttons that open
+   additional windows.  Each of these windows allows you to set different
+   compiler options.  In all, scopts can display nine windows:
+
+      · Compiler Options Index
+      · Compiler Options
+      · Diagnostic Message Options
+      · Code Generation Options
+      · Listing/Cross Reference Options
+      · Optimizer Options
+      · Prototype Generation Options
+      · Linker Options
+      · Map Options
+
+   For a brief description of an option, move the cursor to the option
+   gadget and press the Help key.
+
+   These windows may contain one or more of the following basic types of
+   gadgets:
+
+      · cycles
+
+        appear as raised buttons with a cycle symbol on the left side.  By
+        clicking on the gadget with the left mouse button, you can cycle
+        through the settings available for that option.  To reverse the
+        direction of the cycle, press the Shift key as you click the mouse
+        button.
+
+      · actions
+
+        appear as raised buttons.  Selecting the button causes an
+        immediate action to occur.  For example, selecting the Compiler
+        Options... gadget displays the Compiler Options window.
+
+      · strings
+
+        appear as a raised ridge around a text area.  You can enter data
+        in the area by clicking within the text area and typing. When you
+        have finished typing, press the Return key.
+
+      · lists
+
+        appear as a set of control gadgets (a scroll bar, arrow gadgets, a
+        string area, and ADD and DEL buttons) combined with a raised
+        scrolling area.  Use the scroll bar and arrow gadgets to position
+        the scrolling area on specific items.  To add new items to the
+        list, select the ADD button, type the new item name, and press the
+        Return key.  To remove an item from the list, click on the item
+        (to copy it to the string area), and select the DEL button.  To
+        modify an item, click on the item (to copy it), and enter any
+        corrections.
+
+   To specify an option for which the scopts utility does not have a
+   gadget, enter the option and any parameters required by the option into
+   the @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget.  You can enter as many additional options as you
+   like.  If you use the @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget to specify an option for which
+   scopts already has a gadget, then the next time you invoke scopts, the
+   gadget for that option is selected, and the option is no longer
+   included in the @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget.  The only options remaining in the
+   @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget are those for which scopts does not have a gadget.
+   For example, if you enter @{" LINK " Link "sc:help/sc.guide/LINK"} into the @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget, the next
+   time you invoke scopts, the @{" LINK " Link "sc:help/sc.guide/LINK"} gadget is selected, and the @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"}
+   gadget does not contain the @{" LINK " Link "sc:help/sc.guide/LINK"} option.
+
+   Any values you enter into the @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget are processed after all
+   other gadgets are processed.  Therefore, options you enter into the
+   @{" SPECIAL " Link "sc:help/sc.guide/SPECIAL"} gadget may override other options.
+
+   To specify the name of your final executable module, specify a filename
+   in the @{" ProgramNAME " Link "sc:help/sc.guide/ProgramNAME"} gadget.
+
+   To save your option settings, select the appropriate option from the
+   Project menu.
+
+   To exit scopts without saving any of your changes, click on the
+   @{" Cancel " Link "sc:help/sc.guide/Cancel"} button.
+
+   When you run the sc command, it first looks for an scoptions file in
+   your current directory.  If this file does not exist, the sc command
+   looks for the ENV:sc/scoptions file.
+
+   The scoptions file is an ASCII file that contains the list of sc
+   options that you specify.  You can edit this file with a text editor
+   and add any options you want.
+
+   To load a previously saved options file or to reset all options to
+   their default values, select the appropriate option from the Project
+   menu.
+
+   You can also change option settings by specifying the option on the
+   scopts command line.  For example, to set the math=standard and link
+   options, you can enter the scopts command as follows:
+
+   scopts math=standard link
+
+   If you enter the scopts command followed by option settings, scopts
+   does not display any windows, and you cannot choose the file into which
+   the options are saved.  Specifically, scopts does the following:
+
+      · reads the scoptions file in your current directory, if it exists.
+      · If this file does not exist, scopts reads ENV:sc/scoptions.
+      · adds or changes the options you specified.
+      · saves the new option settings in the file scoptions in the current
+        directory.
+@EndNode
+
+@Node "scsetup"
+scsetup - Sets up a new project
+
+Synopsis
+
+   sc:scsetup [directory] . . .
+
+Description
+
+   The scsetup utility sets up a directory that you can use for C
+   development.  You can run scsetup on existing directories or use it to
+   create new directories. scsetup creates an icon for the directory and
+   copies into the directory icons for the most commonly used SAS/C
+   Development System tools, such as smake and CodeProbe.  You can add
+   icons for any file extensions or tools that you want scsetup to copy in
+   addition to the standard icons.  Specifically, scsetup performs the
+   following actions:
+
+      · Creates the directory, if necessary.
+
+      · Creates an icon file for the directory being set up, if it does
+        not already have one.  scsetup uses the file
+        sc:starter_project.info as a template for directory icons.
+
+      · Creates icons for the files in the directory, if necessary.
+        Default icons are supplied for .c, .h, .a, and .smk files.  These
+        icons are in the sc:icons drawer under the name def_c.info,
+        def_h.info, def_a.info, and def_smk.info. You can add any default
+        icons needed for other extensions by copying an icon into sc:icons
+        with the appropriate name (def_extension.info).
+
+      · Creates an icon file for any subdirectories of the directory being
+        set up, if they do not already have one.
+
+      · Creates icons for the files in each subdirectory, if necessary.
+
+      · Copies the contents of the directory sc:starter_project, if
+        present, to the directory being set up.  This starter directory
+        contains a Build icon, a Debug icon, an Edit icon, and an
+        SCoptions icon.  You can place any other icons or programs in this
+        starter directory that you want copied to directories set up with
+        scsetup.
+
+   scsetup will not overwrite any existing files or icons.
+
+   You can run scsetup from the CLI or from the Workbench.  To run scsetup
+   from the CLI, enter the following command:
+
+        sc:scsetup [directory] . . .
+
+   If you do not specify a directory name, scsetup sets up the current
+   directory.  If you specify a directory that does not exist, scsetup
+   creates the directory.  To run scsetup from the Workbench and create a
+   new project, double-click on the SCsetup icon, and type the name of the
+   drawer when prompted.  To run scsetup from the Workbench and set up an
+   existing drawer, click on the drawer icon. (Click on the actual drawer
+   icon, not the file icons in the drawer.)  To select additional drawers,
+   hold down the Shift key and click on their icons.  After you have
+   selected all the drawers, hold down the Shift key and double-click on
+   the SCsetup icon.
+
+   After you have set up a directory, you can run the editor by
+   double-clicking on the Edit icon, and you can run CodeProbe by
+   double-clicking on the Debug icon.  You can run smake by
+   double-clicking on the Build icon.  smake looks for a smakefile or a
+   makefile.  If none are present, it compiles and links all .c files in
+   the directory using the options specified through the scopts utility,
+   described earlier in this chapter.
+
+See Also
+   @{" Changes to SCSETUP documentation " link sc:help/sc_change.guide/scsetup}     
+
+@EndNode
+
+@Node "slink"
+slink - SAS/C Development System Linker
+
+Synopsis
+
+   slink object-files [@{" options " Link "slink options"}]
+
+Description
+
+   This program takes the object files created by using the SC command,
+   and creates the final executable file.
+
+   It will be invoked automatically from SC if you specify the @{" LINK " Link "sc:help/sc.guide/LINK"}
+   option to the SC command.
+
+See Also
+
+   @{" slink options " Link "slink options"}
+@EndNode
+
+@Node "slink options"
+addsym
+
+   generates HUNK_SYMBOL records for all symbols in each object file
+   whether or not the object file was compiled with the @{" DeBuG " Link "sc:help/sc.guide/DeBuG"} compiler
+   option.
+
+batch
+
+   sets the value of all undefined symbols to 0.  Normally, slink asks you
+   to enter a value for each undefined symbol.
+
+bufsize n
+
+   sets the I/O buffer size for slink.  By default, slink buffers all
+   object modules.  Buffering requires more memory, but reduces the time
+   required to link your program.  If you run out of memory while linking,
+   try linking with "bufsize 4096".  This specification tells slink to
+   buffer only one file at a time and to use a buffer size of 4096 bytes.
+
+chip
+
+   specifies that all hunks are to be placed in chip or display memory
+   regardless of the input object hunk specifications.
+
+define symbol[=value]
+
+   defines a symbol to be used in the linking process.
+
+   NOTE: Do not confuse this option with the DEFINE compiler option.
+
+fancy
+
+   enters control characters to highlight and bold headings in the MAP
+   file.
+
+fast
+
+   specifies that all hunks are to be placed in fast or expansion memory
+   regardless of the input object hunk specifications.
+
+faster
+
+   is included for compatibility with the Commodore linker, ALINK.
+
+from object-filename(s)
+
+   identifies the object files that are the primary input to the linker.
+   The ROOT option is a symonym for this option.  You must specify at
+   least one object file in the slink command.
+
+fwidth n
+
+   specifies the total number of columns in the MAP file.  The default
+   value is 16.
+
+   This option is ignored if you do not specify the MAP option.
+
+height n
+
+   specifies the total number of lines on a page in the MAP file.  The
+   default value is 55.  If you specify 0, the linker does not add
+   formfeed characters to the file.
+
+   This option is ignored if you do not specify the MAP option.
+
+hwidth n
+
+   specifies the hunk name field width, in columns, in the MAP file.  The
+   default value is 8.
+
+   This option is ignored if you do not specify the MAP option.
+
+indent n
+
+   specifies the number of columns to indent on a line in the MAP file.
+   The default value is 0.
+
+   This option is ignored if you do not specify the MAP option.
+
+libfd filename
+
+   specifies the name of a function descriptor (.fd) file.  Use this
+   option only if you are building a shared library.
+
+libprefix prefix
+
+   specifies the prefix you want added to the functions listed in the
+   function descriptor file.  The default prefix is an underscore (_).
+   Use this option only if you are building a shared library.
+
+library link-library-filename(s)
+
+   specifies the library files you want the linker to search for modules
+   referenced in your code.  Only referenced modules from library files
+   are included in the final executable module.  You can abbreviate this
+   option as 'lib'.
+
+librevision n
+
+   specifies the minor revision number of the library you are creating.
+   The default value is 0.  Use this option only if you are building a
+   shared library.
+
+libversion n
+
+   specifies the major version number of the library you are creating.
+   The default value is 1.  Use this option only if you are building a
+   shared library.
+
+map [mapfile [map-option[,]map-option...]]
+
+   tells slink to create a MAP file.  The map file contains information on
+   the size and location of all hunks and the value of all symbols.  If
+   you do not specify a mapfile name, <executable>.map is used.  If you
+   specify a mapfile, you can also specify the following mapfile options:
+
+        F       lists the hunks in each file
+        H       lists hunks by size and originating function
+        L       lists hunks by library function
+        O       lists hunks in each overlay
+        S       lists where symbols are defined
+        X       creates a symbol cross-reference that lists where the
+                symbols are defined and their definition
+
+maxhunk n
+
+   limits hunk size to n bytes.  By default, there is no limit.
+
+noalvs
+
+   issues warning messages if slink generates an automatic link vector
+   (ALV) instruction to resolve 16-bit program counter relative
+   references.
+
+nodebug
+
+   is included for compatibility with previous releases of the linker.
+   Use the stripdebug option instead.
+
+onedata 
+
+   tells the linker to merge all data, bss, and chip sections.  Merging 
+   hunks may decrease the time required to load your program but may 
+   produce larger hunks that are difficult to scatter load.
+
+overlay
+
+   identifies the start of an overlay tree.
+
+ovlymgr filename
+
+   tells slink to use the filename you specify as the overlay manager.
+   The default filename is "ovs.o".
+
+prelink
+
+   tells slink to produce an object module with symbol references and
+   definitions still intact.  You can then link with this object module to
+   produce an executable module.
+
+   Do not specify this option if you are using overlays.
+
+plain
+
+   turns off the fancy option.
+
+pwidth n
+
+   specifies the width of the program unit name field in the MAP file.
+   The default value is 8.
+
+   This option is ignored if you do not specify the MAP option.
+
+quiet
+
+   suppresses all linker messages except error messages.
+
+root object-filename(s)
+
+   identifies the object files that are the primary input to the linker.
+   The FROM option is a symonym for this option.  You must specify at
+   least one object file in the slink command.
+
+swidth n
+
+   specifies the width of the symbol name field in the MAP file.  The
+   default value is 8.
+
+   This option is ignored if you do not specify the MAP option.
+
+smallcode
+
+   tells the linker to merge all code hunks.
+
+smalldata
+
+   tells the linker to merge all data and bss hunks.
+
+stripdebug
+
+   suppresses any HUNK_DEBUG, HUNK_SYMBOL, or hunk names in the final
+   object file.
+
+to filename
+
+   specifies the name of the final executable module.  The default value
+   is the root name of the first object filename listed.
+
+verbose
+
+   prints the name of each file as they are processed.
+
+verify filename
+
+   specifies the file to which you want the linker to write all messages.
+   The default is to write to stdout.
+
+width n
+
+   sets the maximum line length for the MAP and cross-reference files.
+   The default value is 80.
+
+   This option is ignored if you do not specify the MAP option.
+
+with filename
+
+   specifies a file containing slink options.  slink processes the
+   contents of with files as if you had specified the option in the slink
+   command.
+
+xref filename
+
+   specifies the file in which the linker will create cross-reference
+   information.  The default is to write the information in the MAP file.
+
+   NOTE: Do not confuse this option with the compiler XREF option.
+@EndNode
+
+@Node "smake"
+smake - Maintains and updates records of file dependencies
+
+Synopsis
+
+   smake [@{" options " Link "smake options"}] [macro-definitions] [targets]
+
+Description
+
+   The smake utility is a tool that you can use to maintain projects that
+   are composed of many files.  A file can be C source code, a data file
+   for a graphics or audio, or perhaps a spreadsheet file.  For example,
+   you may have a project that consists of 50 files, and several
+   programmers may be responsible for different files.  To manage this
+   project, you need to keep track of which files have been changed and
+   which files must be compiled before other files (that is, which files
+   are dependent on other files).  You can use smake to keep track of file
+   dependencies, recompile and relink any files that have been updated,
+   and produce new product files.
+
+   In other words, smake determines if any of the source files have
+   changed since the last version of the product file was generated and,
+   if so, generates a new product file.
+
+   To use smake, you create a smakefile that identifies dependent files
+   and target files and describes the actions required to produce a new
+   product.  A basic description of these terms follows:
+
+      · target file
+
+        is any file that is created or updated by smake.  Producing this
+        file may require creating or updating several intermediate files.
+
+      · dependent file
+
+        is a file that must be created or updated before a target file can
+        be updated.  A dependent file can be a source code file, header
+        file, or object code file.  In other words, if a dependent file is
+        changed (for example, by editing), then the target file must be
+        rebuilt.
+
+      · actions
+
+        are the commands necessary to update each dependent and target
+        file.  Actions can be calls to the compiler or linker or basic
+        housekeeping commands.
+
+      · smakefile
+
+        is a file that identifies every dependent file required to create
+        the target file and describes every action required to update or
+        create the dependent and target files.
+
+   When you run smake, it re-creates only the first target file specified
+   in the smakefile (unless you specify an alternate target as described
+   in "Using Alternate Targets," later in this section) and, if necessary,
+   any dependent files needed to re-create the target file. Specifically,
+   smake performs the following actions:
+
+      · locates and identifies the target file.
+
+        By default, smake remakes the first target file specified in the
+        smakefile.  You can specify an alternate target as described under
+        "Using Alternate Targets," later in this section.
+
+      · ensures that any file on which the target file depends already
+        exists and is up to date.
+
+        To determine when dependent files were last modified, smake looks
+        at the time stamp of the file.  A file is considered current if it
+        has a time stamp later than that of any of its dependent files.
+
+        NOTE: Before using smake, make sure that your system clock is
+              accurate, using the date command if appropriate.
+
+
+              An example of the date command under AmigaDOS follows:
+
+                        date 12-Aug-92 16:34:57
+
+              You must enter the time using 24-hour clock notation.  Enter
+              the month as a three-character field.
+
+      · Re-creates the target file if any of the dependent files have been
+        modified more recently than the target file.
+
+   For details on creating a smakefile, please see your manual.
+
+Running smake
+
+   You can run smake from the Workbench or from the CLI.
+
+   To run smake from the Workbench, double-click on the Build icon.  smake
+   looks for the smakefile in your current directory.  The default file
+   names that smake looks for, in the order in which it looks for them,
+   are as follows:
+
+        smakefile
+
+        smakefile.smk
+
+        lmkfile
+
+        lmkfile.lmk
+
+        makefile
+
+   To use a different smakefile name, specify the -f option as described
+   later in the "smake options" section.  To specify options, define
+   macros, or specify alternate targets for the Build icon, select the
+   Build icon, choose Information from the Icons menu, and add the
+   necessary parameters in the Tool Types box.
+
+   When running smake from the Workbench, the search order of files is
+   based on the smake_files: assignment.
+
+   You can create the assignment using the following command (from the
+   CLI):
+
+        assign smake_files: your-smake-file-location
+
+   When no assignment has been made, smake searches the current directory
+   for the required files.
+
+   To run smake from the CLI, enter the smake command as follows:
+
+        smake [options] [macro definitions] [targets]
+
+   As with the Build icon, smake looks for one of the three default
+   smakefile names in your current directory.  To use a different
+   smakefile name, specify the -f option as described in the smake
+   options.
+
+See Also
+   @{" smake options " Link "smake options"}, @{" Changes to SMAKE documentation " link sc:help/sc_change.guide/smake}     
+
+@EndNode
+
+@Node "smake options"
+-a
+
+   rebuilds all targets and subtargets without regard to time stamps.
+
+-bfile
+
+   uses the .def file you specify instead of the default file smake.def.
+
+-c
+
+   tells smake to record everything it would have done if it had executed
+   the command you entered.  When you specify the -c option, smake does
+   not execute the command you enter.  Instead, it creates a batch file
+   containing all the instructions it would have executed if you had not
+   specified the -c option.  This file is named smakefile.bat in the
+   current directory, and you can run it by entering the following on the
+   command line:
+
+        execute smakefile.bat
+
+-d
+
+   prints detailed debugging information about the processing of the
+   smakefile.
+
+-e
+
+   erases any out-of-date targets before remaking them.
+
+-ffile
+
+   uses the filename you specify as the input smakefile.  smake attempts
+   to locate the file with the exact name you have specified.  If this
+   search is unsuccessful, smake searches for a file with the name you
+   specified plus an extension of .smake.
+
+-h
+
+   prints help information and then exits.
+
+-i
+
+   ignores errors caused by executing the actions.  Both the -k and -i
+   actions should be used with caution because smake will continue
+   running. The -k option incorporates all of the functionality of the -i
+   option.
+
+-k
+
+   ignores error returns from actions passed to AmigaDOS and from smake
+   not knowing how to make certain targets.  Both the -k and -i actions
+   should be used with caution because smake will continue running.  The
+   -k option incorporates all of the functionality of the -i option.
+
+-n
+
+   displays the actions smake would have taken, but smake does not execute
+   these actions.
+
+-p
+
+   prints target descriptions and expanded macros.
+
+-q
+
+   determines if the target file is current.  smake prints a 1 if the
+   target is current or a 0 if it is not.  smake will not execute any
+   actions.
+
+-s
+
+   does not echo actions to the screen before executing them.
+
+-t
+
+   touches the target files by updating them with the current system time.
+   smake does not execute any of the actions associated with these
+   targets.
+
+-u
+
+   rebuilds unconditionally all targets and subtargets without regard to
+   time stamps.
+
+-x
+
+   is for UNIX compatibility.  If you specify this option, smake attempts
+   to detect any features of the smakefile that would prevent it from
+   working correctly with the UNIX make utility.
+@EndNode
+
+@Node "splat"
+splat - Searches for and replaces patterns that match regular expressions
+
+Synopsis
+
+   splat [>destination] [@{" options " Link "splat options"}] pattern string file . . .
+
+Description
+
+   splat replaces all occurrences of pattern with string in each file that
+   you specify.  splat does not overwrite the original version of the file
+   unless you specify the -o option.  If you do not redirect the output by
+   specifying a greater than (>) sign followed by a destination, splat
+   places the changed file in either a temporary file or, if you use the
+   -d option, in the specified directory.  splat uses the same root
+   filename with an extension of .$$$.
+
+   You must use the rules recognized by grep for specifying the pattern
+   and string.  For example, to specify a string that contains spaces, you
+   must enclose the string in double quotes.  For additional information,
+   see the description of the grep utility earlier in this chapter.
+
+See Also
+
+   @{" splat options " Link "splat options"}
+@EndNode
+
+@Node "splat options"
+-ddirectory
+
+   specifies the directory where you want splat to place the new files.
+   Using this option leaves the original versions untouched.  If the
+   specified directory does not exist, splat attempts to create it.  If
+   the attempt fails, splat displays an error message.  The -o and -d
+   options are mutually exclusive.
+
+-o
+
+   tells splat to overwrite the original version of the file with the new
+   version.  The -o and -d options are mutually exclusive.
+
+-s
+
+   displays the name of the file on which splat is currently working.  It
+   also displays a message saying that no substitutions have been
+   performed if it was unable to find the specified pattern in the file.
+   If you do not specify -s, splat performs its task silently.
+
+-v
+
+   displays all lines in which substitutions are made, but it does not
+   create new versions of the files.  You can use this option to determine
+   the changes that splat will make to your files.
+@EndNode
+
+@Node "tb"
+tb - Displays traceback information
+
+Synopsis
+
+   tb [>destination] [@{" options " Link "tb options"}] [tbfile [program]]
+
+Description
+
+   The tb utility processes the traceback file that is created when you
+   link your program with catch.o and your program terminates abnormally.
+   To get traceback information for your program, you must link your
+   program with catch.o.  If your program terminates abnormally, catch.o
+   creates a standard IFF format file named Snapshot.TB in your current
+   directory.  This file contains up to six sections:
+
+   symbol cross reference
+   stack
+   registers
+   environment
+   memory
+   user data.
+
+   Each section contains information about your program at the time it
+   terminated. (Two sections, memory and user data, may not be available
+   for your program.)  tb displays the traceback information on the screen
+   unless you redirect it by specifying a greater than (>) sign followed
+   by a destination.  If you do not specify any options, tb displays only
+   the current stack frame, which indicates the location where the program
+   terminated.  By specifying options, you can print all of the sections
+   in the traceback file.
+
+   By default, tb looks for the traceback file Snapshot.TB in your current
+   directory.  If you want tb to use a different traceback file, specify
+   the traceback file as the tbfile parameter.
+
+   The program parameter specifies the program from which you want tb to
+   read debugging information.  If you do not specify program, this
+   utility uses the program specified in the traceback file.
+
+   NOTE: Specifying a program is useful when you have two executables of
+         your program: one created with debugging information and another
+         without debugging information.  The version without debugging
+         information loads faster, but you still have access to the
+         traceback information if your program crashes.
+
+See Also
+   @{" tb options " Link "tb options"}
+@EndNode
+
+@Node "tb options"
+-l
+
+   displays all sections present in the traceback file
+
+-x
+
+   displays the location of all symbols encountered in the program
+
+-s
+
+   displays the contents of the entire stack at the time your program
+   terminated
+
+-r
+
+   displays the current contents of registers at the time your program
+   terminated
+
+-v
+
+   displays the callback chain and the location where the program
+   terminated
+
+-m
+
+   displays the amount of memory available at the time your program
+   terminated (if present in Snapshot.TB)
+
+-u
+
+   displays any user data generated by your program (if present in
+   Snapshot.TB).
+@EndNode
+@node HELP "HELP"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or
+click on the close gadget.  You may also hit escape.
+
+Most help screens will display one or more buttons as part of the text.
+Clicking on these buttons will provide further information on the topic
+listed on the button.  You can also reach these help topics through the
+main Contents screen or one of its sub-screens.
+
+In addition, double-clicking in the help window will bring up a help
+screen for the word under the mouse cursor, if such a help screen
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help
+screens.  The help screens are usually arranged alphabetically by
+command or topic.
+@endnode

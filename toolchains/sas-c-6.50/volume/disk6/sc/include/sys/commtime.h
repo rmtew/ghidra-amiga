@@ -1,0 +1,2 @@
+Äà_COMMTIME_HÄ_COMMTIME_H 1à_TIME_TÄ_TIME_T 1
+•çtime_t;áá

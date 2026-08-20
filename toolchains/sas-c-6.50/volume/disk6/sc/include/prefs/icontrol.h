@@ -1,0 +1,12 @@
+€ˆPREFS_ICONTROL_H€PREFS_ICONTROL_HˆEXEC_TYPES_HŒ<exec/types.h>‡ˆLIBRARIES_IFFPARSE_HŒ<libraries/iffparse.h>‡€ID_ICTL MAKE_ID('I','C','T','L')
+ƒIControlPrefs
+{
+’ic_Reserved[4];
+‰ic_TimeOut;
+˜ic_MetaDrag;
+—ic_Flags;
+Šic_WBtoFront;
+Šic_FrontToBack;
+Šic_ReqTrue;
+Šic_ReqFalse;
+};€ICB_COERCE_COLORS 0€ICB_COERCE_LACE 1€ICB_STRGAD_FILTER 2€ICB_MENUSNAP 3€ICB_MODEPROMOTE 4€ICF_COERCE_COLORS (1<<0)€ICF_COERCE_LACE (1<<1)€ICF_STRGAD_FILTER (1<<2)€ICF_MENUSNAP (1<<3)€ICF_MODEPROMOTE (1<<4)‡

@@ -1,0 +1,21 @@
+€ˆEXEC_TYPES_H€EXEC_TYPES_H€GLOBAL€IMPORT€STATIC static€REGISTER register€VOID‹
+¥’;
+¥Ž—;
+¥ŽLONGBITS;
+¥Ÿ˜;
+¥ŽŸ‰;
+¥ŽŸWORDBITS;
+¥„š;
+¥Ž„Š;
+¥Ž„BYTEBITS;
+¥Ž„*STRPTR;
+¥STRPTR*”;
+¥—CPTR;
+¥Ÿ•;
+¥ŽŸ™;
+¥float¤;
+¥DOUBLE;
+¥ŸCOUNT;
+¥ŽŸUCOUNT;
+¥ŸBOOL;
+¥Ž„TEXT;€TRUE 1€FALSE 0€œ0€BYTEMASK 255€LIBRARY_VERSION 33‡

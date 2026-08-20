@@ -1,0 +1,5 @@
+€ˆUTILITY_NAME_H€UTILITY_NAME_HˆEXEC_TYPES_HŒ<exec/types.h>‡
+ƒNamedObject
+{
+”no_Object;
+};€ANO_NameSpace 4000€ANO_UserSpace 4001€ANO_Priority 4002€ANO_Flags 4003€NSB_NODUPS 0€NSB_CASE 1€NSF_NODUPS (1L<<NSB_NODUPS)€NSF_CASE (1L<<NSB_CASE)‡

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  This language definition reuses Ghidra's built-in 68000 processor and SLEIGH
+  specification.  Only the compiler specification differs: MANX C places
+  stack arguments in two-byte slots.
+-->
+<language_definitions>
+  <language processor="68000"
+            endian="big"
+            size="32"
+            variant="MANX"
+            version="1.0"
+            slafile="68040.sla"
+            processorspec="68000.pspec"
+            id="68000:BE:32:MANX">
+    <description>Motorola 68000, MANX C ABI</description>
+    <compiler name="MANX C" spec="68000_manx.cspec" id="manx"/>
+  </language>
+</language_definitions>

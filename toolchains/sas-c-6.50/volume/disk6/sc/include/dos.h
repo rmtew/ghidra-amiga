@@ -1,0 +1,83 @@
+Äà_DOS_HÄ_DOS_H 1å<exec/types.h>å<exec/ports.h>å<exec/lists.h>å<libraries/dos.h>å<libraries/dosextens.h>å<sys/commsize.h>
+•éÑbyte;ÄSECSIZ 512ÄFNSIZE 108ÄFMSIZE 256ÄFESIZE 32
+ÉMELT{
+ÉMELT*fwd;
+çsize;
+};ÄMELTSIZE sizeof(ÉMELT)
+ÉMELT2{
+ÉMELT2*fwd;
+ÉMELT2*bwd;
+éçsize;
+};ÄMELT2SIZE sizeof(ÉMELT2)
+ÉProcID{
+ÉProcID*nextID;
+ÉØ*process;
+ÇUserPortFlag;
+É©*parent;
+É©*child;
+°seglist;
+};
+ÉFORKENV{
+çpriority;
+çstack;
+°std_in;
+°std_out;
+°console;
+É©*msgport;
+};
+ÉTermMsg{
+ÉØmsg;
+ç_class;
+ütype;
+ÉProcess*process;
+çret;
+};
+ÅÇforkl(Ñ*,Ñ*,...);
+ÅÇforkv(Ñ*,Ñ**,ÉFORKENV*,ÉProcID*);
+ÅÇwait(ÉProcID*);
+ÅÉProcID*waitm(ÉProcID**);
+ÅÇdfind(ÉFileInfoBlock*,constÑ*,Ç);
+ÅÇdnext(ÉFileInfoBlock*);
+ÅÇ_dclose(ç);
+Åç_dcreat(constÑ*,Ç);
+Åç_dcreatx(constÑ*,Ç);
+Åç_dopen(constÑ*,Ç);
+ÅéÇ_dread(ç,Ñ*,éÇ);
+Åç_dseek(ç,ç,Ç);
+ÅéÇ_dwrite(ç,Ñ*,éÇ);
+ÅÇgetcd(Ç,Ñ*);
+ÅÇchdir(constÑ*);
+ÅÑ*getcwd(Ñ*,Ç);
+ÅÇmkdir(constÑ*);
+ÅÇrmdir(constÑ*);
+ÅÇgetfnl(constÑ*,Ñ*,size_t,Ç);
+ÅÇgetdfs(constÑ*,ÉInfoData*);
+ÅÇgetfa(constÑ*);
+Åçgetft(constÑ*);
+ÅÇgetpath(°,Ñ*);
+Å°findpath(constÑ*);
+Åç_BackGroundIO;
+Å°_Backstdout;
+Åç__priority;
+ÅÑ*__procname;
+ÅÑ__stdiowin[];
+ÅÑ__stdiov37[];
+Åç__oslibversion;
+Åç__stack;
+Åç__STKNEED;å<sys/commwben.h>
+ÅÇdatecmp(constÉDateStamp*,constÉDateStamp*);
+ÅÇchgclk(constéÑ*);
+Åãgetclk(éÑ*);
+ÅÇonbreak(Ç(*)(ã));
+ÅÇposerr(constÑ*);
+Åã__regargs __chkabort(ã);
+Åãchkabort(ã);
+ÅãChk_Abort(ã);
+ÉDeviceList*getasn(constÑ*);
+Åéçstacksize(ã);
+Åéçstackused(ã);
+Åéçstackavail(ã);Ägeta4 __builtin_geta4
+Åãgeta4(ã);Ägetreg __builtin_getreg
+Åçgetreg(Ç);Äputreg __builtin_putreg
+Åãputreg(Ç,ç);Ä__emit __builtin_emit
+Åã__emit(Ç);ÄREG_D0 0ÄREG_D1 1ÄREG_D2 2ÄREG_D3 3ÄREG_D4 4ÄREG_D5 5ÄREG_D6 6ÄREG_D7 7ÄREG_A0 8ÄREG_A1 9ÄREG_A2 10ÄREG_A3 11ÄREG_A4 12ÄREG_A5 13ÄREG_A6 14ÄREG_A7 15ÄREG_FP0 16ÄREG_FP1 17ÄREG_FP2 18ÄREG_FP3 19ÄREG_FP4 20ÄREG_FP5 21ÄREG_FP6 22ÄREG_FP7 23á

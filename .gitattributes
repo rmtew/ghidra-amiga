@@ -1,0 +1,3 @@
+# Preserve the original SAS/C assembler source verbatim, including its legacy
+# trailing whitespace, so fixture checksums continue to identify its provenance.
+src/test/resources/fixtures/sas-c/6.50/manager/*.a whitespace=-trailing-space

@@ -1,0 +1,16 @@
+€Œ<stdio.h>€CSI "\x9b"
+‹scr_beep(‹);€scr_beep() (‹)(printf("\7"),fflush(stdout))
+‹scr_bs(‹);€scr_bs() (‹)(printf(CSI"D"),fflush(stdout))
+‹scr_delete(‹);€scr_cdelete() (‹)(printf(CSI"P"),fflush(stdout))
+‹scr_cinsert(‹);€scr_cinsert() (‹)(printf(CSI"@"),fflush(stdout))
+‹scr_clear(‹);€scr_clear() (‹)(printf("\f"),fflush(stdout))
+‹scr_cr(‹);€scr_cr() (‹)(printf("\xA"),fflush(stdout))
+‹scr_cursrt(‹);€scr_cursrt() (‹)(printf(CSI"C"),fflush(stdout))
+‹scr_cursup(‹);€scr_cursup() (‹)(printf(CSI"A"),fflush(stdout))
+‹scr_eol(‹);€scr_eol() (‹)(printf(CSI"K"),fflush(stdout))
+‹scr_home(‹);€scr_home() (‹)(printf(CSI"H"),fflush(stdout))
+‹scr_ldelete(‹);€scr_ldelete() (‹)(printf(CSI"M"),fflush(stdout))
+‹scr_lf(‹);€scr_lf() (‹)(printf(CSI"B"),fflush(stdout))
+‹scr_linsert(‹);€scr_linsert() (‹)(printf(CSI"L"),fflush(stdout))
+‹scr_tab(‹);€scr_tab() (‹)(printf("\t"),fflush(stdout))
+‹scr_curs(‚line,‚column);

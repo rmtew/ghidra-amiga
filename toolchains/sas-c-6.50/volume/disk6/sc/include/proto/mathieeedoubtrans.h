@@ -1,0 +1,2 @@
+ÄàPROTO_MATHIEDDDDOUBTRANS_HÄPROTO_MATHIEDDDDOUBTRANS_Hå<exec/types.h>
+ÅÉLibrary*MathIeeeDoubTransBase;å<clib/mathieeedoubtrans_protos.h>å<pragmas/mathieeedoubtrans_pragmas.h>á

@@ -1,0 +1,2 @@
+ÄàPROTO_MATHIEEESINGBAS_HÄPROTO_MATHIEEESINGBAS_Hå<exec/types.h>
+ÅÉLibrary*MathIeeeSingBasBase;å<clib/mathieeesingbas_protos.h>å<pragmas/mathieeesingbas_pragmas.h>á

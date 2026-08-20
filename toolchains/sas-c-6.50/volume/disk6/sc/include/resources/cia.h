@@ -1,0 +1,1 @@
+€ˆDEVICES_CIA_H€DEVICES_CIA_H 1€CIAANAME "ciaa.resource"€CIABNAME "ciab.resource"‡

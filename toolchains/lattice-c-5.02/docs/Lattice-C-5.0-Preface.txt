@@ -1,0 +1,462 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                   Lattice Amiga C Compiler
+     ----------------------------------------------------------------------
+
+
+                                                               Version 5.00
+
+
+
+
+                                     The C Development System for the Amiga
+
+
+
+
+
+
+
+
+
+                                                              Lattice, Inc.
+                                                    2500 S. Highland Avenue
+                                                          Lombard, IL 60148
+                                                                        USA
+
+
+                                         A Subsidiary of SAS Institute Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice C Compiler User's Manual
+
+     Copyright (C) 1988 by Lattice, Inc., Lombard, IL, USA.
+
+     All rights reserved.  Printed in the United States of America.  No
+     part of this publication may be reproduced, stored in a retrieval
+     system, or transmitted, in any form or by any means, electronic or
+     mechanical, photocopying, or otherwise, without the prior written
+     permission of the publisher, Lattice, Inc.
+
+
+
+     Amiga is a registered trademark of Commodore-Amiga, Inc.
+     AmigaDOS is a trademark of Commodore-Amiga, Inc.
+     Commodore is a registered trademark of Commodore Electronics Limited.
+     Kickstart is a trademark of Commodore-Amiga, Inc.
+     IBM is a registered trademark of International Business Machines
+          Corporation.
+     Intuition is a trademark of Commodore-Amiga, Inc.
+     Lattice is a registered trademark of Lattice, Inc.
+     LMK is a trademark of Lattice, Inc.
+     MS-DOS is a registered trademark of Microsoft Corporation.
+     UNIX is a registered trademark of AT&T.
+     Workbench is a trademark of Commodore-Amiga, Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    Preface
+
+     The Lattice Amiga C Compiler is a complete development system for the
+     Commodore Amiga.  This is a reference manual for the Lattice Amiga C
+     Compiler.  Its primary purpose is to accurately describe all commands,
+     utility programs, editor, debugger, environment variables, functions
+     and external names that you will normally use while writing and
+     executing C programs.
+
+                                   Contents
+
+     The manual consists of seven major sections:
+
+     User's Guide (G)   This section describes the installation and
+                        hardware requirements for the Lattice Compiler.  It
+                        describes the directories and files and logical
+                        name assignments.  It describes the Lattice
+                        assembler, and presents information on AmigaDOS as
+                        it impacts the compiler.  It covers compiler and
+                        linker operation, and provides a Lattice C language
+                        definition.  It contains a list of compiler and
+                        linker error messages.  This section has the
+                        pagecode "G" next to each page.
+
+     Utilities (U)      This section describes the new programming
+                        utilities included with the compiler.  These
+                        include a profiler, a traceback facility, a make
+                        facility, build and extract tools, global search
+                        and replacement tools, a C cross-reference
+                        facility, file manipulation utilities, and a word
+                        count utility.  This section has the pagecode "U"
+                        next to each page number.
+
+     Commands (C)       This section summarizes all of the commands in the
+                        Lattice Amiga C Compiler, including compiler,
+                        linker, assembler, and utilities.  This section has
+                        the pagecode "C" next to each page number.
+
+     Editor (E)         This section describes the full screen Lattice
+                        Screen Editor (LSE) which is custom tailored for
+                        the Amiga.  It describes how to use the editor and
+                        how it is integrated into the compiler for
+                        in-memory edit and compile sessions.  This section
+                        has the pagecode "E" next to each page number.
+
+     Debugger (D)       This section describes the Lattice full-screen
+                        symbolic debugger (CodePRobe) which is custom
+                        tailored for the Amiga environment.  It describes
+                        how to use the debugger and how to take advantage
+                        of its advanced features, such as debugging
+                        multi-tasking processes.  This section has the
+                        pagecode "D" next to each page number.
+
+     Library Reference  This section describes all of the library functions
+     (L)                in the Lattice AmigaDOS C Library.  This section
+                        has the pagecode "L" next to each page number.
+
+     Preface                                                              i
+
+
+
+
+
+
+
+
+     Master Index (I)   Each section has its own index and table of
+                        contents.  The master index provides one section
+                        that indexes the entire product.  This section has
+                        the pagecode "I" next to each page number.
+
+                                 New Features
+
+     The Lattice Amiga C Compiler Version 5.0 is a upgrade to the Lattice
+     Amiga C Compiler Version 4.0.  The major new features for Version 5.0
+     include:
+
+     680x0/6888x         The version 5.0 contains code generation support
+                         for the entire family of processor chips including
+                         68000, 68010, 68020, and 68030 processors, and the
+                         math co-processor chips, 68881 and 68882.  The
+                         compiler and related libraries optimize the code
+                         generation for each of these chips.
+
+     Better Performance  Version 5.0 produces more compact code and faster
+                         code.  We have seen as much as 10% performance
+                         improvements with the Version 5.0 system over the
+                         Version 4.0.
+
+     Global Optimizer    Version 5.0 introduces our global optimizer.  Some
+                         of the benchmarks, e.g. Matrix, execute up to 58%
+                         faster with the new global optimizer over the
+                         Lattice Version 4.0 release.  The global
+                         optimizer's dead code elimination feature
+                         increases the performance of Float by over two
+                         orders of magnitude.
+
+     Full-Screen         Version 5.0 introduces the CodePRobe (CPR)
+     Debugger            debugger.  This debugger provides you with a
+                         full-screen symbolic interface to source code
+                         execution.  CodePRobe supports advanced features
+                         like multitasking debugging.
+
+     Full-Screen Editor  Version 5.0 includes the Lattice Screen Editor
+                         (LSE).  This editor has been fully developed for
+                         the Amiga including gadget support and slider
+                         bars.  It is fully programmable so that you can
+                         customize the keystrokes of LSE to that of your
+                         favorite editor.  LSE also supports integrated
+                         development so that you can edit and compile from
+                         the same command set.
+
+     Programmer          Version 5.0 introduces numerous programmer
+     Utilities           utilities.  These include:
+
+                         Traceback      A utility that allows you to debug
+                                        in the event of an abend.
+                         Profiler       A utility that allows you to
+                                        profile the execution of your
+                                        application for performance tuning.
+                         Build/Extract  Utilities that support command line
+                                        generation.
+
+     Preface                                                             ii
+
+
+
+
+
+
+
+
+                         CXREF          A C cross-reference facility.
+                         DIFF           A utility that prints out the
+                                        differences between two files.
+                         fd2pragma      A pragma generator.
+                         Files          A file manipulation utility.
+                         Grep           A global search facility.
+                         Compact        A header file compressor facility.
+                         LMK            A powerful make file utility.
+                         Splat          A global replace facility.
+                         Touch          A file manipulation utility.
+                         WC             A word, sentence counting utility.
+
+     Compatibility       Version 5.0 is fully upward compatible with
+                         Version 4.0.  Object modules and libraries created
+                         with either compiler may be freely mixed.  As with
+                         any improvement, some of the newer features
+                         (registerized parameters and debugging support)
+                         will only be available to code compiled with the
+                         5.0 compiler.
+
+     Library             Version 5.0 contains numerous library enhancements
+     Improvements        and new functions.  Many of the library routines
+                         have been recoded to take advantage of better
+                         algorithms.  Several performance sensitive
+                         routines have been recoded into assembler to
+                         provide the tightest code.  The new routines
+                         include geta4, getenv, and putenv.
+
+     ANSI Compliance     The compiler now supports the full ANSI
+                         preprocessor with string support, token support
+                         and appropriate scoping of substitution symbols.
+                         The defined( ) directive is also supported.  In
+                         addition, __DATE__ and __TIME__ provide the date
+                         and time of compilation.  The compiler now uses
+                         sequence points to ensure correct evaluation and
+                         side effect generation according to the ANSI
+                         standard.  Both the const and volatile keywords
+                         are supported.  Function prototypes may now
+                         include an optional parameter name.  Also
+                         functions taking a variable number of arguments
+                         may be indicated with ellipses '...'.  String
+                         literals may now be concatenated to allow easier
+                         coding of long strings.  (void *) correctly
+                         coerces a type without any warning.  Many
+                         diagnostics have been added to allow detecting
+                         non-conforming programs.
+
+     New Keywords        The compiler now recognizes several new keywords:
+
+                         Keyword      Meaning
+                         signed       Overrides any default unsigned
+                                      options.
+                         near         Declares a data item to be addressed
+                                      relative to the global base register.
+                                      When used with a subroutine, it
+                                      indicates a pc relative subroutine
+
+     Preface                                                            iii
+
+
+
+
+
+
+
+
+                                      call.
+                         far          Declares an item that must be
+                                      addressed with a full 32 bit address.
+                         huge         Same as far.
+                         chip         Declares a data item that must be
+                                      placed in chip ram and addressed with
+                                      a full 32 bit address.
+                         __regargs    Defines a subroutine that is to be
+                                      called with registerized parameters.
+                         __stdargs    Defines a subroutine that is to be
+                                      called with standard stack parameters
+                         __asm        Defines a subroutine that takes its
+                                      parameters in a specific register.
+                         __saveds     Defines a subroutine that is to load
+                                      up the global base pointer upon entry
+                         __interrupt  Defines a subroutine that may be
+                                      called from interrupt code.
+
+     Precompiled         To provide for faster compilation of a large
+     Headers             project, the symbol table obtained by compiling a
+                         program may be saved to disk.  This precompiled
+                         header file may then be used as the starting point
+                         of another compilation to eliminate reparsing the
+                         header files encountered.
+
+     Ignore Multiple     The compiler now supports an option to ignore
+     Includes            multiple #includes of the same file.  In addition,
+                         the search rules for #include files have been
+                         modified to conform to standard UNIX search
+                         conventions.
+
+     Error Messages      To allow more error messages to appear on the
+                         screen before scrolling off, we have adopted a
+                         more condensed format of displaying the error
+                         position in reverse video on the source line
+                         followed by the error message.  This eliminates
+                         the visual confusion caused by the seemingly
+                         blank line between the message and the line.  With
+                         the old format, there was a visual tendency to
+                         associate the error message with the wrong line.
+
+     Error Message       It is now possible to disable particular error
+     Disabling           messages as well as to change the severity of most
+                         messages.  Along with this, it is not possible to
+                         specify a maximum number of errors allowed in a
+                         compilation so that the compiler will abort.
+
+     Improved Error      We have implemented an improved form of error
+     Recovery            recovery for many of the common mistakes to
+                         eliminate many of the situations that resulted in
+                         a cascade of errors.
+
+     Library Code        The library base for #pragma statements is no
+     Generation          longer limited to being a single external pointer.
+                         Any arbitrary expression may be used including
+                         function calls and local variables.  This is
+
+     Preface                                                             iv
+
+
+
+
+
+
+
+
+                         intended to support generating code that resides
+                         in a library.
+
+     Big Compiler        In order to produce a compiler that fits well on a
+     (LC1B)              smaller system, we have elected to provide a "big"
+                         version of the compiler that includes some
+                         additional features.  If you wish to take
+                         advantage of these features (at a cost of about
+                         20K), you must use this big compiler instead of
+                         the standard one.  The big compiler provides a
+                         full listing ability including macro expansion
+                         display, nest level counting, and include file
+                         listing.  This listing may also include an
+                         optional cross reference of all variables, #define
+                         values and structure tags.  The big version of the
+                         compiler may be used to generate prototype files
+                         of all functions encountered in a module.  This
+                         eliminates the potentially tedious task of
+                         constructing the list of prototypes for all
+                         functions in a project.
+
+     Amiga library       The compiler can generate code fully compatible
+     support             with the requirement of an Amiga library routine -
+                         A6 is removed from the compiler selection list and
+                         A4 is made available for code use.  Note that this
+                         code is incompatible with the -b1 option.
+
+     Better control of   When generating code, you may now instruct the
+     code optimization   compiler to choose code sequences optimized for
+                         space or time depending on the type of application
+                         you may be building.
+
+     Registerized        Two styles of registerized parameters are
+     Parameters          supported.  The -rr option cause the compiler to
+                         automatically place up to four parameters in
+                         registers for subroutine calls.  The __asm keyword
+                         may be used in conjunction with a register
+                         specification list to cause the compiler to pass
+                         parameters in a given register.
+
+     International       Error messages are now in separate files for easy
+     Support             customizing to international error messages.
+
+     Resident            The compiler and tools are now multitasking and
+     Compatible          reentrant to support better use of the Amiga, and
+                         for faster load times.  The compiler also builds
+                         resident compatible modules.
+
+                                Acknowledgement
+
+     Lattice is grateful for the outstanding technical contributions to
+     this product from SAS Institute.
+
+
+
+
+
+     Preface                                                              v
+
+
+

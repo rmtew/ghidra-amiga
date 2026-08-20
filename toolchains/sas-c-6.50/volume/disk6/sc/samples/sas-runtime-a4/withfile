@@ -1,0 +1,3 @@
+FROM LIB:c.o root.o global.o
+LIBRARY LIB:sc.lib LIB:amiga.lib
+TO sas-runtime-a4

@@ -1,0 +1,3 @@
+ÄàCLIB_MISC_PROTOS_HÄCLIB_MISC_PROTOS_HàEXEC_TYPES_Hå<exec/types.h>á
+ä*AllocMiscResource(éçunitNum,ä*name);
+ãFreeMiscResource(éçunitNum);á

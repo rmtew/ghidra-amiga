@@ -83,9 +83,7 @@ public abstract class HunkBlock {
 	boolean isValidLoadsegExtraHunk() {
 		switch (blkId) {
 		case HUNK_ABSRELOC32:
-		case HUNK_ABSRELOC16:
 		case HUNK_RELRELOC32:
-		case HUNK_RELRELOC26:
 		case HUNK_RELRELOC16:
 		case HUNK_RELRELOC8:
 		case HUNK_DREL32:
@@ -116,6 +114,8 @@ public abstract class HunkBlock {
 		case HUNK_BSS:
 			return new HunkSegmentBlock((HunkType)type, reader, isExecutable);
 		case HUNK_ABSRELOC32:
+			return new HunkRelocLongBlock((HunkType)type, reader, isExecutable, 4);
+		case HUNK_RELRELOC32:
 			return new HunkRelocLongBlock((HunkType)type, reader, isExecutable, 4);
 		case HUNK_RELRELOC16:
 			return new HunkRelocLongBlock((HunkType)type, reader, isExecutable, 2);

@@ -1,0 +1,20 @@
+€ˆDOS_EXALL_H€DOS_EXALL_HˆEXEC_TYPES_HŒ"exec/types.h"‡ˆUTILITY_HOOKS_HŒ"utility/hooks.h"‡€ED_NAME 1€ED_TYPE 2€ED_SIZE 3€ED_PROTECTION 4€ED_DATE 5€ED_COMMENT 6€ED_OWNER 7
+ƒExAllData{
+ƒExAllData*ed_Next;
+Š*ed_Name;
+’ed_Type;
+—ed_Size;
+—ed_Prot;
+—ed_Days;
+—ed_Mins;
+—ed_Ticks;
+Š*ed_Comment;
+‰ed_OwnerUID;
+‰ed_OwnerGID;
+};
+ƒExAllControl{
+—eac_Entries;
+—eac_LastKey;
+Š*eac_MatchString;
+ƒHook*eac_MatchFunc;
+};‡

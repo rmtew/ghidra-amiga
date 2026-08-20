@@ -9,6 +9,9 @@ import ghidra.app.util.bin.BinaryReader;
 class HunkHeaderBlock extends HunkBlock {
 
 	private List<Integer> hunkTable;
+	private int tableSize;
+	private int firstHunk;
+	private int lastHunk;
 
 	HunkHeaderBlock(BinaryReader reader, boolean isExecutable) throws HunkParseError {
 		super(HunkType.HUNK_HEADER, reader);
@@ -37,12 +40,14 @@ class HunkHeaderBlock extends HunkBlock {
 		}
 		
 		try {
-			int tableSize = reader.readNextInt();
-			int firstHunk = reader.readNextInt();
-			int lastHunk = reader.readNextInt();
+			tableSize = reader.readNextInt();
+			firstHunk = reader.readNextInt();
+			lastHunk = reader.readNextInt();
 			
-			if (tableSize < 0 || firstHunk < 0 || lastHunk < 0) {
-				throw new HunkParseError("HUNK_HEADER invalid table_size or first_hunk or last_hunk");
+			// Overlay-node headers use global hunk numbers while their table size may
+			// describe only that node.  Therefore the range is not bounded by tableSize.
+			if (tableSize < 0 || firstHunk < 0 || lastHunk < firstHunk) {
+				throw new HunkParseError("HUNK_HEADER has an invalid table size or hunk range");
 			}
 			
 			for (int a = 0; a < lastHunk - firstHunk + 1; ++a) {
@@ -61,5 +66,17 @@ class HunkHeaderBlock extends HunkBlock {
 
 	Integer[] getHunkTable() {
 		return hunkTable.toArray(Integer[]::new);
+	}
+
+	int getTableSize() {
+		return tableSize;
+	}
+
+	int getFirstHunk() {
+		return firstHunk;
+	}
+
+	int getLastHunk() {
+		return lastHunk;
 	}
 }

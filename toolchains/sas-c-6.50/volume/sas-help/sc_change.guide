@@ -1,0 +1,572 @@
+@database sc_change
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@node main "Changes to the Documentation"
+                 
+               @{" Version 6.1 (Error Correction Patch) Changes " link ver6.1}
+
+                              @{" General Notes " link general}
+                         
+             @{" Changes to Volume 1:  Introduction, Editor, Compiler " link vol1}
+                         
+             @{" Changes to Volume 2:  Debugger, Utilities Assembler " link vol2}
+                         
+                     @{" Changes to the Library Reference " link lib}
+                         
+                     @{" Changes to the SAS/C Help System " link help_ch}
+@endnode
+@node ver6.1 "Version 6.1 Changes"
+1)  Documentation for  __stdiowin and __stdiov37 was left out of
+    Chapter 6 of the Library Reference Manual.  This documentation
+    has been included in AmigaGuide help.
+
+2)  In the User's Guide Volume 1 on page 137-138, the text and 
+    examples need to emphasize that the replacement string for 
+    __stdiowin[] should end in a / to prevent the auto keyword from 
+    being considered to be the name of the window. 
+
+3)  On page 261 of the User's Guide Volume 2, there is a table showing
+    the templates and associated substitutions that are performed with
+    scmsg.  The substitution for %c is listed as error column number.  
+    %c actually insert the error CLASS.  Additional substitutions are
+    supported as of the 6.1 release: %# = message number, %m = message
+    text, %e = alternate filename, %k = alternate line number.  Changes
+    and additions have also been made to the SCMSG AREXX interface;
+    see the version 6.1 changes document for more details.
+
+4)  p. 127 of the Library Reference manual.  The word megabytes and
+    the end of the 3rd paragraph should actually be kilobytes.
+
+5)  Under the smake utility in the User's Guide Volume 2 on page 289, 
+    the -f option is shown in this format...  -ffile.  It should be 
+    -f file.  The example in the text also needs to be changed to
+    reflect this.
+
+                          -f alpha
+
+6)  In the User's Guide Volume 1 on page 99, the example given for the 
+    linkeroptions option is incorrect.  The book currently says:
+
+       sc linkeroptions="bufsize 10000 maxhunk 2" link myprog.c
+
+    The example should read:
+
+       sc "linkeroptions=bufsize 10000 maxhunk 2" link myprog.c
+
+7)  On page 139 of the Library Reference manual, the calls to clock() in the
+    example have "void" as a parameter.  They should not.  The calls should
+    be, for example,
+
+                   start = clock();
+
+    Also on this page, the printf() statement should have the %d format
+    specifier instead of the %g.
+
+@endnode
+
+@node general "General Notes"
+   1. Since the compiler's executables are now AmigaDOS shared 
+      libraries, they remain in memory after your compile
+      finishes.  They will be automatically flushed out of 
+      memory if they are not in use and some other program 
+      needs the memory.  However, if you run out of fast
+      memory, the operating system starts using chip memory
+      before flushing the libraries.  Chip memory is much
+      slower than fast memory on Amigas with faster processors,
+      so this may slow down your program.
+      
+      If you think this is happening to you, and you are running
+      AmigaDOS 2.0, use the AVAIL command as follows to flush any 
+      shared libraries before running your program:
+      
+         avail flush
+
+   2. New option -nommu
+
+      The -nommu option can be specified for CPR and CPRK.  It tells 
+      CPR not to use the MMU for any reason.  This option is only relevant 
+      for users with a 68020 or greater CPU.
+
+      If your machine is running Enforcer and is 68020- or 68030-based, 
+      CPR will try to use the MMU by default to stop references to illegal 
+      memory.  For these machines, the -nommu option tells CPR not to 
+      verify memory in the MMU tables before trying to access it.  However, 
+      if Enforcer is running, you still will not be able to display illegal 
+      memory. 
+
+      On 68040 machines, CPR doesn't use the MMU tables, but rather uses 
+      the TypeOfMem() call to determine if memory exists at that location.  
+      CPR was modified to act this way because reading illegal memory on a 
+      68040 may cause the machine to crash.  Unfortunatly, this method does 
+      not allow you to display ROM.  For the 68040, the -nommu option 
+      removes this restriction, allowing you to display ROM.  However, care 
+      should be taken in what memory is de-referenced or you could crash 
+      your machine.
+
+   3. The format of bitfields has changed in version 6.0.  If you have a 
+      program that ran under version 5.10 or earlier that depends on the 
+      order of bitfields, it will no longer work.  
+
+   4. Several additional help files have been added to the SAS/C Amigaguide
+      help system.  All SAS/C help files are located in sc:help.  
+ 
+   5. You may find the example program schelp in the sc:examples/cback 
+      directory useful to compile and use.  schelp is a background process
+      which will allow you to hit control-Help to pop up the main help window
+      for the SAS/C Amigaguide help system.  Read the read.me file in that 
+      directory for more information.
+
+   6. By default, when you include the file proto/exec.h you get "syscall"
+      pragmas for all exec.library functions.  Another set of pragmas exists
+      for exec that use the "libcall" method via the library base SysBase.
+      Either set of pragmas will work.  The "syscall" pragmas find the address
+      of exec.library by looking at memory location 4.  The "libcall" pragmas
+      find it by looking at the external variable "SysBase".
+
+      On Amigas with 68020 and higher processors, it is significantly faster
+      to use the "libcall" pragmas.  To do this, define the preprocessor 
+      symbol "__USE_SYSBASE" on the command line or by using a #define 
+      statement.  If you do this, make sure you include the file <proto/exec.h>
+      rather than <pragmas/exec_pragmas.h>.  If you do this and you are not
+      using one of the SAS/C supplied startup modules, you will have to
+      initialize the variable SysBase yourself as follows:
+
+         struct ExecBase *SysBase = *(struct ExecBase **)4;
+
+   7. Two rexx macros were added after the documentation was completed.
+      They are sc:rexx/man.se and sc:rexx/man.cpr.  To use these macros:
+
+      In CPR, type man <function> where <function> is any valid SAS/C 
+      library function.  This will automatically display a help screen 
+      from the sc_lib.guide help file for that function.
+
+      In SE, place the cursor on the name of any valid SAS/C library 
+      function and hit shift-help.  This will automatically display a help
+      screen from the sc_lib.guide help file for that function.
+
+@endnode
+
+@node vol1 "Changes to Volume 1"
+   1. Add the following to the end of the "Changes and Enhancements"
+      list on page xxviii, and to the description of the __interrupt
+      keyword on page 157:
+
+         Unlike previous versions of the compiler, the __interrupt
+         keyword does not imply that the function will be called
+         with stack arguments.  If you use PARMS=REG and the function 
+         must receive its parameters on the stack, add the __stdargs 
+         keyword to its definition and prototype.
+
+   2. On page 264, the following line should be added to the explanation 
+      for Error 625:
+  
+            If you are specifying the link option, you need to include the 
+            math= option to specify which math library with which you want 
+            to link.  If you are linking explicitly, you need to link with 
+            a math library as well as sc.lib.
+
+   3. In the description of the OPTCOMPLEXITY, OPTDEPTH and OPTRDEPTH options
+      on pages 108-110, the default values for the three options are given
+      as 3.  The defaults are actually 0.  This means that by default the
+      global optimizer will not inline any functions unless they have been
+      explicitly declared with the __inline keyword.  This change also needs 
+      to be made on page 83 in Table 8.1, Summary of Compiler Options.
+
+   4. On pages 265 and 256, Warning 156 should not have been included in 
+      the table.  It is on by default.           
+@endnode
+
+@node vol2 "Changes to Volume 2"
+   1. On page 10, line 10 in the list of cpr options, change the second 
+      occurrence of "-cli" to "-.".
+
+   2. On page 43, the first example of the "go" command reads
+   
+         >go 4 when (i == 7)
+
+      this should read
+
+         >go 24 when (i == 7)      
+
+   3. On page 43, in the second listing of example code, the 4 on the
+      third and fourth lines should be 24, as follows:
+
+                 > go 24 when (i ==7)
+                 sort:\Work:examples/sort.c\sort 24
+
+   4. On page 50 under "Attaching actions to breakpoints": the text 
+      discusses setting a breakpoint at line 25 while the example sets 
+      the break at line 26.
+ 
+   5. On page 51, in the bottom example, the definition of the breakpoint 
+      starting on the second line spans 2 input lines.  You must place a 
+      backslash (\) at the end of the first line.
+      
+                 > break sort 26 when (i > 5) {dump p L 4; \
+                     break sort 26 when (i == 8) trace; blist}
+ 
+   6. On page 80, the text mentions the fact that CPR will
+      by default open its own public screen, but it does
+      not give the name of this screen.  Unless otherwise
+      specified with the -SCREEN option, CPR opens a
+      public screen called "SC_CPR.1".
+              
+   7. On page 92 in the example alias commands, the second example should 
+      read "alias enter `set" instead of "alias enter `et".
+
+   8. On page 133 in the synopsis, "be[enable]" should be "be[nable]".
+ 
+   9. On page 172, the description of the RESTART debugger
+      command states that watch breaks on static and external
+      data items will be retained after a RESTART.  This does
+      not work if the program being debugged was linked with
+      the "cres" or "catchres" startup modules and the watch
+      break is set on an item in the near data section.
+
+  10. On page 207, add a semicolon at the end of "void *to".
+
+  11. On page 216, underscores are missing from two bulleted list items near
+      the middle of the page and from item 2 near the bottom.
+ 
+      These lines should read:
+ 
+               * The main routine must be called main rather than _ _main
+                 because covutil.o replaces _ _main with an enhanced 
+                 version.
+ 
+               * Your program must end by calling exit or by falling 
+                 through the end of main.  (Do not call _XCEXIT or abort,
+                 for example.)
+ 
+              2. ...The covutil.o file replaces the _ _main and _ _exit
+                 functions in your program with enhanced versions...
+ 
+  12. On page 255, in the description of the SCMSG command,
+      it states that SCMSG will be automatically invoked when
+      the compiler produces diagnostics.  You must specify the
+      ERRORREXX option to tell the compiler to do this.  If you
+      do not specify ERRORREXX, the SCMSG utility will not be
+      invoked.
+
+  13. On page 271, the SCSETUP utility is documented.  Two new 
+      options have been added to this utility, FORCE and NOSTARTER.
+      If FORCE is specified, SCSETUP copies icons and files into
+      the directory whether or not they already exist.  Use this
+      option if you have a directory already set up for Version 5.10
+      of the compiler.  The NOSTARTER option tells SCSETUP not to
+      copy the contents of the drawer SC:STARTER_PROJECT to the
+      directory being set up.  Use this option to create icons for
+      files in a directory based on their extension when you do
+      not want the SCOptions, Edit, Debug and Build icons copied
+      into the directory.
+
+  14. On page 268 under "Save as global defaults (ENV:)", the path shown,
+      "ENV:/sc/scoptions" should read "ENV:sc/scoptions".  
+
+  15. On pages 276 and 278, in the example smakefiles, data=absolute 
+      should be data=far.
+ 
+  16. On page 279 in the table at the bottom of the page, the first entry
+      should be "$@" instead of "S@".
+ 
+  17. On page 289 at the top of the page, immediately after the smake 
+      template, the sentence should read "As with the Build icon, smake
+      looks for one of the five default smakefile names..."
+
+  18. On page 334, there is a table of compiler options used to
+      enable or disable the optimizers.  Add the following entry
+      to this table:
+      
+      Option           Effect
+      --------         -------
+      optimize         turns on only the peephole optimizer
+      nooptglobal
+      
+      These options are discussed in more detail in Chapter 6
+      of the User's Guide, Volume I, along with the other
+      SC command-line options.
+@endnode
+
+@node lib "Changes to the Library Reference"
+    1. A set of correction pages has been included for use with
+       the Library Reference manual.  Please be sure to apply
+       them to the manual as soon as possible.
+    
+    2. The description of the "getenv" function on page 252 states 
+       that only the first line of the file will be read.  In reality,
+       the entire file is read.
+    
+    3. The following external data names are not listed in the data
+       name reference (Chapter 6 of the Library Reference Manual):
+       
+       long __STKNEED;
+       
+          If your program uses the __stackext keyword or is compiled with
+          the STACKEXT compiler option, __STKNEED specifies the minimum 
+          amount of stack required.  Keep in mind that if a system interrupt
+          occurs, it will use your stack; therefore, you must keep at least 
+          400 bytes of stack free at all times.  The default value of 
+          __STKNEED is 400.  If your program requires more, declare 
+          __STKNEED in your code and statically initialize it to the amount 
+          you require.  You may change the value of __STKNEED while your
+          program is running if you like; if the current stack does not
+          meet the new __STKNEED value, a new one will be allocated the
+          next time you call a function declared with the __stackext 
+          keyword or compiled with the STACKEXT compiler option.  For more
+          information on the __STKNEED external variable, see Chapter 11
+          of the User's Guide, volume I.
+    
+       long __oslibversion;
+    
+          If you use the auto-open feature for system libraries, the
+          autoinitialization code passes the value of this external long
+          integer to the OpenLibrary function when attempting to open
+          each library.  For example, AmigaDOS 2.0 is library revision
+          37.  If your program runs only under AmigaDOS 2.0, you can 
+          declare it in your code as an external variable and initialize 
+          it to 37.  The autoopen libraries will not open if your program
+          is run under older versions of AmigaDOS; the library function
+          __autoopenfail will be called instead.  For more information on
+          auto-open libraries, see Chapter 10 of the User's Guide, volume I.
+    
+       char __stdiowin[] = "CON:10/10/320/80/";
+          
+          If your program is invoked from Workbench, a console window
+          will be opened to allow the standard I/O streams stdin, stdout
+          and stderr to function.  This variable specifies the character
+          string that will be passed to the AmigaDOS Open() function to
+          initialize this window.  You may change this specification
+          to change the appearance or behavior of the window by
+          declaring the array as shown above external to any function
+          in your code.  Under AmigaDOS 2.0, the array __stdiov37
+          will be appended to the __stdiowin string.  For more information
+          on __stdiowin, see Chapter 9 of the User's Guide, Volume I.
+    
+       char __stdiov37[] = "/AUTO/CLOSE/WAIT";
+    
+          If your program is invoked from Workbench, a console window
+          will be opened to allow the standard I/O streams stdin, stdout
+          and stderr to function.  This array will be appended to the
+          contents of the __stdiowin array if and only if the program
+          is invoked under kickstart version 37 or higher (AmigaDOS 2.0).
+          The AmigaDOS 2.0 console device supports special keywords that
+          enhance the behavior of the window.  The default string
+          specifies that the window should open only if your program
+          actually reads or writes data to it; that the window should
+          have a close gadget; and that the window should wait for the
+          user to hit the close gadget or type an end-of-file character
+          before closing.  You may change this specification if you like
+          by declaring the array as shown above external to any function
+          in your code.  For more information on __stdiov37, see Chapter 9
+          of the User's Guide, Volume I.
+    
+       __ctors and __dtors
+    
+          __ctors and __dtors are linker-created symbols which are arrays of
+          autoinitialization and autotermination functions to be invoked when 
+          your program is started or after it exits.  Do not declare __ctors 
+          or __dtors in your code.  For more information on __ctors and __dtors,
+          see Chapter 10 of the User's Guide, Volume I.
+    
+    4. The following should be added to Chapter 7 of the Library Reference
+       Manual:
+    
+       void __autoopenfail(char *lib);
+    
+          If you use the auto-open library feature for system libraries,
+          and one of the system libraries fails for some reason, the
+          function __autoopenfail will be called.  The parameter "lib"
+          points to a null-terminated string giving the name of the
+          library which failed to open.  The default version of this
+          function prints an error message and terminates your program.
+          You can declare a function matching the prototype above if 
+          you like and replace the default version.  The source code
+          to the default version of __autoopenfail is in the file
+          SC:SOURCE/autoopenfail.c.  For more information on auto-open
+          libraries, see Chapter 10 of the User's Guide, volume I.
+
+    5. On page 119, the ATAN2 function is described as returning a result
+       constrained between -PI/2 and PI/2.  The result is actually
+       constained between -PI and PI.
+@endnode
+
+@node help_ch "Changes to the SAS/C Help System"
+Several additional help files have been added to the SAS/C Amigaguide
+help system.  All SAS/C help files are located in sc:help.  Following
+is a list of everything that is completely or partially documented with
+on-line help:
+
+         Compiler Options
+         Linker Options
+         Compiler Error and Warning Messages
+         Linker Error and Warning Messages
+         CPR
+         Slink
+         Utilities
+         Library Functions
+         Editor (SE)
+         Common Problems
+         Changes to the Documentation  (The file that you are accessing.)
+         Contacting Technical Support
+         
+Additional topics are documented in each Help file.  There is also a main
+help screen containing buttons leading to all of the above topics.  This file
+is named sc:help/sc_help.guide.
+           
+You may find the example program schelp in the sc:examples/cback 
+directory useful to compile and use.  schelp is a background process
+which will allow you to hit control-Help to pop up the main help window
+for the SAS/C Amigaguide help system.  Read the read.me file in that 
+directory for more information.
+@endnode
+
+@node cpr "CPR Changes"
+   1. New option -nommu
+
+      The -nommu option can be specified for CPR and CPRK.  It tells 
+      CPR not to use the MMU for any reason.  This option is only relevant 
+      for users with a 68020 or greater CPU.
+
+      If your machine is running Enforcer and is 68020- or 68030-based, 
+      CPR will try to use the MMU by default to stop references to illegal 
+      memory.  For these machines, the -nommu option tells CPR not to 
+      verify memory in the MMU tables before trying to access it.  However, 
+      if Enforcer is running, you still will not be able to display illegal 
+      memory. 
+
+      On 68040 machines, CPR doesn't use the MMU tables, but rather uses 
+      the TypeOfMem() call to determine if memory exists at that location.  
+      CPR was modified to act this way because reading illegal memory on a 
+      68040 may cause the machine to crash.  Unfortunatly, this method does 
+      not allow you to display ROM.  For the 68040, the -nommu option 
+      removes this restriction, allowing you to display ROM.  However, care 
+      should be taken in what memory is de-referenced or you could crash 
+      your machine.
+
+   2. On page 43, the first example of the "go" command reads
+   
+         >go 4 when (i == 7)
+
+      this should read
+
+         >go 24 when (i == 7)      
+
+   3. On page 80, the text mentions the fact that CPR will
+      by default open its own public screen, but it does
+      not give the name of this screen.  Unless otherwise
+      specified with the -SCREEN option, CPR opens a
+      public screen called "SC_CPR.1".
+
+   4. On page 172, the description of the RESTART debugger
+      command states that watch breaks on static and external
+      data items will be retained after a RESTART.  This does
+      not work if the program being debugged was linked with
+      the "cres" or "catchres" startup modules and the watch
+      break is set on an item in the near data section.
+
+   5. A rexx macro, sc:rexx/man.cpr, was added after the documentation 
+      was completed.
+
+      In CPR, type man <function> where <function> is any valid SAS/C 
+      library function.  This will automatically display a help screen 
+      from the sc_lib.guide help file for that function.
+
+@endnode
+
+@node scmsg "SCMSG Changes"
+   1. On page 255, in the description of the SCMSG command,
+      it states that SCMSG will be automatically invoked when
+      the compiler produces diagnostics.  You must specify the
+      ERRORREXX option to tell the compiler to do this.  If you
+      do not specify ERRORREXX, the SCMSG utility will not be
+      invoked.
+@endnode
+
+@node scsetup "SCSETUP Changes"
+   1. On page 271, the SCSETUP utility is documented.  Two new 
+      options have been added to this utility, FORCE and NOSTARTER.
+      If FORCE is specified, SCSETUP copies icons and files into
+      the directory whether or not they already exist.  Use this
+      option if you have a directory already set up for Version 5.10
+      of the compiler.  The NOSTARTER option tells SCSETUP not to
+      copy the contents of the drawer SC:STARTER_PROJECT to the
+      directory being set up.  Use this option to create icons for
+      files in a directory based on their extension when you do
+      not want the SCOptions, Edit, Debug and Build icons copied
+      into the directory.
+@endnode
+
+@node cover "Cover Changes"
+   1. On page 216, the bulleted restrictions are unnecessary. The file covutil.o
+      uses auto-initialization to initialize and write the coverage data
+      to disk. The only restriction for using "cover" is that you must
+      link with a startup file, ie c.o, cres.o, etc. 
+ 
+@endnode
+
+@node smake "SMAKE Changes"
+    1. On pages 276 and 278, in the example smakefiles, data=absolute 
+       should be data=far.
+
+@endnode
+
+@node sc "Compiler Changes"
+   1. Since the compiler's executables are now AmigaDOS shared 
+      libraries, they remain in memory after your compile
+      finishes.  They will be automatically flushed out of 
+      memory if they are not in use and some other program 
+      needs the memory.  However, if you run out of fast
+      memory, the operating system starts using chip memory
+      before flushing the libraries.  Chip memory is much
+      slower than fast memory on Amigas with faster processors,
+      so this may slow down your program.
+      
+      If you think this is happening to you, and you are running
+      AmigaDOS 2.0, use the AVAIL command as follows to flush any 
+      shared libraries before running your program:
+      
+         avail flush
+
+   2. The format of bitfields has changed in version 6.0.  If you have a 
+      program that ran under version 5.10 or earlier that depends on the 
+      order of bitfields, it will no longer work.  
+
+@endnode
+
+@node HELP "HELP"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to 
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or 
+click on the close gadget.  You may also hit escape.
+
+Most help screens will display one or more buttons as part of the text.  
+Clicking on these buttons will provide further information on the topic
+listed on the button.  You can also reach these help topics through the
+main Contents screen or one of its sub-screens.
+
+In addition, double-clicking in the help window will bring up a help 
+screen for the word under the mouse cursor, if such a help screen 
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the 
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help 
+screens.  The help screens are usually arranged alphabetically by 
+command or topic.  
+
+@endnode
+
+
+
+

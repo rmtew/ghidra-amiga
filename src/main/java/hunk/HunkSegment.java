@@ -98,6 +98,9 @@ public class HunkSegment {
 					dbgInfos.add(info);
 				}
 			} else if (block.getHunkType() == HunkType.HUNK_ABSRELOC32 ||
+					   block.getHunkType() == HunkType.HUNK_RELRELOC32 ||
+					   block.getHunkType() == HunkType.HUNK_RELRELOC16 ||
+					   block.getHunkType() == HunkType.HUNK_RELRELOC8 ||
 					   block.getHunkType() == HunkType.HUNK_DREL32 ||
 					   block.getHunkType() == HunkType.HUNK_DREL16 ||
 					   block.getHunkType() == HunkType.HUNK_DREL8 ||

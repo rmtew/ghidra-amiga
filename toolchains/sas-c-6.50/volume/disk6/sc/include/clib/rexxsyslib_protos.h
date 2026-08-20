@@ -1,0 +1,13 @@
+ÄàCLIB_REXXSYSLIB_PROTOS_HÄCLIB_REXXSYSLIB_PROTOS_HàEXEC_TYPES_Hå<exec/types.h>áàREXX_RXSLIB_Hå<rexx/rxslib.h>áàREXX_REXXIO_Hå<rexx/rexxio.h>á
+ä*CreateArgstring(ä*string,éçlength);
+ãDeleteArgstring(ä*argstring);
+óLengthArgstring(ä*argstring);
+ÉRexxMsg*CreateRexxMsg(É©*port,ä*extension,
+ä*host);
+ãDeleteRexxMsg(ÉRexxMsg*packet);
+ãClearRexxMsg(ÉRexxMsg*msgptr,éçcount);
+BOOL FillRexxMsg(ÉRexxMsg*msgptr,éçcount,
+éçmask);
+BOOL IsRexxMsg(ÉRexxMsg*msgptr);
+ãLockRexxBase(éçresource);
+ãUnlockRexxBase(éçresource);á

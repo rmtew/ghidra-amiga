@@ -1,0 +1,414 @@
+           [33mLattice AmigaDOS C Compiler Version 5.0[0m - 11/07/88
+
+This file contains introductory information about Lattice C for the Amiga.
+It also contains suggestions, hints, and miscellaneous information that 
+for whatever reason may not be in the manual.
+
+It is very important to read the contents of this file when installing a 
+new or updated version of the Lattice compiler. Most of the information in 
+this file was compiled after the manual went to press, and so is probably 
+not included in the standard documentation. Also, if an update does not 
+include new documentation then this file will contain a list of enhance-
+ments and bug fixes.
+  
+The "Click For Info On...." program used to display this file from 
+Workbench will pause after every 22 lines. To abort simply type
+   q <return>
+at the pause. To continue the listing, just type
+     <return>
+
+  
+
+
+
+
+Installing the Compiler on a hardisk:
+   1) Copy the s/install_hd on disk 1 to ram:
+   2) Type CD ram:
+   3) Type execute install_hd DRIVE
+        where DRIVE is the destination for the compiler (ie DH0:)
+   4) Change disks when asked to.
+   
+Notes.
+
+     Disk 5 contains a file called [33mADDENDUM.DOC[0m which contains 
+            information omitted from the User's Manual.  [33mREAD THIS FILE!!![0m
+
+
+
+
+
+Miscellaneous -
+
+When using the background task startup routine cback.o the linker may
+generate the error message
+
+ Error 515: An ALV was generated pointing to data  symbol
+
+This message should be a Warning message, and should display the symbol 
+name XCEXIT. This is a minor bug in blink that will be addressed in a 
+future release.
+  
+The message itself is normal, and is a consequence of the method used by
+cback.o to establish the program as a background task. In order to generate
+relocation information that would be relevant to data that might be copied
+to another part of memory, the exit code is assembled in a data section.
+Normally a C program would never reference something in a data section as 
+a function.
+  
+
+
+
+
+Organization -
+
+Version 5.0 is distributed on five Amiga diskettes. The main compiler
+environment consists of the first two diskettes and includes a bootable
+system disk with the executable programs, the Amiga header files in
+compressed form, and the normal run-time support libraries. The remaining 
+diskettes contain the un-compressed header files, the Assembler include 
+files, a set of libraries used for special applications, the Lattice 
+CodeProbe Debugger, the Lattice Macro Assembler, the Lattice Compiler 
+Companion Utilities, and some useful public-domain utilties. Note that 
+because of last minute additions that required expansion to five diskettes 
+the contents differ from that described in the manual. 
+      
+
+
+
+
+
+
+
+::::::::::::::::::::::::Contents of disks::::::::::::::::::::::::::::
+
+Disk 1
+     c (dir)
+       AddBuffers                       Assign
+       Avail                            Binddrivers
+       blink                            CD
+       ConMan                           Copy
+       Delete                           Dir
+       DropBuf                          Echo
+       Else                             EndCLI
+       EndIf                            Execute
+       Failat                           FF
+       GetEnv                           History
+       If                               Install
+       lc                               lc1
+       lc2                              lcerrs.deutsch
+       lcerrs.txt                       List
+       LoadWB                           lse
+       lse.dat                          lse.hlp
+       lse.msg                          Makedir
+       Mount                            NewCLI
+       NewShell                         Path
+       Prompt                           Protect
+       Push                             Queue
+       RemRAD                           Rename
+       Resident                         Run
+       SetClock                         SetCMan
+       SetEnv                           SetPatch
+       Stack                            Type
+     System (dir)
+       .info                            CLI
+       CLI.info                         Diskcopy
+       DiskCopy.info                    format
+       format.info                      SetMap
+       SetMap.info                      
+     l (dir)
+       Aux-Handler                      ConHandler
+       Disk-Validator                   FastFileSystem
+       Newcon-Handler                   Pipe-Handler
+       Port-Handler                     Ram-Handler
+       Shell-Seg                        Speak-Handler
+     devs (dir)
+          keymaps (dir)
+          printers (dir)
+          clipboards (dir)
+       clipboard.device                 MountList
+       narrator.device                  parallel.device
+       printer.device                   ramdrive.device
+       serial.device                    system-configuration
+     s (dir)
+       install_floppy                   install_hd
+       shell-startup                    startup-sequence
+     t (dir)
+     fonts (dir)
+     libs (dir)
+       ConHandler.library               diskfont.library
+       icon.library                     info.library
+       mathieeedoubbas.library          mathieeedoubtrans.library
+       mathtrans.library                translator.library
+       version.library                  
+     Empty (dir)
+     Expansion (dir)
+  .info                            Disk.info
+  Empty.info                       Expansion.info
+  on Lattice C                     On Lattice C.info
+  popcli                           read.me
+  Shell                            Shell.info
+  System.info                      
+
+Disk 2
+     lib (dir)
+       amiga.lib                        c.o
+       catch.o                          catchres.o
+       catchresnr.o                     cback.o
+       cres.o                           lcmieee.lib
+       lc.lib                           lcm.lib
+       lcmr.lib                         lcms.lib
+       lcnb.lib                         lcr.lib
+       lcs.lib                          lcsr.lib
+       lcm881.lib                       lcmffp.lib
+     CompactH (dir)
+          clib (dir)
+          libraries (dir)
+          workbench (dir)
+          exec (dir)
+          graphics (dir)
+          intuition (dir)
+          resources (dir)
+          hardware (dir)
+          devices (dir)
+          proto (dir)
+       assert.h                         ctype.h
+       dos.h                            errno.h
+       error.h                          fcntl.h
+       fctype.h                         float.h
+       ios1.h                           limits.h
+       locking.h                        m68881.h
+       math.h                           nondp.h
+       setjmp.h                         signal.h
+       stddef.h                         stdio.h
+       stdlib.h                         string.h
+       time.h                           unlstd.h
+  .info                            Disk.info
+
+Disk 3
+     Trashcan (dir)
+     c (dir)
+       build                            cpr
+       cpr.hlp                          cxref
+       diff                             dumpobj
+       extract                          fd2pragma
+       files                            go
+       grep                             lc1b
+       LCompact                         lmk
+       lprof                            lstat
+       omd                              oml
+       patch                            splat
+       tb                               touch
+       wc                               
+  .info                            Disk.info
+  Trashcan.info                    
+
+Disk 4
+     Trashcan (dir)
+     cc_extras (dir)
+       .info                            demo.c
+       files.lmk                        grep.lmk
+       grepdemo.c                       grepdemo.doc
+       lmk.def                          lmk.info
+       on CC.info                       pat.h
+       read.me                          touch.doc
+       wc.c                             
+     lseinst (dir)
+       lseinst                          lseinst.msg
+     source (dir)
+       c.a                              catch.a
+       cback.a                          cxbrk.c
+       cxferr.c                         cxffp.a
+       cxovf.c                          ffptran.a
+       matherr.c                        oserr.c
+       ovs.a                            stub.c
+       syserr.c                         tinymain.c
+       uassert.c                        ucxovf.a
+       umain.c                          
+     examples (dir)
+       boxomatic.c                      cat.c
+       ftoc.c                           lines.c
+       memsup.a                         memwatch
+       memwatch.c                       memwatch.doc
+       popcli.c                         popcli.doc                       
+       popsup.a                         setdate.c                        
+       speechtoy.c
+          debugger (dir)
+            avail.cpr                        CprARexx.doc
+            dbptr.cpr                        dbstr.cpr
+            devices.cpr                      devs.cpr
+            execbase.cpr                     ints.cpr
+            libraries.cpr                    libs.cpr
+            lines.c                          makeaptr.cpr
+            memory.cpr                       mods.cpr
+            ports.cpr                        regions.cpr
+            resources.cpr                    rsrcs.cpr
+            setbreaks                        showcli.cpr
+            showprocess.cpr                  smain
+            smain.c                          sort
+            sort.c                           status.cpr
+            swap.c                           whichis.cpr
+     Compiler_Headers (dir)
+          clib (dir)
+          libraries (dir)
+          workbench (dir)
+          exec (dir)
+          graphics (dir)
+          intuition (dir)
+          resources (dir)
+          hardware (dir)
+          devices (dir)
+          proto (dir)
+       assert.h                         ctype.h
+       dos.h                            errno.h
+       error.h                          fcntl.h
+       fctype.h                         float.h
+       ios1.h                           limits.h
+       locking.h                        m68881.h
+       math.h                           nondp.h
+       setjmp.h                         signal.h
+       stddef.h                         stdio.h
+       stdlib.h                         string.h
+       time.h                           
+  Disk.info                        Trashcan.info
+
+Disk 5
+     lib (dir)
+       ddebug.lib                       debug.lib
+       lcsnb.lib
+     Trashcan (dir)
+     Assembler_Headers (dir)
+          libraries (dir)
+          workbench (dir)
+          exec (dir)
+          graphics (dir)
+          intuition (dir)
+          resources (dir)
+          hardware (dir)
+          devices (dir)
+  Addendum.doc                     asm
+  Disk.info                        Trashcan.info
+  
+Problems corrected in V5.02:
+===========================
+ 
+LC1 and LC2
+-----------
+1)  Several CXERR's have been fixed.                
+2)  Incorrect code generation for logical comparisons has been fixed.   
+3)  Failure to promote unsigned for "-w" has been fixed.
+4)  Functions loading doubles off the stack from incorrect offsets with 
+    "-f8" has been fixed.
+5)  Registerized parameters loads up parm with correct offsets.      
+6)  Short integer constants too wide for a short with "-w" option are now 
+    silently promoted.                       
+7)  Formal register double parameters are now loaded correctly with "-f8".
+8)  Mixing "-b0" and "-r1" options now works correctly.         
+9)  Undefined symbol errors have been fixed.                  
+10) Fast floating point problem, "-ff", has been fixed.
+11) Mixing "-b0" and "-x" problem has been fixed.        
+12) The "-b0" option generating incorrect offset for reverse pc-relative 
+    calls has been fixed.
+13) The __saveds keyword has been fixed.                          
+14) 68020 generates correct code for indexing.  
+15) Address of external strings coalescing with "b0" has been fixed.
+16) The "-v -y" options now work correctly when used together.
+17) The "-x" option now works for initializers.
+18) Listing option puts correct version number on page headers.
+19) The __builtin_strlen function has been fixed.
+20) Chip keyword no longer causes relocs to incorrect hunk.            
+21) The volatile keyword now works.                
+22) Autoincrement with shorts now clears out data register.  
+23) Indexing by an unsigned short no longer loses register contents.
+24) Insufficient registers for call through function ptr has been fixed.
+25) Header files causing a stack overflow has been fixed.           
+26) Constants like 0x3E8 are now loaded correctly under ms.         
+27) Multiply by 255 now works.                           
+28) The "-s" option now works.                                 
+29) Compiler now preserves D2/D3 on calls to CXM55.      
+
+CodeProbe
+---------
+1)  The catch command no longer causes gurus if an invalid task name is 
+    specified.
+2)  Detach successfully restarts a task before detaching.
+3)  If a task is waiting on a message port when a <CTRL>-C is typed
+    from the debugger, the task can now be re-started successfully.
+4)  The disassembled instruction bytes are now displayed as words:
+    00C01234: xxxx xxxx xxxx      MOVE.L  a0,foo
+5)  Invoking the debugger before any other access to ram: no longer causes
+    the debugger to hang.
+6)  The commands dd and df with the %e and %g format now print exponents 
+    correctly.
+7)  The dump commands now display correctly when a register is given as
+    an argument.
+8)  The debugger now removes tasks that exit by calling RemTask(0)
+    from its active task list.
+9)  If a call to DeviceProc() or OpenDevice() open a device for the very
+    first time, an AddTask() is performed to create the Device handler.
+    By default, the debugger no longer grabs the new task. In most cases 
+    this is the desirable action, however this is probably not what people 
+    who debug device drivers will want to do.  Therefore, an option is 
+    provided to allow these tasks to be caught. This option is the last
+    selection in the Options menu.
+10) AutoSwap mode and instruction bytes now default to OFF.
+
+LC
+--
+1) "H" option fixed.
+2) "q" or "o" option lets you specify any extension for precompiled headers.
+3) "R" option fixed.
+4) Put "" in .lnk files so filenames with spaces will work.
+
+BLINK
+-----
+1) Handles "" in with files correctly.
+2) Handles Overlays correctly again.
+3) Handles large libraries and libraries with debugging information 
+   correctly.
+4) Does not write out 0 length code hunks.
+
+LSE
+---
+1) Compile from memory gives you more information and does not cause
+   bad characters to appear on the bottom of the screen.
+2) The autoindent and '}' bug has been fixed.
+3) Interlace mode now sizes window correctly.
+4) The "-o" option is no longer necessary on compile options.
+5) LSE is significantly smaller in code size.
+6) You can now RUN LSE and still compile from memory.
+ 
+LMK
+---
+1) Handles default rules correctly.
+
+ASM
+---
+1) Minor code generation bugs fixed.
+2) Puts out warnings for BRA.L and 68030 instructions on 68000.
+3) CSECT allows PC relative or base relative addressing by default.
+
+TB
+--
+1) Handles Chip and Fast bits correctly.
+
+LIBRARIES and HEADERS
+---------------------
+1) lcm881.lib works correctly now.
+2) Stubs added for registerized parmeters so AMIGA.LIB is totally optional.
+3) _exit fixed.
+4) Overlay manager fixed.
+5) The startup routine cback.o has been fixed.
+6) DeleteExtIO and CreateExtIO now are like AMIGA.LIB. The prototype in
+   proto/exec.h was also corrected.
+7) astcsma is now case insensitive.
+8) A bug in DOS.H that happened when short ints were used has been fixed.
+   It fixes the problem with getmem() returning memory on long word
+   boundaries only, and fixes the problem with getfnl().
+9) A prototype for system() was added to stdlib.h
+10) CreateTask and DeleteTask now function like AMIGA.LIB
+11) LCNB.LIB and LCSNB.LIB now work without linking in the math library.
+12) The macro offsetof was added to stddef.h
+13) BSTR * was changed to BSTR in libraries/dosextens.h
+14) The %e in printf and similar fuctions has been fixed.
+15) grep.lib included.

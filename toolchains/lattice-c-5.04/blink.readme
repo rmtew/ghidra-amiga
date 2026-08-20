@@ -1,0 +1,33 @@
+The new Blink comes with an added feature for generating resident
+libraries. Here's how to do it:
+  
+1) Make sure that all modules in the library are compiled with the
+   "-ml" option and use the "__saveds" keyword (or -y option). "-b0"
+    is not allowed.
+    
+2) Create a .fd file for your library.
+
+3) Link with the command line:
+
+blink LIBPREFIX _LIB LIBFD fdfile TO libname FROM libent.o libinit.o libmodules
+
+where 
+    LIBPREFIX is an optional keyword that specifies what prefix to add the
+              the functions listed in the .fd file. _LIB is the prefix in 
+	      this example. The default is simply an _. Note that without 
+	      this keyword, you can't use stubs to call this library. Also
+	      remember that the compiler adds an underscore to everything so
+	      if you define your function as _LIBtest() in your C code,
+	      the prefix should be __LIB.
+	      
+    LIBFD is a new keyword used to specify the name of the .fd file (fdfile).
+
+    libent.o contains the RomTag for the library, MUST BE FIRST (ala c.o).
+
+    libinit.o contains Open, Close, Expunge, and other init stuff,
+              MUST BE THE SECOND MODULE.
+
+    libmodules are user modules.
+		
+   
+

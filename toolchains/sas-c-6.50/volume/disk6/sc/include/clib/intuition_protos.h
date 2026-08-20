@@ -1,0 +1,192 @@
+ÄàCLIB_INTUITION_PROTOS_HÄCLIB_INTUITION_PROTOS_HàINTUITION_INTUITION_Hå<intuition/intuition.h>áàINTUITION_CLASSES_Hå<intuition/classes.h>áàINTUITION_CGHOOKS_Hå<intuition/cghooks.h>áàINTUITION_CLASSUSR_Hå<intuition/classusr.h>á
+ãOpenIntuition(ã);
+ãIntuition(ÉInputEvent*iEvent);
+âAddGadget(ÉWindow*window,Éª*gadget,
+éçposition);
+BOOL ClearDMRequest(ÉWindow*window);
+ãClearMenuStrip(ÉWindow*window);
+ãClearPointer(ÉWindow*window);
+BOOL CloseScreen(ÉScreen*screen);
+ãCloseWindow(ÉWindow*window);
+íCloseWorkBench(ã);
+ãCurrentTime(ó*seconds,ó*micros);
+BOOL DisplayAlert(éçalertNumber,ä*string,
+éçheight);
+ãDisplayBeep(ÉScreen*screen);
+BOOL DoubleClick(éçsSeconds,éçsMicros,
+éçcSeconds,éçcMicros);
+ãDrawBorder(ÉRastPort*rp,ÉBorder*border,çleftOffset,
+çtopOffset);
+ãDrawImage(ÉRastPort*rp,ÉImage*image,çleftOffset,
+çtopOffset);
+ãEndRequest(ÉRequester*requester,ÉWindow*window);
+ÉPreferences*GetDefPrefs(ÉPreferences*preferences,çsize);
+ÉPreferences*GetPrefs(ÉPreferences*preferences,çsize);
+ãInitRequester(ÉRequester*requester);
+ÉMenuItem*ItemAddress(ÉMenu*menuStrip,
+éçmenuNumber);
+BOOL ModifyIDCMP(ÉWindow*window,éçflags);
+ãModifyProp(Éª*gadget,ÉWindow*window,
+ÉRequester*requester,éçflags,
+éçhorizPot,éçvertPot,
+éçhorizBody,éçvertBody);
+ãMoveScreen(ÉScreen*screen,çdx,çdy);
+ãMoveWindow(ÉWindow*window,çdx,çdy);
+ãOffGadget(Éª*gadget,ÉWindow*window,
+ÉRequester*requester);
+ãOffMenu(ÉWindow*window,éçmenuNumber);
+ãOnGadget(Éª*gadget,ÉWindow*window,
+ÉRequester*requester);
+ãOnMenu(ÉWindow*window,éçmenuNumber);
+ÉScreen*OpenScreen(ÉNewScreen*newScreen);
+ÉWindow*OpenWindow(ÉNewWindow*newWindow);
+óOpenWorkBench(ã);
+ãPrintIText(ÉRastPort*rp,ÉIntuiText*iText,çleft,
+çtop);
+ãRefreshGadgets(Éª*gadgets,ÉWindow*window,
+ÉRequester*requester);
+âRemoveGadget(ÉWindow*window,Éª*gadget);
+ãReportMouse(çflag,ÉWindow*window);
+ãReportMouse1(ÉWindow*window,çflag);
+BOOL Request(ÉRequester*requester,ÉWindow*window);
+ãScreenToBack(ÉScreen*screen);
+ãScreenToFront(ÉScreen*screen);
+BOOL SetDMRequest(ÉWindow*window,ÉRequester*requester);
+BOOL SetMenuStrip(ÉWindow*window,ÉMenu*menu);
+ãSetPointer(ÉWindow*window,â*pointer,çheight,
+çwidth,çxOffset,çyOffset);
+ãSetWindowTitles(ÉWindow*window,ä*windowTitle,
+ä*screenTitle);
+ãShowTitle(ÉScreen*screen,çshowIt);
+ãSizeWindow(ÉWindow*window,çdx,çdy);
+ÉView*ViewAddress(ã);
+ÉViewPort*ViewPortAddress(ÉWindow*window);
+ãWindowToBack(ÉWindow*window);
+ãWindowToFront(ÉWindow*window);
+BOOL WindowLimits(ÉWindow*window,çwidthMin,çheightMin,
+éçwidthMax,éçheightMax);
+ÉPreferences*SetPrefs(ÉPreferences*preferences,çsize,
+çinform);
+íIntuiTextLength(ÉIntuiText*iText);
+BOOL WBenchToBack(ã);
+BOOL WBenchToFront(ã);
+BOOL AutoRequest(ÉWindow*window,ÉIntuiText*body,
+ÉIntuiText*posText,ÉIntuiText*negText,
+éçpFlag,éçnFlag,éçwidth,
+éçheight);
+ãBeginRefresh(ÉWindow*window);
+ÉWindow*BuildSysRequest(ÉWindow*window,ÉIntuiText*body,
+ÉIntuiText*posText,ÉIntuiText*negText,
+éçflags,éçwidth,éçheight);
+ãEndRefresh(ÉWindow*window,çcomplete);
+ãFreeSysRequest(ÉWindow*window);
+íMakeScreen(ÉScreen*screen);
+íRemakeDisplay(ã);
+íRethinkDisplay(ã);
+îAllocRemember(ÉRemember**rememberKey,éçsize,
+éçflags);
+ãAlohaWorkbench(çwbport);
+ãFreeRemember(ÉRemember**rememberKey,çreallyForget);
+óLockIBase(éçdontknow);
+ãUnlockIBase(éçibLock);
+íGetScreenData(îbuffer,éçsize,éçtype,
+ÉScreen*screen);
+ãRefreshGList(Éª*gadgets,ÉWindow*window,
+ÉRequester*requester,çnumGad);
+âAddGList(ÉWindow*window,Éª*gadget,
+éçposition,çnumGad,ÉRequester*requester);
+âRemoveGList(ÉWindow*remPtr,Éª*gadget,
+çnumGad);
+ãActivateWindow(ÉWindow*window);
+ãRefreshWindowFrame(ÉWindow*window);
+BOOL ActivateGadget(Éª*gadgets,ÉWindow*window,
+ÉRequester*requester);
+ãNewModifyProp(Éª*gadget,ÉWindow*window,
+ÉRequester*requester,éçflags,
+éçhorizPot,éçvertPot,
+éçhorizBody,éçvertBody,çnumGad);
+íQueryOverscan(éçdisplayID,ÉRectangle*rect,
+çoScanType);
+ãMoveWindowInFrontOf(ÉWindow*window,
+ÉWindow*behindWindow);
+ãChangeWindowBox(ÉWindow*window,çleft,çtop,çwidth,
+çheight);
+ÉHook*SetEditHook(ÉHook*hook);
+íSetMouseQueue(ÉWindow*window,éçqueueLength);
+ãZipWindow(ÉWindow*window);
+ÉScreen*LockPubScreen(ä*name);
+ãUnlockPubScreen(ä*name,ÉScreen*screen);
+ÉÆ*LockPubScreenList(ã);
+ãUnlockPubScreenList(ã);
+ä*NextPubScreen(ÉScreen*screen,ä*namebuf);
+ãSetDefaultPubScreen(ä*name);
+âSetPubScreenModes(éçmodes);
+âPubScreenStatus(ÉScreen*screen,éçstatusFlags);
+ÉRastPort*ObtainGIRPort(ÉGadgetInfo*gInfo);
+ãReleaseGIRPort(ÉRastPort*rp);
+ãGadgetMouse(Éª*gadget,ÉGadgetInfo*gInfo,
+ò*mousePoint);
+ãGetDefaultPubScreen(ä*nameBuffer);
+íEasyRequestArgs(ÉWindow*window,ÉEasyStruct*easyStruct,
+ó*idcmpPtr,îargs);
+íEasyRequest(ÉWindow*window,ÉEasyStruct*easyStruct,
+ó*idcmpPtr,...);
+ÉWindow*BuildEasyRequestArgs(ÉWindow*window,
+ÉEasyStruct*easyStruct,éçidcmp,îargs);
+ÉWindow*BuildEasyRequest(ÉWindow*window,
+ÉEasyStruct*easyStruct,éçidcmp,...);
+íSysReqHandler(ÉWindow*window,ó*idcmpPtr,çwaitInput);
+ÉWindow*OpenWindowTagList(ÉNewWindow*newWindow,
+ÉTagItem*tagList);
+ÉWindow*OpenWindowTags(ÉNewWindow*newWindow,
+éçtag1Type,...);
+ÉScreen*OpenScreenTagList(ÉNewScreen*newScreen,
+ÉTagItem*tagList);
+ÉScreen*OpenScreenTags(ÉNewScreen*newScreen,
+éçtag1Type,...);
+ãDrawImageState(ÉRastPort*rp,ÉImage*image,çleftOffset,
+çtopOffset,éçstate,ÉDrawInfo*drawInfo);
+BOOL PointInImage(éçpoint,ÉImage*image);
+ãEraseImage(ÉRastPort*rp,ÉImage*image,çleftOffset,
+çtopOffset);
+îNewObjectA(ÉIClass*classPtr,ä*classID,
+ÉTagItem*tagList);
+îNewObject(ÉIClass*classPtr,ä*classID,éçtag1,
+...);
+ãDisposeObject(îobject);
+óSetAttrsA(îobject,ÉTagItem*tagList);
+óSetAttrs(îobject,éçtag1,...);
+óGetAttr(éçattrID,îobject,ó*storagePtr);
+óSetGadgetAttrsA(Éª*gadget,ÉWindow*window,
+ÉRequester*requester,ÉTagItem*tagList);
+óSetGadgetAttrs(Éª*gadget,ÉWindow*window,
+ÉRequester*requester,éçtag1,...);
+îNextObject(îobjectPtrPtr);
+ÉIClass*MakeClass(ä*classID,ä*superClassID,
+ÉIClass*superClassPtr,éçinstanceSize,
+éçflags);
+ãAddClass(ÉIClass*classPtr);
+ÉDrawInfo*GetScreenDrawInfo(ÉScreen*screen);
+ãFreeScreenDrawInfo(ÉScreen*screen,ÉDrawInfo*drawInfo);
+BOOL ResetMenuStrip(ÉWindow*window,ÉMenu*menu);
+ãRemoveClass(ÉIClass*classPtr);
+BOOL FreeClass(ÉIClass*classPtr);
+ÉScreenBuffer*AllocScreenBuffer(ÉScreen*sc,ÉBitMap*bm,
+éçflags);
+ãFreeScreenBuffer(ÉScreen*sc,ÉScreenBuffer*sb);
+óChangeScreenBuffer(ÉScreen*sc,ÉScreenBuffer*sb);
+ãScreenDepth(ÉScreen*screen,éçflags,îreserved);
+ãScreenPosition(ÉScreen*screen,éçflags,çx1,
+çy1,çx2,çy2);
+ãScrollWindowRaster(ÉWindow*win,çdx,çdy,çxMin,
+çyMin,çxMax,çyMax);
+ãLendMenus(ÉWindow*fromwindow,ÉWindow*towindow);
+óDoGadgetMethodA(Éª*gad,ÉWindow*win,
+ÉRequester*req,Msg message);
+óDoGadgetMethod(Éª*gad,ÉWindow*win,
+ÉRequester*req,éçMethodID,...);
+ãSetWindowPointerA(ÉWindow*win,ÉTagItem*taglist);
+ãSetWindowPointer(ÉWindow*win,éçtag1,...);
+BOOL TimedDisplayAlert(éçalertNumber,ä*string,
+éçheight,éçtime);
+ãHelpControl(ÉWindow*win,éçflags);á

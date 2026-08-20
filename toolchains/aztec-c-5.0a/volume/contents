@@ -1,0 +1,307 @@
+
+                               DISK CONTENTS
+							   -------------
+
+Following is a list of files contained on the Aztec C 5.0a distribution
+disks.  The entire contents of each disk is listed, except for the 
+following:
+
+                * Amiga C 1.3 include files
+                  Disk 1
+                * Workbench 1.3 files
+                  Disk 1
+                * Amiga Assembly include files
+                  Disk 2
+                * Example programs
+                  Disk 4
+
+The 'crc' number next to each file name is the number obtained by running
+the Aztec utility crc.  If you are having a problem with a utilty or
+program acting strangely and/or crashing, you should run the crc utility
+on the program in question, and compare it with the number listed here
+to insure that the program was not damaged or corrupted on the disk.
+
+---------------------------------------------------------------------------
+                                    DISK 1
+---------------------------------------------------------------------------
+/
+Root directory
+
+	-hdinstall: crc=5012
+	    Hard disk installation program
+	-floppyinst: crc=664c
+	    Floppy disk installation program
+
+/INCLUDE:
+Standard ANSI and Aztec header files.
+
+	-include/stdlib.h: crc=7e96
+	    ANSI library declarations
+	-include/time.h: crc=614e
+	    ANSI time declarations
+	-include/obj68k.h: crc=a516
+		Aztec 68000 object-module format information
+	-include/float.h: crc=7aa5
+		ANSI floating point information
+	-include/limits.h: crc=8871
+		ANSI definition of compiler limits (integer range, etc.)
+	-include/setjmp.h: crc=4036
+		ANSI definitions for use w/ setjmp() and longjmp()
+	-include/locale.h: crc=6ea3
+		ANSI definitions for locales (only the C locale is
+		currently supported).
+	-include/signal.h: crc=b483
+		ANSI definitions of supported signals (for use with
+		the signal() and raise() functions).
+	-include/errno.h: crc=9ec9
+		ANSI definitions of standard I/O and math errors
+	-include/pragmas.h: crc=597a
+		Aztec definitions for in-line generation of resident library
+		calls.
+	-include/math.h: crc=58a8
+		ANSI definitions for floating point math.
+	-include/assert.h: crc=5021
+		ANSI definitions for the assert macro.
+	-include/stdio.h: crc=39ca
+		ANSI defintions for standard I/O (fread, printf, etc).
+	-include/stddef.h: crc=70c8
+		ANSI miscellaneous definition.
+	-include/stat.h: crc=b31b
+		UNIX definitions for file statistic.
+	-include/stdarg.h: crc=e0bf
+		ANSI definitions for variable argument passing.
+	-include/ctype.h: crc=2deb
+		ANSI definitions for determing and altering character types.
+	-include/fcntl.h: crc=8651
+		UNIX/Aztec definitions for unbuffered I/O
+	-include/functions.h: crc=3ae8
+		Aztec declarations and prototypes of Amiga resident library 
+		functions.
+	-include/string.h: crc=0f6d
+		ANSI declarations for string handle.
+	-include/sgtty.h: crc=5c97
+		Unix declarations for I/O handling.
+
+---------------------------------------------------------------------------
+                                    DISK 2
+---------------------------------------------------------------------------
+
+/BIN:
+Executable files.
+
+	-bin/cnm: crc=338f
+		Dumps Aztec object-module/object-library symbol tables.
+	-bin/cmp: crc=c663
+		Compares two files byte-by-byte.
+	-bin/cc: crc=bbf5
+		Aztec C 5.0a compiler.
+	-bin/cat: crc=67e5
+		Types an input file out to stdout.
+	-bin/obcv: crc=3031
+		Object module converter.
+	-bin/hd: crc=a621
+		Dumps a specified module out in hex/ASCII.
+	-bin/adump: crc=13dd
+		Dumps information on an Amiga executable file.
+	-bin/as: crc=d912
+		Aztec 5.0a assembler.
+	-bin/ls: crc=e9cd
+		Unix-style directory command
+	-bin/set: crc=8fc9
+		Sets environment variables.
+	-bin/crc: crc=4e10
+		Calculates a unique CRC number for the input file.
+	-bin/mkarcv: crc=140f
+		Concatenates ASCII files together.
+	-bin/ln: crc=8427
+		Aztec 5.0a linker.
+	-bin/z: crc=4a2f
+		A Unix VI-compatible editor.
+	-bin/lb: crc=af6a
+		Maintains object modules libraries in Aztec format.
+	-bin/mclk: crc=3575
+		Clock & memory usage utility.
+	-bin/ord: crc=59b7
+		Orders object modules for placement in a library.
+	-bin/arcv: crc=83ec
+		Splits files created with the mkarcv utility.
+	-bin/touch: crc=0f0c
+		Updates a files time and date to the current time and date.
+	-bin/du: crc=a3d0
+		Displays disk usage statistics.
+	-bin/avail: crc=c6b1
+		Displays memory usage.
+	-ctags: crc=b98d
+		Utility for tagging function locations within C source files, for
+		use with the Z editor.
+
+/LIB:
+Aztec C linkable libraries.
+
+	-lib/m.lib: crc=6335
+		Manx IEEE floating point library (small code/small data, 
+		32-bit ints).
+	-lib/m16.lib: crc=b69e
+		Manx IEEE floating point library (small code/small data, 
+		16-bit ints).
+	-lib/ma.lib: crc=0002
+		Amiga IEEE floating point library (small code/small data, 
+		32-bit ints).
+	-lib/m8.lib: crc=64b2
+		68881 coprocessor floating point library (small code/small data,
+		32-bit ints).
+	-lib/ma16.lib: crc=e33f
+		Amiga IEEE floating point library (small code/small data,
+		16-bit ints).
+	-lib/m816.lib: crc=a1c2
+		68881 coprocessor floating point library (small code/small data,
+		16-bit ints).
+	-lib/mf16.lib: crc=8b5f
+		Fast Floating Point (FFP) library (small code/small data, 16-bit
+		ints).
+	-lib/c16.lib: crc=35e1
+		Standard C library (small code/small data, 16-bit ints).
+	-lib/c.lib: crc=e40f
+		Standard C library (small code/small data, 32-bit ints).
+	-lib/mf.lib: crc=6fec
+		Fast Floating Point (FFP) library (small code/small data, 32-bit
+		ints).
+
+---------------------------------------------------------------------------
+                                    DISK 3
+---------------------------------------------------------------------------
+
+/ARP:
+ARP files.
+
+	-arp/arprel3.zoo: crc=7a7d
+		Arp 1.3 release files (requires Zoo to de-archive).
+	-arp/appro.zoo: crc=9e64
+		Arp 1.3 developer files (requires Zoo to de-archive).
+
+/BIN:
+Executable files.
+
+	-bin/uniq: crc=2fc3
+		Prints differences between lines in a file.
+	-bin/diff: crc=19f1		NOTE: Not present in Professional Package
+		Displays differences between source files.
+	-bin/grep: crc=3b8e		NOTE: Not present in Professional Package
+		Searches for patterns or strings within specified files.
+	-bin/obd: crc=f8e6
+		Dumps Aztec-format object modules.
+	-bin/setdat: crc=7fd9
+		Sets date.
+	-bin/make: crc=45f1		NOTE: Not present in Professional Package
+		Project maintenace utility.
+
+/CRT_SRC:
+Startup and exit code source code.
+
+	-crt_src/vars.c: crc=0153
+		Declarations for startup code (source code).
+	-crt_src/_exit.c: crc=3330
+		Standard _exit() routine (source code).
+	-crt_src/wbparse.c: crc=dfff
+		Routines for parsing Workbench-passed parameters (source code).
+	-crt_src/crt0.a68: crc=b785
+		Standard Aztec startup code (source code).
+	-crt_src/cliparse.c: crc=ca23
+		Routines for parsing CLI-passed parameters (source code).
+	-crt_src/_main.c: crc=bd7d
+		Standard Aztec startup code (source code).
+
+/LIB:
+Aztec C linkable libraries.
+
+	-lib/mal16.lib: crc=dca7
+		Amiga IEEE floating point library (large code/large data, 16-bit
+		ints).
+	-lib/cl16.lib: crc=6d76
+		Standard C library (large code/large data, 16-bit ints).
+	-lib/cl.lib: crc=9ba8
+		Standard C library (large code/large data, 32-bit ints).
+	-lib/mal.lib: crc=16fe
+		Amiga IEEE floating point library (large code/large data, 32-bit
+		ints).
+	-lib/ml.lib: crc=ae76
+		Manx IEEE floating point library (large code/large data, 
+		32-bit ints).
+	-lib/mfl.lib: crc=8621
+		Fast Floating Point (FFP) library (large code/large data,
+		32-bit ints).
+	-lib/mfl16.lib: crc=712a
+		Fast Floating Point (FFP) library (large code/large data,
+		16-bit ints).
+
+---------------------------------------------------------------------------
+                                    DISK 4
+---------------------------------------------------------------------------
+
+/BIN:
+Executable programs.
+
+	-bin/mackie: crc=56b2
+		Screen-saver utility.
+	-bin/db: crc=ef49
+		Assembly-level debugger
+	-bin/db.info: crc=0dca
+		Icons for db.
+	-bin/sdbf: crc=2a34		NOTE: Not present in Professional Package
+		Aztec Source-Level Debugger (FFP version).
+	-bin/sdb: crc=f207		NOTE: Not present in Professional Package
+		Aztec Source-Level Debugger (non-FFP version).
+
+/LIB:
+Aztec C linkable libraries.
+
+	-lib/sl.lib: crc=f608
+		Screen-function library (large code/large data, 32-bit ints).
+	-lib/m8l16.lib: crc=b78a
+		68881 coprocessor library (large code/large data, 16-bit ints).
+	-lib/sl16.lib: crc=09aa
+		Screen-function library (large code/large data, 16-bit ints).
+	-lib/s.lib: crc=ddb3
+		Screen-function library (small code/small data, 32-bit ints).
+	-lib/ml16.lib: crc=6d2b
+		Manx IEEE floating point library (large code/large data, 16-bit
+		ints).
+	-lib/m8l.lib: crc=e766
+		68881 coprocessor library (large code/large data, 32-bit ints).
+	-lib/s16.lib: crc=a95a
+		Screen-function library (small code/small data, 16-bit ints).
+	-lib/detach.oss: crc=85ca
+		Alternate startup code for detaching from parent process.
+		Uses small code, small data, 16-bit ints.
+	-lib/detach.osl: crc=c813
+		Alternate startup code for detaching from parent process.
+		Uses large code, large data, 16-bit ints.
+	-lib/detach.ols: crc=9ecb
+		Alternate startup code for detaching from parent process.
+		Uses small code, small data, 32-bit ints.
+	-lib/detach.oll: crc=da8a
+		Alternate startup code for detaching from parent process.
+		Uses large code, large data, 32-bit ints.
+
+/RES_LIB:
+Files for creating resident libraries in C.
+
+	-res_lib/mylib.fd: crc=4ab0
+		Example .fd file.
+	-res_lib/libstart.asm: crc=3b07
+		Resident library startup code.
+	-res_lib/test.c: crc=d378
+		Example code.
+	-res_lib/makefile: crc=fa40
+		Makefile for resident library example.
+	-res_lib/libsup.c: crc=2664
+		General code/definitions for resident libraries.
+	-res_lib/mylib.h: crc=c5e7
+		Example header file for resident libraries.
+	-res_lib/mylib.c: crc=30f7
+		Example source for resident libraries.
+	-res_lib/MAPFD: crc=3f56
+		Creates .fd files.
+	-res_lib/readme: crc=940a
+
+

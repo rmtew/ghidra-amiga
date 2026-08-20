@@ -1,0 +1,8 @@
+FROM LIB:c.o root.o
+LIBRARY LIB:sc.lib LIB:amiga.lib
+OVLYMGR ovs.o
+OVERLAY
+middle.o
+*leaf.o
+#
+TO sas-nested

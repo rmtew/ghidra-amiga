@@ -1,0 +1,70 @@
+@database sc_help
+
+
+Copyright (c) 1992 SAS Institute, Inc, Cary, NC
+All Rights Reserved
+
+
+
+@master sc:help/sc_help.guide
+@node main "SAS/C Help"
+This is the main help screen for the SAS/C AmigaGuide Help Utility.  This
+screen provides links to all other SAS/C Help Screens.
+
+             @{" CodePRobe Debugger (CPR)                        " link "sc:help/cpr.guide/main"}
+             @{" Compiler and Linker Error and Warning Messages  " link "sc:help/scmsg.guide/main"}
+             @{" Utilities                                       " link "sc:help/sc_util.guide/main"}
+             @{" Compiler Options                                " link "sc:help/sc.guide/main"}
+             @{" Linker Options                                  " link "sc:help/sc_util.guide/slink options"}
+             @{" Library Functions                               " link "sc:help/sc_lib.guide/main"}
+             @{" SAS/C Editor (SE)                               " link "sc:help/se.guide/main"}
+             @{" Common Problems                                 " link "sc:help/sc_prob.guide/main"}
+             @{" Changes to the Documentation                    " link "sc:help/sc_change.guide/main"}
+             @{" Contacting Technical Support                    " link tech}
+@endnode
+
+@node tech "Contacting Technical Support"
+
+Before contacting Technical Support, you should have the following:
+
+         - Your registration number
+         - Your version number
+         - A complete and succinct problem description
+         - A list of which compiler and linker options you are using
+         - A list of which parts of the product that you did not install
+
+To contact Technical Support, call:
+
+   In the US, Canada, and Europe:   (919) 677-8009
+
+                    In Australia:   (02) 428 0428
+
+                  In New Zealand:   (04) 727 595
+@endnode
+@node HELP "HELP"
+You have reached this Help window by either clicking on the Help
+button or by hitting the Help key within the SAS/C Help utility.
+Unlike other help topics present in the SAS/C Help utility, the Help
+help topic opens its own window.  You must close this window by
+clicking on the close gadget or hitting escape before returning to
+the SAS/C help utility.  You cannot hit the Retrace button to return.
+
+To quit the SAS/C Help utility, select Quit from the Project menu or
+click on the close gadget.  You may also hit escape.
+
+Most help screens will display one or more buttons as part of the text.
+Clicking on these buttons will provide further information on the topic
+listed on the button.  You can also reach these help topics through the
+main Contents screen or one of its sub-screens.
+
+In addition, double-clicking in the help window will bring up a help
+screen for the word under the mouse cursor, if such a help screen
+exists.
+
+While in the SAS/C Help utility, you may retrace your steps through the
+help screens you have selected by clicking on the Retrace button.
+
+The Browse buttons will move you forward and backwards between help
+screens.  The help screens are usually arranged alphabetically by
+command or topic.
+@endnode

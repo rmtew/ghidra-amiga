@@ -1,0 +1,54 @@
+	include	'exec/types.i'
+	include	'exec/resident.i'
+	include	'exec/nodes.i'
+	include	'exec/libraries.i'
+
+PRI	equ	0
+
+
+	section  text,code
+   
+	xref	_LibID
+	xref	_LibName
+	xref	RESLEN
+	xref	_BSSBAS		* linker defined base of BSS
+	xref	_BSSLEN		* linker defined length of BSS
+	xref	_LibFuncTab
+	xref	_LibInitTab
+			
+
+	CNOP	4
+	xref	_LibInit
+	xdef	_LibRomTag
+	
+	moveq	#0,d0
+	rts
+_LibRomTag:
+	dc.w	RTC_MATCHWORD
+	dc.l	_LibRomTag
+	dc.l	endtag
+*	dc.b	RTF_AUTOINIT
+*	dc.b	_LibVersion
+	dc.w	RTF_AUTOINIT<<8+_LibVersion
+       IFD DEVICE
+	dc.b	NT_DEVICE
+       ELSE
+	dc.b 	NT_LIBRARY
+       ENDC
+	dc.b	PRI
+	dc.l	_LibName
+	dc.l	_LibID
+	dc.l	_LibInitTab
+endtag:
+	section	__MERGED,data
+	xdef	_Libmergeddata
+_Libmergeddata	dc.l	0
+
+	csect	 data,0,1,1,2
+        xref     _LibVersion    * need a 16 bit reloc here
+
+
+	end
+	
+
+

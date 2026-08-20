@@ -9,16 +9,30 @@ import ghidra.app.util.importer.MessageLog;
 public final class BinFmtHunk {
 
 	public static BinImage loadImage(HunkBlockFile hbf, MessageLog log) {
+		HunkLoadSegFile lsf = loadSegFile(hbf, log);
+		return lsf == null ? null : createImage(lsf, log);
+	}
+
+	public static HunkLoadSegFile loadSegFile(HunkBlockFile hbf, MessageLog log) {
 		try {
 			HunkLoadSegFile lsf = new HunkLoadSegFile();
 			lsf.parseBlockFile(hbf);
-			return createImageFromLoadSegFile(lsf);
+			return lsf;
 		} catch (HunkParseError e) {
 			log.appendException(e);
 			return null;
 		}
 	}
 	
+	public static BinImage createImage(HunkLoadSegFile lsf, MessageLog log) {
+		try {
+			return createImageFromLoadSegFile(lsf);
+		} catch (HunkParseError e) {
+			log.appendException(e);
+			return null;
+		}
+	}
+
 	private static BinImage createImageFromLoadSegFile(HunkLoadSegFile lsf) throws HunkParseError {
 		int num = 0;
 		
@@ -50,9 +64,11 @@ public final class BinFmtHunk {
 				throw new HunkParseError(String.format("Unknown Segment Type for BinImage: %d", seg.getHunkType().getValue()));
 			}
 			
-			Segment bs = new Segment(segType, size, data, num++);
+			HunkLoadSegFile.Node node = lsf.getOwner(seg);
+			int logicalSlot = node == null ? num : findLogicalSlot(node, seg);
+			Segment bs = new Segment(segType, size, data, num++, logicalSlot, node);
 			bs.setSegmentInfo(seg);
-			bi.addSegment(bs);
+			bi.addSegment(bs, seg);
 		}
 		
 		Segment[] biSegs = bi.getSegments();
@@ -63,7 +79,7 @@ public final class BinFmtHunk {
 			HunkSymbolBlock[] symbolBlocks = hSeg.getSymbolBlocks();
 			
 			if (relocBlocks != null) {
-				addHunkRelocs(relocBlocks, seg, biSegs);
+				addHunkRelocs(relocBlocks, seg, lsf, bi);
 			}
 			if(symbolBlocks != null) {
 				addHunkSymbols(symbolBlocks, seg, biSegs);
@@ -72,18 +88,42 @@ public final class BinFmtHunk {
 		
 		return bi;
 	}
+
+	private static int findLogicalSlot(HunkLoadSegFile.Node node, HunkSegment segment) throws HunkParseError {
+		for (int slot = node.getFirstHunk(); slot <= node.getLastHunk(); slot++) {
+			if (node.getSegmentAtLogicalSlot(slot) == segment) {
+				return slot;
+			}
+		}
+		throw new HunkParseError("Physical segment is not owned by its HUNK_HEADER node");
+	}
 	
-	private static void addHunkRelocs(HunkRelocBlock[] relocBlocks, Segment seg, Segment[] allSegs) throws HunkParseError {
+	private static void addHunkRelocs(HunkRelocBlock[] relocBlocks, Segment seg, HunkLoadSegFile loadSegFile,
+			BinImage image) throws HunkParseError {
 		for (HunkRelocBlock blk : relocBlocks) {
 			for (RelocData r : blk.getRelocs()) {
 				int hunkNum = r.getHunkNum();
 				Reloc[] offsets = r.getRelocs();
 				
-				if (hunkNum >= allSegs.length) {
-					throw new HunkParseError("Invalid hunk segment number");
+				HunkSegment targetHunk;
+				if (seg.getNode() == null) {
+					HunkSegment[] allHunks = loadSegFile.getSegments();
+					if (hunkNum < 0 || hunkNum >= allHunks.length) {
+						throw new HunkParseError("Invalid hunk segment number");
+					}
+					targetHunk = allHunks[hunkNum];
 				}
-				
-				Segment toSeg = allSegs[hunkNum];
+				else {
+					targetHunk = loadSegFile.resolveLogicalSlot(seg.getNode(), hunkNum);
+					if (targetHunk == null) {
+						throw new HunkParseError(String.format(
+								"Relocation from logical hunk %d targets unavailable slot %d", seg.getLogicalSlot(), hunkNum));
+					}
+				}
+				Segment toSeg = image.getPhysicalSegment(targetHunk);
+				if (toSeg == null) {
+					throw new HunkParseError("Relocation target has no physical image segment");
+				}
 				
 				List<Reloc> rl = new ArrayList<>();
 				rl.addAll(Arrays.asList(seg.getRelocations(toSeg)));

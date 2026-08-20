@@ -1,0 +1,4422 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          Lattice Screen Editor (LSE (TM)) Reference Manual
+     ----------------------------------------------------------------------
+
+
+                                                                Version 2.0
+
+                                Part of the Lattice C Compiler for AmigaDOS
+
+
+
+
+
+
+
+
+
+
+                                                      Lattice, Incorporated
+                                                    2500 S. Highland Avenue
+                                                          Lombard, IL 60148
+                                                                        USA
+
+
+                                           Subsidiary of SAS Institute Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE) Reference Manual
+
+     Copyright (C) 1987, 1988 by Lattice, Incorporated, Lombard, IL, USA.
+
+     All rights reserved.  Printed in the United States of America.  No
+     part of this publication may be reproduced, stored in a retrieval
+     system, or transmitted, in any form or by any means, electronic or
+     mechanical, photocopying, or otherwise, without the prior written
+     permission of the publisher, Lattice, Incorporated.
+
+
+
+     Lattice(R) is a registered trademark of Lattice, Incorporated.
+     LSE(TM) and HighStyle(TM) are trademarks of Lattice, Incorporated.
+     Amiga(TM) is a registered trademark of Commodore-Amiga, Inc.
+     AmigaDOS(TM) is a trademark of Commodore-Amiga, Inc.
+     Commodore is a registered trademark of Commodore Electronics Limited.
+     UNIX is a registered trademark of AT&T.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                               Table of Contents
+
+
+     1. Overview of LSE                                                  E1
+
+          1.1 Introduction                                               E1
+               1.1.1 Features of LSE                                     E1
+               1.1.2 Contents                                            E1
+          1.2 This Section                                               E2
+          1.3 An Editor for Programmers                                  E2
+               1.3.1 Built to Reduce Your Development Time               E2
+               1.3.2 Up to Speed Quickly                                 E2
+               1.3.3 Editing Modes                                       E3
+               1.3.4 Nine Things at Once                                 E3
+          1.4 LSE Features                                               E3
+
+
+     2. Getting Started                                                  E5
+
+          2.1 Introduction                                               E5
+          2.2 The LSE Environment                                        E5
+          2.3 Installing LSE                                             E5
+          2.4 The Command Line                                           E5
+
+
+     3. Using LSE                                                        E7
+
+          3.1 Introduction                                               E7
+          3.2 The LSE Screen                                             E7
+               3.2.1 The Current Window                                  E7
+               3.2.2 The Status Line                                     E7
+                    3.2.2.1 Current Line Indicator                       E7
+                    3.2.2.2 Current Column Indicator                     E8
+                    3.2.2.3 Current Filename Indicator                   E8
+                    3.2.2.4 Current Mode Indicator                       E8
+                    3.2.2.5 Window Number Indicator                      E8
+                    3.2.2.6 Keystroke Saver Active Indicator             E8
+                    3.2.2.7 Marked Block Indicator                       E8
+                    3.2.2.8 Error Messages                               E9
+               3.2.3 The Prompt Line                                     E9
+               3.2.4 The Input Line                                      E9
+          3.3 Entering Text and Commands                                 E9
+          3.4 Data, Message, and Help Files                             E10
+
+
+     4. Special Keys                                                    E12
+
+          4.1 Introduction                                              E12
+          4.2 Mouse Controls                                            E13
+          4.3 Cursor Movement Keys                                      E13
+          4.4 Change Window Keys                                        E14
+               4.4.1 Change Window (<CTRL-F6>)                          E14
+               4.4.2 Change Window Size (<F9>)                          E15
+               4.4.3 Cycle Windows (<F6>)                               E15
+          4.5 Insert Keys                                               E15
+          4.6 Delete Keys                                               E15
+
+     Lattice Screen Editor LSE                                            i
+
+
+
+
+
+
+
+
+          4.7 The Help Key                                              E16
+          4.8 Change Color Keys                                         E16
+          4.9 Keysaver Macro Keys                                       E16
+               4.9.1 Start or Stop Keysaver Macro (<ALT-#>)             E17
+               4.9.2 Replay a Macro (<ALT-F#>)                          E17
+               4.9.3 Saving Macros                                      E17
+               4.9.4 Loading a Macro File                               E17
+          4.10 Mark Block Keys                                          E18
+               4.10.1 Mark Beginning of Block (<CTRL-[>)                E18
+               4.10.2 Mark End of Block (<CTRL-]>)                      E18
+          4.11 Command Keys                                             E18
+               4.11.1 Block (<CTRL-B>)                                  E19
+               4.11.2 Compile (<F4>)                                    E19
+               4.11.3 Fork Command (<CTRL-F>)                           E20
+               4.11.4 Mode Menu (<CTRL-M>)                              E20
+               4.11.5 Go to Line Number (<CTRL-L>)                      E20
+               4.11.6 Open New Window (<CTRL-O>)                        E20
+               4.11.7 Project Menu (<CTRL-P>)                           E21
+                    4.11.7.1 Finishing an Editing Session               E21
+                    4.11.7.2 File Status                                E21
+                    4.11.7.3 Quit Option                                E22
+                    4.11.7.4 Save Option                                E22
+                    4.11.7.5 Continue Option                            E22
+                    4.11.7.6 Next Option                                E23
+                    4.11.7.7 Open Option                                E23
+                    4.11.7.8 Rename Option                              E23
+                    4.11.7.9 Insert Option                              E23
+                    4.11.7.10 Display Option                            E23
+               4.11.8 Replace (<CTRL-R>)                                E23
+               4.11.9 Search (<CTRL-S>)                                 E24
+               4.11.10 Quit (<F3>)                                      E24
+               4.11.11 Undo (<CTRL-U>)                                  E25
+          4.12 Action Keys                                              E26
+               4.12.1 Menu Toggle (<F2>)                                E26
+               4.12.2 Display Next Error (<F5>)                         E26
+               4.12.3 Enter Escape Character (<CTRL-ESC>)               E27
+               4.12.4 Find Next Match (<ALT-S>)                         E27
+               4.12.5 Interlace Toggle (<CTRL-ENTER>)                   E28
+               4.12.6 Set Compiler Options (<CTRL-F4>)                  E28
+
+
+     5. Compiling From LSE                                              E29
+
+          5.1 Introduction                                              E29
+          5.2 Integrated Environment                                    E29
+          5.3 Before Compiling                                          E29
+          5.4 Compiling Your Source File                                E29
+          5.5 Encountering Syntax Errors                                E30
+          5.6 Reviewing Errors in Your Source File                      E30
+
+
+     6. The LSE Mode Menu                                               E31
+
+          6.1 Introduction                                              E31
+          6.2 Selecting A Mode Menu Option                              E31
+          6.3 Input Modes Option                                        E31
+
+     Lattice Screen Editor LSE                                           ii
+
+
+
+
+
+
+
+
+               6.3.1 Assembly Language Modes                            E32
+               6.3.2 Power-Type Mode                                    E32
+          6.4 Tab Stops Option                                          E32
+          6.5 Expand Tabs to Spaces Option                              E33
+          6.6 Auto Indenting Option                                     E33
+          6.7 Column Display Indicator Option                           E33
+          6.8 Search Parameters Option                                  E33
+          6.9 Prompt Before Undo Option                                 E33
+          6.10 Check Compiler Output for Errors Option                  E34
+
+
+                                  APPENDICES
+
+
+     A. LSE Error Messages                                              E35
+
+          A.1 Introduction                                              E35
+          A.2 Start Up Errors                                           E35
+          A.3 Processing Errors                                         E35
+
+
+     B. Customizing LSE                                                 E40
+
+          B.1 Introduction                                              E40
+          B.2 LSEINST: The Installation Program                         E40
+               B.2.1 The LSE Data File (LSE.DAT)                        E41
+               B.2.2 Running LSEINST                                    E41
+               B.2.3 Changing LSE Keystrokes                            E41
+               B.2.4 Changing LSE Options                               E42
+                    B.2.4.1 Default Options                             E42
+                    B.2.4.2 File Extension Options                      E43
+                    B.2.4.3 Backup File Processing                      E43
+               B.2.5 Leaving LSEINST                                    E44
+                    B.2.5.1 Print the Key Selections                    E44
+                    B.2.5.2 Abandon This Session                        E44
+                    B.2.5.3 Rename the Current Data File                E44
+                    B.2.5.4 Save the Changes Made This Session          E45
+          B.3 Making Changes to LSE.MSG                                 E45
+               B.3.1 Changing Menu Messages                             E45
+          B.4 Making Changes to LSE.HLP                                 E46
+
+
+     C. Special Keys Summary                                            E47
+
+          C.1 Introduction                                              E47
+          C.2 Cursor Movement Keys                                      E47
+          C.3 Change Window Keys                                        E48
+          C.4 Insert Keys                                               E48
+          C.5 Delete Keys                                               E48
+          C.6 Help Key                                                  E49
+          C.7 Change Color Keys                                         E49
+          C.8 Keysaver Macro Keys                                       E49
+          C.9 Mark Block Keys                                           E49
+          C.10 Command Menu Key Functions                               E49
+          C.11 Action Keys                                              E50
+
+
+     Lattice Screen Editor LSE                                          iii
+
+
+
+
+
+
+
+
+     D. Regular Expression Syntax                                       E51
+
+          D.1 Introduction                                              E51
+          D.2 Pattern Search                                            E51
+          D.3 Similar to UNIX grep                                      E51
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE                                           iv
+
+
+
+
+
+
+
+
+                                   Section 1
+
+                                Overview of LSE
+
+     1.1 Introduction
+
+     This major part of the Lattice Amiga C Compiler Manual is the Lattice
+     Screen Editor Reference Manual.  It describes the actions, operations
+     and features of version 2.0 of the Lattice Screen Editor.
+
+     1.1.1 Features of LSE
+
+     The Lattice Screen Editor (LSE(TM)) is an editor that is easy to use
+     and it offers the features, flexibility and power needed by
+     professional programmers.  The LSE editor includes:
+
+          * Amiga mouse pull-down menus, click on gadgets, click on text,
+            and scrollbar,
+
+          * Programmable keystrokes to tailor LSE to your personal
+            preferences,
+
+          * Integrated Compile and Edit capabilities,
+
+          * Nested UNDO capabilities of up to 50 levels,
+
+          * The ability to edit up to nine files at the same time,
+
+          * Easy to use mouse and menu commands,
+
+          * Automatic file back-up,
+
+          * Special input modes for assembly language, automatic tabbing,
+            word wrap for text mode, and auto-indenting on opening brace
+            ({),
+
+          * Pattern and string searches,
+
+          * Keystroke saver macros, and
+
+          * On-line Help.
+
+     1.1.2 Contents
+
+     The Lattice Screen Editor Reference is divided into the following six
+     sections and four appendices:
+
+          * Section 1 presents an overview of LSE and contains a list of
+            the LSE features.
+
+          * Section 2 covers the LSE environment, loading the system, and
+            the command line options.
+
+          * Section 3 describes the basics of editing in LSE and covers the
+            screen, entering text and commands, and the data, message, and
+            help files.
+
+     Lattice Screen Editor LSE                                           E1
+
+
+
+
+
+
+
+
+          * Section 4 describes the Special Keys which control editing, and
+            entering text into a file.
+
+          * Section 5 describes how to compile Lattice C source files from
+            the LSE integrated environment.
+
+          * Section 6 describes the Mode Menu options which control the
+            editing environment.
+
+          * Appendix A presents a list of the error messages which may be
+            generated during execution.
+
+          * Appendix B describes installing and customizing LSE.
+
+          * Appendix C reviews the special keys used while entering text.
+
+          * Appendix D describes the regular expression syntax accepted by
+            LSE.
+
+     1.2 This Section
+
+     Section 1 presents an overview of the Lattice Screen Editor (LSE).
+
+     1.3 An Editor for Programmers
+
+     LSE is written in Lattice C and has been specifically optimized to run
+     on the Amiga.
+
+     1.3.1 Built to Reduce Your Development Time
+
+     Now you can use LSE to write C source code and compile code directly
+     from memory.  Pressing a single key invokes the Lattice C Compiler
+     using your predefined compiler and error checking options.
+
+     Using this integrated compile/edit environment you can compile the
+     source file while buffering compiler syntax errors for later review.
+     Prompts are displayed only during the review cycle.
+
+     You can also elect to check the compiler output either for errors only
+     or for both errors and warnings.
+
+     This integrated concept will greatly reduce your compile/edit cycle
+     which will increase your programming productivity.
+
+     1.3.2 Up to Speed Quickly
+
+     You don't want to waste time learning a new editor, but you want the
+     ability to compile from memory.  So in addition to LSE's standard
+     command structure, we've included a configuration program that enables
+     you to tailor LSE to your personal keystroke preferences.
+
+          * LSE uses spreadsheet-style menus and pulled-down menus with the
+            Amiga mouse and standard Amiga gadgets to get you going fast.
+            And as you become more familiar with the editor you can execute
+            commands via shortcut keys without using the menus.
+
+
+     Lattice Screen Editor LSE                                           E2
+
+
+
+
+
+
+
+
+          * Using the LSE Installation Program you can tailor LSE
+            keystrokes to match those of your current editor.  And you can
+            even change the LSE messages or prompts by editing the LSE
+            message file.
+
+     1.3.3 Editing Modes
+
+     LSE includes special language specific input modes for C language and
+     assembly language programmers as well as a power-type (word-wrap)
+     mode.  LSE can handle files up to the limit of memory on your
+     equipment so you don't have to worry about file sizes.
+
+     1.3.4 Nine Things at Once
+
+     Like any good programmer you are concerned about consistency and
+     continuity.  You want to check out a module you coded at the start of
+     the project to make sure that your current work is structured the same
+     way.  And you want to pull out a few lines of code from there and copy
+     them here.
+
+     That's why LSE can do nine things at once.  You can keep up to nine
+     files in memory, viewing up to two files at the same time.  And under
+     AmigaDOS you can fork LSE leaving it in the background in order to
+     start a compile or perform any other Amiga system task, then switch
+     back and continue editing.
+
+     1.4 LSE Features
+
+     Besides the standard functions you expect in an editor (block
+     manipulation, full screen data entry, etc.) LSE provides you with:
+
+     Lattice C Compiling and         C files can be compiled from memory
+     Error Tracking                  and the output from the compiler can
+                                     be processed by LSE to find lines in
+                                     your source code containing errors or
+                                     warnings.  This fast compile/edit loop
+                                     can greatly reduce your program
+                                     development time.
+
+     Multi-Window Environment        LSE allows you to keep nine files in
+                                     memory.  You can display two files at
+                                     the same time and move and copy data
+                                     between the files quickly and easily.
+                                     In addition, a toggle is provided for
+                                     switching between a full screen
+                                     display and a split screen display.
+
+     Multi-Level Commands            All LSE commands are available either
+                                     through spreadsheet-style menus or
+                                     short-cut keys.  A mouse can be used
+                                     to select menu items or to move the
+                                     editing cursor.  Using the mouse you
+                                     can pull-down the top menus, you can
+                                     click on gadgets, you can click on
+                                     text positioning of the cursor, and
+                                     you can use the scrollbar.
+
+     Lattice Screen Editor LSE                                           E3
+
+
+
+
+
+
+
+
+     Backup Directory                You can target back-up files either to
+                                     the current directory (with an
+                                     extension of .bak) or to a default
+                                     directory.  The automatic back-up
+                                     feature can be disabled.
+
+     Special Input Modes             LSE supports three assembly language
+                                     input modes, giving case folding and
+                                     the designation of a comment
+                                     character.  A power-type (word-wrap)
+                                     mode is also available for preparing
+                                     text to be further manipulated by
+                                     other text processing utilities.
+
+     Full 8-Bit Character Input      LSE supports the entry of any 8-bit
+                                     character into the text.  This allows
+                                     LSE to support special graphics
+                                     characters and foreign character sets.
+
+     Installation Program            An installation program is provided so
+                                     that you can customize any or all of
+                                     LSE's keystrokes.  You may change
+                                     menus, prompts, and help messages by
+                                     editing the message files directly.
+
+     Pattern and String Searches     Text searching can use patterns as
+                                     well as simple strings.  Patterns are
+                                     formed as regular expressions as in
+                                     the popular grep utility.
+
+     Keysaver Macros                 Macros can be created using LSE's
+                                     Keysaver Macro options.  Macros can be
+                                     any combination of commands and
+                                     character strings.  Macros can be
+                                     saved for later use or eliminated
+                                     after an editing session.  A two key
+                                     combination can be designated to start
+                                     the playback of any saved Macro
+                                     character string.
+
+     Auto-Indenting on Open          To make C programming easier, you can
+     Brace ({)                       auto-indent on each open brace ({)
+                                     character.  This is a toggle option
+                                     which can be switched off when using
+                                     LSE for other uses.
+
+     On-Line Help                    <F1> provides on-screen help at
+                                     virtually any level of LSE processing.
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE                                           E4
+
+
+
+
+
+
+
+
+                                   Section 2
+
+                                Getting Started
+
+     2.1 Introduction
+
+     Section 2 describes getting started with LSE.  It covers the LSE
+     environment, loading the system, and the command line options.
+
+     2.2 The LSE Environment
+
+     LSE requires an Amiga system with at least 512K bytes of application
+     memory.  A hard drive is preferred but LSE operates well on a system
+     that has only floppy drives.
+
+     2.3 Installing LSE
+
+     LSE is included as part of the Lattice C Compiler.  Refer to the
+     Lattice C Compiler User's Guide for complete information on installing
+     LSE on your system.
+
+     2.4 The Command Line
+
+     The command line to invoke LSE is:
+
+          lse [-v | [[-ddatafile] file1[.ext] [file2[.ext]]]]
+
+     Where optional information is shown enclosed in brackets ([ ]) and
+     where:
+
+     -v              This option displays the LSE version number and
+                     copyright.  You will need the version number from this
+                     display should you call for support.  The screen is
+                     cleared and your file is displayed in an LSE window.
+
+     -ddatafile      The option -d indicates that a datafile name is being
+                     entered.  The datafile is the name of the file created
+                     by the installation program LSEINST.EXE.  The default
+                     is to search the directories in the PATH variable for
+                     LSE.DAT.  There must be no blank characters between
+                     the option -d and the datafile name.
+
+     file1[.ext]     The file to be read into window 1.  The extension is
+                     optional.  Using LSEINST you can choose to
+                     automatically append default extensions to the file
+                     name (like .c for C source files).
+
+     file2[.ext]     The file to be optionally read into window 2.  Again,
+                     the extension is optional and appended only if the
+                     default (no extension) has been changed.
+
+     You can invoke LSE without a filename by entering:
+
+          lse
+
+     Use the Project Menu and the Rename Option to name a text file invoked
+
+     Lattice Screen Editor LSE                                           E5
+
+
+
+
+
+
+
+
+     without a filename.  LSE will not allow you to save an un-named text
+     file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE                                           E6
+
+
+
+
+
+
+
+
+                                   Section 3
+
+                                   Using LSE
+
+     3.1 Introduction
+
+     Section 3 describes the basics of running LSE and covers the screen,
+     entering text and commands, and the data, message and help files.
+
+     3.2 The LSE Screen
+
+     You edit your text file in a window.  A window of text refers to the
+     area of the screen reserved for text.  The default text window size is
+     20 lines by 78 columns.  Up to nine files can be open at any one time.
+     The files can be displayed in any open window as nine full screen
+     displays to toggle between; or a split screen display showing two open
+     windows at any one time.
+
+     3.2.1 The Current Window
+
+     The current window is either the full window being displayed, as
+     indicated by the current active window indicator, or the window which
+     contains the cursor when two windows are displayed in split screen.
+
+     A window in full screen uses all but the last three lines of the
+     screen area.  The last three lines of the screen area contain the
+     status line, the prompt line, and the input/descriptor line.
+
+     3.2.2 The Status Line
+
+     The status line contains the following information indicators:
+
+          * Current line
+
+          * Current column
+
+          * Current filename
+
+          * Current mode indicator
+
+          * Window number
+
+          * Keystroke saver active indicator
+
+          * Marked block indicator
+
+     When more than one window is displayed at a time, each status line
+     refers to the window directly above it.
+
+     3.2.2.1 Current Line Indicator
+
+     The current line is that line of text on which the cursor resides.
+     The current line indicator displays the line number of the current
+     line:
+
+          LINE: 80
+
+     Lattice Screen Editor (LSE)                                         E7
+
+
+
+
+
+
+
+
+     This indicates that the current line of the file is line 80.
+
+     3.2.2.2 Current Column Indicator
+
+     The current column display is optional and is activated either from
+     the Mode Menu during an editing session or from the installation
+     program (to change the default).  The default is OFF.  When ON, the
+     column indicator displays the column at which the cursor is
+     positioned:
+
+          COL 6
+
+     This indicates that the cursor is positioned at column 6.
+
+     3.2.2.3 Current Filename Indicator
+
+     The current filename is the name of the file from which the text was
+     read.  It is also the name of the file that the text will be written
+     to when the Project Menu/Save Option has been selected:
+
+          FILE: ftoc.c
+
+     The above example indicates that ftoc.c is currently being edited.
+     Note that the current filename is absolute even if a relative filename
+     was entered.
+
+     3.2.2.4 Current Mode Indicator
+
+     The current mode indicator, displays either INSERT or OVERWRITE to
+     indicate which input mode you are in.
+
+     3.2.2.5 Window Number Indicator
+
+     The window number indicates which window is displayed.  The indicator
+     displays the number 1 through 9, between braces, to indicate which
+     window you are editing.  When editing window 3:
+
+          {3}
+
+     is displayed on the status line.
+
+     3.2.2.6 Keystroke Saver Active Indicator
+
+     The keystroke saver active indicator is displayed only when you have
+     invoked the macro keystroke saver.  When active, the number of the
+     active macro (from 1 to 10) is displayed.  All keystrokes will be
+     recorded and stored in that macro.
+
+     3.2.2.7 Marked Block Indicator
+
+     There are three components to the marked block indicator:
+
+          * The left bracket character ([) is displayed if a Beginning of
+            Block has been set.
+
+          * If an End of Block has been set, the right bracket character
+
+     Lattice Screen Editor (LSE)                                         E8
+
+
+
+
+
+
+
+
+            (]) is displayed.
+
+          * If the block is marked successfully, the character * is
+            displayed between the brackets.
+
+     After a block has been marked successfully:
+
+          [*]
+
+     is displayed on the status line.
+
+     3.2.2.8 Error Messages
+
+     The status line is also used to display error messages.  Once an error
+     message has been displayed, it remains on the status line until the
+     cursor is moved off the current line of the text file.  Once the
+     cursor is moved off the current line, the status line indicators are
+     again displayed.  Error messages are described in Appendix A.
+
+     3.2.3 The Prompt Line
+
+     There is one prompt line for LSE regardless of the number of open
+     windows.
+
+     The prompt line is located directly below the status line (the window
+     2 status line when more than one window is displayed).
+
+     The prompt line displays prompts and messages such as menus, requests
+     for filenames, and verification of a string replace.
+
+     3.2.4 The Input Line
+
+     The input line is displayed one line below the prompt line on the last
+     line of the LSE screen.  Your responses to the prompt line are
+     displayed on the input line including input for filenames, strings,
+     and line numbers.
+
+     The input line is also used to display messages that LSE is performing
+     such tasks as Opening..., Closing..., or Compiling....
+
+     The input line also acts as the descriptor line when invoking LSE
+     menus that identify an action to be performed.
+
+     3.3 Entering Text and Commands
+
+     When invoking LSE you may use one or two filenames along with the
+     command, lse.  If more than one filename is specified, the first file
+     on the command line is read into the top window and the second file on
+     the command line is read into the bottom window.
+
+     An empty window is displayed if a file did not previously exist or
+     contained no text.  If you invoke LSE without a filename and want to
+     save the file after editing, use the Project Menu/Rename Option to
+     name the file before saving it.  Refer to Section 2 for information on
+     the command line.
+
+
+     Lattice Screen Editor (LSE)                                         E9
+
+
+
+
+
+
+
+
+     When you access LSE you are in the Insert Mode.  This means that
+     entering any one of the 96 printable ASCII characters (hex 20 through
+     hex 7f) inserts that character into the text at the current character
+     position.  The Insert Mode is the default.  You can toggle into the
+     Overwrite Mode by pressing <INS> (or the <0-Keypad> on an Amiga 1000).
+
+     When you are in the Overwrite Mode, entering a character overwrites
+     the character at the current cursor position.  Any other 8-bit
+     character code can be entered into the text by preceding it with the
+     escape character, as described in Section 4.
+
+     All actions in LSE start at the current line.  When entering
+     characters causes the width of the current line to exceed the current
+     window width, the current line is re-framed.  As the column of the
+     current character changes, the current line is re-framed to keep the
+     current position in the window at all times.  As soon as the cursor is
+     moved off the long line, that line is re-framed in the window starting
+     at column 1.  The maximum width for any line is LSE is 256 characters.
+
+     Any 8-bit character code not in the 96 printable ASCII character set
+     and input without being preceded by the escape character is
+     interpreted by LSE as an attempt to execute a command.  If the
+     character code does not map to one of the over forty LSE functions,
+     the code is entered into the text.  The character will be displayed in
+     reverse video.
+
+     If the character code matches one of the special keys, LSE performs
+     the function, possibly repositioning the cursor, and passes control
+     back to you for further text entry.
+
+     If the character code matches an LSE command you are prompted for more
+     information or a menu is displayed.
+
+     3.4 Data, Message, and Help Files
+
+     The following files control all actions of LSE.
+
+          * The data file, LSE.DAT, contains information about your
+            computer and your key assignments.
+
+          * The message file, LSE.MSG, contains text for the menus, help
+            messages, error messages, and prompts.
+
+          * The help file, LSE.HLP, contains all help screen text.
+
+     LSE.DAT and LSE.MSG are read when LSE is invoked.  LSE searches for
+     LSE.HLP when on-screen help is requested.
+
+     You can change LSE by altering any or all of these files:
+
+          * LSE.DAT is changed using LSEINST, the installation program.
+
+          * LSE.MSG and LSE.HLP are both text files and can be changed
+            using LSE.
+
+     See Appendix B for more information before making any changes to these
+
+     Lattice Screen Editor (LSE)                                        E10
+
+
+
+
+
+
+
+
+     files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E11
+
+
+
+
+
+
+
+
+                                   Section 4
+
+                                 Special Keys
+
+     4.1 Introduction
+
+     Section 4 describes the Special Keys that control LSE.  The Special
+     Keys control editing and entering text into a file.  Special keys also
+     trigger the Commands which control the processing performed while in
+     an editing session.
+
+     There are eleven categories of Special Keys:
+
+     Mouse        The Amiga mouse is given special control to:  move the
+     Controls     cursor position within the file by clicking on text,
+                  pull-down menus from the top that allow you to have all
+                  the LSE command access from the mouse, move through the
+                  text via scroll gadgets, and click on standard gadgets.
+                  LSE uses all of the standard Amiga system gadgets.
+
+     Cursor       The Cursor Movement keys allow you to position the cursor
+     Movement     within the file:  up or down a line; to the previous or
+                  next character or word; and to the beginning or end of
+                  the line.  They also allow you to display the previous
+                  and next page of text, the beginning and end of text, and
+                  scroll the display up and down.
+
+     Change       The Change Window keys allow you to change the active
+     Window       window; change the window size; and cycle through hidden
+                  windows.
+
+     Insert       The Insert keys allow you to toggle between the Insert
+                  Mode and the Overwrite Mode; insert a blank line; and
+                  restore lines that have been previously deleted.
+
+     Delete       The Delete keys allow you to remove text from the file by
+                  character, word, line and to the end of the line.
+
+     Help         The Help key allows you to display context-sensitive help
+                  windows.
+
+     Change       The Change Color keys allow you to change the foreground
+     Color        or background color of the display screen.
+
+     Keysaver     The Keysaver Macro keys allow you to define and execute
+     Macro        macros.
+
+     Mark         The Mark Block keys allow you to mark the beginning and
+     Block        the end of a block of text that you want to copy, delete,
+                  move, print, read, or write.
+
+     Command      The Command keys allow you to control the processing
+                  performed while in an editing session:  performing block
+                  operations, invoking the Lattice C Compiler, forking the
+                  command processor, displaying the Mode Menu, displaying
+                  the Project Menu, opening a new window, moving to a
+
+     Lattice Screen Editor (LSE)                                        E12
+
+
+
+
+
+
+
+
+                  specific line number, searching for a text string,
+                  replacing a text string, quitting and undoing a file
+                  action.
+
+     Action       The Action keys allow you to control actions in
+                  conjunction with other options or commands:  displaying
+                  the Main Menu; displaying the next error; entering the
+                  escape character to the file; locating the next match for
+                  a search; switching to Interlace mode; and setting
+                  compiler options.
+
+     The standard keystroke assignments may be changed or customized using
+     LSEINST as described in Appendix B.
+
+     4.2 Mouse Controls
+
+     The Amiga mouse controls for LSE allow for the following capabilities:
+
+                                Mouse Controls
+
+          Action                       | Function
+          -----------------------------+------------------------------
+          Button Left Click on text    | Move cursor to click point
+                                       |
+          Button Left Click on         | Move to relative text
+          slider-bar                   | position
+                                       |
+          Button Right Click on        | Execute LSE command being
+          pull-down menu               | pointed at
+                                       |
+          Button Left Click on gadget  | Execute standard gadget
+                                       | command being pointed at
+
+     4.3 Cursor Movement Keys
+
+     These keys reposition the cursor within the file:
+
+          Function           | Key          | Action
+          -------------------+--------------+-------------------------
+          Up One Line        | <UP>         | Move the cursor up one
+                             |              | line.
+                             |              |
+          Down One Line      | <DOWN>       | Move the cursor down one
+                             |              | line.
+                             |              |
+          Previous Character | <LEFT>       | Move the cursor one
+                             |              | character left.
+                             |              |
+          Previous Word      | <CTRL-LEFT>  | Move the cursor one word
+                             |              | left.
+                             |              |
+          Next Character     | <RIGHT>      | Move the cursor one
+                             |              | character right.
+                             |              |
+          Next Word          | <CTRL-RIGHT> | Move the cursor one word
+                             |              | right.
+
+     Lattice Screen Editor (LSE)                                        E13
+
+
+
+
+
+
+
+
+          Function           | Key          | Action
+          -------------------+--------------+-------------------------
+          Beginning of Line  | <HOME>       | Move the cursor to the
+                             |              | first character of the
+                             |              | current line.
+                             |              |
+          Beginning of Text  | <CTRL-HOME>  | Move the cursor to the
+                             |              | first character of the
+                             |              | text file.
+                             |              |
+          End of Line        | <END>        | Move the cursor to the
+                             |              | last character of the
+                             |              | current line.
+                             |              |
+          End of Text        | <CTRL-END>   | Move the cursor to the
+                             |              | last character of the
+                             |              | text file.
+                             |              |
+          Previous Page      | <PGUP>       | Display the previous
+                             |              | page of text.
+                             |              |
+          Next Page          | <PGDN>       | Display the next page of
+                             |              | text.
+                             |              |
+          Scroll Up          | <CTRL-^>     | Scrolls the display up
+                             |              | without moving the
+                             |              | cursor.
+                             |              |
+          Scroll Down        | <CTRL-V>     | Scrolls the display down
+                             |              | without moving the
+                             |              | cursor.
+
+     4.4 Change Window Keys
+
+     The Change Window keys allow you to change the active window, change
+     the window size, and cycle through hidden windows:
+
+          Function           | Key       | Action
+          -------------------+-----------+----------------------------
+          Change Window      | <CTRL-F6> | Change active window when
+                             |           | in the split screen mode.
+                             |           |
+          Change Window Size | <F9>      | Toggle window display size
+                             |           | from full to half screen.
+                             |           |
+          Cycle Windows      | <F6>      | Cycle through hidden
+                             |           | windows.
+
+     4.4.1 Change Window (<CTRL-F6>)
+
+     The <CTRL-F6> key is a toggle that switches the cursor between text
+     files in the split screen mode.  The cursor is positioned at the same
+     relative location in the new window as it was in the other window
+     before you first pressed <CTRL-F6>.  If only one window is open when
+     you press <CTRL-F6>:
+
+
+     Lattice Screen Editor (LSE)                                        E14
+
+
+
+
+
+
+
+
+          ERROR: NO ALTERNATE WINDOW AVAILABLE
+
+     is displayed on the status line.
+
+     4.4.2 Change Window Size (<F9>)
+
+     The <F9> key causes the display size of the current window to be
+     changed.  If your current display of two open windows consists of a
+     split screen, your new display will be full screen for each of the two
+     windows.  If your current display of two open windows consists of a
+     full screen for each of the windows, your new display will be split
+     screen.
+
+     If only one window is open when you press <F9>:
+
+          ERROR: ONE WINDOW OPEN -- DISPLAY SIZE CANNOT BE CHANGED
+
+     is displayed on the status line.
+
+     4.4.3 Cycle Windows (<F6>)
+
+     The <F6> key displays any text files loaded but not displayed.  If
+     only one window is available when you press <F6>:
+
+          ERROR: NO ALTERNATE WINDOW AVAILABLE
+
+     is displayed on the status line.
+
+     4.5 Insert Keys
+
+     The Insert keys allow you to toggle between the Insert Mode and the
+     Overwrite Mode, insert a blank line, and restore lines that have been
+     previously deleted:
+
+          Function             | Key      | Action
+          ---------------------+----------+---------------------------
+          Insert Mode Toggle   | <INS>    | Toggle between the Insert
+                               |          | Mode and the Overwrite
+                               |          | Mode.
+                               |          |
+          Insert a Line        | <CTRL-N> | Insert a line before the
+                               |          | current line, do not break
+                               |          | the current line.
+                               |          |
+          Restore Deleted Line | <ALT-Y>  | Restore the last line
+                               |          | deleted with <CTRL-Y> at
+                               |          | the cursor position,
+                               |          | shifting the current line
+                               |          | down one line.
+
+     4.6 Delete Keys
+
+     The Delete Keys remove text from the file by character, word, line and
+     to the end of the line:
+
+
+
+     Lattice Screen Editor (LSE)                                        E15
+
+
+
+
+
+
+
+
+          Function              | Key      | Action
+          ----------------------+----------+--------------------------
+          Delete Current        | <DEL>    | Delete current character
+          Character             |          | from text.
+                                |          |
+          Delete Previous       | <BKSP>   | Delete previous character
+          Character             |          | from the text.
+                                |          |
+          Delete Word           | <CTRL-W> | Delete text until the
+                                |          | next word is encountered.
+                                |          | A word is any contiguous
+                                |          | text bounded by blanks.
+                                |          |
+          Delete Line           | <CTRL-Y> | Delete the current line.
+                                |          | The line can be restored
+                                |          | using <ALT-Y>.
+                                |          |
+          Delete to End of Line | <CTRL-E> | Delete text from the
+                                |          | cursor position to the
+                                |          | end of the current line.
+
+     4.7 The Help Key
+
+     The <F1> key (or <HELP> is used to display context-sensitive help
+     windows.  Pressing <F1>:
+
+          * While entering text causes command key information to be
+            displayed.
+
+          * While in the Command Menu causes menu information to be
+            displayed.
+
+          * While in an individual option causes information on that option
+            to be displayed.
+
+     4.8 Change Color Keys
+
+     The Change Color keys cycle the monitor foreground and background
+     colors.  You must have a color monitor for these keys to be effective:
+
+          Function         | Key  | Action
+          -----------------+------+-----------------------------------
+          Cycle Foreground | <F7> | Cycle through the foreground
+                           |      | colors.
+                           |      |
+          Cycle Background | <F8> | Cycle through the background
+                           |      | colors.
+
+     The color settings you have selected when you leave LSE become the
+     default colors the next time LSE is started.  You may not set the
+     foreground and background to the same color.
+
+     4.9 Keysaver Macro Keys
+
+     The Keysaver Macro keys let you define and execute macros:
+
+
+     Lattice Screen Editor (LSE)                                        E16
+
+
+
+
+
+
+
+
+          Function            | Key      | Action
+          --------------------+----------+----------------------------
+          Start/Stop Keysaver | <ALT-#>  | Start or stop recording
+          Macro               |          | keys to the keysaver macro.
+                              |          |
+          Replay a Macro      | <ALT-F#> | Replay a macro.
+
+     Note that the "#" refers to any number on the keypad (1,2,3,...,9,0).
+     The number "0" will refer to function key <F10> when you replay the
+     macro.
+
+     4.9.1 Start or Stop Keysaver Macro (<ALT-#>)
+
+     To start a Keysaver Macro press <ALT-#> (a number key from 1 to 0).
+     The following is then displayed on the prompt line:
+
+          Key Saver Begun
+
+     and the number of the macro being defined will be shown on the right
+     hand side of the status line.  All keystrokes will now be saved to a
+     buffer.  To end the macro press <ALT> and the same number key again.
+
+     4.9.2 Replay a Macro (<ALT-F#>)
+
+     Pressing <ALT-F#> replays a macro with that number.  Each keysaver
+     corresponds to a function key (from <F1> to <F10>).  For example,
+     pressing <ALT-F2> invokes macro number 2.  No action occurs if
+     <ALT-F#> is pressed with a number of a keysaver containing no
+     keystrokes.
+
+     4.9.3 Saving Macros
+
+     If you do not save macros, they are lost when you complete your
+     editing session and terminate LSE.
+
+     Use the Project Menu/Macros Option to save the macros you have
+     defined.  Select Save from the Macros sub-menu.  You will then be
+     prompted for a filename in which to save the macros.
+
+          SAVE MACRO FILE: SPECIFY MACRO FILENAME (default is LSE.MAC)
+
+     Enter a valid filename and press <ENTER>.  Press <F2> to leave the
+     Save Macros display without saving the macro file.
+
+     4.9.4 Loading a Macro File
+
+     Once you have saved your macros to a Macro File you can load that file
+     using the Load Macro option.
+
+     Use the Project Menu/Macros Option to load a macro file previously
+     defined.  Select Load from the Macros sub-menu.  You will then be
+     prompted for the macro file you want to use:
+
+          LOAD MACRO FILE: SPECIFY MACRO FILENAME (default is LSE.MAC)
+
+     Enter a filename and press <ENTER>.  The file you have named will be
+
+     Lattice Screen Editor (LSE)                                        E17
+
+
+
+
+
+
+
+
+     written over the current (if any) macro file.  There is no check to
+     ensure that the named file is a valid macro file.  Press <F2> to leave
+     the Load Macros display without loading a macro file.
+
+     4.10 Mark Block Keys
+
+     The Mark Block Keys are used to mark the beginning and end of a block
+     of text that you want to copy, delete, move, print, read or write:
+
+          Function          | Key      | Action
+          ------------------+----------+------------------------------
+          Mark Beginning of | <CTRL-[> | Mark the start of a block of
+          Block             |          | text.
+                            |          |
+          Mark End of Block | <CTRL-]> | Mark the end of a block of
+                            |          | text.
+
+     4.10.1 Mark Beginning of Block (<CTRL-[>)
+
+     The <CTRL-[> key identifies the start of a text block that will be
+     used by the Block command.  <CTRL-[> is inclusive, which means that
+     the designated block will include the current character.
+
+     When marking the beginning of a block of text, position the cursor
+     over the first character of the block and press <CTRL-[>.  When the
+     beginning mark is set, the character [ is displayed on the status line
+     of the window.
+
+     4.10.2 Mark End of Block (<CTRL-]>)
+
+     The <CTRL-]> key identifies the end of a text block that will be used
+     by the Block command.  <CTRL-]> is non-inclusive, which means that the
+     designated block will not include the current character.  When marking
+     the end of a block of text, position the cursor to the right of the
+     last character of the text block and press <CTRL-]>.
+
+     When the end mark is set, the character ] is displayed on the status
+     line of the window.  When both start, and the end of the block are
+     marked, an asterisk is displayed between the two brackets (i.e., [*])
+     and the block is shown in reverse video.  There may be only one active
+     block marked at a time.
+
+     4.11 Command Keys
+
+     Commands allow you to control the processing within LSE.  The Command
+     keys are short-cuts which can be used in place of selections from the
+     Main Menu displayed when <F2> is pressed.  The following table
+     presents the function, the Main Menu selection, the short-cut keys and
+     the description of the function from the Main Menu:
+
+                      |  Menu  |          |
+          Function    | Select | Direct   | Description
+          ------------+--------+----------+---------------------------
+          Block       | <B>    | <CTRL-B> | Block Operations
+                      |        |          |
+          Compile     | <C>    | <F4>     | Invoke Lattice C Compiler
+
+     Lattice Screen Editor (LSE)                                        E18
+
+
+
+
+
+
+
+
+                      |  Menu  |          |
+          Function    | Select | Direct   | Description
+          ------------+--------+----------+---------------------------
+          Fork        | <F>    | <CTRL-F> | Fork Command Processor
+                      |        |          |
+          Mode        | <M>    | <CTRL-M> | Select LSE Mode
+                      |        |          |
+          Line Number | <L>    | <CTRL-L> | Go to a Specific Line
+                      |        |          | Number
+                      |        |          |
+          Open        | <O>    | <CTRL-O> | Open New Window
+                      |        |          |
+          Project     | <P>    | <CTRL-P> | Project Menu
+                      |        |          |
+          Replace     | <R>    | <CTRL-R> | Search and Replace
+                      |        |          |
+          Search      | <S>    | <CTRL-S> | Search
+                      |        |          |
+          Quit        | <Q>    | <F3>     | Quit
+                      |        |          |
+          Undo        | <U>    | <CTRL-U> | Undo Last Change
+
+     4.11.1 Block (<CTRL-B>)
+
+     Pressing <CTRL-B> or selecting Block Operations from the Main Menu
+     causes the Block Command Menu to be displayed.  Use the Block Command
+     to perform any of the following operations:
+
+          * Copy a Block
+          * Delete a Block
+          * Move a Block
+          * Print a Block
+          * Read a Named File into the Current File Starting at the Cursor
+            Position
+          * Write a Block to the Named File
+          * Move to the Beginning of a Block
+          * Move to the End of a Block
+
+     The Copy Option is highlighted when the Block Command Menu is
+     displayed.  To select an option from the menu:
+
+          * Position the highlighted bar over the selection using the
+            <LEFT> and <RIGHT> keys, then select the option by pressing
+            <ENTER>, or
+
+          * Enter the first character of the option and press <ENTER>.
+
+     4.11.2 Compile (<F4>)
+
+     Pressing <F4> or selecting Invoke Lattice C Compiler from the Main
+     Menu starts the compile of the edited C source file from memory.  If
+     the current file you are editing is not a C source file (it does not
+     have an extension of .C, pressing <F4> causes the message:
+
+          ERROR: THIS IS NOT A .C FILE
+
+
+     Lattice Screen Editor (LSE)                                        E19
+
+
+
+
+
+
+
+
+     to be displayed on the status line.  See Section 5 for more
+     information on compiling from LSE.
+
+     4.11.3 Fork Command (<CTRL-F>)
+
+     Fork allows you to leave your edited file and flip to the command
+     processor in order to perform some system task.  Pressing <CTRL-F> or
+     selecting Fork Command Processor from the Main Menu causes the
+     message:
+
+          FORK COMMAND PROCESSOR (Press any key)
+
+     to be displayed on the descriptor line.  Press any key to put up a new
+     window.
+
+     4.11.4 Mode Menu (<CTRL-M>)
+
+     Pressing <CTRL-M> or selecting Select LSE Mode from the Main Menu
+     displays the Mode Menu.
+
+     The Mode Menu controls your input mode, your tab stops, expanding tab
+     stops into spaces, automatic indenting on the { character, the column
+     display on the status line, the type of search pattern utilized,
+     whether an undo prompt is displayed, and error processing within the
+     compiler.  See Section 6 for more information on the Mode Menu.
+
+     4.11.5 Go to Line Number (<CTRL-L>)
+
+     Pressing <CTRL-L> or selecting Go to a specific Line Number displays
+     the prompt:
+
+          ENTER LINE NUMBER TO LOCATE: Number
+
+     Enter a line number and press <ENTER>.  You are then positioned in
+     your edited file at the specified line.
+
+     4.11.6 Open New Window (<CTRL-O>)
+
+     LSE can open nine text files at the same time using the Open command.
+     Pressing <CTRL-O> or selecting Open New Window from the Main Menu
+     causes the prompt:
+
+          OPEN WINDOW: Filename (Menu Key for view mode only)
+
+     to be displayed on the descriptor line.  Enter a filename to open an
+     additional window.  To open a file in View Mode press <F2> rather than
+     entering a filename when this prompt is displayed.  The message:
+
+          VIEW MODE FILENAME: filename
+
+     is then displayed.  When files opened in View Mode cannot be changed,
+     you are able to mark blocks of text for use by the Block/Copy Option;
+     Block/Print Option and the Block/Write Option.  No other actions can
+     be performed on a file opened in View Mode.
+
+     If you have nine files opened and you press <CTRL-O>, the message:
+
+     Lattice Screen Editor (LSE)                                        E20
+
+
+
+
+
+
+
+
+          ERROR: NO WINDOW AVAILABLE
+
+     is displayed on the status line and no new window is opened.
+
+     4.11.7 Project Menu (<CTRL-P>)
+
+     Pressing <CTRL-P> or selecting Project Menu from the Main Menu causes
+     the Project Menu to be displayed.  Use the Project Menu to perform any
+     of the following options:
+
+          * Quit Editing and do not Save File Changes.
+          * Quit Editing and Save File Changes.
+          * Save the File and Continue Editing the File.
+          * Save the File and Reopen Window for Next File.
+          * Do not Save the File and Reopen Window for Next File.
+          * Rename the Current File.
+          * Insert the Named File at the Current Line.
+          * Display the List of the Current Files.
+          * Load and Save Macro Files.
+
+     The Save option is highlighted when the Project Menu is displayed.  To
+     select an option from the menu:
+
+          * Use the <LEFT> and <RIGHT> keys to position the select bar over
+            the command to be executed and press <ENTER>.
+
+          * Press the letter corresponding to the selection you want.
+
+     4.11.7.1 Finishing an Editing Session
+
+     The Project Menu identifies the actions used by LSE to finish an
+     editing session with the text file displayed in the current window.
+
+     LSE does not edit a file directly.  When a file is named, it is copied
+     to a work area while the actual (current) file remains unchanged.
+     Whenever LSE saves text to a file, it then renames the current copy of
+     that file to a backup copy and saves the edited text to the named
+     file.  By default, LSE renames the current copy to filename.bak
+     erasing any previous version of filename.bak.
+
+     Using LSEINST you can optionally change the default file extension for
+     the backup file as well as set up a backup directory.  These options
+     are explained in Appendix B.
+
+     4.11.7.2 File Status
+
+     Every time you access the Project Menu, LSE displays a file status
+     message on the status line indicating if any changes have been made to
+     the file:
+
+          * CAUTION: CURRENT FILE HAS BEEN CHANGED is displayed if the file
+            has been changed.
+
+          * CURRENT FILE HAS NOT BEEN CHANGED is displayed if the file has
+            not been changed.
+
+
+     Lattice Screen Editor (LSE)                                        E21
+
+
+
+
+
+
+
+
+     4.11.7.3 Quit Option
+
+     The Quit Option abandons the text in the current window and then
+     closes the current window:
+
+          * If the current window is the only active window, LSE is ended
+            and control is passed back to the operating system.
+
+          * If there are two windows open, the non-active window becomes
+            the current window.  Once active, the new current window
+            occupies all of the allotted screen space.
+
+     If you have made changes to the file and use the Quit Option, the file
+     changes will be lost.  Refer to the file status message if you are not
+     sure.
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  NOTE:  It is faster to use the close gadget or Quit     |
+          |  Command (<F3>) if you want to abandon the text files    |
+          |  in two (or more) open windows rather than use the       |
+          |  Project Menu/Quit Option for each open window.  No      |
+          |  file status message is displayed if text has not been   |
+          |  changed.  A warning prompt is displayed before files    |
+          |  are abandoned if text has been changed in any window.   |
+          |                                                          |
+          ------------------------------------------------------------
+
+     4.11.7.4 Save Option
+
+     The Save Option writes the text in the current window to the file
+     specified by the current filename and then closes the window:
+
+          * If this is the only window open, LSE is ended and control is
+            passed back to the operating system.
+
+          * If there are two (or more) windows open, the non-active window
+            becomes the current window.  Once active, the new current
+            window occupies all of the allotted screen space.
+
+     You cannot save an unnamed file.  If LSE was started without a
+     filename and you have not used the Project/Rename Option, the message:
+
+          ERROR: NO FILE NAME SPECIFIED
+
+     is displayed on the status line and no further action is performed.
+     Rename the file and use the Save Option again.
+
+     4.11.7.5 Continue Option
+
+     The Continue Option writes the text in the current window to the file
+     specified by the current filename.  The Continue Option does not close
+     the current window or alter the current text in any way.
+
+     Like the Save Option, you must have named the file before using the
+     Continue Option.
+
+     Lattice Screen Editor (LSE)                                        E22
+
+
+
+
+
+
+
+
+     4.11.7.6 Next Option
+
+     The Next Option allows you to edit a series of text files without
+     leaving LSE.
+
+     The Next Option writes the text in the current window to the file by
+     the current filename.  You are then prompted for the next filename to
+     be loaded into the current window.  Once the file has been loaded, the
+     cursor is placed at the beginning of the text.
+
+     Like the Save Option, you must have named the file before using the
+     Next Option.
+
+     4.11.7.7 Open Option
+
+     The Open Option abandons the text in the current window.  You are then
+     prompted for the next filename to be loaded into the current window.
+     Once the file has been loaded, the cursor is positioned at the
+     beginning of the text.  Unlike the Next Option, the Open Option does
+     not save the current text file before loading the new file.
+
+     If you have made changes to the file and use the Open Option, the file
+     changes will be lost.  Refer to the file status message if you are not
+     sure.
+
+     4.11.7.8 Rename Option
+
+     The Rename Option allows you to:
+
+          * Specify a new name for the file in the current window.
+
+          * Name a previously unnamed file when LSE is started without a
+            filename.
+
+     An unnamed file cannot be written from memory using Save, Continue or
+     Next.  You must name the file using the Rename Option before using any
+     of these other options.  The current text is not changed when it is
+     Renamed.
+
+     4.11.7.9 Insert Option
+
+     The Insert Option lets you insert a file on disk at the cursor
+     position in your active window.  It is functionally the same as the
+     Block Menu/Read Option.
+
+     4.11.7.10 Display Option
+
+     The Display Option clears the editing window and presents the
+     following display showing the active windows and the files open within
+     those windows.  You can press any key to return to your active window.
+
+     4.11.8 Replace (<CTRL-R>)
+
+     Use the Replace Command to locate text strings in your text file and
+     replace then with the entered text string.  Pressing <CTRL-R> or
+     selecting Search and Replace from the Main Menu causes the prompt:
+
+     Lattice Screen Editor (LSE)                                        E23
+
+
+
+
+
+
+
+
+          REGULAR EXPRESSION SEARCH STRING: (MENU KEY to search backwards)
+
+     to be displayed.  Enter the search string and press <ENTER>.  The
+     normal search and replace path is from the current cursor position
+     "down" through the file to the end-of-file.  To search and replace
+     "up" from the current cursor position to the top-of-file press <F2>
+     before entering your search string.
+
+     You will then be prompted for your replace string.  Enter the replace
+     string and press <ENTER>.  The next prompt will ask whether you want
+     to be prompted for each replace or if the replace should be performed
+     through the file automatically,
+
+     You can change the search direction after your search and replace
+     strings have been entered by re-displaying the search prompt, pressing
+     <F2> and then <ENTER>.
+
+     Use the Mode Menu or the install program to change from a regular
+     expression search (as described in Appendix D) to a simple string
+     search.
+
+     Use <ALT-S> to find the next occurrence of the entered search string.
+     Once the string is located, you will be prompted as to whether the
+     replacement is to occur.
+
+     4.11.9 Search (<CTRL-S>)
+
+     Use the Search Command to locate text strings within your text file.
+     Pressing <CTRL-S> or selecting Search from the Main Menu causes this
+     prompt:
+
+          REGULAR EXPRESSION SEARCH STRING: (MENU KEY to search backwards)
+
+     to be displayed.  Enter the search string and press <ENTER>.
+
+     The normal search path is from the current cursor position "down"
+     through the end-of-file.  To search "up" from the current cursor
+     position to the top-of-file press <F2> before entering your search
+     string.  You can change the search direction after your search string
+     has been entered by re-displaying the search prompt, pressing <F2> and
+     then <ENTER>.
+
+     Use the Mode Menu or the install program to change from a regular
+     expression search (as described in Appendix D) to a simple string
+     search.
+
+     Use <ALT-S> to find the next occurrence of the entered search string.
+
+     4.11.10 Quit (<F3>)
+
+     Use the Quit Command to end an editing session without saving any file
+     changes in any of the editing windows.  Press <F3> or select Quit from
+     the Main Menu or the close gadget to quit an editing session.
+
+     Unlike the Project Menu/Quit Option, the Quit Command works on all
+     windows rather than just the current window.  No file status message
+
+     Lattice Screen Editor (LSE)                                        E24
+
+
+
+
+
+
+
+
+     is displayed if there have been no file changes.  The warning
+     requestor:
+
+                            ---------------------
+                            |  Do you want to   |
+                            |      ABANDON      |
+                            |    your work?     |
+                            | -------   ------- |
+                            | | YES |   | NO  | |
+                            | -------   ------- |
+                            ---------------------
+                            |                   |
+                            ---------------------
+
+     is displayed if changes have occurred in any window.  Select No to
+     abort the Quit Command.  Select Yes to abandon the changed file.
+
+     4.11.11 Undo (<CTRL-U>)
+
+     The Undo Command allows you to recover from any file activity you have
+     performed while still in the window for that file.  Pressing <CTRL-U>
+     or selecting Undo Last Change from the Main Menu initiates the undo
+     process.  Using Undo, you can:
+
+          * Restore Replaced Text.
+
+          * Restore Deleted Block.
+
+          * Restore Deleted Line.
+
+          * Restore Replaced Line.
+
+          * Delete Inserted Line.
+
+          * Delete Added Block.
+
+     For example, if you used <CTRL-Y> to delete a line of text from the
+     file, pressing <CTRL-U> causes the prompt:
+
+          UNDO -- RESTORE REPLACED LINE?:  YES  NO
+
+     to be displayed on the status line.  Enter Y to add the deleted line
+     back to the file.  Enter N to abort the Undo operation.
+
+     If you have not changed the default prompt before using the Undo Mode
+     option, LSE will display a prompt (as shown above) before performing
+     any action.  If no prompt before Undo is displayed, the action is
+     performed immediately when you select the Undo Command.
+
+     If you select the Undo Command when either no file actions have been
+     performed on the text file in this window or all actions have already
+     been undone, the message:
+
+          UNDO BUFFER EMPTY
+
+     is displayed on the status line and no action is performed.
+
+     Lattice Screen Editor (LSE)                                        E25
+
+
+
+
+
+
+
+
+     Up to 50 actions are contained in the Undo buffer.  An action is
+     defined as any file activity which altered a contiguous part of the
+     file from a single line to a defined block.
+
+     The levels are stacked and undone in LIFE (last-in/first-out) order.
+     Separate Undo buffers are kept for each window.  The Undo buffer for a
+     window is emptied once you quit or save the file.
+
+     4.12 Action Keys
+
+     The Action Keys control actions in conjunction with other options or
+     commands:
+
+          Function               | Key          | Action
+          -----------------------+--------------+---------------------
+          Menu Toggle            | <F2>         | Display Main Menu or
+                                 |              | cancel menu item or
+                                 |              | action and return to
+                                 |              | editing.
+                                 |              |
+          Display Next Error     | <F5>         | Frame next compiler
+                                 |              | error.
+                                 |              |
+          Enter Escape Character | <CTRL-ESC>   | Enter escape
+                                 |              | character
+                                 |              |
+          Find Next Match        | <ALT-S>      | Locate next match
+                                 |              | for search.
+                                 |              |
+          Interlace Toggle       | <CTRL-ENTER> | Interlace Toggle key
+                                 |              |
+          Set Compiler Options   | <CTRL-F4>    | Set compiler options
+
+     4.12.1 Menu Toggle (<F2>)
+
+     Press <F2> while editing a file to display the Main Menu.
+
+     To select a command from the Main Menu:
+
+          * Use the Amiga mouse to pull-down and click on the appropriate
+            command, or
+
+          * Position the highlighted bar over the selection using the
+            <LEFT> and <RIGHT> keys, then select the command by pressing
+            <ENTER>, or
+
+          * Enter the first character of the command.
+
+     Pressing <F2> while in the Main Menu or within any command sub-menu
+     cancels the action and returns you to your text window.
+
+     4.12.2 Display Next Error (<F5>)
+
+     Use this key to search for errors within the compiler output after
+     compiling a source file.  If you have not activated error checking and
+     you press <F5>, the message:
+
+     Lattice Screen Editor (LSE)                                        E26
+
+
+
+
+
+
+
+
+          ERROR: LC ERROR CHECKING NOT ACTIVE
+
+     is displayed on the status line.
+
+     4.12.3 Enter Escape Character (<CTRL-ESC>)
+
+     The Enter Escape Character function causes the next character input to
+     LSE to be placed into the text without any processing.  This allows
+     control characters and non-ASCII characters to be placed into the
+     text.
+
+     If the character following <CTRL-ESC> is the character \, the next
+     special key that you press places a coded string into your text
+     representing that special key.  The special key is not executed.  This
+     coded string representing the special key action is used by the
+     keyboard macro processor when a macro file is loaded and replayed.
+
+     4.12.4 Find Next Match (<ALT-S>)
+
+     The <ALT-S> key initiates the continuation of the last search or
+     search and replace.  <ALT-S> continues the search or search and
+     replace either forward or backward through the text file in the
+     direction it was first specified.  If there was no previous search LSE
+     displays the message:
+
+          ERROR: NO PREVIOUS SEARCH
+
+     on the status line.  If this is either the last occurrence of a
+     specified string or if the string was not located in the file, the
+     message:
+
+          text  NO MORE MATCHES FOUND
+
+     is displayed on the status line where text is the text string included
+     within the Search or Replace.
+
+     Separate Search and Replace buffers are kept for each open window.  If
+     you changed windows since the last search and have not entered a new
+     search string, <ALT-S> uses the search buffer of the non-active
+     window.
+
+     The Search and Replace buffer is flushed for a window when performing:
+
+          * Project Menu/Quit Option
+
+          * Project Menu/Save Option
+
+     The Search and Replace Buffer is not flushed for a window when
+     performing:
+
+          * Project Menu/Open Option
+
+          * Project Menu/Next Option
+
+          * Project Menu/Flush Option
+
+
+     Lattice Screen Editor (LSE)                                        E27
+
+
+
+
+
+
+
+
+     4.12.5 Interlace Toggle (<CTRL-ENTER>)
+
+     The <CTRL-ENTER> key toggles the screen between either the default 20
+     lines to 45 lines per window.
+
+     4.12.6 Set Compiler Options (<CTRL-F4>)
+
+     The <CTRL-F4> key is used to set the compiler options to be used when
+     compiling C source files from memory.  Pressing <CTRL-F4> causes the
+     message:
+
+          ENTER OPTIONS FOR C COMPILER (for example, -S -d -i/lc/)
+
+     to be displayed on the descriptor line and the prompt:
+
+          LC_OPT:
+
+     on the status line.  Enter the options for the Lattice C Compiler on
+     the input line.  Terminate the options by pressing <ENTER>.  Refer to
+     your User's Reference Manual for complete information on Lattice C
+     compiler options.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E28
+
+
+
+
+
+
+
+
+                                   Section 5
+
+                              Compiling From LSE
+
+     5.1 Introduction
+
+     Section 5 describes how to compile from LSE as an integrated
+     edit/compile environment.
+
+     You can use LSE to both write your C source code and then compile your
+     code directly from memory.  Pressing <F4> invokes the Lattice C
+     Compiler using your predefined compiler and error checking options.
+
+     5.2 Integrated Environment
+
+     Using this integrated compile/edit environment you can compile the
+     source file while buffering compiler syntax errors for later review.
+     Prompts are displayed only during the review cycle.  You can elect to
+     check the compiler output either for errors only or for both errors
+     and warnings.
+
+     5.3 Before Compiling
+
+     Before compiling your source file you can:
+
+          * Add options to the LC command using the <CTRL-F4> key
+            combination.
+
+          * Determine conditions for handling syntax errors and warnings in
+            the compiler output from the Mode Menu.  The default error
+            handling conditions are "prompt for each syntax error located"
+            and "check compiler output for errors and warnings."
+
+     5.4 Compiling Your Source File
+
+     Once you press <F4> your source file remains on the screen while it is
+     compiled from memory and Compiling... is displayed on the input line.
+
+     When compiling your source files from memory, a series of intermediate
+     messages are displayed describing each step of the process.
+
+     The intermediate messages are displayed on the descriptor line and
+     describe the current compiler activities.  You are returned to your
+     source file once a successful compile has been performed.
+
+     Refer to your Compiler Command Reference for information on the
+     Lattice C compiling process.
+
+     If you try to compile a text file, that is if you press <F4> when your
+     current file has an extension other than .c the message:
+
+          ERROR: TEXT IS NOT .C FILE
+
+     is displayed on the status line and no action occurs.  If your source
+     code "blows up" during the compile, the message:
+
+
+     Lattice Screen Editor (LSE)                                        E29
+
+
+
+
+
+
+
+
+          Fatal Compiler Error. Press any key to continue.
+
+     is displayed on the status line and no further action occurs.  Press
+     any key to leave the compiler and return to your source file.
+
+     5.5 Encountering Syntax Errors
+
+     When a syntax error is located in your source file it will be saved in
+     a buffer.  You can now review and correct your errors in the source
+     file before you recompile.
+
+     5.6 Reviewing Errors in Your Source File
+
+     You can review the errors in your source file once the source file has
+     been compiled.
+
+          * In order to review your syntax errors you must have previously
+            selected to save the errors rather than abort after the first
+            error.
+
+          * You can also review your warnings, again if you previously
+            chose to have the compiler check for warnings.
+
+     Error handling is an option on the LSE Mode Menu and can be changed
+     for each editing session.  See Section 6 for complete information on
+     the Mode Menu.  Your default error handling can be set using LSEINST.
+     See Appendix B for complete information on LSEINST.
+
+     Errors are reviewed using <F5>:
+
+          * Press <F5> and you are positioned at the first line in your
+            source file containing a syntax error.
+
+          * Press <F5> again to locate the next line containing a syntax
+            error.
+
+          * Once all errors have been located, the message NO MORE LC
+            ERRORS is displayed.
+
+     The errors can be located only for the source file compiled from the
+     current window.  Press <F5> while in a window other than that of your
+     compiled source file and the message:
+
+          ERROR: LC ERROR CHECKING NOT ACTIVE IN CURRENT WINDOW
+
+     is displayed on the status line.
+
+     If you press <F5> when either no source file has been compiled or the
+     source file has been compiled with no errors, the message:
+
+          ERROR: LC ERROR CHECKING NOT ACTIVE
+
+     is displayed on the status line and no other action is performed.
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E30
+
+
+
+
+
+
+
+
+                                   Section 6
+
+                               The LSE Mode Menu
+
+     6.1 Introduction
+
+     Section 6 describes the LSE Mode Menu.  The Mode Menu is displayed by
+     pressing <CTRL-M> or by selecting Select LSE Mode from the Main Menu.
+     The Mode Menu controls the following LSE options:
+
+          * Input mode is to be used.
+
+          * Tab stops are to be used.
+
+          * Expand tabs into spaces.
+
+          * Automatic indenting is to occur on an open brace ({).
+
+          * Column Display is to be used.
+
+          * Patterns or simple string matching is to be used for searches.
+
+          * Prompt before executing an undo.
+
+          * Compiler output to be checked for warnings and errors or errors
+            only.
+
+     6.2 Selecting A Mode Menu Option
+
+     Use the <UP> and <DOWN> keys to move up and down the list.  Press the
+     <SPACE> key to change a selection or to rotate through the choices for
+     an item.  Press <ENTER> to save any changes.  Press <F2> to leave the
+     Mode Menu without making any selections.
+
+     Each of the mode options has a default value.  You can change this
+     default value using LSEINST to tailor LSE to meet your needs and so
+     that the mode option need not be changed for each editing session.
+
+     Some mode options affect all windows while others affect only the
+     current window.  To change an option for a window you must display the
+     Mode Menu and select the specific option while in that window.
+
+     6.3 Input Modes Option
+
+     The Input Modes option controls the mode in which text is entered into
+     LSE.  There are five input modes to choose from:
+
+          * A default mode during which there is no post-processing of
+            input.
+
+          * Three assembly language modes to perform case folding and
+            special character field termination.
+
+          * Power-type (word-wrap) mode in which carriage returns are
+            automatically inserted into the text when the screen size width
+            id exceeded by the current line length.
+
+     Lattice Screen Editor (LSE)                                        E31
+
+
+
+
+
+
+
+
+     The default Input Mode causes no post-processing of the input.  The
+     input mode affects only the current window.
+
+     6.3.1 Assembly Language Modes
+
+     The assembly language modes provide for the folding of character input
+     into uppercase for one, two or three fields.  After you have selected
+     your case folding requirements, you are asked to specify the character
+     that initiates a comment for your assembler.
+
+     In any of the assembly language modes:
+
+          * A colon (:), space, or tab moves the cursor location from the
+            first field into the second field.
+
+          * From the second field, a tab or space moves to the third field,
+            while the comment character moves to the comment filed.
+
+          * From the third field, the comment character moves to the
+            comment field.
+
+     There is never any case folding after the comment character has been
+     entered.  If the comment character is placed in the first field, the
+     entire line is designated as a comment and no case folding occurs.
+
+          ------------------------------------------------------------
+          |                                                          |
+          |  NOTE:  A comment character may be entered into the      |
+          |  text without causing a move to the comment field by     |
+          |  preceding the comment character with an escape          |
+          |  character (\).  Entering the comment character in this  |
+          |  way preserves any active case folding.                  |
+          |                                                          |
+          ------------------------------------------------------------
+
+     6.3.2 Power-Type Mode
+
+     Power-type mode can be used for non-programming tasks, such as
+     preparing documents or editing batch files.  When the characters you
+     are entering extend past the right margin, the entire last word is
+     moved to the next line and processing continues.  Note that no
+     justification is performed when in power-type mode, resulting in a
+     ragged right margin.
+
+     6.4 Tab Stops Option
+
+     The default tab stops within LSE are eight characters wide.  The Tab
+     Stops option is used to change to a different set of tab stop
+     locations or to restore the settings back to the default settings.
+     Changes to the tab stops affect only the current window.
+
+     You will be prompted to enter the new settings after indicating that
+     you want them changed:
+
+          ENTER NEW TAB SETTINGS, SEPARATED BY COMMAS
+
+
+     Lattice Screen Editor (LSE)                                        E32
+
+
+
+
+
+
+
+
+     Enter the new tab columns as a string of numbers with comma
+     delimiters.  The following string:
+
+          5,10,15,20,25
+
+     would create new tab stops five (rather than eight) columns apart.
+
+     6.5 Expand Tabs to Spaces Option
+
+     The default setting is to not expand tabs to spaces.  Once ON, this
+     option affects only the tabs entered while the option is ON.  Tabs
+     entered prior to this option being turned ON are treated as tabs.
+     Once OFF, tabs entered while the option was on remain as spaces.  The
+     "expand tabs to spaces" option affects only the current window.
+
+     6.6 Auto Indenting Option
+
+     This feature can help structure C source code by providing automatic
+     indenting on open and closed braces ({ }).
+
+     The default mode for Auto Indenting is ON.  When ON, special cursor
+     positioning occurs on a carriage return based upon the first non-blank
+     character of the previous line:
+
+          * If the character is an open brace ({), the new line is indented
+            one tab stop to the right of the previous line.
+
+          * If the character is a close brace (}), the new line is indented
+            one tab stop to the left of the previous line.
+
+          * If any other character is in the first non-blank position, the
+            new line is indented to the same position as the previous line.
+
+     When OFF, no automatic indenting occurs.  This option affects the
+     current window only.
+
+     6.7 Column Display Indicator Option
+
+     The Column Display Indicator can be displayed on the status line.
+     This option toggles the Column Display Indicator ON and OFF.  This
+     option affects all windows.  The default position is OFF.
+
+     6.8 Search Parameters Option
+
+     This option can toggle the LSE Search Parameters between Pattern
+     Searches (the default) and Simple String Matching.  The Search
+     Parameters are used by both the Search Command and the Replace
+     Command.  This option affects all windows.  The default is Pattern
+     Searches.
+
+     6.9 Prompt Before Undo Option
+
+     This option can eliminate the prompt before an "Undo" when the Undo
+     Command is selected.  When the Undo prompt is displayed you can choose
+     whether or not to continue the action.  When this prompt is off, an
+     Undo is performed automatically when the Undo Command is selected.
+
+     Lattice Screen Editor (LSE)                                        E33
+
+
+
+
+
+
+
+
+     This option affects all windows.  The default is to display the prompt
+     before an Undo.
+
+     6.10 Check Compiler Output for Errors Option
+
+     The Check Compiler Output for Errors determines the level of error
+     checking performed by the Lattice C Compiler.  You can choose to:
+
+          * Check the compiler output for Errors and Warnings.
+
+          * Check the compiler output for Errors only.
+
+     This option affects all windows.  The default is to check the compiler
+     output for Errors and Warnings.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E34
+
+
+
+
+
+
+
+
+                                  Appendix A
+
+                              LSE Error Messages
+
+     A.1 Introduction
+
+     Appendix A presents a listing of the error messages which can be
+     generated by LSE during start up and normal execution.
+
+     A.2 Start Up Errors
+
+     You cannot run LSE if you receive a start-up error message.  If you
+     can correct the problem, do so and start LSE again.
+
+     DATA FILE LSE.DAT NOT FOUND
+
+          The LSE data file, LSE.DAT, was not found either in the current
+          directory or in any of the directories in the path when starting
+          LSE.  Add LSE.DAT to a valid directory and re-invoke LSE.
+
+     ILLEGAL OPTION
+
+          A command line option was entered that LSE did not recognize.
+          The command line options must be entered correctly in order to
+          invoke LSE.
+
+     MESSAGE FILE LSE.MSG NOT FOUND
+
+          The LSE message file, LSE.MSG, was not found either in the
+          current directory or in any of the directories on the path.  Add
+          LSE.MSG to the proper directory and re-invoke LSE.
+
+     NOT ENOUGH MEMORY TO START USE
+
+          There is not enough memory available within your computer for LSE
+          to load LSE.MSG and LSE.DAT.
+
+     A.3 Processing Errors
+
+     Processing errors are displayed during the normal course of running
+     LSE.  Processing error messages are displayed on the status line of
+     the current window.  They are preceded by:
+
+          ERROR:
+
+     The error message is displayed on the status line until the cursor is
+     moved off the current line.
+
+     BAD LINE NUMBER
+
+          The entry for a line number was answered with non-numeric input.
+
+     BAD SEARCH PATTERN
+
+          The input for a Search or Replace is not a valid pattern.
+
+
+     Lattice Screen Editor (LSE)                                        E35
+
+
+
+
+
+
+
+
+     BLOCK NOT PROPERLY MARKED
+
+          A block option was requested without a properly marked text
+          block.
+
+     CAN'T ASSIGN WITHIN AN ASSIGN
+
+          An attempt was made to turn on a macro keysaver while a macro
+          keysaver was already active.
+
+     CAN'T EXECUTE MACROS DURING ASSIGN
+
+          An attempt was made to execute a macro while a macro keysaver was
+          turned on.
+
+     CAN'T MOVE BLOCK FROM WITHIN BLOCK
+
+          An attempt was made to move a block to a location inside the
+          block.
+
+     COMPILER REPORTED ERRORS
+
+          A source file compiled from memory with the Lattice C Compiler
+          contained errors.  The source file did compile through to
+          end-of-file.  The errors (if saved) can be reviewed using <F5>.
+
+     COMPILER ERROR BUFFER OVERFLOW
+
+          A source file compiled from memory with the Lattice C Compiler
+          generated more errors than could be held in the error buffer.
+          The source file is compiled through to end-of-file.  The error
+          buffer is not cleared.  Review the errors contained in the error
+          buffer using <F5> and recompile the file.
+
+     ERROR OPENING OUTPUT FILE
+
+          An error occurred while LSE was trying to open a file for output.
+          This generally indicates that you have tried to write to a
+          read-only file or have run out of directory space.
+
+     ERROR READING INPUT FILE
+
+          An error occurred while LSE was trying to read information from a
+          user file.
+
+     ERROR WRITING OUTPUT FILE
+
+          An error occurred while LSE was trying to write to an output
+          file.  This generally indicates that you have run out of disk
+          space or that another program has the file open.
+
+     EXACT LINE NUMBER NOT FOUND
+
+          A line number was specified that does not exist in the file.
+
+     FATAL COMPILER ERROR
+
+     Lattice Screen Editor (LSE)                                        E36
+
+
+
+
+
+
+
+
+          A source file compiled from memory with the Lattice C Compiler
+          could not compile to completion due to a fatal error.  You are
+          returned to your source file.  The compiler error message
+          describing the fatal error is displayed on the status line.
+
+     FILE IS VIEW ONLY
+
+          An attempt was made to change or save a file opened in View Mode.
+
+     HELP NOT AVAILABLE
+
+          A request for context sensitive help was made while the help file
+          LSE.HLP was not found at start-up time.  There is no context
+          sensitive help available for the editing session.
+
+     HELP NOT FOUND
+
+          LSE.HLP has been changed in such a way that the requested help
+          message no longer exists.  The index portion of the file has been
+          changed or deleted.
+
+     HELP NOT FOUND IN HELP FILE
+
+          LSE.HLP has been changed in such a way that the requested help
+          message no longer exists.
+
+     INSUFFICIENT MEMORY
+
+          LSE has run out of available memory while trying to add text to
+          the file.  As much of this text file as memory will allow will be
+          saved; the remainder will be lost.
+
+     INSUFFICIENT MEMORY FOR HELP
+
+          The correct help message was found in LSE.HLP but there is not
+          enough memory to create and display the help window.
+
+     LC ERROR CHECKING NOT AVAILABLE
+
+          An attempt was made to review compiler errors for the file in the
+          current window while this file has either not been compiled or is
+          not a C source file.
+
+     LC ERROR CHECKING NOT AVAILABLE IN CURRENT WINDOW
+
+          An attempt was made to review compiler errors for the file in the
+          current window.  The other window being displayed has a source
+          file which was compiled.  Make that window the current window and
+          review the compiler errors.
+
+     MACRO FILE NOT FOUND
+
+          The specified macro file was not found either in the current
+          directory or in a directory along the user's path.
+
+     MACRO TOO BIG, - MACRO ENDED
+
+     Lattice Screen Editor (LSE)                                        E37
+
+
+
+
+
+
+
+
+          A macro was created having more than 255 keystrokes.  The macro
+          is ended and the first 255 keystrokes can be executed as a macro.
+
+     MAX LINESIZE EXCEEDED
+
+          More than 256 characters were entered on the current line.
+
+     NO ALTERNATE WINDOW AVAILABLE
+
+          An attempt was made to change to a second window while no second
+          window was displayed.
+
+     NO AVAILABLE WINDOW FOR NEW FILE
+
+          An attempt was made to open another window when a maximum number
+          of windows are already open.
+
+     NO FILE NAME SPECIFIED
+
+          An attempt was made to save a file which was started or opened
+          without a file name.  Use the Project Menu/Rename Option to name
+          the file and save the file.
+
+     NO MORE MATCHES FOUND
+
+          The Find Next function was not able to locate the displayed
+          search string.
+
+     NO PREVIOUS SEARCH
+
+          The Find Next function was used while no search string had been
+          specified.
+
+     ONE WINDOW OPEN - DISPLAY SIZE CANNOT BE CHANGED
+
+          An attempt was made to change the display size of the screen area
+          while only one window was open.  The Window Size toggle is
+          available only when two windows are open.
+
+     PRINTER ERROR
+
+          An attempt was made to print a block when the default printer was
+          not available.
+
+     TEXT IS NOT .C FILE
+
+          An attempt was made to compile the current file from memory.  The
+          file is not a C source file (it does not have a file extension of
+          .C) and cannot be compiled.
+
+     UNABLE TO LOAD COMPILER
+
+          An attempt was made to compile a source file from memory.  The
+          Lattice C Compiler either cannot be found using the current path
+          or there is not enough memory to load the compiler once it was
+          found.  Check your path statement and try the compile again.
+
+     Lattice Screen Editor (LSE)                                        E38
+
+
+
+
+
+
+
+
+     USER ABORTED SEARCH
+
+          A Search or Replace was aborted before its normal termination.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E39
+
+
+
+
+
+
+
+
+                                  Appendix B
+
+                                Customizing LSE
+
+     B.1 Introduction
+
+     Appendix B describes installing and customizing LSE.  It covers the
+     purpose and function of LSEINST, the installation program for LSE.  It
+     also describes tailoring LSE to your needs by making changes to the
+     Message (LSE.MSG) and Help (LSE.HLP) Files.
+
+     B.2 LSEINST:  The Installation Program
+
+     LSEINST is a screen-oriented program used to re-define the default
+     keystrokes and options in LSE.
+
+     All keystrokes in LSE can be changed.  The keystrokes are presented in
+     the following groups:
+
+          * Cursor Movement Keys.
+
+          * Delete and Insert Keys.
+
+          * Command Menu Keys.
+
+          * Change Window Keys.
+
+          * Compiler Keys.
+
+          * Special Use Keys.
+
+          * Execute and Assign Macro Keys.
+
+     The LSE mode options can also be changed.  The options identify:
+
+          * What input mode is to be used.
+
+          * What tab stops are to be used.
+
+          * Whether tabs are to be expanded to spaces.
+
+          * Whether automatic indenting is to occur on an open brace ({).
+
+          * Whether the Column Display is to be used.
+
+          * Whether patterns or simple string matching is to be used for
+            searches.
+
+          * Whether a prompt is displayed before executing an undo.
+
+          * Whether the compiler output is checked for warnings and errors
+            or errors only.
+
+     Each set of keystrokes and modes is presented on a single screen
+     display which is selected from the LSEINST Main Menu.
+
+
+     Lattice Screen Editor (LSE)                                        E40
+
+
+
+
+
+
+
+
+     B.2.1 The LSE Data File (LSE.DAT)
+
+     LSEINST stores all key and option information in the LSE Data File
+     (LSE.DAT).  When started, LSEINST attempts to read in your current
+     LSE.DAT file.
+
+          * If LSEINST cannot find LSE.DAT in your current directory or
+            along the directories in your path, it assumes you want to
+            create a new LSE.DAT.
+
+          * If LSEINST does find your current LSE.DAT it assumes that you
+            want the information from this file to be used as the defaults
+            for this execution of LSEINST.
+
+     Upon leaving LSEINST you have the option to save or abandon your
+     changes for this session with LSEINST.
+
+     B.2.2 Running LSEINST
+
+     LSEINST is started by entering:
+
+          LSEINST
+
+     This causes the LSEINST main menu to be displayed.
+
+     The LSEINST main menu controls the group of items you want to change
+     or view.  Select the group by pressing the function key (<F1> through
+     <F10>) displayed to the left of the description.  For example, press
+     <F4> to display the Command Menu keys display.
+
+     Use <ESC> to return to this display from any other display within
+     LSEINST.
+
+     B.2.3 Changing LSE Keystrokes
+
+     To change default keystrokes:
+
+          * Select the desired display from the Main Menu.
+
+          * Press the function key (<F1> through <F8>) appearing to the
+            left of the description to display the key group.
+
+          * Once the selected key group is displayed, press the function
+            key to the left of the description to reassign the key value
+            for the identified item.
+
+          * After making the desired change(s), press <ESC> to return to
+            the Main Menu.
+
+     To change the current definition of the Quit key from <F3> to
+     <CTRL-Q>:
+
+          * Press <F6>.
+
+          * The message "Press key to be used for <GO TO QUIT LSE COMMAND>"
+            is displayed.
+
+     Lattice Screen Editor (LSE)                                        E41
+
+
+
+
+
+
+
+
+          * Press and hold <CTRL> and then press <Q>.
+
+          * The current definition of the Quit key is the displayed as
+            <CTRL-Q>.
+
+     LSEINST identifies key conflicts but allows the key to be selected.
+     For example, you wanted to change the Quit keystroke from Q to L (for
+     Leave).
+
+     LSEINST would display the message:
+
+          <GO TO QUIT LSE COMMAND> conflicts with <GO TO LOCATE LINE
+          COMMAND>
+
+     You should avoid conflicts with the assigned LSE keys.
+
+     B.2.4 Changing LSE Options
+
+     As just stated above, the options identify the default processing
+     performed by LSE.  The defaults can be changed for each editing
+     session using the Mode Menu.  Select the options display by pressing
+     <F9> while the LSEINST main menu is displayed.
+
+     To change an option:
+
+          * Position the cursor at the option to be changed using the <UP>
+            and <DOWN> keys.
+
+          * Change the current selection by pressing <SPACE>.  If there is
+            more than one selection, cycle through the choices by pressing
+            <SPACE>.
+
+          * Select the setting by pressing <ENTER>.
+
+          * Once you have completed your selections, press <ESC> to return
+            to the main menu.
+
+     Refer to Section 6 for information on the various mode options.
+
+     B.2.4.1 Default Options
+
+     LSE is shipped with the following default options:
+
+          * No processing of input.
+
+          * Set tab stops to default settings (every 8 spaces).
+
+          * Automatic indenting on '{' ON.
+
+          * Status line column display OFF.
+
+          * Searches use patterns.
+
+          * Prompt before performing undo.
+
+          * No default file extension.
+
+     Lattice Screen Editor (LSE)                                        E42
+
+
+
+
+
+
+
+
+          * Rename current file with backup .BAK extension.
+
+          * Check compiler output for errors and warnings.
+
+     These options can be changed for an editing session by using the Mode
+     Command.  Use LSEINST to change the defaults.
+
+     B.2.4.2 File Extension Options
+
+     A file extension can automatically be added to a filename when
+     specified without an extension.  There are two file extension options:
+
+          * No default file extensions.
+
+          * Use default file extensions.
+
+     The "no default file extensions" is the system default.  When you
+     select default file extensions, the message and prompt:
+
+          CURRENT SETTING:
+          ENTER DEFAULT EXTENSION FOR FILENAMES (examples, C,ASM)
+
+     are displayed.  Enter the extension you want to use as the default and
+     press <ENTER>.  It will then appear as the CURRENT SETTING.  For
+     example, if you make c your default extension, the file ftoc would be
+     renamed to ftoc.c when edited.
+
+     The file extension option can be changed only within LSEINST.
+
+     B.2.4.3 Backup File Processing
+
+     You can choose to automatically generate backup copies of your files
+     as they are saved either in a separate directory or with the specified
+     file extension within the same directory as your source file.  There
+     are three backup file processing options:
+
+          * Rename current file with backup extension.
+
+          * Do not create backup file.
+
+          * Place backup file in backup directory.
+
+     Renaming the current file with backup extension is the system default
+     and .bak is the system default backup extension.
+
+     When you select backup directory, the message and prompt:
+
+          CURRENT SETTING:
+          ENTER DEFAULT BACKUP DIRECTORY (for example, C:/BAK)
+
+     are displayed.  Enter the directory you want to use as the default and
+     press <ENTER>.  It will then appear as the CURRENT SETTING.  For
+     example, if you make C:/BAK your default backup directory, the file
+     ftoc.c would be saved to both the current directory and C:/BAK/FTOC.C.
+
+     When you select rename current file with backup extension, the message
+
+     Lattice Screen Editor (LSE)                                        E43
+
+
+
+
+
+
+
+
+     and prompt:
+
+          CURRENT SETTING:
+          ENTER DEFAULT BACKUP EXTENSION (for example, BAK)
+
+     are displayed.  Enter the extension you want to use as the default and
+     press <ENTER>.  It will then appear as the CURRENT SETTING.  For
+     example, if you make .old your default extension, the file ftoc.c
+     would be backed-up to ftoc.old when saved.
+
+     The backup file processing option can be changed only within LSEINST.
+
+     B.2.5 Leaving LSEINST
+
+     Once you have completed your session with LSEINST return to the main
+     menu and press <F10>.  The exit menu is then displayed.  From this
+     menu you can choose to:
+
+          * Print the current key selections.
+
+          * Abandon the file and not save any changes made during this
+            session.
+
+          * Rename the current data file.
+
+          * Save changes made during this session to the current data file.
+
+     Like all other displays, press the function key to the left of the
+     description to perform the task described.
+
+     B.2.5.1 Print the Key Selections
+
+     Press <F1> to print the current key selections to your default
+     printer.  Since this document only covers the default key selections,
+     this option is very useful to track any changes you have made to the
+     key assignments.
+
+     B.2.5.2 Abandon This Session
+
+     Press <F2> to abandon this session of LSEINST.  Any changes made to
+     the LSE data file (LSE.DAT) are ignored.
+
+     B.2.5.3. Rename the Current Data File
+
+     Press <F3> to rename the current data file.  You may want to have a
+     series of data files to control editing of specific types of files.
+     This is accomplished by re-directing LSE to the named data file.
+
+     Once you press <F3>, the message and prompt:
+
+          CURRENT SETTING:  LSE.DAT
+          ENTER NEW DATA FILENAME
+
+     are displayed.  Enter the new data file name and press <ENTER>.  The
+     new name will then appear as the CURRENT SETTING.  For example, if you
+     enter SOURCE.DAT as your data file name it will appear as the current
+
+     Lattice Screen Editor (LSE)                                        E44
+
+
+
+
+
+
+
+
+     setting.  After saving the changes, LSE would use SOURCE.DAT rather
+     than LSE.DAT to locate key and option information.
+
+     B.2.5.4 Save the Changes Made This Session
+
+     Press <F4> to save changes made during this session of LSEINST.  After
+     you press <F4>, the changes are saved to the current data file, the
+     message:
+
+          INSTALLATION SUCCESSFULLY COMPLETED
+
+     is displayed.
+
+     B.3 Making Changes to LSE.MSG
+
+     LSE.MSG contains the text for all prompts, help messages and error
+     messages used within LSE.  It also contains information about default
+     file extensions and coded information about menus.  You can change any
+     of the messages to alter the appearance and functionality of LSE.
+
+     Unlike LSE.DAT, there is no special utility for changing LSE.MSG;
+     LSE.MSG is a text file containing over one hundred numbered message
+     lines which can be changed using LSE.
+
+     B.3.1 Changing Menu Messages
+
+     Messages 1 through 8 contain the menus used during LSE processing.
+     The menus are represented as a series of multi-line messages; each
+     series defining an LSE menu.  The messages have the following general
+     layout:
+
+          #;"  @key{menu}{descriptor line}'
+
+     where:
+
+     #;                    Is the message number.
+
+     @key                  Is the default setting for this menu option and
+                           should never be changed.
+
+     {menu}                Is the string displayed on the menu line
+                           selected to initiate this command.
+
+     {descriptor line}     Is the text that appears on the descriptor line
+                           when the menu item is pointed to.
+
+     The entire message string must be enclosed within quotation marks
+     (" ").  If there are several lines corresponding to the same message,
+     use the single quote character (') to indicate continuation and end
+     the last line with the quote character (").
+
+     Each menu item should be given a default setting for the menu.  This
+     default setting identifies the position of the select bar when the
+     menu is displayed.  Use the character > to identify the default
+     setting for the menu.  It replaces the character @ directly preceding
+     the key.
+
+     Lattice Screen Editor (LSE)                                        E45
+
+
+
+
+
+
+
+
+     What follows is the default Main Menu from the Message File:
+
+          1;"COMMAND:  >B{B}{Block operations}'
+          1;"  @L{C}{Invoke Lattice C Compiler}'
+          1;"  @F{F}{Fork command processor}'
+          1;"  @M{M}{Select LSE mode}'
+          1;"  @N{L}{Go to a specific line number}'
+          1;"  @O{O}{Open new window}'
+          1;"  @C{P}{Project Menu}'
+          1;"  @R{R}{Search and replace}'
+          1;"  @S{S}{Search}'
+          1;"  @Q{Q}{Quit}'
+          1;"  @U{U}{Undo Last Change}"
+
+     Note that the Block Command is the menu default and that quotes are
+     used to complete the menu selections following the Undo Command.
+
+     You may modify the text to be displayed on the menu line.  This may,
+     however, change the key you must press to choose the selection.  For
+     example, if you were to replace the Block Command with the following
+     line:
+
+          1;"  @B{P}{Cut and Paste Operations}"
+
+     you would see Cut and Paste Operations on this menu and need to choose
+     P to select this option.
+
+     You should not have conflicting choices on the option keys of the menu
+     selections since only the first option using that letter can be
+     chosen.  In the above example, P is selected rather than C as there
+     would be a conflict with the Invoke the Compiler Command.
+
+     B.4 Making Changes to LSE.HLP
+
+     LSE.HLP contains the text that forms the help messages for the context
+     sensitive help command of LSE.  You may choose these messages to make
+     the help more suitable to your needs.  Like LSE.MSG, LSE.HLP can be
+     changed using LSE.
+
+     The text for the subjects are separated from each other by subject
+     numbers.  The subject numbers are two digits preceded by a period:
+
+          .00
+
+     In the sample page, the Block Read option is identified by subject
+     number .04 and the Project Command is identified by subject number
+     .06.  The text for the first help screen is identified by this subject
+     number.  The subject number controls what text goes with which element
+     of LSE so these should not be changed.
+
+     The help text can span any number of pages.  When multiple pages of
+     help text are available, pressing any key will display the next page.
+     Only the text appearing within the display window area can be
+     displayed.  There is no facility to display text past column 80.
+
+
+
+     Lattice Screen Editor (LSE)                                        E46
+
+
+
+
+
+
+
+
+                                  Appendix C
+
+                             Special Keys Summary
+
+     C.1 Introduction
+
+     Appendix C presents a summary of the keystrokes used within LSE.  The
+     summary covers the standard keystroke assignments which are delivered
+     with the product and subsequently referred to within the text.  The
+     standard keystroke assignments can be customized to any control key or
+     other special key using LSEINST as described in Appendix B.
+
+     C.2 Cursor Movement Keys
+
+          Function           | Key          | Action
+          -------------------+--------------+-------------------------
+          Up One Line        | <UP>         | Move the cursor up one
+                             |              | line.
+                             |              |
+          Down One Line      | <DOWN>       | Move the cursor down one
+                             |              | line.
+                             |              |
+          Previous Character | <LEFT>       | Move the cursor one
+                             |              | character left.
+                             |              |
+          Previous Word      | <CTRL-LEFT>  | Move the cursor one word
+                             |              | left.
+                             |              |
+          Next Character     | <RIGHT>      | Move the cursor one
+                             |              | character right.
+                             |              |
+          Next Word          | <CTRL-RIGHT> | Move the cursor one word
+                             |              | right.
+                             |              |
+          Beginning of Line  | <HOME>       | Move the cursor to the
+                             |              | first character of the
+                             |              | current line.
+                             |              |
+          Beginning of Text  | <CTRL-HOME>  | Move the cursor to the
+                             |              | first character of the
+                             |              | text file.
+                             |              |
+          End of Line        | <END>        | Move the cursor to the
+                             |              | last character of the
+                             |              | current line.
+                             |              |
+          End of Text        | <CTRL-END>   | Move the cursor to the
+                             |              | last character of the
+                             |              | text file.
+                             |              |
+          Previous Page      | <PGUP>       | Display the previous
+                             |              | page of text.
+                             |              |
+          Next Page          | <PGDN>       | Display the next page of
+                             |              | text.
+
+
+     Lattice Screen Editor (LSE)                                        E47
+
+
+
+
+
+
+
+
+          Function           | Key          | Action
+          -------------------+--------------+-------------------------
+          Scroll Up          | <CTRL-^>     | Scrolls the display up
+                             |              | without moving the
+                             |              | cursor.
+                             |              |
+          Scroll Down        | <CTRL-V>     | Scrolls the display down
+                             |              | without moving the
+                             |              | cursor.
+
+     C.3 Change Window Keys
+
+          Function           | Key       | Action
+          -------------------+-----------+----------------------------
+          Change Window      | <CTRL-F6> | Change active window when
+                             |           | in the split screen mode.
+                             |           |
+          Change Window Size | <F9>      | Toggle window display size
+                             |           | from full to half screen.
+                             |           |
+          Cycle Windows      | <F6>      | Cycle through hidden
+                             |           | windows.
+
+     C.4 Insert Keys
+
+          Function             | Key      | Action
+          ---------------------+----------+---------------------------
+          Insert Mode Toggle   | <INS>    | Toggle between the Insert
+                               |          | Mode and the Overwrite
+                               |          | Mode.
+                               |          |
+          Insert a Line        | <CTRL-N> | Insert a line before the
+                               |          | current line, do not break
+                               |          | the current line.
+                               |          |
+          Restore Deleted Line | <ALT-Y>  | Restore the last line
+                               |          | deleted with <CTRL-Y> at
+                               |          | the cursor position,
+                               |          | shifting the current line
+                               |          | down one line.
+
+     C.5 Delete Keys
+
+          Function              | Key      | Action
+          ----------------------+----------+--------------------------
+          Delete Current        | <DEL>    | Delete current character
+          Character             |          | from text.
+                                |          |
+          Delete Previous       | <BKSP>   | Delete previous character
+          Character             |          | from the text.
+                                |          |
+          Delete Word           | <CTRL-W> | Delete text until the
+                                |          | next word is encountered.
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E48
+
+
+
+
+
+
+
+
+          Function              | Key      | Action
+          ----------------------+----------+--------------------------
+          Delete Line           | <CTRL-Y> | Delete the current line.
+                                |          | The line can be restored
+                                |          | using <ALT-Y>.
+                                |          |
+          Delete to End of Line | <CTRL-E> | Delete text to the end of
+                                |          | the current line.
+
+     C.6 Help Key
+
+          Function     | Key    | Action
+          -------------+--------+-------------------------------------
+          Context Help | <F1>   | Display help window.
+                       |        |
+          Context Help | <HELP> | Display help window.
+
+     C.7 Change Color Keys
+
+          Function         | Key  | Action
+          -----------------+------+-----------------------------------
+          Cycle Foreground | <F7> | Cycle through the foreground
+                           |      | colors.
+                           |      |
+          Cycle Background | <F8> | Cycle through the background
+                           |      | colors.
+
+     C.8 Keysaver Macro Keys
+
+          Function            | Key      | Action
+          --------------------+----------+----------------------------
+          Start/Stop Keysaver | <ALT-#>  | Start or stop recording
+          Macro               |          | keys to the keysaver macro.
+                              |          |
+          Replay a Macro      | <ALT-F#> | Replay a macro.
+
+     C.9 Mark Block Keys
+
+          Function          | Key      | Action
+          ------------------+----------+------------------------------
+          Mark Beginning of | <CTRL-[> | Mark the start of a block of
+          Block             |          | text.
+                            |          |
+          Mark End of Block | <CTRL-]> | Mark the end of a block of
+                            |          | text.
+
+     C.10 Command Menu Key Functions
+
+                      |  Menu  |          |
+          Function    | Select | Direct   | Description
+          ------------+--------+----------+---------------------------
+          Block       | <B>    | <CTRL-B> | Block Operations
+                      |        |          |
+          Compile     | <C>    | <F4>     | Invoke Lattice C Compiler
+                      |        |          |
+          Fork        | <F>    | <CTRL-F> | Fork Command Processor
+
+     Lattice Screen Editor (LSE)                                        E49
+
+
+
+
+
+
+
+
+                      |  Menu  |          |
+          Function    | Select | Direct   | Description
+          ------------+--------+----------+---------------------------
+          Mode        | <M>    | <CTRL-M> | Select LSE Mode
+                      |        |          |
+          Line Number | <L>    | <CTRL-L> | Go to a Specific Line
+                      |        |          | Number
+                      |        |          |
+          Open        | <O>    | <CTRL-O> | Open New Window
+                      |        |          |
+          Project     | <P>    | <CTRL-P> | Project Menu
+                      |        |          |
+          Replace     | <R>    | <CTRL-R> | Search and replace
+                      |        |          |
+          Search      | <S>    | <CTRL-S> | Search
+                      |        |          |
+          Quit        | <Q>    | <F3>     | Quit
+                      |        |          |
+          Undo        | <U>    | <CTRL-U> | Undo Last Change
+
+     C.11 Action Keys
+
+          Function             | Key          | Action
+          ---------------------+--------------+-----------------------
+          Menu Toggle          | <F2>         | Display Main Menu or
+                               |              | cancel action and
+                               |              | return to editing.
+                               |              |
+          Display Next Error   | <F5>         | Frame next compiler
+                               |              | error.
+                               |              |
+          Escape Character     | <CTRL-ESC>   | Enter escape character
+                               |              |
+          Find Next Match      | <ALT-S>      | Locate next match for
+                               |              | search.
+                               |              |
+          Interlace Toggle     | <CTRL-ENTER> | Interlace Toggle key.
+                               |              |
+          Set Compiler Options | <CTRL-F4>    | Set compiler options.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E50
+
+
+
+
+
+
+
+
+                                  Appendix D
+
+                           Regular Expression Syntax
+
+     D.1 Introduction
+
+     Appendix D describes the regular expression syntax and minor
+     deviations that the LSE version makes from the standard.  The
+     following text is taken from the Lattice Compiler Companion Users
+     Guide for the Grep utility.  The functions that perform the regular
+     expression search in LSE are the same as those provided with this
+     package.
+
+     D.2 Pattern Search
+
+     For the purpose of this appendix, a regular expression will be
+     referred to as a pattern.
+
+     The version of a regular expression search used within LSE is very
+     much like the regular expression search of UNIX grep, but with a few
+     exceptions.  A slightly less general class of patterns (regular
+     expressions) is supported; in particular, the UNIX regular expressions
+     of the form:
+
+          \{m\}  or  \{m,\}  or  \{m,n\}
+
+     which match ranges of occurrences of regular expressions, are not
+     recognized by the regular expression search in LSE.  Neither are the
+     regular expressions of the forms:
+
+          \(...\)  or))\n
+
+     where n is a numeral, and \n is intended to match the same string of
+     characters as was matched by the expression enclosed between \( and
+     \).
+
+     D.3 Similar to UNIX grep
+
+     Aside from these departures, this regular expression search has all
+     the features of the UNIX grep.  In particular:
+
+          * An ordinary character is a one-character pattern that matches
+            itself.
+
+          * A backslash (\) followed by any special character is a
+            one-character pattern that matches the special character
+            itself, except when it is used in an escape sequence for a
+            non-graphic character.  The special characters include:
+
+                 . * [ and \  (Unlike UNIX, . * and \ remain special even
+                     within square brackets, but [ does not.)
+
+                 ^ - is special at the beginning of an entire pattern.
+
+                 $ - is special at the end of an entire pattern (as
+                     explained below).
+
+     Lattice Screen Editor (LSE)                                        E51
+
+
+
+
+
+
+
+
+                 ! - is special immediately following a [ (as explained
+                     below).
+
+          * A period (.) is a one-character pattern that matches any
+            character except newline or end-of-string.
+
+          * A non-empty string of characters enclosed in square brackets
+            ([ ]) is a one-character pattern that matches any one character
+            in that string.  However, if the first character of the string
+            is ! then the one-character pattern matches any character
+            except newline, end-of-string, and the remaining characters in
+            the string.  Thus ! is a not sign applied to a character class.
+            Note that this is a notational departure from UNIX, which uses
+            ^ for this application (thus rendering ^ ambiguous).
+
+            Also supported are such character classes as:
+
+                 [a-z]
+
+            indicating all of the letters a through z.  The only
+            restriction in such cases is that the first character must
+            occur alphabetically prior to the second.
+
+          * LSE regular expression search recognizes certain non-graphic
+            characters denoted in the manner of Kernighan & Ritchie.  In
+            particular, the expression on the left below may be used to
+            denote a pattern that is matched by the character described on
+            the right:
+
+            \n       newline
+
+            \t       tab
+
+            \b       backspace
+
+            \r       carriage return
+
+            \\       backslash
+
+            \xmn     the character whose hex number is denoted by the hex
+                     numerals m and n (in sequence)
+
+          * Text strings containing whitespace (spaces and tabs) may be
+            specified as a regular expression search pattern by enclosing
+            them in quote marks (" ").  Thus a string may be searched for
+            by means of:
+
+                 "this is a string"
+
+          * If r is a pattern, then:
+
+                 r*
+
+            matches one or more occurrences of r.  If there is a choice,
+            then the longest leftmost string that matches is chosen.
+
+
+     Lattice Screen Editor (LSE)                                        E52
+
+
+
+
+
+
+
+
+          * If r is a pattern, then:
+
+                 r+
+
+            matches one or more occurrences of r.  If there is a choice,
+            then the longest leftmost string that matches is chosen.
+
+          * The concatenation of patterns is a pattern that matches the
+            concatenation of the strings matched by each component of the
+            pattern.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor (LSE)                                        E53
+
+
+
+
+
+
+
+
+                                     INDEX
+
+     A
+
+     Abandon LSEINST Session  E44
+     Action Keys  E13, E26, E50
+     <ALT-F#>  E17, E49
+     <ALT-#>  E17, E49
+     <ALT-S>  E24, E27, E50
+     <ALT-Y>  E15, E48
+     ASCII  E10
+     Auto Indenting Option  E33, E42
+
+     B
+
+     Backslash  E32
+     Backspace  E15, E48
+     <BkSp>  E15, E48
+     Backup Directory  E4
+     Backup File Processing Option  E43
+     BAD LINE NUMBER  E35
+     BAD SEARCH PATTERN  E35
+     Before Compiling  E29
+     Beginning of Line  E14, E47
+     Beginning of Text  E14, E47
+     Block Command  E19
+     BLOCK NOT PROPERLY MARKED  E36
+     Block  E18, E49
+     Button Left Click on gadget  E13
+     Button Left Click on slider-bar  E13
+     Button Left Click on text  E13
+     Button Right Click on pull-down menu  E13
+
+     C
+
+     C Source Code  E33
+     CAN'T ASSIGN WITHIN AN ASSIGN  E36
+     CAN'T EXECUTE MACROS DURING ASSIGN  E36
+     CAN'T MOVE BLOCK FROM WITHIN BLOCK  E36
+     Case Folding  E31
+     Change Color Keys  E12, E16, E49
+     Change Tab Stops  E32
+     Change Window Keys  E12, E14, E40, E48
+     Change Window Size  E14, E15, E48
+     Change Window  E14, E48
+     Changing Keystroke Assignments  E13, E41
+     Changing Menu Messages  E45
+     Changing LSE Options  E42
+     Check Compiler Output for Errors Option  E34, E43
+     Column Display Indicator Option  E33, E42
+     Column Display Indicator  E8, E33
+     Command Keys  E12, E18
+     Command Line Syntax  E5
+     Command Menu Key Functions  E49
+     Command Menu  E18
+
+
+     Lattice Screen Editor LSE INDEX                                      i
+
+
+
+
+
+
+
+
+     Command, Block  E19
+        Fork  E20
+        Invoke Lattice C Compiler  E19, E29
+        Line Number  E20
+        Mode  E20
+        Open  E20
+        Project  E21
+        Quit  E24
+        Replace  E23
+        Search  E24
+        Undo  E25, E33
+     Comment Character  E32
+     Compile  E19, E49
+     COMPILER ERROR BUFFER OVERFLOW  E36
+     Compiler Keys  E40
+     COMPILER REPORTED ERRORS  E36
+     Compiling C Files  E3
+     Compiling Your Source File  E29
+     Continue Option  E22
+     <CTRL-[>  E18, E49
+     <CTRL-]>  E18, E49
+     <CTRL-^>  E14, E48
+     <CTRL-ENTER>  E26
+     <CTRL-END>  E14, E47
+     <CTRL-ESC>  E26, E27, E50
+     <CTRL-HOME>  E14, E47
+     <CTRL-B>  E18, E19, E49
+     <CTRL-E>  E16, E49
+     <CTRL-F4>  E26, E28, E29, E50
+     <CTRL-F6>  E14, E48
+     <CTRL-F>  E19, E20, E49
+     <CTRL-L>  E19, E20, E50
+     <CTRL-M>  E19, E20, E31, E50
+     <CTRL-N>  E15, E48
+     <CTRL-O>  E19, E20, E50
+     <CTRL-P>  E19, E21, E50
+     <CTRL-R>  E19, E23, E50
+     <CTRL-S>  E19, E24, E50
+     <CTRL-U>  E19, E25, E50
+     <CTRL-V>  E14, E48
+     <CTRL-W>  E16, E48
+     <CTRL-Y>  E16, E49
+     <CTRL-LEFT>  E13, E47
+     <CTRL-RIGHT>  E14, E47
+     Current Character  E8
+     Current Filename Indicator  E8
+     Current Line Indicator  E7
+     Current Mode Indicator  E8
+     Current Window  E7
+     Cursor Movement Keys  E12, E13, E40, E47
+     Cycle Background Color  E16, E49
+     Cycle Foreground Color  E16, E49
+     Cycle Windows  E14, E15, E48
+
+
+
+
+     Lattice Screen Editor LSE INDEX                                     ii
+
+
+
+
+
+
+
+
+     D
+
+     DATA FILE LSE.DAT NOT FOUND  E35
+     Data File  E41, E44
+     Default File Extension Option  E42, E43
+     Default Options  E42
+     Delete Current Character  E16, E48
+     Delete Keys  E12, E15, E40, E48
+     Delete Line  E16, E49
+     Delete to End of Line  E16, E49
+     Delete Word  E16, E48
+     <DEL>  E16, E48
+     Descriptor Line  E9
+     Display Next Error  E26, E50
+     Display Option  E23
+     Down One Line  E13, E47
+     <DOWN>  E13, E47
+
+     E
+
+     End of Line  E14, E47
+     End of Text  E14, E47
+     <End>  E14, E47
+     Enter Escape Character  E26, E27, E50
+     Error Message Display  E9
+     Error Messages  E35
+     ERROR OPENING OUTPUT FILE  E36
+     ERROR READING INPUT FILE  E36
+     Error Tracking  E3
+     ERROR WRITING OUTPUT FILE  E36
+     Errors  E34
+     Escape Character  E10, E32
+     EXACT LINE NUMBER NOT FOUND  E36
+     Execute and Assign Macro Keys  E40
+     Execute standard gadget command  E13
+     Expand Tabs to Spaces Option  E33, E42
+
+     F
+
+     FATAL COMPILER ERROR  E36
+     FILE IS VIEW ONLY  E37
+     File Size Limitation  E3
+     File Status  E21
+     Find Next Match  E26, E27, E50
+     Foreign Character Set  E4
+     Fork Command  E19, E20, E49
+
+     G
+
+     Go to Line Number  E19, E20, E50
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE INDEX                                    iii
+
+
+
+
+
+
+
+
+     H
+
+     Help File  E46
+     Help Key  E16, E49
+     Help Keys  E12
+     HELP NOT AVAILABLE  E37
+     HELP NOT FOUND IN HELP FILE  E37
+     HELP NOT FOUND  E37
+     <HOME>  E14, E47
+
+     I
+
+     ILLEGAL OPTION  E35
+     Indicator, Column Display  E8, E33
+        Current Filename  E8
+        Current Line  E7
+        Current Mode  E8
+        Keystroke Active  E8
+        Marked Block  E8
+        Window Number  E8
+     Input Line  E9
+     Input Modes Option  E31, E42
+     Input Modes  E4
+     Insert a Line  E15, E48
+     Insert Keys  E12, E15, E40, E48
+     Insert Mode Toggle  E15, E48
+     Insert Mode  E8, E10
+     Insert Option  E23
+     <Ins>  E15, E48
+     Installation Program  E4, E40
+     Installing LSE  E5
+     INSUFFICIENT MEMORY FOR HELP  E37
+     INSUFFICIENT MEMORY  E37
+     Integrated Environment  E29
+     Interlace Toggle  E26, E28, E50
+     Invoke Lattice C Compiler Command  E19, E29
+     Invoking LSE  E9
+
+     K
+
+     <F1>  E4, E16, E49
+     <F2>  E26, E50
+     <F3>  E19, E24, E50
+     <F4>  E19, E49
+     <F5>  E26, E30, E50
+     <F6>  E14, E15, E48
+     <F7>  E16, E49
+     <F8>  E16, E49
+     <F9>  E14, E15, E48
+
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE INDEX                                     iv
+
+
+
+
+
+
+
+
+     Keys, Action  E13, E26, E50
+        Change Color  E12, E16, E49
+        Change Window  E12, E14, E40, E48
+        Command  E12, E18, E49
+        Compiler  E40
+        Cursor Movement  E12, E13, E40, E47
+        Delete  E12, E15, E40, E48
+        Execute and Assign Macro  E40
+        Help  E12
+        Insert  E12, E15, E40, E48
+        Keysaver Macro  E12, E16, E49
+        Mark Block  E12, E18, E49
+        Special Use  E40
+     Keysaver Macro Keys  E12, E16, E49
+     Keysaver Macro  E17
+     Keystroke Active Indicator  E8
+
+     L
+
+     Lattice C Compiler  E5, E34
+     Lattice C Installation  E5
+     LC Command  E29
+     LC ERROR CHECKING NOT AVAILABLE IN CURRENT WINDOW  E37
+     LC ERROR CHECKING NOT AVAILABLE  E37
+     LC OPT  E29
+     <LEFT>  E13, E47
+     Line Number Command  E20
+     Loading a Macro File  E17
+     LSE.DAT  E10, E35, E41, E44
+     LSE.HLP  E10, E46
+     LSE.MSG  E10, E35, E45
+     LSEINST Exit Menu  E44
+     LSEINST Main Menu  E41
+     LSEINST  E31, E40
+     LSE Data File  E35, E41, E44
+     LSE Help File  E46
+     LSE Message File  E35, E45
+     LSE Overview  E1
+
+     M
+
+     MACRO FILE NOT FOUND  E37
+     Macro File  E17
+     Macro Keystroke Saver  E8
+     MACRO TOO BIG, - MACRO ENDED  E37
+     Macros  E4
+     Mark Beginning of Block  E18, E49
+     Mark Block Keys  E12, E18, E49
+     Mark End of Block  E18, E49
+     Marked Block Indicator  E8
+     Marking a Block  E18
+     MAX LINESIZE EXCEEDED  E38
+     Maximum Line Length  E10
+     Menu Toggle Key  E26, E50
+     MESSAGE FILE LSE.MSG NOT FOUND  E35
+     Message File  E45
+
+     Lattice Screen Editor LSE INDEX                                      v
+
+
+
+
+
+
+
+
+     Mode Command  E20
+     Mode Menu Options  E31
+     Mode Menu  E19, E20, E29, E50
+     Mode Options  E40
+     Mouse Controls  E12
+     Move cursor to click point  E13
+     Move to relative text position  E13
+     Multiple File Processing  E3
+
+     N
+
+     Next Character  E13, E47
+     Next Option  E23
+     Next Page  E14, E47
+     Next Word  E14, E47
+     NO ALTERNATE WINDOW AVAILABLE  E38
+     NO AVAILABLE WINDOW FOR NEW FILE  E38
+     NO FILE NAME SPECIFIED  E38
+     NO MORE MATCHES FOUND  E38
+     NO PREVIOUS SEARCH  E38
+     NOT ENOUGH MEMORY TO START LSE  E35
+
+     O
+
+     On-Line Help  E4
+     ONE WINDOW OPEN - DISPLAY SIZE CANNOT BE CHANGED  E38
+     Open Command  E20
+     Open New Window  E19, E20, E50
+     Open Option  E23
+     Option, Auto Indenting  E33, E42
+        Backup File Processing  E43
+        Check Compiler Output for Errors  E34, E43
+        Column Display Indicator  E33, E42
+        Continue  E22
+        Default File Extension  E42, E43
+        Display  E23
+        Expand Tabs to Spaces  E33, E42
+        Input Modes  E31, E42
+        Insert  E23
+        Next  E23
+        Open  E23
+        Prompt Before Undo  E25, E33, E42
+        Quit  E22
+        Rename  E23
+        Save  E22
+        Search Parameters  E33, E42
+        Syntax Error Handling  E43
+        Tab Stops  E32, E42
+     Options, Mode Menu  E31
+     Overwrite Mode  E8, E10
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE INDEX                                     vi
+
+
+
+
+
+
+
+
+     P
+
+     Page Control Keys  E47
+     <PGDN>  E14, E47
+     <PGUP>  E14, E47
+     Power-type Mode  E3, E4, E32
+     Previous Character  E13, E47
+     Previous Page  E14, E47
+     Previous Word  E13, E47
+     Print LSE Key Selections  E44
+     PRINTER ERROR  E38
+     Processing Errors  E35
+     Project Command  E21
+     Project Menu  E19, E21, E50
+     Prompt Before Undo Option  E25, E33, E42
+     Prompt Line  E9
+
+     Q
+
+     Quit Command  E24
+     Quit Option  E22
+     Quit  E19, E50
+
+     R
+
+     Re-Define Keystrokes  E40
+     Re-framing a Window  E10
+     Rename Option  E23
+     Replace Command  E23
+     Replace  E19, E50
+     Replay a Macro  E17, E49
+     Restore Deleted Line  E15, E48
+     Reviewing Errors  E30
+     <RIGHT>  E13, E47
+
+     S
+
+     Save Option  E22
+     Save LSEINST Changes  E45
+     Saving Macros  E17
+     Scroll Down  E14, E48
+     Scroll Up  E14, E48
+     Search Command  E24
+     Search Parameters Option  E33, E42
+     Search  E4, E19, E50
+     Set Compiler Options  E26, E28, E50
+     Special Graphics Characters  E4
+     Special Key Functions  E10
+     Special Keys  E12
+     Special Use Keys  E40
+     Start Keysaver Macro  E17, E49
+     Start Up Errors  E35
+     Status Line  E7
+     Stop Keysaver Macro  E17, E49
+     Syntax Error Handling Option  E43
+     Syntax Errors  E29, E30
+
+     Lattice Screen Editor LSE INDEX                                    vii
+
+
+
+
+
+
+
+
+     System Requirements  E5
+
+     T
+
+     Tab Stops Option  E32, E42
+     Tabs to Spaces  E33
+     Tabs  E4
+     TEXT IS NOT .C FILE  E38
+
+     U
+
+     UNABLE TO LOAD COMPILER  E38
+     Undo Buffer  E26
+     Undo Command  E25, E33
+     Undo  E19, E50
+     Unnamed Files  E22
+     Up One Line  E13, E47
+     <UP>  E13, E47
+     USER ABORTED SEARCH  E39
+
+     V
+
+     View Mode  E20
+
+     W
+
+     Warnings  E29, E30, E34
+     Window Number Indicator  E8
+     Window Size  E7
+     Window  E7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Lattice Screen Editor LSE INDEX                                   viii
+
+
+

@@ -1,0 +1,186 @@
+ÄàCLIB_DOS_PROTOS_HÄCLIB_DOS_PROTOS_HàDOS_DOS_Hå<dos/dos.h>áàDOS_DOSEXTENS_Hå<dos/dosextens.h>áàDOS_RECORD_Hå<dos/record.h>áàDOS_RDARGS_Hå<dos/rdargs.h>áàDOS_DOSASL_Hå<dos/dosasl.h>áàDOS_VAR_Hå<dos/var.h>áàDOS_NOTIFY_Hå<dos/notify.h>áàDOS_DATETIME_Hå<dos/datetime.h>á
+°Open(STRPTR name,çaccessMode);
+íClose(°file);
+íRead(°file,îbuffer,çlength);
+íWrite(°file,îbuffer,çlength);
+°Input(ã);
+°Output(ã);
+íSeek(°file,çposition,çoffset);
+íDeleteFile(STRPTR name);
+íRename(STRPTR oldName,STRPTR newName);
+°Lock(STRPTR name,çtype);
+ãUnLock(°lock);
+°DupLock(°lock);
+íExamine(°lock,ÉFileInfoBlock*fileInfoBlock);
+íExNext(°lock,ÉFileInfoBlock*fileInfoBlock);
+íInfo(°lock,ÉInfoData*parameterBlock);
+°CreateDir(STRPTR name);
+°CurrentDir(°lock);
+íIoErr(ã);
+É©*CreateProc(STRPTR name,çpri,°segList,
+çstackSize);
+ãExit(çreturnCode);
+°LoadSeg(STRPTR name);
+ãUnLoadSeg(°seglist);
+É©*DeviceProc(STRPTR name);
+íSetComment(STRPTR name,STRPTR comment);
+íSetProtection(STRPTR name,çprotect);
+ÉDateStamp*DateStamp(ÉDateStamp*date);
+ãDelay(çtimeout);
+íWaitForChar(°file,çtimeout);
+°ParentDir(°lock);
+íIsInteractive(°file);
+íExecute(STRPTR string,°file,°file2);
+îAllocDosObject(éçtype,ÉTagItem*tags);
+îAllocDosObjectTagList(éçtype,ÉTagItem*tags);
+îAllocDosObjectTags(éçtype,éçtag1type,...);
+ãFreeDosObject(éçtype,îptr);
+íDoPkt(É©*port,çaction,çarg1,çarg2,çarg3,
+çarg4,çarg5);
+íDoPkt0(É©*port,çaction);
+íDoPkt1(É©*port,çaction,çarg1);
+íDoPkt2(É©*port,çaction,çarg1,çarg2);
+íDoPkt3(É©*port,çaction,çarg1,çarg2,
+çarg3);
+íDoPkt4(É©*port,çaction,çarg1,çarg2,
+çarg3,çarg4);
+ãSendPkt(ÉDosPacket*dp,É©*port,
+É©*replyport);
+ÉDosPacket*WaitPkt(ã);
+ãReplyPkt(ÉDosPacket*dp,çres1,çres2);
+ãAbortPkt(É©*port,ÉDosPacket*pkt);
+BOOL LockRecord(°fh,éçoffset,éçlength,
+éçmode,éçtimeout);
+BOOL LockRecords(ÉRecordLock*recArray,éçtimeout);
+BOOL UnLockRecord(°fh,éçoffset,éçlength);
+BOOL UnLockRecords(ÉRecordLock*recArray);
+°SelectInput(°fh);
+°SelectOutput(°fh);
+íFGetC(°fh);
+íFPutC(°fh,çch);
+íUnGetC(°fh,çcharacter);
+íFRead(°fh,îblock,éçblocklen,
+éçnumber);
+íFWrite(°fh,îblock,éçblocklen,
+éçnumber);
+STRPTR FGets(°fh,STRPTR buf,éçbuflen);
+íFPuts(°fh,STRPTR str);
+ãVFWritef(°fh,STRPTR format,í*argarray);
+ãFWritef(°fh,STRPTR format,...);
+íVFPrintf(°fh,STRPTR format,îargarray);
+íFPrintf(°fh,STRPTR format,...);
+íFlush(°fh);
+íSetVBuf(°fh,STRPTR buff,çtype,çsize);
+°DupLockFromFH(°fh);
+°OpenFromLock(°lock);
+°ParentOfFH(°fh);
+BOOL ExamineFH(°fh,ÉFileInfoBlock*fib);
+íSetFileDate(STRPTR name,ÉDateStamp*date);
+íNameFromLock(°lock,STRPTR buffer,çlen);
+íNameFromFH(°fh,STRPTR buffer,çlen);
+òSplitName(STRPTR name,éçseperator,STRPTR buf,çoldpos,
+çsize);
+íSameLock(°lock1,°lock2);
+íSetMode(°fh,çmode);
+íExAll(°lock,ÉExAllData*buffer,çsize,çdata,
+ÉExAllControl*control);
+íReadLink(É©*port,°lock,STRPTR path,STRPTR buffer,
+éçsize);
+íMakeLink(STRPTR name,çdest,çsoft);
+íChangeMode(çtype,°fh,çnewmode);
+íSetFileSize(°fh,çpos,çmode);
+íSetIoErr(çresult);
+BOOL Fault(çcode,STRPTR header,STRPTR buffer,çlen);
+BOOL PrintFault(çcode,STRPTR header);
+íErrorReport(çcode,çtype,éçarg1,
+É©*device);
+ÉCommandLineInterface*Cli(ã);
+ÉProcess*CreateNewProc(ÉTagItem*tags);
+ÉProcess*CreateNewProcTagList(ÉTagItem*tags);
+ÉProcess*CreateNewProcTags(éçtag1type,...);
+íRunCommand(°seg,çstack,STRPTR paramptr,çparamlen);
+É©*GetConsoleTask(ã);
+É©*SetConsoleTask(É©*task);
+É©*GetFileSysTask(ã);
+É©*SetFileSysTask(É©*task);
+STRPTR GetArgStr(ã);
+BOOL SetArgStr(STRPTR string);
+ÉProcess*FindCliProc(éçnum);
+óMaxCli(ã);
+BOOL SetCurrentDirName(STRPTR name);
+BOOL GetCurrentDirName(STRPTR buf,çlen);
+BOOL SetProgramName(STRPTR name);
+BOOL GetProgramName(STRPTR buf,çlen);
+BOOL SetPrompt(STRPTR name);
+BOOL GetPrompt(STRPTR buf,çlen);
+°SetProgramDir(°lock);
+°GetProgramDir(ã);
+íSystemTagList(STRPTR command,ÉTagItem*tags);
+íSystem(STRPTR command,ÉTagItem*tags);
+íSystemTags(STRPTR command,éçtag1type,...);
+íAssignLock(STRPTR name,°lock);
+BOOL AssignLate(STRPTR name,STRPTR path);
+BOOL AssignPath(STRPTR name,STRPTR path);
+BOOL AssignAdd(STRPTR name,°lock);
+íRemAssignList(STRPTR name,°lock);
+ÉDevProc*GetDeviceProc(STRPTR name,ÉDevProc*dp);
+ãFreeDeviceProc(ÉDevProc*dp);
+ÉDosList*LockDosList(éçflags);
+ãUnLockDosList(éçflags);
+ÉDosList*AttemptLockDosList(éçflags);
+BOOL RemDosEntry(ÉDosList*dlist);
+íAddDosEntry(ÉDosList*dlist);
+ÉDosList*FindDosEntry(ÉDosList*dlist,STRPTR name,
+éçflags);
+ÉDosList*NextDosEntry(ÉDosList*dlist,éçflags);
+ÉDosList*MakeDosEntry(STRPTR name,çtype);
+ãFreeDosEntry(ÉDosList*dlist);
+BOOL IsFileSystem(STRPTR name);
+BOOL Format(STRPTR filesystem,STRPTR volumename,éçdostype);
+íRelabel(STRPTR drive,STRPTR newname);
+íInhibit(STRPTR name,çonoff);
+íAddBuffers(STRPTR name,çnumber);
+íCompareDates(ÉDateStamp*date1,ÉDateStamp*date2);
+íDateToStr(ÉDateTime*datetime);
+íStrToDate(ÉDateTime*datetime);
+°InternalLoadSeg(°fh,°table,í*funcarray,í*stack);
+BOOL InternalUnLoadSeg(°seglist,ã(*freefunc)());
+°NewLoadSeg(STRPTR file,ÉTagItem*tags);
+°NewLoadSegTagList(STRPTR file,ÉTagItem*tags);
+°NewLoadSegTags(STRPTR file,éçtag1type,...);
+íAddSegment(STRPTR name,°seg,çsystem);
+ÉSegment*FindSegment(STRPTR name,ÉSegment*seg,çsystem);
+íRemSegment(ÉSegment*seg);
+íCheckSignal(çmask);
+ÉRDArgs*ReadArgs(STRPTR arg_template,í*array,
+ÉRDArgs*args);
+íFindArg(STRPTR keyword,STRPTR arg_template);
+íReadItem(STRPTR name,çmaxchars,ÉCSource*cSource);
+íStrToLong(STRPTR string,í*value);
+íMatchFirst(STRPTR pat,ÉAnchorPath*anchor);
+íMatchNext(ÉAnchorPath*anchor);
+ãMatchEnd(ÉAnchorPath*anchor);
+íParsePattern(STRPTR pat,STRPTR buf,çbuflen);
+BOOL MatchPattern(STRPTR pat,STRPTR str);
+ãFreeArgs(ÉRDArgs*args);
+STRPTR FilePart(STRPTR path);
+STRPTR PathPart(STRPTR path);
+BOOL AddPart(STRPTR dirname,STRPTR filename,éçsize);
+BOOL StartNotify(ÉNotifyRequest*notify);
+ãEndNotify(ÉNotifyRequest*notify);
+BOOL SetVar(STRPTR name,STRPTR buffer,çsize,çflags);
+íGetVar(STRPTR name,STRPTR buffer,çsize,çflags);
+íDeleteVar(STRPTR name,éçflags);
+ÉLocalVar*FindVar(STRPTR name,éçtype);
+íCliInitNewcli(ÉDosPacket*dp);
+íCliInitRun(ÉDosPacket*dp);
+íWriteChars(STRPTR buf,éçbuflen);
+íPutStr(STRPTR str);
+íVPrintf(STRPTR format,îargarray);
+íPrintf(STRPTR format,...);
+íParsePatternNoCase(STRPTR pat,STRPTR buf,çbuflen);
+BOOL MatchPatternNoCase(STRPTR pat,STRPTR str);
+BOOL SameDevice(°lock1,°lock2);
+ãExAllEnd(°lock,ÉExAllData*buffer,çsize,çdata,
+ÉExAllControl*control);
+BOOL SetOwner(STRPTR name,çowner_info);á

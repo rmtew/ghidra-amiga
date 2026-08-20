@@ -1,6 +1,7 @@
 package amiga;
 
 import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ import ghidra.program.model.mem.MemoryBlock;
 import ghidra.program.model.symbol.RefType;
 import ghidra.program.model.symbol.ReferenceManager;
 import ghidra.program.model.symbol.SourceType;
+import ghidra.program.model.symbol.Symbol;
+import ghidra.program.model.symbol.SymbolTable;
 import ghidra.program.model.util.CodeUnitInsertionException;
 import ghidra.util.exception.DuplicateNameException;
 import ghidra.util.exception.InvalidInputException;
@@ -56,12 +59,52 @@ public class AmigaUtils {
 	}
 
 	public static MemoryBlock createSegment(InputStream stream, FlatProgramAPI fpa, String name, long address, long size, boolean write, boolean execute, MessageLog log) {
+		return createSegment(stream, fpa, name, address, size, write, execute, log, false);
+	}
+
+	/**
+	 * Returns an analysis-owned symbol name that is stable across reanalysis and
+	 * cannot silently alias an existing global at a different address. Imported
+	 * and user-defined symbols are intentionally not renamed by this helper.
+	 */
+	static String uniqueAnalysisSymbolName(Program program, Address address, String preferredName) {
+		SymbolTable symbols = program.getSymbolTable();
+		for (int index = 0;; index++) {
+			String candidate = index == 0 ? preferredName : preferredName + "_at_" +
+					String.format("%08X", address.getOffset()) + (index == 1 ? "" : "_" + index);
+			List<Symbol> existing = symbols.getGlobalSymbols(candidate);
+			if (existing.isEmpty() || existing.stream().allMatch(symbol -> address.equals(symbol.getAddress()))) {
+				return candidate;
+			}
+		}
+	}
+
+	/**
+	 * Creates a primary analysis label without replacing analyst/imported labels.
+	 * A conflicting analysis name receives the deterministic address suffix from
+	 * {@link #uniqueAnalysisSymbolName(Program, Address, String)}.
+	 */
+	static void applyAnalysisGlobalLabel(Program program, Address address, String preferredName)
+			throws DuplicateNameException, InvalidInputException {
+		Symbol primary = program.getSymbolTable().getPrimarySymbol(address);
+		if (primary != null && primary.getSource() != SourceType.DEFAULT && primary.getSource() != SourceType.ANALYSIS) {
+			return;
+		}
+		String name = uniqueAnalysisSymbolName(program, address, preferredName);
+		if (primary != null && primary.getName().equals(name)) {
+			return;
+		}
+		Symbol label = program.getSymbolTable().createLabel(address, name, SourceType.ANALYSIS);
+		label.setPrimary();
+	}
+
+	public static MemoryBlock createSegment(InputStream stream, FlatProgramAPI fpa, String name, long address, long size, boolean write, boolean execute, MessageLog log, boolean overlay) {
 		MemoryBlock block;
 		try {
 			Program program = fpa.getCurrentProgram();
 			
 			int transId = program.startTransaction(String.format("Create %s block", name));
-			block = fpa.createMemoryBlock(name, fpa.toAddr(address), stream, size, false);
+			block = fpa.createMemoryBlock(name, fpa.toAddr(address), stream, size, overlay);
 			program.endTransaction(transId, true);
 			
 			block.setRead(true);
@@ -75,7 +118,11 @@ public class AmigaUtils {
 	}
 
 	public static void createExecBaseSegment(FlatProgramAPI fpa, FileDataTypeManager fdm, MessageLog log) {
-		MemoryBlock exec = createSegment(null, fpa, "EXEC", 0x4, 4, false, false, log);
+		// AbsExecBase at $4 is populated by AmigaOS at run time. Keep the
+		// synthetic pointer readable to Ghidra instead of creating an
+		// uninitialized block, which causes the decompiler to reject every
+		// absolute-$4 load before it can use the pointer type.
+		MemoryBlock exec = createSegment(new ByteArrayInputStream(new byte[4]), fpa, "EXEC", 0x4, 4, false, false, log);
 		
 		Program program = fpa.getCurrentProgram();
 

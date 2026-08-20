@@ -1,0 +1,2 @@
+ÄàPROTO_TRANSLATOR_HÄPROTO_TRANSLATOR_Hå<exec/types.h>
+ÅÉLibrary*TranslatorBase;å<clib/translator_protos.h>å<pragmas/translator_pragmas.h>á

@@ -1,0 +1,6 @@
+FROM root.o,lib:c.o
+LIB lib:lc.lib
+TO lattice-overlay
+OVERLAY
+overlay.o
+#

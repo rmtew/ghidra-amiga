@@ -1,0 +1,285 @@
+       [33mLattice AmigaDOS C Compiler Version 4.0[0m - 10/01/87
+
+This file contains introductory information about Lattice C for the Amiga.
+It also contains suggestions, hints, and miscellaneous information that 
+for whatever reason may not be in the manual
+
+It is very important to read the contents of this file when installing a 
+new or updated version of the Lattice compiler. Most of the information in 
+this file was compiled after the manual went to press, and so is probably 
+not included in the standard documentation. Also, if an update does not 
+include new documentation then this file will contain a list of enhancements
+and bug fixes.
+
+The "Click For Info On...." program used to display this file from 
+Workbench will pause after every 22 lines. To abort simply type
+   q <return>
+at the pause. To continue the listing, just type
+     <return>
+
+
+
+
+Contents:
+
+   1.   What's New
+   2.   Overview - Organization, Installation, and Operation
+   3.   Suggestions - Helpful hints and Ideas
+   4.   Documentation Errata
+   5.   Miscellaneous
+   6.   Disk Contents
+   7.   Acknowledgements
+
+
+
+
+
+
+
+
+
+
+
+
+Whats New? --
+
+This version of the Compiler incorporates several significant new features:
+
+  - Support for 16-bit integers
+
+  - Implementation of Builtin functions for the standard string and
+    memory manipulation routines.
+
+  - The ability to call all Amiga Library functions directly without
+    having to go through the stubs in Amiga.Lib
+
+  - Support for overlays and library indexing in [33mBLINK[0m.
+
+In addition, improvements have been made in several areas of the compiler,
+assembler, and linker.
+
+The linker, [33mBLINK[0m, has several new options available. It will also
+allow interactive recovery from undefined symbols, and supports pre-linking
+for large application development.
+
+Considerable effort has been devoted to improving the code generation
+capabilities of the compiler. The error messages produced by the compiler
+can now include the actual source line that caused the error. And the
+compiler now accepts compressed header files to reduce the compile time
+spent reading the voluminous Amiga header files. A utility to compress
+header files and source files is also included.
+
+All the normal libraries in Version 4.0 are indexed for faster linking.
+Because of this new feature, the current version of OML will not work
+on the libraries distributed with this compiler.  You can, of course,
+use OML to build and manipulate your own libraries. An updated version of
+OML that will read and construct indexed libraries will be provided with
+future fixes.
+
+There are function prototypes provided for all the Amiga functions to avoid
+problems associated with 16-bit integers. And the Amiga include files have
+been updated to V1.2.1 from Commodore.
+
+The assembler now accepts the syntax used by Metacomco and the standard
+Amiga include files. This means it is now possible to do normal assembler
+applications development with the Lattice Assembler.
+
+The documentation has been updated to reflect the changes in the compiler
+package.
+
+Organization -
+
+Version 4.0 is distributed on four Amiga diskettes. The main compiler
+environment consists of the first two diskettes and includes a bootable
+system disk with the executable programs, the Amiga header files in
+compressed form, the normal run-time support libraries, source for user-
+modifiable library routines, and some examples. The remaining diskettes
+contain the un-compressed header files, the Assembler include files, a set
+of libraries used for special applications, and some useful public-domain
+utilties. Note that because of the last minute additions that required
+expansion to four diskettes the contents differ from that described in the
+manual. A complete list of contents is available at the end of this file.
+
+The [33mExtras[0m directory on disk 4 contains useful items from the
+Lattice BBS. Among these are [33mConMan[0m, the console handler used
+with this package. 
+
+A Recoverable RAM Disk driver from ASDG is available on the Lattice BBS.
+Copyright restrictions prevent us from including the RRD with the compiler.
+However, we highly recommend you take the effort to obtain it. If you have 
+a large expansion memory then the recoverable RAM disk driver can be used 
+to implement a compiler environment that can be recovered if the machine 
+crashes.
+
+Installation and Operation - 
+
+The compiler is designed to be run from the CLI (Command Line Interface) 
+environment. Detailed command specifications for each program are available
+in the manual.
+
+This compiler package is a completely self-contained environment. Disk 1
+is a bootable disk that leaves you in the CLI environment with the 
+necessary logical names already assigned. Therefore, on a floppy disk based
+system no installation is necessary; simply insert disk 1 when the system
+prompts you for the Workbench disk after the power-on or ctrl-amiga-amiga 
+re-boot sequence (the boot procedure will require both disk 1 and disk 2 to 
+complete).
+
+The Compiler is shipped with AmigaDOS and WorkBench V1.2, and requires V1.2
+of KickStart. Also, to provide the maximum amount of free disk space, no
+fonts or printer drivers are shipped with the compiler. After backing up the
+disks copy the appropriate printer driver from the [33mdevs/printers[0m directory
+on your WorkBench disk to the [33mdevs/printers[0m directory on disk 1.
+
+Workbench (the icon based environment) is not loaded by the boot procedure.
+This allows the maximum amount of memory for program development. If you 
+want Workbench, simply type the command [33mloadwb[0m at the CLI prompt.
+
+To install the compiler on a hard disk system, boot the system with your 
+normal boot sequence (i.e., boot the hard disk system) then insert disk 1
+in any drive and type:
+
+   copy Lattice_C_4.0.1:s/install_hd Ram:
+   cd Ram:
+   execute install_hd <path>
+
+where [33m<path>[0m is an optional destination path. The default path is [33mDH0:[0m.
+If specified, the path must end in a colon or slash. For example,
+
+   execute  install_hd  DHB:Compiler_Stuff/
+
+After running the install script, edit your startup-sequence file and add 
+the necessary statements to make the logical name assignments described in 
+section E of the manual.
+
+
+Suggestions -
+
+
+If you are trying to use the compiler on a single drive system, keeping the 
+source file on the same disk as the header files and libraries can reduce 
+the number of disk swaps. The minimum number of swaps can be achieved by 
+copying the source file to ram: and compiling it from there. Of course, the 
+optimum development setup is a 2-megabyte ram expansion. Then you simply 
+copy the compiler executables, library files, and header files to ram disk 
+(see s/install_hd).
+
+If you are using a two-drive system, you may find that the link process
+is faster if the destination drive is not the same as the drive with the
+libraries. Using disk 1 for source files, or using the -o option with the
+driver program 'lc', can significantly reduce the number of disk seeks 
+performed during linking.
+
+Try to use unsigned short integers for array subscripting. The compiler 
+will generate in-line hardware multiplies for address calculations instead 
+of calls to a function to do long integer multiplies. Although highly 
+optimized, the long integer multiply routine is still over 3 times longer 
+than the single in-line multiply instruction.
+
+Aborting a compile (or any program created with the default break-character  
+handler in this version) causes a requester to appear allowing the user to 
+continue or abort. Under V1.2 of AmigaDOS these options may be selected 
+via the left-Amiga key in conjunction with either the 'v' or the 'b' key.
+Left-Amiga-v continues, while left-Amiga-b aborts.
+
+
+Documentation Errata - 
+
+There are a couple of compiler options that were overlooked in the 
+documentation.
+
+ -ce	Disables printing the source line that the error was found in along
+	with the error message
+
+ -cf	Causes the compiler to insure that prototypes exist for all 
+	functions in the source file.
+
+ -c+ 	Disables the compiler warning message about using structures as
+	parameters in function calls.
+
+
+Miscellaneous -
+
+When using the background task startup routine [33mcback.o[0m the linker may
+generate the error message
+
+ Error 515: An ALV was generated pointing to data  symbol
+
+This message should be a Warning message, and should display the symbol name
+[33mXCEXIT[0m. This is a minor bug in blink that will be addressed in a 
+future release.
+
+The message itself is normal, and is a consequence of the method used by
+cback.o to establish the program as a background task. In order to generate
+relocation information that would be relevant to data that might be copied
+to another part of memory, the exit code is assembled in a data section.
+Normally a C program would never reference something in a data section as 
+a function.
+
+
+Disk Contents -
+
+
+Disk 1:  - Main system disk (boot disk). Includes executable programs.
+-------
+     C/
+       arc, lc, lc1, lc2, lcompact, fd2pragma, blink, omd, asm
+
+
+Disk 2:  - Work Disk. Contains header files, libraries, and source.
+-------
+     Compacth/         Compressed include files - V 1.2.1
+     Lib/              These libraries are compiled with the -b option and 
+             use the new library indexing supported only by the 
+             new blink.
+       lc.lib    lcm.lib    lcmffp.lib
+       lcs.lib   lcms.lib   lcmffps.lib
+       amiga.lib          An indexed version of amiga.lib
+     Source/           Source code to various library routines
+     Examples/         Samples of source using Lattice
+
+Disk 3:  - Extras #1. Fully commented header and include files
+-------
+      Compiler_Headers/     uncompressed include files - V 1.2.1 - new 
+                            this time
+      Assembler_Includes/   Assembler 1.2.1 include files
+
+Disk 4: - Extras #2. Additional libraries and Utilities
+-------
+      These libraries are compiled without the -b option and are necessary 
+      only for those programs that can't be compiled with -b.  They 
+      correspond to the libraries shipped with 3.10 except these now have 
+      indexing.
+
+       lcnb.lib  lcmnb.lib  lcmffpnb.lib
+       lcsnb.lib lcmsnb.lib lcmffpsnb.lib
+
+       amiga.alib         The original amiga.lib (no indexing)
+
+
+Acknowledgements - 
+
+This copy of the compiler includes [33mConMan[0m, an alternative
+console handler that supports command-line editing. [33mConMan[0m was
+written by Bill Hawes, and is a ShareWare product. If you would like to
+support the development of this and other ShareWare products feel free
+to send a contribution to Bill Hawes. Documentation and additional
+utilities are included in the file [33mconman10.arc[0m in the Extras
+directory of Disk 4.
+
+The startup script also invokes [33mPopCLI[0m, a public-domain utility
+written by John Toebes. This and other utilities from John and the other
+members of the Software Distillery are available on the Lattice BBS and
+other fine BBS systems.
+
+The Lattice C Compiler was originally ported to the Amiga by John Meissen
+at Lattice, Inc., who was also responsible for enhancements and
+documentation through version 3.10
+
+John Toebes, at SAS Institute Inc., was responsible for Version 4.0 of the
+Lattice AmigaDOS C Compiler.  Additional support was provided by Jack
+Rouse at SAS Institute Inc. and John Meissen at Lattice, Inc.  Also at SAS,
+Donald Major was responsible for the enhancements for Blink 7.1 while
+Randy Williams performed compiler validation.
+
+The documentation for Version 4.0 was produced by Bill Donald at Lattice Inc.

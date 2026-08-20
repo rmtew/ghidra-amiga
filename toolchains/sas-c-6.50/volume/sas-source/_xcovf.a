@@ -1,0 +1,39 @@
+        IDNT    "xcovf.o"
+***
+*
+*          Copyright © 1992 SAS Institute, Inc.
+*
+* name          xcovf
+*
+* description   this function is called when a stack overflow is
+*               detected. It resets the stack pointer and calls
+*               the overflow handler
+*
+***
+
+        section text,CODE
+
+        xref    _StackPtr
+        xdef    _XCOVF
+      IFD OENTRY
+        xdef    _xcovf
+      ENDC
+
+        xref    _CXOVF
+        xref    @__exit
+_XCOVF:
+_xcovf:
+
+   ** Set the stack to somewhere where we know we have
+   ** room, AND have not killed the autos from __main.
+      IFD NOBASER
+	move.l  _StackPtr,d0             ; reset stack pointer
+      ELSE
+	move.l  _StackPtr(A4),d0         ; reset stack pointer
+      ENDC
+      sub.w     #500,d0
+      move.l    d0,a7
+      
+      
+        jmp     _CXOVF(PC)
+        end

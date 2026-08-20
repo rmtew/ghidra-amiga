@@ -1,0 +1,15 @@
+€ˆGRAPHICS_SCALE_H€GRAPHICS_SCALE_HˆEXEC_TYPES_HŒ<exec/types.h>‡
+ƒBitScaleArgs{
+‰bsa_SrcX,bsa_SrcY;
+‰bsa_SrcWidth,bsa_SrcHeight;
+‰bsa_XSrcFactor,bsa_YSrcFactor;
+‰bsa_DestX,bsa_DestY;
+‰bsa_DestWidth,bsa_DestHeight;
+‰bsa_XDestFactor,bsa_YDestFactor;
+ƒBitMap*bsa_SrcBitMap;
+ƒBitMap*bsa_DestBitMap;
+—bsa_Flags;
+‰bsa_XDDA,bsa_YDDA;
+’bsa_Reserved1;
+’bsa_Reserved2;
+};‡

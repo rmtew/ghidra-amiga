@@ -1,0 +1,1 @@
+€ˆ_STDARG_H€_STDARG_H 1Œ<sys/commlist.h>€va_start(a,b) a=(„*)(&b+1)€va_arg(a,b) (*((b*)((a+=((sizeof(b)+sizeof(‚)-1)&~(sizeof(‚)-1)))-((sizeof(b)+sizeof(‚)-1)&~(sizeof(‚)-1)))))€va_end(a)‡

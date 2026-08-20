@@ -1,0 +1,15 @@
+BindDrivers
+addbuffers df0: 10
+echo ""
+echo "                           Aztec C for the Amiga"
+echo "                               Version 5.0a"
+echo "                                  1/9/89"
+echo ""
+Stack 8000
+path ram:
+path Aztec1:system
+path az2:bin
+set CLIB=az2:lib
+set INCLUDE=aztec1:include
+set CCTEMP=ram:
+

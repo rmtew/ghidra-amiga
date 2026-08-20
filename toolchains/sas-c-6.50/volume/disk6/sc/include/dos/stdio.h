@@ -1,0 +1,1 @@
+€ˆDOS_STDIO_H€DOS_STDIO_H€ReadChar() FGetC(Input())€WriteChar(c) FPutC(Output(),(c))€UnReadChar(c) UnGetC(Input(),(c))€ReadChars(buf,num) FRead(Input(),(buf),1,(num))€ReadLn(buf,len) FGets(Input(),(buf),(len))€WriteStr(s) FPuts(Output(),(s))€VWritef(format,argv) VFWritef(Output(),(format),(argv))€BUF_LINE 0€BUF_FULL 1€BUF_NONE 2€ENDSTREAMCH -1‡

@@ -45,6 +45,10 @@ dependencies {
 	runtimeOnly fileTree(dir: ghidraInstallDir + '/Ghidra', include: "**/*.jar", exclude: project.name + '**')
 }
 
+test {
+	systemProperty 'ghidra.install.dir', ghidraInstallDir
+}
+
 eclipse {
     classpath {
         downloadJavadoc = true
@@ -70,13 +74,28 @@ eclipse.classpath.file.whenMerged {
 }
 
 buildExtension {
+	// Package only extension runtime content, never local tooling, build products,
+	// tests, or reverse-engineering workspaces.
+	exclude '.github'
+	exclude '.gradle'
+	exclude '.uv-cache'
 	exclude '.vscode'
+	exclude 'build'
+	exclude 'dist'
+	exclude 'docs'
 	exclude 'gradle*'
 	exclude '.editorconfig'
 	exclude 'java-formatter.xml'
 	exclude '3rdparty'
 	exclude 'amiga_ndk39.prf'
+	exclude 'notes'
+	exclude 'scripts'
+	exclude 'site'
+	exclude 'src'
 	exclude 'test'
+	exclude 'toolchains'
+	exclude 'tmp'
+	exclude 'work'
 }
 
 task install(type: Copy) {

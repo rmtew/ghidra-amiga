@@ -1,0 +1,397 @@
+;;; This file will apply the 5.04 patches to the following directories:
+;;;        LC:
+;;;        LIB:
+;;;        INCLUDE:
+;;;        LC:/Compiler_Headers
+;;;        LC:/Source
+
+failat 1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;    Make assigns for each major   ;;;
+;;;       compiler directory.        ;;;
+;;;       (can be customized)        ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;  LC:       is where the compiler executables are located.
+;  LIB:      is where the compiler libraries are located.
+;  INCLUDE:  is where the compact headers are located.
+
+assign SOURCES:  LC:/Source            ;;  Compiler source
+assign HEADER:   LC:/Compiler_Headers  ;;  Include Files (not compact)
+
+
+copy Lattice_5.04_Patch:LCompare.doc LC:/
+copy Lattice_5.04_Patch:blink.readme LC:/
+copy Lattice_5.04_Patch:readme.504   LC:/
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;        Patch executables         ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;----------  LPATCH  ----------
+
+echo "Copying [0;33;40mlpatch[0;31;40m"
+copy Lattice_5.04_Patch:c/lpatch LC:
+delete LC:patch
+
+cd Lattice_5.04_Patch:patches
+
+;----------  LC  ----------
+echo "Patching [0;33;40mlc[0;31;40m"
+lpatch -oram:lc lc:lc
+protect ram:lc +p
+copy ram:lc lc:
+delete ram:lc
+
+;----------  LC1  ----------
+echo "Patching [0;33;40mlc1[0;31;40m"
+lpatch >NIL: -oram:lc1 lc:lc1
+protect ram:lc1 +p
+copy ram:lc1 lc: 
+delete ram:lc1
+
+;----------  LC1B  ----------
+echo "Patching [0;33;40mlc1b[0;31;40m"
+lpatch >NIL: -oram:lc1b lc:lc1b
+protect ram:lc1b +p
+copy ram:lc1b lc: 
+delete ram:lc1b
+
+;----------  LC2  ----------
+echo "Patching [0;33;40mlc2[0;31;40m"
+lpatch >NIL: -oram:lc2 lc:lc2
+protect ram:lc2 +p
+copy ram:lc2 lc: 
+delete ram:lc2
+
+;----------  GO  ----------
+echo "Patching [0;33;40mgo[0;31;40m"
+lpatch >NIL: -oram:go lc:go
+protect ram:go +p
+copy ram:go lc: 
+delete ram:go
+
+;----------  ASM  ----------
+echo "Patching [0;33;40masm[0;31;40m"
+lpatch -oram:asm lc:asm
+protect ram:asm +p
+copy ram:asm lc: 
+delete ram:asm
+
+;----------  BLINK  ----------
+echo "Patching [0;33;40mblink[0;31;40m"
+lpatch -oram:blink lc:blink
+protect ram:blink +p
+copy ram:blink lc: 
+delete ram:blink
+
+;----------  OML  ----------
+echo "Patching [0;33;40moml[0;31;40m"
+lpatch -oram:oml lc:oml
+copy ram:oml lc:
+delete ram:oml
+
+;----------  LMK  ----------
+echo "Patching [0;33;40mlmk[0;31;40m"
+lpatch -oram:lmk lc:lmk
+protect ram:lmk +p
+copy ram:lmk lc: 
+delete ram:lmk
+
+;----------  CPR  ----------
+echo "Patching [0;33;40mcpr[0;31;40m"
+failat 21
+lpatch >NIL: -oram:cprtmp -pcpr-1.pch lc:cpr
+if fail
+    copy lc:cpr ram:cprtmp
+endif
+failat 1
+lpatch -oram:cpr -pcpr-2.pch ram:cprtmp
+copy ram:cpr lc:
+delete ram:cpr#? quiet
+
+echo "Patching [0;33;40mcpr.hlp[0;31;40m"
+lpatch -oram:cpr.hlp -pcpr.hlp.pch lc:cpr.hlp
+copy ram:cpr.hlp lc:
+delete ram:cpr.hlp
+
+;----------  OMD  ----------
+echo "Patching [0;33;40momd[0;31;40m"
+lpatch -oram:omd lc:omd
+copy ram:omd lc:
+delete ram:omd
+
+;----------  LSE  ----------
+echo "Patching [0;33;40mlse[0;31;40m"
+failat 21
+lpatch >NIL: -oram:lsetmp -plse-1.pch lc:lse
+if fail
+    copy lc:lse ram:lsetmp
+endif
+failat 1
+lpatch -oram:lse -plse-2.pch ram:lsetmp
+protect ram:lse +p
+copy ram:lse lc:
+delete ram:lse#? quiet
+
+;----------  LPROF  ----------
+echo "Patching [0;33;40mlprof[0;31;40m"
+lpatch -oram:lprof lc:lprof
+copy ram:lprof lc:
+delete ram:lprof
+
+;----------  LSTAT  ----------
+echo "Patching [0;33;40mlstat[0;31;40m"
+lpatch -oram:lstat lc:lstat
+copy ram:lstat lc:
+delete ram:lstat
+
+;----------  DIFF  ----------
+echo "Patching [0;33;40mdiff[0;31;40m"
+lpatch -oram:diff lc:diff
+copy ram:diff lc:
+delete ram:diff
+
+;----------  TB  ----------
+echo "Patching [0;33;40mtb[0;31;40m"
+lpatch -oram:tb lc:tb
+copy ram:tb lc:
+delete ram:tb
+
+;----------  FD2PRAGMA  ----------
+echo "Patching [0;33;40mfd2pragma[0;31;40m"
+lpatch -oram:fd2pragma lc:fd2pragma
+copy ram:fd2pragma lc:
+delete ram:fd2pragma
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;       Copy new LIB: files        ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+cd Lattice_5.04_Patch:lib
+
+echo "Replacing startup files..."
+copy lib#? LIB: clone
+
+lpatch -oram:c.o -pc.pch lib:c.o
+copy ram:c.o lib: clone
+delete ram:c.o
+
+lpatch -oram:cres.o -pcres.pch lib:cres.o
+copy ram:cres.o lib: clone
+delete ram:cres.o
+
+lpatch -oram:catch.o -pcatch.pch lib:catch.o
+copy ram:catch.o lib: clone
+delete ram:catch.o
+
+lpatch -oram:catchres.o -pcatchres.pch lib:catchres.o
+copy ram:catchres.o lib: clone
+delete ram:catchres.o
+
+lpatch -oram:catchresnr.o -pcatchresnr.pch lib:catchresnr.o
+copy ram:catchresnr.o lib: clone
+delete ram:catchresnr.o
+
+lpatch -oram:cback.o -pcback.pch lib:cback.o
+copy ram:cback.o lib: clone
+delete ram:cback.o
+
+
+
+cd Lattice_5.04_Patch:source
+
+echo "Replacing startup sources..."
+copy lib#? SOURCES: clone
+
+failat 21
+lpatch >NIL: -oram:ctmp.a -pc-1.pch SOURCES:c.a
+if fail
+    copy SOURCES:c.a ram:ctmp.a
+endif
+failat 1
+lpatch -oram:c.a -pc-2.pch ram:ctmp.a
+copy ram:c.a SOURCES:
+delete ram:c.a
+delete ram:ctmp.a
+
+failat 21
+lpatch >NIL: -oram:catchtmp.a -pcatch-1.pch SOURCES:catch.a
+if fail
+    copy SOURCES:catch.a ram:catchtmp.a
+endif
+failat 1
+lpatch -oram:catch.a -pcatch-2.pch ram:catchtmp.a
+copy ram:catch.a SOURCES:
+delete ram:catch.a
+delete ram:catchtmp.a
+
+failat 21
+lpatch >NIL: -oram:cbacktmp.a -pcback-1.pch SOURCES:cback.a
+if fail
+    copy SOURCES:cback.a ram:cbacktmp.a
+endif
+failat 1
+lpatch -oram:cback.a -pcback-2.pch ram:cbacktmp.a
+copy ram:cback.a SOURCES:
+delete ram:cback.a
+delete ram:cbacktmp.a
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;    Replace LC library modules    ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+makedir ram:TEMPLIB
+cd ram:TEMPLIB
+
+echo "Replacing modules in LC.LIB"
+copy Lattice_5.04_Patch:libo/lc.objs ram:
+oml ram:lc.objs x *
+oml LIB:LC.LIB d strtol.c atebehindlayer teupfrontlayer uildsysrequest
+oml LIB:LC.LIB r @Lattice_5.04_Patch:libo/lc.changes
+delete #? QUIET
+
+echo "Replacing modules in LCR.LIB"
+lpatch -oram:lcr.objs -pLattice_5.04_Patch:libo/lcr.pch ram:lc.objs
+oml ram:lcr.objs x *
+oml LIB:LCR.LIB d strtol.c atebehindlayer teupfrontlayer uildsysrequest
+oml LIB:LCR.LIB r @Lattice_5.04_Patch:libo/lc.changes
+delete #? QUIET
+delete ram:lcr.objs
+
+echo "Replacing modules in LCS.LIB"
+lpatch -oram:lcs.objs -pLattice_5.04_Patch:libo/lcs.pch ram:lc.objs
+oml ram:lcs.objs x *
+oml LIB:LCS.LIB d strtol.c atebehindlayer teupfrontlayer uildsysrequest
+oml LIB:LCS.LIB r @Lattice_5.04_Patch:libo/lc.changes
+delete #? QUIET
+delete ram:lcs.objs
+
+echo "Replacing modules in LCSR.LIB"
+lpatch -oram:lcsr.objs -pLattice_5.04_Patch:libo/lcsr.pch ram:lc.objs
+oml ram:lcsr.objs x *
+oml LIB:LCSR.LIB d strtol.c atebehindlayer teupfrontlayer uildsysrequest
+oml LIB:LCSR.LIB r @Lattice_5.04_Patch:libo/lc.changes
+delete #? QUIET
+delete ram:lcsr.objs
+
+echo "Replacing modules in LCNB.LIB"
+lpatch -oram:lcnb.objs -pLattice_5.04_Patch:libo/lcnb.pch ram:lc.objs
+oml ram:lcnb.objs x *
+oml LIB:LCNB.LIB d strtol.c atebehindlayer teupfrontlayer uildsysrequest
+oml LIB:LCNB.LIB r @Lattice_5.04_Patch:libo/lc.changes
+delete #? QUIET
+delete ram:lcnb.objs
+
+echo "Replacing modules in LCSNB.LIB"
+lpatch -oram:lcsnb.objs -pLattice_5.04_Patch:libo/lcsnb.pch ram:lc.objs
+oml ram:lcsnb.objs x *
+oml LIB:LCSNB.LIB d strtol.c atebehindlayer teupfrontlayer uildsysrequest
+oml LIB:LCSNB.LIB r @Lattice_5.04_Patch:libo/lc.changes
+delete #? QUIET
+delete ram:lcsnb.objs
+
+delete ram:lc.objs
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;    Replace LCM library modules   ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+echo "Replacing modules in LCM.LIB"
+oml Lattice_5.04_Patch:libo/lcm.objs x *
+oml LIB:LCM.LIB r @Lattice_5.04_Patch:libo/lcm.changes
+delete #? QUIET
+
+echo "Replacing modules in LCMS.LIB"
+oml Lattice_5.04_Patch:libo/lcms.objs x *
+oml LIB:LCMS.LIB r @Lattice_5.04_Patch:libo/lcm.changes
+delete #? QUIET
+
+echo "Replacing modules in LCMR.LIB"
+oml Lattice_5.04_Patch:libo/lcmr.objs x *
+oml LIB:LCMR.LIB r @Lattice_5.04_Patch:libo/lcm.changes
+delete #? QUIET
+
+echo "Replacing modules in LCMIEEE.LIB"
+oml Lattice_5.04_Patch:libo/lcmieee.objs x *
+oml LIB:LCMIEEE.LIB r @Lattice_5.04_Patch:libo/lcmieee.changes
+delete #? QUIET
+
+echo "Replacing modules in LCMFFP.LIB"
+oml Lattice_5.04_Patch:libo/lcmffp.objs x *
+oml LIB:LCMFFP.LIB r @Lattice_5.04_Patch:libo/lcmffp.changes
+delete #? QUIET
+
+echo "Replacing LCM881.LIB"
+copy Lattice_5.04_Patch:libo/lcm881.lib LIB: clone
+
+
+cd ram:
+delete TEMPLIB QUIET
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;       Replace header files       ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+echo "Replacing Header Files"
+
+makedir ram:h
+makedir ram:h/proto
+makedir ram:h/workbench
+makedir ram:h/intuition
+
+cd Lattice_5.04_Patch:compiler_headers
+
+lpatch -oram:h/assert.h -passert.pch HEADER:assert.h
+lpatch -oram:h/dos.h -pdos.pch HEADER:dos.h
+lpatch -oram:h/fcntl.h -pfcntl.pch HEADER:fcntl.h
+lpatch -oram:h/ios1.h -pios1.pch HEADER:ios1.h
+lpatch -oram:h/m68881.h -pm68881.pch HEADER:m68881.h
+lpatch -oram:h/math.h -pmath.pch HEADER:math.h
+lpatch -oram:h/signal.h -psignal.pch HEADER:signal.h
+lpatch -oram:h/stddef.h -pstddef.pch HEADER:stddef.h
+lpatch -oram:h/stdio.h -pstdio.pch HEADER:stdio.h
+lpatch -oram:h/stdlib.h -pstdlib.pch HEADER:stdlib.h
+lpatch -oram:h/string.h -pstring.pch HEADER:string.h
+lpatch -oram:h/intuition/preferences.h -pintuition/preferences.pch HEADER:intuition/preferences.h
+lpatch -oram:h/proto/dos.h -pproto/dos.pch HEADER:proto/dos.h
+lpatch -oram:h/proto/icon.h -pproto/icon.pch HEADER:proto/icon.h
+lpatch -oram:h/workbench/icon.h -pworkbench/icon.pch HEADER:workbench/icon.h
+copy mffp.h ram:h clone
+copy mieeedoub.h ram:h clone
+copy ram:h HEADER: all clone
+
+cd ram:h
+
+echo "Replacing Compact Header Files"
+lcompact <assert.h >INCLUDE:assert.h
+lcompact <dos.h >INCLUDE:dos.h 
+lcompact <fcntl.h >INCLUDE:fcntl.h
+lcompact <ios1.h >INCLUDE:ios1.h
+lcompact <m68881.h >INCLUDE:m68881.h
+lcompact <math.h >INCLUDE:math.h
+lcompact <mffp.h >INCLUDE:mffp.h
+lcompact <mieeedoub.h >INCLUDE:mieeedoub.h
+lcompact <signal.h >INCLUDE:signal.h
+lcompact <stddef.h >INCLUDE:stddef.h
+lcompact <stdio.h >INCLUDE:stdio.h
+lcompact <stdlib.h >INCLUDE:stdlib.h 
+lcompact <string.h >INCLUDE:string.h
+lcompact <intuition/preferences.h >INCLUDE:intuition/preferences.h
+lcompact <proto/dos.h >INCLUDE:proto/dos.h
+lcompact <proto/icon.h >INCLUDE:proto/icon.h
+lcompact <workbench/icon.h >INCLUDE:workbench/icon.h
+
+cd ram:
+delete h all quiet
+
+echo
+echo "Lattice C 5.04 patch installation completed."
