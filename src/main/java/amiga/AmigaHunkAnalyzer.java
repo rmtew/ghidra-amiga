@@ -18,10 +18,11 @@ package amiga;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 import fd.FdFunction;
 import fd.FdFunctionsInLibs;
@@ -83,7 +84,7 @@ import ghidra.util.task.TaskMonitor;
 public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	//private static final int imageBaseOffset = 0x10000;
 	private static final String AUTO_DISCOVER_LIBRARIES_OPTION = "Automatically discover referenced APIs";
-	private final List<String> filter = new ArrayList<String>();
+	private final List<String> filter = new ArrayList<>();
 	private Set<String> activeLibraries = Set.of();
 	private FdFunctionsInLibs funcsList;
 	private boolean autoDiscoverReferencedLibraries = true;
@@ -123,7 +124,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			options.registerOption(lib, defaultValue, null, String.format("Analyze calls from %s", lib));
 		}
 		options.registerOption(AUTO_DISCOVER_LIBRARIES_OPTION, true, null,
-				"Create API tables for known libraries, devices, and resources whose names are referenced from code.");
+				"Create API tables for known libraries, devices, and resources when their names are proven arguments to an Exec opener.");
 	}
 	
 	@Override
@@ -153,16 +154,33 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		}
 		
 		Set<String> selectedLibraries = new HashSet<>(filter);
-		if (autoDiscoverReferencedLibraries) {
-			selectedLibraries.addAll(findReferencedApiLibraries(program, funcsList.getLibsList(null)));
-		}
 		activeLibraries = Set.copyOf(selectedLibraries);
 		FlatProgramAPI fpa = new FlatProgramAPI(program);
 		FileDataTypeManager fdm;
 		try {
 			fdm = fpa.openDataTypeArchive(getModuleDataFile("amiga_ndk39.gdt"), true);
+			// Exec is selected by default. Materialise the explicitly selected tables
+			// first so discovery can prove an actual Exec vector call, rather than
+			// guessing from a vector displacement shared by unrelated APIs.
 			for(String lib : funcsList.getLibsList(new ArrayList<>(activeLibraries))) {
 				createFunctionsSegment(fpa, fdm, lib, funcsList.getFunctionTableByLib(lib), log);
+			}
+			if (autoDiscoverReferencedLibraries) {
+				Map<Address, String> knownBases = new HashMap<>();
+				knownBases.put(program.getAddressFactory().getDefaultAddressSpace().getAddress(4), FdParser.EXEC_LIB);
+				propagateKnownBaseCopies(program, knownBases, new HashSet<>());
+				for (ApiDiscoveryEvidence evidence : findReferencedApiLibraries(program,
+						funcsList.getLibsList(null), knownBases)) {
+					if (selectedLibraries.add(evidence.apiKey())) {
+						log.appendMsg(String.format("Discovered %s through %s at %s using string at %s",
+								evidence.apiKey(), evidence.openerName(), evidence.openerAddress(),
+								evidence.stringAddress()));
+					}
+				}
+				activeLibraries = Set.copyOf(selectedLibraries);
+				for (String lib : funcsList.getLibsList(new ArrayList<>(activeLibraries))) {
+					createFunctionsSegment(fpa, fdm, lib, funcsList.getFunctionTableByLib(lib), log);
+				}
 			}
 		} catch (Exception e) {
 			log.appendException(e);
@@ -236,31 +254,36 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	}
 
 	/**
-	 * Finds API base names only when a known Amiga library/device/resource name is
-	 * a defined string with a reference from executable code. This avoids creating
-	 * tables from arbitrary filename-like text while covering ordinary OpenLibrary,
-	 * OpenDevice, and OpenResource call sites (including compiler wrappers).
+	 * Finds API names only when a known defined string is proven to reach the name
+	 * argument of a direct Exec opener. An executable reference alone is not
+	 * enough: it could be a diagnostic, filename, or display string.
 	 */
-	static Set<String> findReferencedApiLibraries(Program program, String[] knownLibraries) {
+	Set<ApiDiscoveryEvidence> findReferencedApiLibraries(Program program, String[] knownLibraries,
+			Map<Address, String> knownBases) {
 		Set<String> known = new HashSet<>();
 		for (String library : knownLibraries) {
 			known.add(library.toLowerCase(Locale.ROOT));
 		}
-		Set<String> discovered = new HashSet<>();
-		DataIterator data = program.getListing().getDefinedData(true);
-		while (data.hasNext()) {
-			Data stringData = data.next();
-			if (!stringData.hasStringValue()) {
-				continue;
+		Set<ApiDiscoveryEvidence> discovered = new LinkedHashSet<>();
+		InstructionIterator instructions = program.getListing().getInstructions(true);
+		while (instructions.hasNext()) {
+			Instruction call = instructions.next();
+			FdFunction opener = getDirectOpenApiCall(program, call, knownBases);
+			ApiNameArgument argument = opener == null ? null : getApiNameArgument(program, call, opener);
+			if (argument != null && known.contains(argument.apiKey())) {
+				discovered.add(new ApiDiscoveryEvidence(argument.apiKey(), argument.stringAddress(),
+						call.getAddress(), opener.getName(false)));
 			}
-			String stringValue = StringDataInstance.getStringDataInstance(stringData).getStringValue();
-			String library = toApiBaseName(stringValue);
-			if (library == null || !known.contains(library) || !hasExecutableReference(program, stringData.getAddress())) {
-				continue;
-			}
-			discovered.add(library);
 		}
 		return discovered;
+	}
+
+	/** Proven direct acquisition of a bundled Amiga API definition. */
+	static record ApiDiscoveryEvidence(String apiKey, Address stringAddress, Address openerAddress,
+			String openerName) {
+	}
+
+	private record ApiNameArgument(String apiKey, Address stringAddress) {
 	}
 
 	static String toApiBaseName(String externalName) {
@@ -274,18 +297,6 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		return normalized.replace('.', '_');
 	}
 
-	private static boolean hasExecutableReference(Program program, Address address) {
-		ReferenceIterator references = program.getReferenceManager().getReferencesTo(address);
-		while (references.hasNext()) {
-			Reference reference = references.next();
-			MemoryBlock sourceBlock = program.getMemory().getBlock(reference.getFromAddress());
-			if (sourceBlock != null && sourceBlock.isExecute()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	static DataType getAmigaDataType(String type, FileDataTypeManager fdm) {
 		if (type == null || type.isBlank() || type.equalsIgnoreCase("VOID")) {
 			return VoidDataType.dataType;
@@ -448,7 +459,11 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			if (opener == null) {
 				continue;
 			}
-			String library = getApiNameBeforeCall(program, instruction, 6);
+			if (!isApiBaseOpener(opener)) {
+				continue;
+			}
+			ApiNameArgument argument = getApiNameArgument(program, instruction, opener);
+			String library = argument == null ? null : argument.apiKey();
 			String returnRegister = getApiOpenerReturnRegister(program, opener);
 			Address resultStorage = getReturnedRegisterStorage(program, instruction, returnRegister);
 			if (library != null && resultStorage != null && activeLibraries.contains(library)) {
@@ -1350,7 +1365,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				Integer bias = getA6VectorBias(vectorCall);
 				String library = bias == null ? null : findA6ApiBase(program, vectorCall, bases);
 				FdFunction definition = library == null ? null : getFunctionByLibraryBias(library, bias);
-				if (definition != null && !isApiOpener(definition) &&
+				if (definition != null && !isApiNameOpener(definition) &&
 						isForwardingApiWrapper(program, wrapper, vectorCall, library, definition)) {
 					wrappers.put(wrapper.getEntryPoint(), new ForwardingApiWrapper(library, definition));
 				}
@@ -1361,7 +1376,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 
 	private boolean isForwardingOpenApiWrapper(Program program, Function wrapper, Instruction openerCall,
 			FdFunction opener) {
-		if (!isApiOpener(opener) || !forwardsOpenApiArguments(program, wrapper, openerCall, opener)) {
+		if (!isApiBaseOpener(opener) || !forwardsOpenApiArguments(program, wrapper, openerCall, opener)) {
 			return false;
 		}
 		String returnRegister = getApiOpenerReturnRegister(program, opener);
@@ -1633,10 +1648,11 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				if (opener == null) {
 					opener = getDirectOpenApiCall(program, instruction, bases);
 				}
-				if (opener != null) {
+				if (opener != null && isApiBaseOpener(opener)) {
 					String returnRegister = getApiOpenerReturnRegister(program, opener);
-					return register.getName().equals(returnRegister)
-							? getApiNameBeforeCall(program, instruction, 6) : null;
+					ApiNameArgument argument = getApiNameArgument(program, instruction, opener);
+					return register.getName().equals(returnRegister) && argument != null
+							? argument.apiKey() : null;
 				}
 				if (writesRegister(instruction, register.getName())) {
 					return null;
@@ -1655,15 +1671,20 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			return null;
 		}
 		FdFunction function = getFunctionByLibraryBias(FdParser.EXEC_LIB, bias);
-		return isApiOpener(function) ? function : null;
+		return isApiNameOpener(function) ? function : null;
 	}
 
-	private static boolean isApiOpener(FdFunction function) {
+	private static boolean isApiNameOpener(FdFunction function) {
 		if (function == null) {
 			return false;
 		}
 		String name = function.getName(false);
-		return name.equals("OpenLibrary") || name.equals("OldOpenLibrary") || name.equals("OpenResource");
+		return name.equals("OpenLibrary") || name.equals("OldOpenLibrary") || name.equals("OpenDevice") ||
+				name.equals("OpenResource");
+	}
+
+	private static boolean isApiBaseOpener(FdFunction function) {
+		return function != null && !function.getName(false).equals("OpenDevice") && isApiNameOpener(function);
 	}
 
 	private FdFunction getFunctionByLibraryBias(String library, int bias) {
@@ -1690,12 +1711,37 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		return registers != null && registers.size() == 1 ? registers.get(0).getName() : null;
 	}
 
-	private static String getApiNameBeforeCall(Program program, Instruction call, int instructionLimit) {
-		Instruction instruction = call;
-		for (int index = 0; index < instructionLimit && instruction != null; index++) {
-			instruction = instruction.getPrevious();
-			if (instruction == null) {
-				break;
+	/**
+	 * Follows the specific ABI name register to its defining string in the same
+	 * straight-line function path. Register-to-register copies are supported;
+	 * calls, branches, and unrecognised computations are deliberately rejected.
+	 */
+	private static ApiNameArgument getApiNameArgument(Program program, Instruction call, FdFunction opener) {
+		String register = getApiNameArgumentRegister(opener);
+		Function function = register == null ? null :
+				program.getFunctionManager().getFunctionContaining(call.getAddress());
+		if (function == null) {
+			return null;
+		}
+		CodeBlock block;
+		try {
+			block = new BasicBlockModel(program).getFirstCodeBlockContaining(call.getAddress(), TaskMonitor.DUMMY);
+		}
+		catch (CancelledException exception) {
+			return null;
+		}
+		if (block == null) {
+			return null;
+		}
+		for (Instruction instruction = call.getPrevious(); instruction != null &&
+				block.contains(instruction.getAddress());
+				instruction = instruction.getPrevious()) {
+			if (instruction.getFlowType().isCall() || instruction.getFlowType().isJump() ||
+					instruction.getFlowType().isTerminal()) {
+				return null;
+			}
+			if (!writesRegister(instruction, register)) {
+				continue;
 			}
 			for (Reference reference : instruction.getReferencesFrom()) {
 				if (!reference.isMemoryReference()) {
@@ -1703,11 +1749,39 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				}
 				Data data = program.getListing().getDefinedDataAt(reference.getToAddress());
 				if (data != null && data.hasStringValue()) {
-					return toApiBaseName(StringDataInstance.getStringDataInstance(data).getStringValue());
+					String apiKey = toApiBaseName(StringDataInstance.getStringDataInstance(data).getStringValue());
+					return apiKey == null ? null : new ApiNameArgument(apiKey, data.getAddress());
 				}
 			}
+			String sourceRegister = getSingleInputRegister(instruction);
+			if (sourceRegister == null || sourceRegister.equals(register)) {
+				return null;
+			}
+			register = sourceRegister;
 		}
 		return null;
+	}
+
+	private static String getApiNameArgumentRegister(FdFunction opener) {
+		if (!isApiNameOpener(opener) || opener.getArgs().isEmpty()) {
+			return null;
+		}
+		String register = opener.getArgs().get(0).reg;
+		return register == null ? null : register.toUpperCase(Locale.ROOT);
+	}
+
+	private static String getSingleInputRegister(Instruction instruction) {
+		String source = null;
+		for (Object object : instruction.getInputObjects()) {
+			if (!(object instanceof Register register) || register.getName().equals("CCR")) {
+				continue;
+			}
+			if (source != null) {
+				return null;
+			}
+			source = register.getName();
+		}
+		return source;
 	}
 
 	private static Address getReturnedRegisterStorage(Program program, Instruction call, String registerName) {
@@ -1944,8 +2018,9 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		if (opener == null && isOpenApiVectorCall(vectorLibrary, bias)) {
 			opener = getFunctionByLibraryBias(FdParser.EXEC_LIB, bias);
 		}
-		if (opener != null) {
-			String library = getApiNameBeforeCall(program, instruction, 6);
+		if (opener != null && isApiBaseOpener(opener)) {
+			ApiNameArgument argument = getApiNameArgument(program, instruction, opener);
+			String library = argument == null ? null : argument.apiKey();
 			String returnRegister = getApiOpenerReturnRegister(program, opener);
 			if (returnRegister != null) {
 				state.put(returnRegister, library != null && activeLibraries.contains(library) ? library : null);
@@ -1986,7 +2061,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		if (!FdParser.EXEC_LIB.equals(library) || bias == null) {
 			return false;
 		}
-		return isApiOpener(getFunctionByLibraryBias(FdParser.EXEC_LIB, bias));
+		return isApiBaseOpener(getFunctionByLibraryBias(FdParser.EXEC_LIB, bias));
 	}
 
 	private record ForwardingApiWrapper(String library, FdFunction definition) {

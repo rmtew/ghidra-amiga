@@ -16,6 +16,7 @@ import ghidra.GhidraApplicationLayout;
 import ghidra.app.util.importer.MessageLog;
 import ghidra.framework.Application;
 import ghidra.framework.ApplicationConfiguration;
+import ghidra.framework.options.ToolOptions;
 import ghidra.program.database.ProgramBuilder;
 import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.listing.Function;
@@ -90,6 +91,14 @@ public class AmigaHunkAnalyzerTest {
 					program.getSymbolTable().createLabel(builder.addr("0x4"), "g_ExecLibraryBase", SourceType.ANALYSIS);
 					assertTrue(analyzer.canAnalyze(program));
 					added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY, log);
+					int functionsAfterFirstAnalysis = program.getFunctionManager().getFunctionCount();
+					int referencesAfterFirstAnalysis = getAnalysisReferenceCount(
+							program.getListing().getInstructionAt(builder.addr("0x116")));
+					assertTrue(analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+							new MessageLog()));
+					assertEquals(functionsAfterFirstAnalysis, program.getFunctionManager().getFunctionCount());
+					assertEquals(referencesAfterFirstAnalysis, getAnalysisReferenceCount(
+							program.getListing().getInstructionAt(builder.addr("0x116"))));
 				}
 				catch (Exception e) {
 					throw new AssertionError(e);
@@ -111,6 +120,255 @@ public class AmigaHunkAnalyzerTest {
 			assertEquals("SysBase", program.getSymbolTable().getPrimarySymbol(builder.addr("0x4")).getName());
 			assertEquals("g_IconLibraryBase", program.getSymbolTable().getPrimarySymbol(builder.addr("0x80")).getName());
 			assertTrue(program.getSymbolTable().getGlobalSymbols("g_ExecLibraryBase").isEmpty());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void discoversAnApiNameCopiedIntoTheOpenLibraryArgumentRegister() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-name-copy", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// SysBase -> A6; address of icon.library -> A0 -> A1; OpenLibrary(A1, 0).
+			builder.setBytes("0x100", "2c78000441fa0038224870004eaefdd84e75");
+			builder.createString("0x140", "icon.library");
+			builder.disassemble("0x100", 0x12);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				HashMap<ghidra.program.model.address.Address, String> knownBases = new HashMap<>();
+				knownBases.put(builder.addr("0x4"), "exec_library");
+				var evidence = analyzer.findReferencedApiLibraries(program,
+						new String[] { "icon_library" }, knownBases);
+				assertEquals(1, evidence.size());
+				AmigaHunkAnalyzer.ApiDiscoveryEvidence discovery = evidence.iterator().next();
+				assertEquals("icon_library", discovery.apiKey());
+				assertEquals(builder.addr("0x140"), discovery.stringAddress());
+				assertEquals(builder.addr("0x10c"), discovery.openerAddress());
+				assertEquals("OpenLibrary", discovery.openerName());
+				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertTrue("a copied name argument should select icon.library",
+					program.getMemory().getBlock("icon_library") != null);
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotDiscoverAnApiNameFromAnotherControlFlowPredecessor() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-name-control-flow", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// The branch reaches OpenLibrary without defining A1. The adjacent
+			// fall-through code does define icon.library in A1, but is another block.
+			builder.setBytes("0x100", "2c780004600a43fa003670004e714e714eaefdd84e75");
+			builder.createString("0x140", "icon.library");
+			builder.disassemble("0x100", 0x16);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x106", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertNull("a name assignment in another predecessor block is not proof",
+					program.getMemory().getBlock("icon_library"));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotDiscoverAStringThatIsNotTheOpenLibraryArgument() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-name-not-argument", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// The code references icon.library, then overwrites A1 before OpenLibrary.
+			builder.setBytes("0x100", "2c78000443fa0038227c0000018070004eaefdd84e75");
+			builder.createString("0x140", "icon.library");
+			builder.disassemble("0x100", 0x18);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertNull("a merely referenced API name must not select a table",
+					program.getMemory().getBlock("icon_library"));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotDiscoverDisplayOnlyUnreferencedOrUnknownApiNames() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-name-negative-evidence", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// Display-only reference to icon.library.
+			builder.setBytes("0x100", "41fa007c4e75");
+			// OpenLibrary("unknown.library", 0) must remain harmless and unselected.
+			builder.setBytes("0x120", "2c78000443fa006870004eaefdd84e75");
+			builder.createString("0x180", "icon.library");
+			builder.createString("0x190", "unknown.library");
+			builder.createString("0x1b0", "workbench.library");
+			builder.disassemble("0x100", 6);
+			builder.disassemble("0x120", 0x12);
+			builder.createMemoryReference("0x100", "0x180", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x120", "0x4");
+			builder.createMemoryReference("0x124", "0x190", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function display = builder.createFunction("0x100");
+			Function unknownOpen = builder.createFunction("0x120");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(display.getBody());
+				functions.add(unknownOpen.getBody());
+				added[0] = analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertNull("a display-only reference must not select icon.library",
+					program.getMemory().getBlock("icon_library"));
+			assertNull("an unreferenced name must not select workbench.library",
+					program.getMemory().getBlock("workbench_library"));
+			assertNull("an unknown opener name must not create a synthetic table",
+					program.getMemory().getBlock("unknown_library"));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void discoversAKnownDevicePassedToOpenDevice() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-device", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// OpenDevice("console.device", 0, ioRequest, 0): the name ABI register is A0.
+			builder.setBytes("0x100", "2c78000441fa00387000227c0000018072004eaefe444e75");
+			builder.createString("0x140", "console.device");
+			builder.disassemble("0x100", 0x18);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertTrue("OpenDevice should select its known device table",
+					program.getMemory().getBlock("console_device") != null);
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void discoversAKnownResourcePassedToOpenResource() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-resource", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// OpenResource("card.resource"): the name ABI register is A1.
+			builder.setBytes("0x100", "2c78000443fa00384eaefe0e4e75");
+			builder.createString("0x140", "card.resource");
+			builder.disassemble("0x100", 0x10);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertTrue("OpenResource should select its known resource table",
+					program.getMemory().getBlock("card_resource") != null);
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotDiscoverApisWhenAutomaticDiscoveryIsDisabled() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("api-discovery-disabled", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x200);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2c78000443fa003870004eaefdd84e75");
+			builder.createString("0x140", "icon.library");
+			builder.disassemble("0x100", 0x12);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x140", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			boolean[] added = new boolean[1];
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				ToolOptions options = new ToolOptions("test");
+				analyzer.registerOptions(options, program);
+				options.setBoolean("Automatically discover referenced APIs", false);
+				analyzer.optionsChanged(options, program);
+				added[0] = analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog());
+			});
+			assertTrue(added[0]);
+			assertNull(program.getMemory().getBlock("icon_library"));
 		}
 		finally {
 			builder.dispose();
@@ -265,6 +523,16 @@ public class AmigaHunkAnalyzerTest {
 			}
 		}
 		throw new AssertionError("expected " + targetName + " override at " + address);
+	}
+
+	private static int getAnalysisReferenceCount(Instruction instruction) {
+		int count = 0;
+		for (Reference reference : instruction.getReferencesFrom()) {
+			if (reference.getSource() == SourceType.ANALYSIS) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	@Test
