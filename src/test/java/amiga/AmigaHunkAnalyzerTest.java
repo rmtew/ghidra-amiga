@@ -19,6 +19,8 @@ import ghidra.framework.ApplicationConfiguration;
 import ghidra.framework.options.ToolOptions;
 import ghidra.program.database.ProgramBuilder;
 import ghidra.program.model.address.AddressSet;
+import ghidra.program.model.data.DataUtilities;
+import ghidra.program.model.data.DataUtilities.ClearDataMode;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Instruction;
 import ghidra.program.model.listing.Program;
@@ -310,6 +312,171 @@ public class AmigaHunkAnalyzerTest {
 	}
 
 	@Test
+	public void resolvesDeviceVectorAfterASuccessfulOpenDevice() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("device-success", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2c78000441fa007843f900000080700072004eaefe444a80660c" +
+					"2c79000000944eaeffd64e754e75");
+			builder.createString("0x180", "timer.device");
+			builder.disassemble("0x100", 0x2a);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x180", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x108", "0x80", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x11a", "0x94");
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertTrue("OpenDevice should select timer.device", program.getMemory().getBlock("timer_device") != null);
+			assertVectorTarget(program, builder.addr("0x120"), "timer_device_AddTime");
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void resolvesDeviceVectorWhenBeqBranchesToOpenDeviceSuccess() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("device-success-beq", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// tst D0; beq success; return-on-failure; success: load io_Device and call AddTime.
+			builder.setBytes("0x100", "2c78000441fa00787000227c0000008072004eaefe444a806702" +
+					"4e752c79000000944eaeffd64e75");
+			builder.createString("0x180", "timer.device");
+			builder.disassemble("0x100", 0x2c);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x180", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x10a", "0x80", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x11c", "0x94");
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertVectorTarget(program, builder.addr("0x122"), "timer_device_AddTime");
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotResolveDeviceVectorAfterAnUncheckedOpenDevice() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("device-unchecked", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2c78000441fa007843f900000080700072004eaefe44" +
+					"2c79000000944eaeffd64e75");
+			builder.createString("0x180", "timer.device");
+			builder.disassemble("0x100", 0x24);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x180", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x108", "0x80", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x116", "0x94");
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertNoVectorTarget(program, builder.addr("0x11c"));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotResolveDeviceVectorAtAConflictingSuccessMerge() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("device-conflict", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// A separate branch can reach the apparent success block without OpenDevice succeeding.
+			builder.setBytes("0x100", "601c4e752c78000441fa007843f900000080700072004eaefe44" +
+					"4a80660c2c79000000944eaeffd64e754e75");
+			builder.createString("0x184", "timer.device");
+			builder.disassemble("0x100", 0x2c);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReference("0x108", "0x184", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x10c", "0x80", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x11e", "0x94");
+			Function function = builder.createFunction("0x104");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertNoVectorTarget(program, builder.addr("0x124"));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void keepsSeparateOpenDeviceRequestsIndependent() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("device-independent", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2c78000441fa007843f900000080700072004eaefe444a806630" +
+					"2c79000000944eaeffd62c78000441fa007443f9000000a0700072004eaefe44" +
+					"4a80660c2c79000000b44eaeffd64e754e75");
+			builder.createString("0x180", "timer.device");
+			builder.createString("0x1a0", "console.device");
+			builder.disassemble("0x100", 0x4c);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x180", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x108", "0x80", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x11a", "0x94");
+			builder.createMemoryReadReference("0x124", "0x4");
+			builder.createMemoryReference("0x128", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x12c", "0xa0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x13e", "0xb4");
+			Function function = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(function.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertVectorTarget(program, builder.addr("0x120"), "timer_device_AddTime");
+			assertVectorTarget(program, builder.addr("0x144"), "console_device_CDInputHandler");
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
 	public void discoversAKnownResourcePassedToOpenResource() throws Exception {
 		ProgramBuilder builder = new ProgramBuilder("api-resource", "68000:BE:32:default");
 		try {
@@ -525,6 +692,14 @@ public class AmigaHunkAnalyzerTest {
 		throw new AssertionError("expected " + targetName + " override at " + address);
 	}
 
+	private static void assertNoVectorTarget(Program program, ghidra.program.model.address.Address address) {
+		for (Reference reference : program.getListing().getInstructionAt(address).getReferencesFrom()) {
+			if (reference.getReferenceType().isCall() && reference.getSource() == SourceType.ANALYSIS) {
+				throw new AssertionError("unexpected analysis call override at " + address);
+			}
+		}
+	}
+
 	private static int getAnalysisReferenceCount(Instruction instruction) {
 		int count = 0;
 		for (Reference reference : instruction.getReferencesFrom()) {
@@ -563,6 +738,459 @@ public class AmigaHunkAnalyzerTest {
 			assertEquals(4, updatedWrapper.getParameter(0).getStackOffset());
 			assertEquals("version", updatedWrapper.getParameter(1).getName());
 			assertEquals(8, updatedWrapper.getParameter(1).getStackOffset());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void discoversADevicePassedThroughAForwardingOpenDeviceWrapper() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("open-device-wrapper", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// Save A6; forward four C stack arguments to OpenDevice's A0/D0/A1/D1 ABI; restore A6.
+			builder.setBytes("0x100", "2f0e2c780004206f0008202f000c226f0010222f00144eaefe442c5f4e75");
+			// OpenDevice("timer.device", 0, &request, 0) through the wrapper.
+			builder.setBytes("0x140", "42a72f39000001c042a74879000001a04eb9000001004fef00104e75");
+			builder.createString("0x1a0", "timer.device");
+			builder.disassemble("0x100", 0x24);
+			builder.disassemble("0x140", 0x20);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReadReference("0x142", "0x1c0");
+			builder.createMemoryReference("0x14a", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function wrapper = builder.createFunction("0x100");
+			Function caller = builder.createFunction("0x140");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(wrapper.getBody());
+				functions.add(caller.getBody());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+				int functionCount = program.getFunctionManager().getFunctionCount();
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+				assertEquals(functionCount, program.getFunctionManager().getFunctionCount());
+			});
+			Function updatedWrapper = program.getFunctionManager().getFunctionAt(builder.addr("0x100"));
+			assertEquals("BYTE", updatedWrapper.getReturnType().getDisplayName());
+			assertEquals(4, updatedWrapper.getParameterCount());
+			assertEquals("devName", updatedWrapper.getParameter(0).getName());
+			assertEquals(4, updatedWrapper.getParameter(0).getStackOffset());
+			assertEquals("ioRequest", updatedWrapper.getParameter(2).getName());
+			assertEquals(12, updatedWrapper.getParameter(2).getStackOffset());
+			assertTrue("a proven OpenDevice wrapper call should select timer.device",
+					program.getMemory().getBlock("timer_device") != null);
+			assertEquals("timerequest *", program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+					.getDataType().getDisplayName());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotTrustAnOpenDeviceWrapperWithAnExtraCall() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("open-device-wrapper-extra-call", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// This otherwise forwarding wrapper calls another function after OpenDevice, so it is not a transparent forwarder.
+			builder.setBytes("0x100", "2f0e2c780004206f0008202f000c226f0010222f00144eaefe444eb9000001302c5f4e75");
+			builder.setBytes("0x140", "42a72f39000001c042a74879000001a04eb9000001004fef00104e75");
+			builder.setBytes("0x130", "4e75");
+			builder.createString("0x1a0", "timer.device");
+			builder.disassemble("0x100", 0x2a);
+			builder.disassemble("0x140", 0x20);
+			builder.disassemble("0x130", 2);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReference("0x14a", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function wrapper = builder.createFunction("0x100");
+			Function caller = builder.createFunction("0x140");
+			builder.createFunction("0x130");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(wrapper.getBody());
+				functions.add(caller.getBody());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+			});
+			assertNull("a wrapper with an extra call must not select timer.device",
+					program.getMemory().getBlock("timer_device"));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void typesAnA4RelativeRequestSlotPassedThroughAnOpenDeviceWrapper() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("open-device-wrapper-a4-request", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2f0e2c780004206f0008202f000c226f0010222f00144eaefe442c5f4e75");
+			// A4 is an anchored data base; its -4 slot is the request pointer passed to OpenDevice.
+			builder.setBytes("0x140", "287c000001c442a72f2cffff42a74879000001a04eb9000001004fef00104e75");
+			// The reference points to the C string after a three-byte prefix, as in
+			// Treasure's Hunk relocation presentation.  No defined string starts there.
+			builder.setBytes("0x1a0", "12345674696d65722e64657669636500");
+			builder.disassemble("0x100", 0x24);
+			builder.disassemble("0x140", 0x26);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReadReference("0x148", "0x1c0");
+			// Treasure's relocated PC-relative reference points past the prefix.
+			builder.createMemoryReference("0x14e", "0x1a3", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function wrapper = builder.createFunction("0x100");
+			Function caller = builder.createFunction("0x140");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertEquals("timer.device", AmigaHunkAnalyzer.getReferencedString(program, builder.addr("0x1a3")));
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(wrapper.getBody());
+				functions.add(caller.getBody());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+				// Reproduce the weaker type left by an earlier/general analysis pass.
+				try {
+					DataUtilities.createData(program, builder.addr("0x1c0"), wrapper.getParameter(2).getDataType(), -1,
+							false, ClearDataMode.CLEAR_ALL_CONFLICT_DATA);
+				}
+				catch (Exception exception) {
+					throw new AssertionError(exception);
+				}
+				assertEquals("IORequest *", program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+						.getDataType().getDisplayName());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+			});
+			assertEquals("timerequest *", program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+					.getDataType().getDisplayName());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void typesConsoleDeviceRequestAsIoStdReq() throws Exception {
+		assertStandardDeviceRequestType("console.device");
+	}
+
+	@Test
+	public void typesInputDeviceRequestAsIoStdReq() throws Exception {
+		assertStandardDeviceRequestType("input.device");
+	}
+
+	@Test
+	public void typesGameportDeviceRequestAsIoStdReq() throws Exception {
+		assertStandardDeviceRequestType("gameport.device");
+	}
+
+	@Test
+	public void typesAnAnalysisOwnedLocalPassedToDirectOpenDevice() throws Exception {
+		assertDirectOpenDeviceLocalType();
+	}
+
+	@Test
+	public void typesADirectStaticConsoleRequestObject() throws Exception {
+		assertDirectStaticRequestObject("console.device");
+	}
+
+	@Test
+	public void typesADirectStaticInputRequestObject() throws Exception {
+		assertDirectStaticRequestObject("input.device");
+	}
+
+	@Test
+	public void doesNotTypeAnIndirectDirectOpenDeviceRequest() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("direct-open-device-indirect-request", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// A1 loads a pointer value from memory; it is not the address of a request object.
+			builder.setBytes("0x100", "2c78000441f9000001a070002279000001c072004eaefe444e75");
+			builder.createString("0x1a0", "console.device");
+			builder.disassemble("0x100", 0x1a);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReadReference("0x10c", "0x1c0");
+			Function caller = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(caller.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertNull(program.getListing().getDefinedDataAt(builder.addr("0x1c0")));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotOverwriteAUserDefinedDirectStaticRequestObject() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("direct-open-device-user-request", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2c78000441f9000001a0700043f9000001c072004eaefe444e75");
+			builder.createString("0x1a0", "console.device");
+			builder.disassemble("0x100", 0x1a);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x10c", "0x1c0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function caller = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			builder.withTransaction(() -> {
+				try {
+					// A user-owned field inside the proposed IOStdReq range also protects the object.
+					program.getSymbolTable().createLabel(builder.addr("0x1d4"), "userRequestField",
+							SourceType.USER_DEFINED);
+				}
+				catch (Exception exception) {
+					throw new AssertionError(exception);
+				}
+			});
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(caller.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertNull(program.getListing().getDefinedDataAt(builder.addr("0x1c0")));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotSpecializeAConflictingDirectStaticRequestObject() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("direct-open-device-request-conflict", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2c78000441f9000001a0700043f9000001c072004eaefe444e75");
+			builder.setBytes("0x140", "2c78000441f9000001b0700043f9000001c072004eaefe444e75");
+			builder.createString("0x1a0", "console.device");
+			builder.createString("0x1b0", "timer.device");
+			builder.disassemble("0x100", 0x1a);
+			builder.disassemble("0x140", 0x1a);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReadReference("0x140", "0x4");
+			builder.createMemoryReference("0x104", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x10c", "0x1c0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x144", "0x1b0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x14c", "0x1c0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function first = builder.createFunction("0x100");
+			Function second = builder.createFunction("0x140");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(first.getBody());
+				functions.add(second.getBody());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+			});
+			assertNull(program.getListing().getDefinedDataAt(builder.addr("0x1c0")));
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	private static void assertDirectStaticRequestObject(String deviceName) throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("direct-open-device-object-" + deviceName,
+				"68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// LEA materialises the request object's address directly in A1.
+			builder.setBytes("0x100", "2c78000441f9000001a0700043f9000001c072004eaefe444e75");
+			builder.createString("0x1a0", deviceName);
+			builder.disassemble("0x100", 0x1a);
+			builder.createMemoryReadReference("0x100", "0x4");
+			builder.createMemoryReference("0x104", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x10c", "0x1c0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function caller = builder.createFunction("0x100");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(caller.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+				assertTrue(analyzer.added(program, new AddressSet(caller.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			assertEquals("IOStdReq", program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+					.getDataType().getDisplayName());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	private static void assertDirectOpenDeviceLocalType() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("open-device-local-request", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			// A2 is an analysis-owned local request pointer.  The post-open write at
+			// 0x28 is IOStdReq.io_Data, not IORequest[1].Message.Node.ln_Type.
+			builder.setBytes("0x100", "2c7800044eb900000180244041fa00907000224a72004eaefe4442aa00284e75");
+			builder.setBytes("0x180", "70004e75");
+			builder.createString("0x1a0", "input.device");
+			builder.disassemble("0x100", 0x22);
+			builder.disassemble("0x180", 4);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReference("0x10c", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function caller = builder.createFunction("0x100");
+			builder.createFunction("0x180");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				assertTrue(analyzer.added(program, new AddressSet(caller.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+				assertTrue(analyzer.added(program, new AddressSet(caller.getBody()), TaskMonitor.DUMMY,
+						new MessageLog()));
+			});
+			ghidra.program.model.listing.Variable request = findLocal(caller, "ioRequest");
+			assertTrue(request != null);
+			assertEquals("IOStdReq *", request.getDataType().getDisplayName());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	private static ghidra.program.model.listing.Variable findLocal(Function function, String name) {
+		for (ghidra.program.model.listing.Variable local : function.getLocalVariables()) {
+			if (name.equals(local.getName())) {
+				return local;
+			}
+		}
+		return null;
+	}
+
+	@Test
+	public void doesNotOverwriteUserDefinedStandardDeviceRequestStorage() throws Exception {
+		assertStandardDeviceRequestType("console.device", true);
+	}
+
+	private static void assertStandardDeviceRequestType(String deviceName) throws Exception {
+		assertStandardDeviceRequestType(deviceName, false);
+	}
+
+	private static void assertStandardDeviceRequestType(String deviceName, boolean userDefinedStorage) throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("open-device-wrapper-" + deviceName, "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x300);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2f0e2c780004206f0008202f000c226f0010222f00144eaefe442c5f4e75");
+			builder.setBytes("0x140", "42a72f39000001c042a74879000001a04eb9000001004fef00104e75");
+			builder.createString("0x1a0", deviceName);
+			builder.disassemble("0x100", 0x24);
+			builder.disassemble("0x140", 0x20);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReadReference("0x142", "0x1c0");
+			builder.createMemoryReference("0x14a", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function wrapper = builder.createFunction("0x100");
+			Function caller = builder.createFunction("0x140");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(wrapper.getBody());
+				functions.add(caller.getBody());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+				try {
+					DataUtilities.createData(program, builder.addr("0x1c0"), wrapper.getParameter(2).getDataType(), -1,
+							false, ClearDataMode.CLEAR_ALL_CONFLICT_DATA);
+				}
+				catch (Exception exception) {
+					throw new AssertionError(exception);
+				}
+				assertEquals("IORequest *", program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+						.getDataType().getDisplayName());
+				if (userDefinedStorage) {
+					try {
+						program.getSymbolTable().createLabel(builder.addr("0x1c0"), "userRequest",
+								SourceType.USER_DEFINED);
+					}
+					catch (Exception exception) {
+						throw new AssertionError(exception);
+					}
+				}
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+			});
+			assertEquals(deviceName, userDefinedStorage ? "IORequest *" : "IOStdReq *",
+					program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+					.getDataType().getDisplayName());
+		}
+		finally {
+			builder.dispose();
+		}
+	}
+
+	@Test
+	public void doesNotSpecializeARequestSlotWithConflictingDeviceEvidence() throws Exception {
+		ProgramBuilder builder = new ProgramBuilder("open-device-request-conflict", "68000:BE:32:default");
+		try {
+			builder.createMemory("ram", "0", 0x400);
+			builder.setExecute(builder.getProgram().getMemory().getBlock(builder.addr("0")), true);
+			builder.setBytes("0x100", "2f0e2c780004206f0008202f000c226f0010222f00144eaefe442c5f4e75");
+			// Two proven calls give the same request slot incompatible known device types.
+			builder.setBytes("0x140", "42a72f39000001c042a74879000001a04eb9000001004fef00104e75");
+			builder.setBytes("0x170", "42a72f39000001c042a74879000001b04eb9000001004fef00104e75");
+			builder.createString("0x1a0", "console.device");
+			builder.createString("0x1b0", "timer.device");
+			builder.disassemble("0x100", 0x24);
+			builder.disassemble("0x140", 0x20);
+			builder.disassemble("0x170", 0x20);
+			builder.createMemoryReadReference("0x104", "0x4");
+			builder.createMemoryReadReference("0x142", "0x1c0");
+			builder.createMemoryReadReference("0x172", "0x1c0");
+			builder.createMemoryReference("0x14a", "0x1a0", RefType.DATA, SourceType.ANALYSIS, 0);
+			builder.createMemoryReference("0x17a", "0x1b0", RefType.DATA, SourceType.ANALYSIS, 0);
+			Function wrapper = builder.createFunction("0x100");
+			Function firstCaller = builder.createFunction("0x140");
+			Function secondCaller = builder.createFunction("0x170");
+
+			Program program = builder.getProgram();
+			AmigaHunkAnalyzer analyzer = new AmigaHunkAnalyzer();
+			builder.withTransaction(() -> {
+				program.setExecutableFormat("Amiga Hunk Executable");
+				assertTrue(analyzer.canAnalyze(program));
+				AddressSet functions = new AddressSet(wrapper.getBody());
+				functions.add(firstCaller.getBody());
+				functions.add(secondCaller.getBody());
+				assertTrue(analyzer.added(program, functions, TaskMonitor.DUMMY, new MessageLog()));
+			});
+			assertEquals("IORequest *", program.getListing().getDefinedDataAt(builder.addr("0x1c0"))
+					.getDataType().getDisplayName());
 		}
 		finally {
 			builder.dispose();

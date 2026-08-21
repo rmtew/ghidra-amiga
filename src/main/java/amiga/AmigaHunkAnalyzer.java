@@ -28,6 +28,8 @@ import fd.FdFunction;
 import fd.FdFunctionsInLibs;
 import fd.FdLibFunctions;
 import fd.FdParser;
+import ghidra.app.decompiler.DecompInterface;
+import ghidra.app.decompiler.DecompileResults;
 import ghidra.app.services.AbstractAnalyzer;
 import ghidra.app.services.AnalysisPriority;
 import ghidra.app.services.AnalyzerType;
@@ -36,6 +38,8 @@ import ghidra.framework.Application;
 import ghidra.framework.options.Options;
 import ghidra.program.flatapi.FlatProgramAPI;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressOutOfBoundsException;
+import ghidra.program.model.address.AddressOverflowException;
 import ghidra.program.model.address.AddressSetView;
 import ghidra.program.model.block.BasicBlockModel;
 import ghidra.program.model.block.CodeBlock;
@@ -69,6 +73,14 @@ import ghidra.program.model.listing.ReturnParameterImpl;
 import ghidra.program.model.listing.VariableStorage;
 import ghidra.program.model.listing.Function.FunctionUpdateType;
 import ghidra.program.model.mem.MemoryBlock;
+import ghidra.program.model.mem.MemoryAccessException;
+import ghidra.program.model.pcode.HighFunction;
+import ghidra.program.model.pcode.HighFunctionDBUtil;
+import ghidra.program.model.pcode.HighSymbol;
+import ghidra.program.model.pcode.HighVariable;
+import ghidra.program.model.pcode.PcodeOp;
+import ghidra.program.model.pcode.PcodeOpAST;
+import ghidra.program.model.pcode.Varnode;
 import ghidra.program.model.scalar.Scalar;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
@@ -157,6 +169,7 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		activeLibraries = Set.copyOf(selectedLibraries);
 		FlatProgramAPI fpa = new FlatProgramAPI(program);
 		FileDataTypeManager fdm;
+		Map<Address, FdFunction> discoveredOpenDeviceWrappers = Map.of();
 		try {
 			fdm = fpa.openDataTypeArchive(getModuleDataFile("amiga_ndk39.gdt"), true);
 			// Exec is selected by default. Materialise the explicitly selected tables
@@ -169,12 +182,15 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				Map<Address, String> knownBases = new HashMap<>();
 				knownBases.put(program.getAddressFactory().getDefaultAddressSpace().getAddress(4), FdParser.EXEC_LIB);
 				propagateKnownBaseCopies(program, knownBases, new HashSet<>());
+				discoveredOpenDeviceWrappers = findForwardingOpenDeviceWrappers(program, knownBases);
+				applyOpenApiWrapperSignatures(program, discoveredOpenDeviceWrappers);
 				for (ApiDiscoveryEvidence evidence : findReferencedApiLibraries(program,
-						funcsList.getLibsList(null), knownBases)) {
+						funcsList.getLibsList(null), knownBases, discoveredOpenDeviceWrappers)) {
 					if (selectedLibraries.add(evidence.apiKey())) {
+						String opener = evidence.wrapperAddress() == null ? evidence.openerName()
+								: evidence.openerName() + " wrapper at " + evidence.wrapperAddress();
 						log.appendMsg(String.format("Discovered %s through %s at %s using string at %s",
-								evidence.apiKey(), evidence.openerName(), evidence.openerAddress(),
-								evidence.stringAddress()));
+								evidence.apiKey(), opener, evidence.openerAddress(), evidence.stringAddress()));
 					}
 				}
 				activeLibraries = Set.copyOf(selectedLibraries);
@@ -191,8 +207,11 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		Set<Address> ambiguousApiBaseStorages = new HashSet<>();
 		Map<Address, String> apiBaseStorages = discoverApiBaseStorages(program, ambiguousApiBaseStorages);
 		Map<Address, FdFunction> openWrappers = findOpenApiWrappers(program, apiBaseStorages);
+		Map<Address, FdFunction> openDeviceWrappers = findForwardingOpenDeviceWrappers(program, apiBaseStorages);
+		openDeviceWrappers.putAll(discoveredOpenDeviceWrappers);
 		try {
 			applyOpenApiWrapperSignatures(program, openWrappers);
+			applyOpenApiWrapperSignatures(program, openDeviceWrappers);
 		} catch (InvalidInputException | DuplicateNameException e) {
 			log.appendException(e);
 			return false;
@@ -212,6 +231,12 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			log.appendException(e);
 			return false;
 		}
+		try {
+			resolveSuccessfulOpenDeviceVectors(program, set, fdm, apiBaseStorages, monitor);
+		} catch (CancelledException e) {
+			log.appendException(e);
+			return false;
+		}
 		Map<Address, ForwardingApiWrapper> forwardingWrappers = findForwardingApiWrappers(program,
 				apiBaseStorages);
 		try {
@@ -222,7 +247,9 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 					deviceDispatches);
 			applyDeviceDispatchWrapperSignatures(program, fdm, deviceWrappers);
 			installDeviceDispatchCallOverrides(program, deviceWrappers, deviceAbiTargets);
-			propagateOpenDeviceRequestTypes(program, fdm, forwardingWrappers,
+			propagateOpenDeviceRequestTypes(program, fdm, forwardingWrappers, openDeviceWrappers,
+					AmigaAbiModel.loadDeviceRequestTypes(), monitor);
+			propagateOpenDeviceRequestLocalTypes(program, fdm, forwardingWrappers, openDeviceWrappers,
 					AmigaAbiModel.loadDeviceRequestTypes(), monitor);
 			propagateTypedStackParameters(program, monitor);
 			if (specializePointerParametersByStructureAccess(program, fdm, monitor)) {
@@ -260,6 +287,11 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	 */
 	Set<ApiDiscoveryEvidence> findReferencedApiLibraries(Program program, String[] knownLibraries,
 			Map<Address, String> knownBases) {
+		return findReferencedApiLibraries(program, knownLibraries, knownBases, Map.of());
+	}
+
+	private Set<ApiDiscoveryEvidence> findReferencedApiLibraries(Program program, String[] knownLibraries,
+			Map<Address, String> knownBases, Map<Address, FdFunction> openDeviceWrappers) {
 		Set<String> known = new HashSet<>();
 		for (String library : knownLibraries) {
 			known.add(library.toLowerCase(Locale.ROOT));
@@ -270,9 +302,19 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			Instruction call = instructions.next();
 			FdFunction opener = getDirectOpenApiCall(program, call, knownBases);
 			ApiNameArgument argument = opener == null ? null : getApiNameArgument(program, call, opener);
+			Address wrapperAddress = null;
+			if (argument == null) {
+				Function wrapper = getDirectCallee(program, call);
+				FdFunction definition = wrapper == null ? null : openDeviceWrappers.get(wrapper.getEntryPoint());
+				if (definition != null) {
+					argument = getOpenDeviceWrapperNameArgument(program, call, wrapper);
+					opener = definition;
+					wrapperAddress = wrapper.getEntryPoint();
+				}
+			}
 			if (argument != null && known.contains(argument.apiKey())) {
 				discovered.add(new ApiDiscoveryEvidence(argument.apiKey(), argument.stringAddress(),
-						call.getAddress(), opener.getName(false)));
+						call.getAddress(), opener.getName(false), wrapperAddress));
 			}
 		}
 		return discovered;
@@ -280,10 +322,37 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 
 	/** Proven direct acquisition of a bundled Amiga API definition. */
 	static record ApiDiscoveryEvidence(String apiKey, Address stringAddress, Address openerAddress,
-			String openerName) {
+			String openerName, Address wrapperAddress) {
 	}
 
 	private record ApiNameArgument(String apiKey, Address stringAddress) {
+	}
+
+	private static ApiNameArgument getOpenDeviceWrapperNameArgument(Program program, Instruction call,
+			Function wrapper) {
+		if (wrapper.getParameterCount() < 1) {
+			return null;
+		}
+		Parameter deviceName = wrapper.getParameter(0);
+		if (!deviceName.getVariableStorage().isStackStorage()) {
+			return null;
+		}
+		Function caller = program.getFunctionManager().getFunctionContaining(call.getAddress());
+		Instruction push = caller == null ? null : findPushedStackArgument(caller, call, deviceName.getStackOffset());
+		return push == null ? null : getReferencedApiNameArgument(program, push);
+	}
+
+	private static ApiNameArgument getReferencedApiNameArgument(Program program, Instruction instruction) {
+		for (Reference reference : instruction.getReferencesFrom()) {
+			if (!reference.isMemoryReference()) {
+				continue;
+			}
+			String key = toApiBaseName(getReferencedString(program, reference.getToAddress()));
+			if (key != null) {
+				return new ApiNameArgument(key, reference.getToAddress());
+			}
+		}
+		return null;
 	}
 
 	static String toApiBaseName(String externalName) {
@@ -808,6 +877,36 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		conflicts.add(storage);
 	}
 
+	private enum RequestStorageKind {
+		POINTER_SLOT,
+		OBJECT
+	}
+
+	/** A statically proven actual argument, retaining whether code passes its value or address. */
+	private record RequestStorageTarget(Address address, RequestStorageKind kind) {
+	}
+
+	private record RequestStorageProposal(RequestStorageTarget target, DataType type) {
+	}
+
+	private static void recordRequestStorageProposal(Map<Address, RequestStorageProposal> proposals,
+			Set<Address> conflicts, RequestStorageTarget target, DataType type) {
+		Address address = target.address();
+		if (conflicts.contains(address)) {
+			return;
+		}
+		RequestStorageProposal existing = proposals.get(address);
+		if (existing == null) {
+			proposals.put(address, new RequestStorageProposal(target, type));
+			return;
+		}
+		if (existing.target().kind() == target.kind() && existing.type().isEquivalent(type)) {
+			return;
+		}
+		proposals.remove(address);
+		conflicts.add(address);
+	}
+
 	private static Instruction findPushedStackArgument(Function caller, Instruction call, int parameterStackOffset) {
 		if (parameterStackOffset < 4) {
 			return null;
@@ -828,8 +927,11 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	}
 
 	private static int getStackPushSize(Instruction instruction) {
+		if (instruction.getMnemonicString().equals("pea")) {
+			return 4;
+		}
 		String text = instruction.toString().replace(" ", "").toUpperCase(Locale.ROOT);
-		if (!text.endsWith(",-(SP)")) {
+		if (!(text.endsWith("-(SP)") || text.endsWith("-(A7)"))) {
 			return 0;
 		}
 		if (text.startsWith("MOVEM.L")) {
@@ -971,11 +1073,39 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 
 	private static boolean isPointerSpecialization(DataType candidateType, DataType baseType) {
 		if (!(candidateType instanceof Pointer candidatePointer) || !(baseType instanceof Pointer basePointer) ||
-				!(candidatePointer.getDataType() instanceof Structure candidate) ||
-				!(basePointer.getDataType() instanceof Structure base)) {
+				!(candidatePointer.getDataType() instanceof Structure) ||
+				!(basePointer.getDataType() instanceof Structure)) {
 			return false;
 		}
-		return candidate.isEquivalent(base) || embedsBaseAtZero(candidate, base);
+		return isStructureSpecialization(candidatePointer.getDataType(), basePointer.getDataType());
+	}
+
+	private static boolean isStructureSpecialization(DataType candidateType, DataType baseType) {
+		if (!(candidateType instanceof Structure candidate) || !(baseType instanceof Structure base)) {
+			return false;
+		}
+		return candidate.isEquivalent(base) || embedsBaseAtZero(candidate, base) ||
+				hasEquivalentStructurePrefix(candidate, base);
+	}
+
+	/**
+	 * Some NDK request structures, including IOStdReq, repeat the common
+	 * IORequest fields instead of embedding an IORequest member.  They are still
+	 * ABI-compatible prefix specializations when every defined base component
+	 * occurs at the same offset with the same type.
+	 */
+	private static boolean hasEquivalentStructurePrefix(Structure candidate, Structure base) {
+		if (candidate.getLength() < base.getLength()) {
+			return false;
+		}
+		for (DataTypeComponent baseComponent : base.getDefinedComponents()) {
+			DataTypeComponent candidateComponent = candidate.getComponentAt(baseComponent.getOffset());
+			if (candidateComponent == null || candidateComponent.getOffset() != baseComponent.getOffset() ||
+					!candidateComponent.getDataType().isEquivalent(baseComponent.getDataType())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void specializePrivateDeviceDispatchWrappers(Program program,
@@ -1196,17 +1326,15 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	 * OpenDevice's ABI deliberately accepts the common IORequest prefix.  A
 	 * statically known device name supplies the stronger, header-defined request
 	 * subtype for its request argument.  The mapping is data-driven and is
-	 * applied only to direct, statically addressed argument storage.
+	 * applied to direct static storage and, separately, to a single proven
+	 * decompiler local value.
 	 */
 	private static void propagateOpenDeviceRequestTypes(Program program, FileDataTypeManager fdm,
-			Map<Address, ForwardingApiWrapper> forwardingWrappers,
+			Map<Address, ForwardingApiWrapper> forwardingWrappers, Map<Address, FdFunction> openDeviceWrappers,
 			List<AmigaAbiModel.DeviceRequestType> requestTypes, TaskMonitor monitor)
 			throws CancelledException, CodeUnitInsertionException {
-		Map<String, DataType> typesByDevice = new HashMap<>();
-		for (AmigaAbiModel.DeviceRequestType requestType : requestTypes) {
-			typesByDevice.put(requestType.deviceName, new PointerDataType(getAmigaDataType(requestType.requestType, fdm)));
-		}
-		Map<Address, DataType> proposals = new HashMap<>();
+		Map<String, DataType> typesByDevice = getDeviceRequestPointerTypes(fdm, requestTypes);
+		Map<Address, RequestStorageProposal> proposals = new HashMap<>();
 		Set<Address> conflicts = new HashSet<>();
 		FunctionIterator callers = program.getFunctionManager().getFunctions(true);
 		while (callers.hasNext()) {
@@ -1215,46 +1343,57 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			InstructionIterator instructions = program.getListing().getInstructions(caller.getBody(), true);
 			while (instructions.hasNext()) {
 				Instruction call = instructions.next();
-				Function callee = getDirectCallee(program, call);
-				if (callee == null || !isOpenDeviceCall(callee, forwardingWrappers)) {
+				OpenDeviceCallArguments arguments = getOpenDeviceCallArguments(program, caller, call,
+						forwardingWrappers, openDeviceWrappers);
+				if (arguments == null) {
 					continue;
 				}
-				Parameter deviceName = findParameter(callee, "devName");
-				Parameter request = findParameter(callee, "ioRequest");
-				if (deviceName == null || request == null || !deviceName.getVariableStorage().isStackStorage() ||
-						!request.getVariableStorage().isStackStorage()) {
-					continue;
-				}
-				Instruction namePush = findPushedStackArgument(caller, call, deviceName.getStackOffset());
-				Instruction requestPush = findPushedStackArgument(caller, call, request.getStackOffset());
-				String name = namePush == null ? null : getReferencedString(program, namePush);
-				Address storage = requestPush == null ? null : getMemoryReference(requestPush, true);
-				DataType type = name == null ? null : typesByDevice.get(name.toLowerCase(Locale.ROOT));
+				RequestStorageTarget storage = arguments.requestStorage();
+				DataType type = getDeviceRequestType(arguments.deviceName(), typesByDevice);
 				if (storage != null && type != null) {
-					recordTypeProposal(proposals, conflicts, storage, type);
+					recordRequestStorageProposal(proposals, conflicts, storage, type);
 				}
 			}
 		}
-		for (Map.Entry<Address, DataType> proposal : proposals.entrySet()) {
-			if (!conflicts.contains(proposal.getKey())) {
-				applyAnalysisPointerStorageType(program, proposal.getKey(), proposal.getValue());
+		for (RequestStorageProposal proposal : proposals.values()) {
+			if (!conflicts.contains(proposal.target().address())) {
+				applyRequestStorageType(program, proposal.target(), proposal.type());
 			}
 		}
 	}
 
-	private static boolean isOpenDeviceCall(Function callee, Map<Address, ForwardingApiWrapper> wrappers) {
+	private static boolean isOpenDeviceCall(Function callee, Map<Address, ForwardingApiWrapper> wrappers,
+			Map<Address, FdFunction> openDeviceWrappers) {
 		ForwardingApiWrapper forwarding = wrappers.get(callee.getEntryPoint());
+		FdFunction opener = openDeviceWrappers.get(callee.getEntryPoint());
 		return (forwarding != null && "OpenDevice".equals(forwarding.definition().getName(false))) ||
-				"exec_library_OpenDevice".equals(callee.getName());
+				(opener != null && "OpenDevice".equals(opener.getName(false))) ||
+				"exec_library_OpenDevice".equals(callee.getName()) ||
+				hasAnalysisOpenDeviceSignature(callee);
 	}
 
-	private static Parameter findParameter(Function function, String name) {
-		for (Parameter parameter : function.getParameters()) {
-			if (name.equals(parameter.getName())) {
-				return parameter;
-			}
+	/**
+	 * A forwarding wrapper can already have our analysis-owned OpenDevice
+	 * signature while the current pass cannot reconstruct its A6 provenance
+	 * (notably when Manx loads SysBase from an A4-relative slot).  That exact
+	 * persisted signature is sufficient evidence to continue using the wrapper;
+	 * user-defined signatures are deliberately never accepted here.
+	 */
+	private static boolean hasAnalysisOpenDeviceSignature(Function function) {
+		if (function.getSignatureSource() != SourceType.ANALYSIS || function.getParameterCount() != 4 ||
+				!"devName".equals(function.getParameter(0).getName()) ||
+				!"unit".equals(function.getParameter(1).getName()) ||
+				!"ioRequest".equals(function.getParameter(2).getName()) ||
+				!"flags".equals(function.getParameter(3).getName())) {
+			return false;
 		}
-		return null;
+		DataType requestType = function.getParameter(2).getDataType();
+		return requestType instanceof Pointer pointer && pointer.getDataType() instanceof Structure request &&
+				"IORequest".equals(request.getName());
+	}
+
+	private static Parameter getStackParameter(Function function, int ordinal) {
+		return function.getParameterCount() > ordinal ? function.getParameter(ordinal) : null;
 	}
 
 	private static String getReferencedString(Program program, Instruction instruction) {
@@ -1262,10 +1401,40 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			if (!reference.isMemoryReference()) {
 				continue;
 			}
-			Data data = program.getListing().getDefinedDataAt(reference.getToAddress());
-			if (data != null && data.hasStringValue()) {
-				return StringDataInstance.getStringDataInstance(data).getStringValue();
+			String value = getReferencedString(program, reference.getToAddress());
+			if (value != null) {
+				return value;
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * Resolves an Amiga C string at a reference target.  Hunk relocation
+	 * addends can make Ghidra's defined string begin before the actual target;
+	 * in that case read the bounded, NUL-terminated ASCII string at the target
+	 * itself rather than using an unrelated prefix from the containing data.
+	 */
+	static String getReferencedString(Program program, Address address) {
+		Data data = program.getListing().getDefinedDataAt(address);
+		if (data != null && data.hasStringValue()) {
+			return StringDataInstance.getStringDataInstance(data).getStringValue();
+		}
+		StringBuilder value = new StringBuilder();
+		try {
+			for (int index = 0; index < 128; index++) {
+				int character = Byte.toUnsignedInt(program.getMemory().getByte(address.add(index)));
+				if (character == 0) {
+					return value.isEmpty() ? null : value.toString();
+				}
+				if (character < 0x20 || character > 0x7e) {
+					return null;
+				}
+				value.append((char) character);
+			}
+		}
+		catch (MemoryAccessException | AddressOutOfBoundsException exception) {
+			return null;
 		}
 		return null;
 	}
@@ -1316,14 +1485,83 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		if (symbol != null && symbol.getSource() == SourceType.USER_DEFINED) {
 			return;
 		}
-		if (existing != null && !Undefined.isUndefined(existing.getDataType()) &&
-				!(existing.getDataType() instanceof Pointer)) {
-			return;
-		}
 		if (existing != null && existing.getDataType().isEquivalent(type)) {
 			return;
 		}
+		// Preserve established data except when this is the precise, safe upgrade
+		// from a common ABI prefix (for example IORequest *) to the known device
+		// request subtype (for example timerequest *).  The caller above has
+		// already required a concrete device-name/request pairing.
+		if (existing != null && !Undefined.isUndefined(existing.getDataType()) &&
+				!isPointerSpecialization(type, existing.getDataType())) {
+			return;
+		}
 		DataUtilities.createData(program, storage, type, -1, false, ClearDataMode.CLEAR_ALL_CONFLICT_DATA);
+	}
+
+	private static void applyRequestStorageType(Program program, RequestStorageTarget target, DataType pointerType)
+			throws CodeUnitInsertionException {
+		if (target.kind() == RequestStorageKind.POINTER_SLOT) {
+			applyAnalysisPointerStorageType(program, target.address(), pointerType);
+			return;
+		}
+		if (!(pointerType instanceof Pointer pointer) || !(pointer.getDataType() instanceof Structure objectType)) {
+			return;
+		}
+		applyAnalysisRequestObjectType(program, target.address(), objectType);
+	}
+
+	/**
+	 * Applies the object behind a directly materialised request address.  This is
+	 * distinct from a pointer slot: LEA request,A1 passes {@code &request}, so
+	 * the memory at request has the concrete structure type rather than a
+	 * pointer type.
+	 */
+	private static void applyAnalysisRequestObjectType(Program program, Address storage, Structure objectType)
+			throws CodeUnitInsertionException {
+		Data existing = program.getListing().getDefinedDataAt(storage);
+		Symbol symbol = program.getSymbolTable().getPrimarySymbol(storage);
+		if (symbol != null && symbol.getSource() == SourceType.USER_DEFINED) {
+			return;
+		}
+		if (existing != null && existing.getDataType().isEquivalent(objectType)) {
+			return;
+		}
+		if (existing != null && !Undefined.isUndefined(existing.getDataType()) &&
+				!isStructureSpecialization(objectType, existing.getDataType())) {
+			return;
+		}
+		if (hasProtectedDataWithin(program, storage, objectType.getLength())) {
+			return;
+		}
+		DataUtilities.createData(program, storage, objectType, -1, false, ClearDataMode.CLEAR_ALL_CONFLICT_DATA);
+	}
+
+	/** Never clear a separately defined or user-owned item in an inferred object's range. */
+	private static boolean hasProtectedDataWithin(Program program, Address start, int length) {
+		if (length <= 0) {
+			return true;
+		}
+		Address end;
+		try {
+			end = start.addNoWrap(length - 1L);
+		}
+		catch (AddressOutOfBoundsException | AddressOverflowException exception) {
+			return true;
+		}
+		for (Address address = start; ; address = address.next()) {
+			Symbol symbol = program.getSymbolTable().getPrimarySymbol(address);
+			if (!address.equals(start) && symbol != null && symbol.getSource() == SourceType.USER_DEFINED) {
+				return true;
+			}
+			Data data = program.getListing().getDefinedDataContaining(address);
+			if (data != null && !data.getMinAddress().equals(start) && !Undefined.isUndefined(data.getDataType())) {
+				return true;
+			}
+			if (address.equals(end)) {
+				return false;
+			}
+		}
 	}
 
 	private Map<Address, FdFunction> findOpenApiWrappers(Program program, Map<Address, String> bases) {
@@ -1341,6 +1579,34 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 				FdFunction functionDefinition = getFunctionByLibraryBias(FdParser.EXEC_LIB, bias);
 				if (isForwardingOpenApiWrapper(program, function, instruction, functionDefinition)) {
 					wrappers.put(function.getEntryPoint(), functionDefinition);
+				}
+			}
+		}
+		return wrappers;
+	}
+
+	/**
+	 * Finds the special case deliberately excluded from ordinary opener-wrapper
+	 * handling: OpenDevice forwards a status result rather than an API base.
+	 * Its verified C-facing wrapper is still valid evidence for selecting a
+	 * named device definition and for request-type propagation.
+	 */
+	private Map<Address, FdFunction> findForwardingOpenDeviceWrappers(Program program,
+			Map<Address, String> bases) {
+		Map<Address, FdFunction> wrappers = new HashMap<>();
+		FunctionIterator functions = program.getFunctionManager().getFunctions(true);
+		while (functions.hasNext()) {
+			Function function = functions.next();
+			InstructionIterator instructions = program.getListing().getInstructions(function.getBody(), true);
+			while (instructions.hasNext()) {
+				Instruction instruction = instructions.next();
+				Integer bias = getA6VectorBias(instruction);
+				if (bias == null || !FdParser.EXEC_LIB.equals(findA6ApiBase(program, instruction, bases))) {
+					continue;
+				}
+				FdFunction definition = getFunctionByLibraryBias(FdParser.EXEC_LIB, bias);
+				if (isForwardingOpenDeviceWrapper(program, function, instruction, definition)) {
+					wrappers.put(function.getEntryPoint(), definition);
 				}
 			}
 		}
@@ -1379,6 +1645,20 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		if (!isApiBaseOpener(opener) || !forwardsOpenApiArguments(program, wrapper, openerCall, opener)) {
 			return false;
 		}
+		return preservesOpenApiResult(program, wrapper, openerCall, opener);
+	}
+
+	private boolean isForwardingOpenDeviceWrapper(Program program, Function wrapper, Instruction openerCall,
+			FdFunction opener) {
+		if (opener == null || !"OpenDevice".equals(opener.getName(false)) ||
+				!forwardsOpenApiArguments(program, wrapper, openerCall, opener)) {
+			return false;
+		}
+		return preservesOpenApiResult(program, wrapper, openerCall, opener);
+	}
+
+	private boolean preservesOpenApiResult(Program program, Function wrapper, Instruction openerCall,
+			FdFunction opener) {
 		String returnRegister = getApiOpenerReturnRegister(program, opener);
 		if (returnRegister == null) {
 			return false;
@@ -1667,7 +1947,8 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 
 	private FdFunction getDirectOpenApiCall(Program program, Instruction instruction, Map<Address, String> bases) {
 		Integer bias = getA6VectorBias(instruction);
-		if (bias == null || !FdParser.EXEC_LIB.equals(findA6ApiBase(program, instruction, bases))) {
+		String base = bias == null ? null : findA6ApiBase(program, instruction, bases);
+		if (bias == null || !FdParser.EXEC_LIB.equals(base)) {
 			return null;
 		}
 		FdFunction function = getFunctionByLibraryBias(FdParser.EXEC_LIB, bias);
@@ -1717,7 +1998,10 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 	 * calls, branches, and unrecognised computations are deliberately rejected.
 	 */
 	private static ApiNameArgument getApiNameArgument(Program program, Instruction call, FdFunction opener) {
-		String register = getApiNameArgumentRegister(opener);
+		return getApiNameArgument(program, call, getApiNameArgumentRegister(opener));
+	}
+
+	private static ApiNameArgument getApiNameArgument(Program program, Instruction call, String register) {
 		Function function = register == null ? null :
 				program.getFunctionManager().getFunctionContaining(call.getAddress());
 		if (function == null) {
@@ -1743,15 +2027,9 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			if (!writesRegister(instruction, register)) {
 				continue;
 			}
-			for (Reference reference : instruction.getReferencesFrom()) {
-				if (!reference.isMemoryReference()) {
-					continue;
-				}
-				Data data = program.getListing().getDefinedDataAt(reference.getToAddress());
-				if (data != null && data.hasStringValue()) {
-					String apiKey = toApiBaseName(StringDataInstance.getStringDataInstance(data).getStringValue());
-					return apiKey == null ? null : new ApiNameArgument(apiKey, data.getAddress());
-				}
+			ApiNameArgument argument = getReferencedApiNameArgument(program, instruction);
+			if (argument != null) {
+				return argument;
 			}
 			String sourceRegister = getSingleInputRegister(instruction);
 			if (sourceRegister == null || sourceRegister.equals(register)) {
@@ -1762,11 +2040,25 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		return null;
 	}
 
+	/** The source of a stack argument may be represented as DATA rather than READ. */
+	private static Address getReferencedMemoryAddress(Instruction instruction) {
+		for (Reference reference : instruction.getReferencesFrom()) {
+			if (reference.isMemoryReference()) {
+				return reference.getToAddress();
+			}
+		}
+		return null;
+	}
+
 	private static String getApiNameArgumentRegister(FdFunction opener) {
-		if (!isApiNameOpener(opener) || opener.getArgs().isEmpty()) {
+		return getApiArgumentRegister(opener, 0);
+	}
+
+	private static String getApiArgumentRegister(FdFunction opener, int index) {
+		if (opener == null || index < 0 || index >= opener.getArgs().size()) {
 			return null;
 		}
-		String register = opener.getArgs().get(0).reg;
+		String register = opener.getArgs().get(index).reg;
 		return register == null ? null : register.toUpperCase(Locale.ROOT);
 	}
 
@@ -1782,6 +2074,463 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 			source = register.getName();
 		}
 		return source;
+	}
+
+	/**
+	 * Resolves device-specific vectors only after a canonical, success-gated
+	 * OpenDevice call has associated a statically addressed IORequest with a
+	 * known device. This is intentionally separate from library-base storage:
+	 * OpenDevice returns status in D0 and device identity belongs to the request.
+	 */
+	private void resolveSuccessfulOpenDeviceVectors(Program program, AddressSetView set, FileDataTypeManager fdm,
+			Map<Address, String> apiBaseStorages, TaskMonitor monitor) throws CancelledException {
+		Integer deviceOffset = getStructureFieldOffset("IORequest", "io_Device", fdm);
+		if (deviceOffset == null) {
+			return;
+		}
+		FunctionIterator functions = program.getFunctionManager().getFunctions(set, true);
+		while (functions.hasNext()) {
+			monitor.checkCancelled();
+			Function function = functions.next();
+			BasicBlockModel model = new BasicBlockModel(program);
+			Map<Address, DeviceBaseState> seedStates = findSuccessfulOpenDeviceSeeds(program, function,
+					model, apiBaseStorages, monitor);
+			if (seedStates.isEmpty()) {
+				continue;
+			}
+			resolveDeviceVectorsInFunction(program, function, model, seedStates, deviceOffset, monitor);
+		}
+	}
+
+	/**
+	 * Refines a request held in a decompiler local, such as a pointer returned by
+	 * AllocMem and passed directly to OpenDevice.  This deliberately does not
+	 * follow aliases: the exact OpenDevice argument must already be one
+	 * non-global, non-parameter IORequest high variable in the caller.
+	 */
+	private static void propagateOpenDeviceRequestLocalTypes(Program program, FileDataTypeManager fdm,
+			Map<Address, ForwardingApiWrapper> forwardingWrappers, Map<Address, FdFunction> openDeviceWrappers,
+			List<AmigaAbiModel.DeviceRequestType> requestTypes, TaskMonitor monitor)
+			throws CancelledException, InvalidInputException, DuplicateNameException {
+		Map<String, DataType> typesByDevice = getDeviceRequestPointerTypes(fdm, requestTypes);
+		DecompInterface decompiler = new DecompInterface();
+		try {
+			decompiler.openProgram(program);
+			FunctionIterator callers = program.getFunctionManager().getFunctions(true);
+			while (callers.hasNext()) {
+				monitor.checkCancelled();
+				Function caller = callers.next();
+				Map<Address, DataType> typeByCall = getOpenDeviceRequestTypesByCall(program, caller,
+						forwardingWrappers, openDeviceWrappers, typesByDevice);
+				if (typeByCall.isEmpty()) {
+					continue;
+				}
+				DecompileResults results = decompiler.decompileFunction(caller, 30, monitor);
+				HighFunction highFunction = results.decompileCompleted() ? results.getHighFunction() : null;
+				if (highFunction == null) {
+					continue;
+				}
+				Map<HighSymbol, DataType> proposals = new HashMap<>();
+				Set<HighSymbol> conflicts = new HashSet<>();
+				for (java.util.Iterator<PcodeOpAST> ops = highFunction.getPcodeOps(); ops.hasNext();) {
+					PcodeOp op = ops.next();
+					DataType type = typeByCall.get(op.getSeqnum().getTarget());
+					if (op.getOpcode() != PcodeOp.CALL || type == null || op.getNumInputs() <= 3) {
+						continue;
+					}
+					HighSymbol symbol = getRefinableOpenDeviceLocal(op.getInput(3), type);
+					if (symbol != null) {
+						recordLocalTypeProposal(proposals, conflicts, symbol, type);
+					}
+				}
+				for (Map.Entry<HighSymbol, DataType> proposal : proposals.entrySet()) {
+					HighSymbol symbol = proposal.getKey();
+					if (!conflicts.contains(symbol) && isAnalysisOwnedLocal(symbol)) {
+						HighFunctionDBUtil.updateDBVariable(symbol, symbol.getName(), proposal.getValue(),
+								SourceType.ANALYSIS);
+					}
+				}
+				decompiler.flushCache();
+			}
+		}
+		finally {
+			decompiler.dispose();
+		}
+	}
+
+	private static Map<String, DataType> getDeviceRequestPointerTypes(FileDataTypeManager fdm,
+			List<AmigaAbiModel.DeviceRequestType> requestTypes) {
+		Map<String, DataType> typesByDevice = new HashMap<>();
+		for (AmigaAbiModel.DeviceRequestType requestType : requestTypes) {
+			DataType type = new PointerDataType(getAmigaDataType(requestType.requestType, fdm));
+			typesByDevice.put(requestType.deviceName, type);
+			String apiKey = toApiBaseName(requestType.deviceName);
+			if (apiKey != null) {
+				typesByDevice.put(apiKey, type);
+			}
+		}
+		return typesByDevice;
+	}
+
+	private static Map<Address, DataType> getOpenDeviceRequestTypesByCall(Program program, Function caller,
+			Map<Address, ForwardingApiWrapper> forwardingWrappers, Map<Address, FdFunction> openDeviceWrappers,
+			Map<String, DataType> typesByDevice) {
+		Map<Address, DataType> result = new HashMap<>();
+		InstructionIterator instructions = program.getListing().getInstructions(caller.getBody(), true);
+		while (instructions.hasNext()) {
+			Instruction call = instructions.next();
+			OpenDeviceCallArguments arguments = getOpenDeviceCallArguments(program, caller, call, forwardingWrappers,
+					openDeviceWrappers);
+			DataType type = arguments == null ? null : getDeviceRequestType(arguments.deviceName(), typesByDevice);
+			if (type != null) {
+				result.put(call.getAddress(), type);
+			}
+		}
+		return result;
+	}
+
+	private static DataType getDeviceRequestType(String deviceName, Map<String, DataType> typesByDevice) {
+		return deviceName == null ? null : typesByDevice.get(deviceName.toLowerCase(Locale.ROOT));
+	}
+
+	private record OpenDeviceCallArguments(String deviceName, RequestStorageTarget requestStorage) {
+	}
+
+	private static OpenDeviceCallArguments getOpenDeviceCallArguments(Program program, Function caller,
+			Instruction call, Map<Address, ForwardingApiWrapper> forwardingWrappers,
+			Map<Address, FdFunction> openDeviceWrappers) {
+		Function callee = getDirectCallee(program, call);
+		if (callee == null || !isOpenDeviceCall(callee, forwardingWrappers, openDeviceWrappers)) {
+			return null;
+		}
+		Parameter deviceName = getStackParameter(callee, 0);
+		Parameter request = getStackParameter(callee, 2);
+		if (deviceName == null || request == null || !deviceName.getVariableStorage().isStackStorage() ||
+				!request.getVariableStorage().isStackStorage()) {
+			// Direct Exec OpenDevice has its documented A0/D0/A1/D1 ABI rather
+			// than a C stack signature. Reuse the bounded direct-register trace.
+			if (!"exec_library_OpenDevice".equals(callee.getName())) {
+				return null;
+			}
+			ApiNameArgument name = getApiNameArgument(program, call, "A0");
+			Address requestObject = getDirectOpenDeviceRequestObject(program, call);
+			RequestStorageTarget target = requestObject == null ? null :
+					new RequestStorageTarget(requestObject, RequestStorageKind.OBJECT);
+			return new OpenDeviceCallArguments(name == null ? null : name.apiKey(), target);
+		}
+		Instruction namePush = findPushedStackArgument(caller, call, deviceName.getStackOffset());
+		Instruction requestPush = findPushedStackArgument(caller, call, request.getStackOffset());
+		String name = namePush == null ? null : getReferencedString(program, namePush);
+		Address storage = requestPush == null ? null : getReferencedMemoryAddress(requestPush);
+		RequestStorageTarget target = storage == null ? null :
+				new RequestStorageTarget(storage, RequestStorageKind.POINTER_SLOT);
+		return new OpenDeviceCallArguments(name, target);
+	}
+
+	/**
+	 * A direct Exec ABI call has no stack argument metadata.  Accept only a
+	 * literal address materialised directly into A1 with LEA; loading a pointer,
+	 * copying an alias, arithmetic, or any control-flow reconstruction is not
+	 * evidence that the referenced memory is the request object.
+	 */
+	private static Address getDirectOpenDeviceRequestObject(Program program, Instruction call) {
+		Function function = program.getFunctionManager().getFunctionContaining(call.getAddress());
+		if (function == null) {
+			return null;
+		}
+		CodeBlock block;
+		try {
+			block = new BasicBlockModel(program).getFirstCodeBlockContaining(call.getAddress(), TaskMonitor.DUMMY);
+		}
+		catch (CancelledException exception) {
+			return null;
+		}
+		for (Instruction instruction = call.getPrevious(); instruction != null && block != null &&
+				block.contains(instruction.getAddress()); instruction = instruction.getPrevious()) {
+			if (!writesRegister(instruction, "A1")) {
+				continue;
+			}
+			if (!instruction.getMnemonicString().toLowerCase(Locale.ROOT).startsWith("lea")) {
+				return null;
+			}
+			return getReferencedMemoryAddress(instruction);
+		}
+		return null;
+	}
+
+	private static HighSymbol getRefinableOpenDeviceLocal(Varnode requestArgument, DataType type) {
+		Varnode value = requestArgument;
+		for (int depth = 0; value != null && depth < 3; depth++) {
+			HighVariable high = value.getHigh();
+			HighSymbol symbol = high == null ? null : high.getSymbol();
+			if (symbol != null) {
+				return symbol.isParameter() || symbol.isGlobal() ||
+						!isPointerSpecialization(type, high.getDataType()) ? null : symbol;
+			}
+			PcodeOp definition = value.getDef();
+			if (definition == null || definition.getNumInputs() != 1 ||
+					(definition.getOpcode() != PcodeOp.COPY && definition.getOpcode() != PcodeOp.CAST)) {
+				return null;
+			}
+			value = definition.getInput(0);
+		}
+		return null;
+	}
+
+	private static boolean isAnalysisOwnedLocal(HighSymbol symbol) {
+		Symbol databaseSymbol = symbol.getSymbol();
+		if (databaseSymbol != null) {
+			SourceType source = databaseSymbol.getSource();
+			return source == SourceType.DEFAULT || source == SourceType.ANALYSIS;
+		}
+		ghidra.program.model.listing.Variable variable = HighFunctionDBUtil.getFunctionVariable(symbol);
+		if (variable == null) {
+			return true;
+		}
+		SourceType source = variable.getSource();
+		return source == SourceType.DEFAULT || source == SourceType.ANALYSIS;
+	}
+
+	private static void recordLocalTypeProposal(Map<HighSymbol, DataType> proposals, Set<HighSymbol> conflicts,
+			HighSymbol symbol, DataType type) {
+		if (conflicts.contains(symbol)) {
+			return;
+		}
+		DataType existing = proposals.get(symbol);
+		if (existing == null || existing.isEquivalent(type)) {
+			proposals.put(symbol, type);
+		}
+		else {
+			proposals.remove(symbol);
+			conflicts.add(symbol);
+		}
+	}
+
+	private Map<Address, DeviceBaseState> findSuccessfulOpenDeviceSeeds(Program program, Function function,
+			BasicBlockModel model, Map<Address, String> apiBaseStorages, TaskMonitor monitor) throws CancelledException {
+		Map<Address, DeviceBaseState> seeds = new HashMap<>();
+		InstructionIterator instructions = program.getListing().getInstructions(function.getBody(), true);
+		while (instructions.hasNext()) {
+			Instruction call = instructions.next();
+			FdFunction opener = getDirectOpenApiCall(program, call, apiBaseStorages);
+			if (opener == null || !"OpenDevice".equals(opener.getName(false))) {
+				continue;
+			}
+			ApiNameArgument name = getApiNameArgument(program, call, opener);
+			Address request = getApiArgumentStorage(program, call, opener, 2);
+			CodeBlock success = getOpenDeviceSuccessBlock(program, model, call, monitor);
+			if (name == null || request == null || success == null || !activeLibraries.contains(name.apiKey()) ||
+					!hasOnlySource(success, model, call.getAddress(), monitor)) {
+				continue;
+			}
+			DeviceBaseState seed = new DeviceBaseState();
+			seed.putRequest(request, name.apiKey());
+			recordDeviceState(seeds, success.getFirstStartAddress(), seed);
+		}
+		return seeds;
+	}
+
+	private static Address getApiArgumentStorage(Program program, Instruction call, FdFunction opener, int index) {
+		return getApiArgumentStorage(program, call, getApiArgumentRegister(opener, index));
+	}
+
+	private static Address getApiArgumentStorage(Program program, Instruction call, String register) {
+		if (register == null) {
+			return null;
+		}
+		Function function = program.getFunctionManager().getFunctionContaining(call.getAddress());
+		if (function == null) {
+			return null;
+		}
+		CodeBlock block;
+		try {
+			block = new BasicBlockModel(program).getFirstCodeBlockContaining(call.getAddress(), TaskMonitor.DUMMY);
+		}
+		catch (CancelledException exception) {
+			return null;
+		}
+		for (Instruction instruction = call.getPrevious(); instruction != null && block != null &&
+				block.contains(instruction.getAddress()); instruction = instruction.getPrevious()) {
+			if (!writesRegister(instruction, register)) {
+				continue;
+			}
+			for (Reference reference : instruction.getReferencesFrom()) {
+				if (reference.isMemoryReference()) {
+					return reference.getToAddress();
+				}
+			}
+			String source = getSingleInputRegister(instruction);
+			if (source == null || source.equals(register)) {
+				return null;
+			}
+			register = source;
+		}
+		return null;
+	}
+
+	private static CodeBlock getOpenDeviceSuccessBlock(Program program, BasicBlockModel model, Instruction call,
+			TaskMonitor monitor) throws CancelledException {
+		Instruction test = call.getNext();
+		Instruction branch = test == null ? null : test.getNext();
+		if (!isTestOfD0(test) || branch == null) {
+			return null;
+		}
+		String mnemonic = branch.getMnemonicString();
+		if (mnemonic.startsWith("bne")) {
+			Instruction success = branch.getNext();
+			return success == null ? null : model.getFirstCodeBlockContaining(success.getAddress(), monitor);
+		}
+		if (!mnemonic.startsWith("beq")) {
+			return null;
+		}
+		Address success = getDirectBranchTarget(branch);
+		return success == null ? null : model.getFirstCodeBlockContaining(success, monitor);
+	}
+
+	private static Address getDirectBranchTarget(Instruction instruction) {
+		for (Reference reference : instruction.getReferencesFrom()) {
+			if (reference.getReferenceType().isJump() && !reference.getReferenceType().isComputed()) {
+				return reference.getToAddress();
+			}
+		}
+		for (Object object : instruction.getOpObjects(0)) {
+			if (object instanceof Address address) {
+				return address;
+			}
+			if (object instanceof Scalar displacement) {
+				return instruction.getAddress().add(instruction.getLength() + displacement.getSignedValue());
+			}
+		}
+		return null;
+	}
+
+	private static boolean isTestOfD0(Instruction instruction) {
+		return instruction != null && instruction.getMnemonicString().startsWith("tst") &&
+				hasSourceRegister(instruction, "D0");
+	}
+
+	private static boolean hasOnlySource(CodeBlock block, BasicBlockModel model, Address sourceAddress,
+			TaskMonitor monitor) throws CancelledException {
+		CodeBlock source = model.getFirstCodeBlockContaining(sourceAddress, monitor);
+		if (source == null) {
+			return false;
+		}
+		CodeBlockReferenceIterator sources = block.getSources(monitor);
+		boolean found = false;
+		while (sources.hasNext()) {
+			if (!source.getFirstStartAddress().equals(sources.next().getSourceBlock().getFirstStartAddress())) {
+				return false;
+			}
+			found = true;
+		}
+		return found;
+	}
+
+	private void resolveDeviceVectorsInFunction(Program program, Function function, BasicBlockModel model,
+			Map<Address, DeviceBaseState> seedStates, int deviceOffset, TaskMonitor monitor) throws CancelledException {
+		List<CodeBlock> blocks = new ArrayList<>();
+		CodeBlockIterator iterator = model.getCodeBlocksContaining(function.getBody(), monitor);
+		while (iterator.hasNext()) {
+			CodeBlock block = iterator.next();
+			if (function.getBody().contains(block.getFirstStartAddress())) {
+				blocks.add(block);
+			}
+		}
+		Map<Address, DeviceBaseState> outStates = new HashMap<>();
+		boolean changed;
+		do {
+			changed = false;
+			for (CodeBlock block : blocks) {
+				DeviceBaseState state = seedStates.get(block.getFirstStartAddress());
+				if (state != null) {
+					state = state.copy();
+				}
+				else {
+					state = incomingDeviceState(block, function, outStates, monitor);
+				}
+				if (state == null) {
+					continue;
+				}
+				InstructionIterator instructions = program.getListing().getInstructions(block, true);
+				while (instructions.hasNext()) {
+					transferDeviceBaseState(program, instructions.next(), state, deviceOffset, false);
+				}
+				DeviceBaseState old = outStates.put(block.getFirstStartAddress(), state);
+				changed |= !state.equals(old);
+			}
+		} while (changed);
+		for (CodeBlock block : blocks) {
+			DeviceBaseState state = seedStates.get(block.getFirstStartAddress());
+			if (state != null) {
+				state = state.copy();
+			}
+			else {
+				state = incomingDeviceState(block, function, outStates, monitor);
+			}
+			if (state == null) {
+				continue;
+			}
+			InstructionIterator instructions = program.getListing().getInstructions(block, true);
+			while (instructions.hasNext()) {
+				transferDeviceBaseState(program, instructions.next(), state, deviceOffset, true);
+			}
+		}
+	}
+
+	private static DeviceBaseState incomingDeviceState(CodeBlock block, Function function,
+			Map<Address, DeviceBaseState> outStates, TaskMonitor monitor) throws CancelledException {
+		DeviceBaseState incoming = null;
+		boolean hasSource = false;
+		CodeBlockReferenceIterator sources = block.getSources(monitor);
+		while (sources.hasNext()) {
+			CodeBlock source = sources.next().getSourceBlock();
+			if (!function.getBody().contains(source.getFirstStartAddress())) {
+				continue;
+			}
+			hasSource = true;
+			DeviceBaseState state = outStates.get(source.getFirstStartAddress());
+			if (state == null) {
+				return null;
+			}
+			incoming = incoming == null ? state.copy() : incoming.intersection(state);
+		}
+		return hasSource ? incoming : null;
+	}
+
+	private void transferDeviceBaseState(Program program, Instruction instruction, DeviceBaseState state,
+			int deviceOffset, boolean installOverrides) {
+		Address sourceStorage = getMemoryReference(instruction, true);
+		String memoryDevice = sourceStorage == null || sourceStorage.getOffset() < deviceOffset ? null :
+				state.getRequest(sourceStorage.subtract(deviceOffset));
+		String sourceDevice = memoryDevice == null ? getSourceDeviceBase(instruction, state) : memoryDevice;
+		for (Object result : instruction.getResultObjects()) {
+			if (result instanceof Register register) {
+				state.putRegister(register.getName(), sourceDevice);
+			}
+		}
+		Integer bias = getA6VectorBias(instruction);
+		String device = bias == null ? null : state.getRegister("A6");
+		if (installOverrides && device != null) {
+			addResolvedApiCall(program, instruction, device, bias);
+		}
+	}
+
+	private static String getSourceDeviceBase(Instruction instruction, DeviceBaseState state) {
+		for (Object input : instruction.getInputObjects()) {
+			if (input instanceof Register register) {
+				String device = state.getRegister(register.getName());
+				if (device != null) {
+					return device;
+				}
+			}
+		}
+		return null;
+	}
+
+	private static void recordDeviceState(Map<Address, DeviceBaseState> states, Address address,
+			DeviceBaseState candidate) {
+		DeviceBaseState existing = states.get(address);
+		states.put(address, existing == null ? candidate : existing.intersection(candidate));
 	}
 
 	private static Address getReturnedRegisterStorage(Program program, Instruction call, String registerName) {
@@ -2113,6 +2862,79 @@ public class AmigaHunkAnalyzer extends AbstractAnalyzer {
 		@Override
 		public int hashCode() {
 			return registerBases.hashCode();
+		}
+	}
+
+	/** Device identity tied to a concrete IORequest and copies of its io_Device base. */
+	static final class DeviceBaseState {
+		private final Map<Address, String> requestDevices;
+		private final Map<String, String> registerDevices;
+
+		DeviceBaseState() {
+			requestDevices = new HashMap<>();
+			registerDevices = new HashMap<>();
+		}
+
+		private DeviceBaseState(Map<Address, String> requestDevices, Map<String, String> registerDevices) {
+			this.requestDevices = new HashMap<>(requestDevices);
+			this.registerDevices = new HashMap<>(registerDevices);
+		}
+
+		void putRequest(Address request, String device) {
+			if (device == null) {
+				requestDevices.remove(request);
+			}
+			else {
+				requestDevices.put(request, device);
+			}
+		}
+
+		String getRequest(Address request) {
+			return requestDevices.get(request);
+		}
+
+		void putRegister(String register, String device) {
+			if (device == null) {
+				registerDevices.remove(register);
+			}
+			else {
+				registerDevices.put(register, device);
+			}
+		}
+
+		String getRegister(String register) {
+			return registerDevices.get(register);
+		}
+
+		DeviceBaseState copy() {
+			return new DeviceBaseState(requestDevices, registerDevices);
+		}
+
+		DeviceBaseState intersection(DeviceBaseState other) {
+			DeviceBaseState result = new DeviceBaseState();
+			intersect(requestDevices, other.requestDevices, result.requestDevices);
+			intersect(registerDevices, other.registerDevices, result.registerDevices);
+			return result;
+		}
+
+		private static <K> void intersect(Map<K, String> left, Map<K, String> right,
+				Map<K, String> result) {
+			for (Map.Entry<K, String> entry : left.entrySet()) {
+				if (entry.getValue().equals(right.get(entry.getKey()))) {
+					result.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+
+		@Override
+		public boolean equals(Object object) {
+			return object instanceof DeviceBaseState other && requestDevices.equals(other.requestDevices) &&
+					registerDevices.equals(other.registerDevices);
+		}
+
+		@Override
+		public int hashCode() {
+			return 31 * requestDevices.hashCode() + registerDevices.hashCode();
 		}
 	}
 	

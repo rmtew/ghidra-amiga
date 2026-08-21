@@ -21,6 +21,7 @@ import ghidra.framework.ApplicationConfiguration;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.DataTypePath;
 import ghidra.program.model.data.FileDataTypeManager;
+import ghidra.program.model.data.Structure;
 import fd.FdParser;
 
 public class AmigaNdkArchiveTest {
@@ -53,6 +54,21 @@ public class AmigaNdkArchiveTest {
 			assertEquals(1, matches.size());
 			assertEquals("IOAudio", matches.get(0).getName());
 			assertEquals(0x44, matches.get(0).getLength());
+		}
+	}
+
+	@Test
+	public void exposesStandardIoRequestWithTheIoRequestAbiPrefix() throws Exception {
+		try (FileDataTypeManager archive = FileDataTypeManager.openFileArchive(new File("data/amiga_ndk39.gdt"), true)) {
+			List<DataType> matches = new ArrayList<>();
+			archive.findDataTypes("IOStdReq", matches);
+			assertEquals(1, matches.size());
+			assertEquals("IOStdReq", matches.get(0).getName());
+			assertEquals(0x30, matches.get(0).getLength());
+			Structure request = (Structure) matches.get(0);
+			assertEquals("io_Message", request.getComponentAt(0).getFieldName());
+			assertEquals("io_Actual", request.getComponentAt(0x20).getFieldName());
+			assertEquals("io_Offset", request.getComponentAt(0x2c).getFieldName());
 		}
 	}
 

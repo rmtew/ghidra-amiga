@@ -25,6 +25,7 @@ import ghidra.program.model.data.FileDataTypeManager;
 public class CreateAmigaNdk39Gdt extends GhidraScript {
 	private static final String INCLUDE_ROOT = "3rdparty/NDK_3.9/include_h";
 	private static final String HEADER_MANIFEST = "data/ndk39_headers.txt";
+	private static final String TYPE_ROOTS = "data/ndk39_type_roots.h";
 	/*
 	 * hdwrench.h uses SAS/C register annotations, including one on a callback
 	 * parameter.  They describe a calling convention, not a C data type, and
@@ -45,18 +46,23 @@ public class CreateAmigaNdk39Gdt extends GhidraScript {
 		Path repository = Path.of(arguments[0]).toAbsolutePath().normalize();
 		Path includeRoot = repository.resolve(INCLUDE_ROOT);
 		Path manifest = repository.resolve(HEADER_MANIFEST);
+		Path typeRoots = repository.resolve(TYPE_ROOTS);
 		Path output = Path.of(arguments[1]).toAbsolutePath().normalize();
 		List<String> headers = readAndValidateManifest(includeRoot, manifest);
+		if (!Files.isRegularFile(typeRoots)) {
+			throw new IOException("Repository root does not contain " + TYPE_ROOTS);
+		}
 
 		Files.createDirectories(output.getParent());
 		deleteArchive(output);
-		String[] headerFiles = headers.stream().map(includeRoot::resolve).map(Path::toString).toArray(String[]::new);
+		String[] headerFiles = java.util.stream.Stream.concat(headers.stream().map(includeRoot::resolve),
+			java.util.stream.Stream.of(typeRoots)).map(Path::toString).toArray(String[]::new);
 		FileDataTypeManager archive = CParserUtils.parseHeaderFiles(null, headerFiles,
 				new String[] { includeRoot.toString() }, PARSER_ARGUMENTS, output.toString(),
 				"68000:BE:32:default", "default", monitor);
 		archive.close();
 		Files.deleteIfExists(Path.of(output + "_CParser.out"));
-		println("Created " + output + " from " + headers.size() + " NDK declaration headers.");
+		println("Created " + output + " from " + headers.size() + " NDK declaration headers and type roots.");
 	}
 
 	private static List<String> readAndValidateManifest(Path includeRoot, Path manifest) throws IOException {

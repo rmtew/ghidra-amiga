@@ -8,6 +8,18 @@ All notable changes to this project are documented in this file.
 
 - Picasso96, MMULib, and OpenPCI function-definition files for Amiga API
   vector discovery.
+- Evidence-based direct and wrapper-mediated API discovery: known library,
+  device, and resource tables are selected only when a proven Exec opener is
+  passed the corresponding name.
+- Concrete device-request refinement for proven `OpenDevice` calls, including
+  `IOStdReq` support for console, input, and gameport requests. This covers
+  static pointer slots, directly addressed request objects, and analysis-owned
+  request locals.
+
+### Changed
+
+- Successful `OpenDevice` calls now carry device identity to subsequent
+  device-vector analysis only along a proven success path.
 
 ### Fixed
 
@@ -15,6 +27,11 @@ All notable changes to this project are documented in this file.
   pointer markers attached to parameter names, and tolerates trailing
   semicolons in FD prototypes.
 - Resident-library SFD selection is safe for GUI and headless imports.
+- HUNK relocation addends that point inside a string are read from the actual
+  reference target, avoiding an unrelated preceding data prefix.
+- Directly addressed `OpenDevice` request objects are represented as objects
+  rather than incorrectly as pointer slots; user-owned or concrete interior
+  data is preserved.
 
 Thanks to **mheyer** (`sonode@gmx.de`) for the original commits that supplied
 these definition files and fixes.
